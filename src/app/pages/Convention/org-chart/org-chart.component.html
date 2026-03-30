@@ -1,0 +1,25 @@
+<div class="container mt-4" dir="rtl">
+  <h2 class="text-center mb-4">الهيكل التنظيمي</h2>
+ <div class="col-md-2">
+                <label for="billinginfo-phone" class="form-label">Service
+                </label>
+                <app-lov [listData]="listService" [columns]="columnsSearch" codeField="cod_soc"
+                  [selectedCode]="codServ" (selectedValue)="onSelectedValue($event)"></app-lov>
+              </div>
+  <div *ngIf="loading" class="text-center mt-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div class="mt-4">
+    <div #orgChart id="orgChart" style="width: 100%; height: 600px; border: 1px solid #ccc;"></div>
+  </div>
+</div>

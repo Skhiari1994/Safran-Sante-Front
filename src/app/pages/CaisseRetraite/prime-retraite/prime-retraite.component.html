@@ -1,0 +1,296 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs title="Saisie de la prime de Retraite" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+  <!-- Report Filter Section -->
+  <div class="col-md-12 d-flex justify-content-center mt-3">
+    <div style="width: 85%;">
+      <div class="collapse show" id="reportFilterCollapse">
+        <div class="card p-4 border shadow-none mb-3">
+
+          <form action="javascript:void(0);" class="row g-3" [formGroup]="formPrimeRetraite">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row">
+                  <!-- Etat Cotisation -->
+                  <div class="col-md-3">
+                    <label class="form-label">Etat Cotisation</label>
+                    <select class="form-select border-success" formControlName="etat_prime">
+                      <option value="">Tous</option>
+                      <option value="I">En instance</option>
+                      <option value="V">Validé</option>
+                    </select>
+                  </div>
+                  <!-- Corps -->
+                  <div class="col-md-3">
+                    <label class="form-label">Corps</label>
+                    <select class="form-select border-success" formControlName="corps_report">
+                      <option *ngFor="let i of listCorps" [value]="i.cod_corps">
+                        {{ i.lib_corps }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center mt-4">
+    <div class="col-md-10">
+      <div class="collapse show" id="paymentmethodCollapse">
+        <div class="card p-4 border shadow-none">
+          <!-- Search Form -->
+          <form action="javascript:void(0);" class="row g-3" [formGroup]="formPrimeRetraite">
+            <div class="row">
+              <!-- First Column -->
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-2">
+                    <label class="form-label">Matricule</label>
+                    <app-lov [listData]="listPersonnel" [columns]="columnPersonnels" codeField="mat_pers"
+                      [selectedCode]="matPersVal" (selectedValue)="onSelectedValuePers($event)">
+                    </app-lov>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Nom & Prénom</label>
+                    <input type="text" class="form-control border-primary" [value]="nomPren" readonly />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Id unique</label>
+                    <input type="text" class="form-control border-primary" formControlName="num_retr" readonly />
+                  </div>
+                  <div class="col-md-1">
+                    <label class="form-label">Numéro</label>
+                    <input type="text" class="form-control border-primary" formControlName="num_remb" readonly />
+                  </div>
+                  <div class="col-md-2"></div>
+                  <div class="col-md-2">
+                    <label class="form-label">Code remb</label>
+                    <app-lov [listData]="listRemb" [columns]="columnRemb" codeField="cod_remb" [selectedCode]="codRemb"
+                      (selectedValue)="onSelectedValueRemb($event)">
+                    </app-lov>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Libelle</label>
+                    <input type="text" class="form-control border-primary" [value]="libRemb" />
+                  </div>
+                  <div class="col-md-1">
+                    <label class="form-label">Prime</label>
+                    <select class="form-select border-success" formControlName="benef_prime">
+                      <option value="N">Oui</option>
+                      <option value="O">Non</option>
+                    </select>
+                  </div>
+                  <div class="col-md-1">
+                    <label class="form-label">Droit</label>
+                    <select class="form-select border-success" formControlName="benef_droi">
+                      <option value="N">Oui</option>
+                      <option value="O">Non</option>
+                    </select>
+                  </div>
+                  <div class="col-md-1">
+                    <label class="form-label">Taux</label>
+                    <input type="text" class="form-control border-primary" formControlName="taux_prime" appMontantMask
+                      readonly />
+                  </div>
+                  <div class="col-md-3"></div>
+                  <div class="col-md-2">
+                    <label class="form-label">Date remb</label>
+                    <input type="text" class="form-control border-primary" formControlName="dat_remb" mask="00/00/0000"
+                      (blur)="calcul_prime_retraite()" />
+                  </div>
+
+                  <div class="col-md-2">
+                    <label class="form-label">Virement</label>
+                    <select class="form-select border-success" formControlName="mod_pay">
+                      <option value="C">Chéque</option>
+                      <option value="E">Espéce</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Etat prime</label>
+                    <select class="form-select border-success" formControlName="etat_prime">
+                      <option value="S">Saisie</option>
+                      <option value="V">Validé</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Date deb retenu</label>
+                    <input type="text" class="form-control border-primary" formControlName="dat_deb_ret"
+                      mask="00/00/0000" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Date fin retenu</label>
+                    <input type="text" class="form-control border-primary" formControlName="dat_fin_ret"
+                      mask="00/00/0000" readonly />
+                  </div>
+                  <div class="col-md-2"></div>
+                  <div class="col-md-2">
+                    <label class="form-label">Montant cotis</label>
+                    <input type="text" class="form-control border-warning montant-input" placeholder="Montant cotis"
+                      formControlName="montant_cotis" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Montant prime</label>
+                    <input type="text" class="form-control border-warning montant-input" placeholder="Montant prime"
+                      formControlName="montant_prime" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Montant total</label>
+                    <input type="text" class="form-control border-warning montant-input" placeholder="Montant total"
+                      formControlName="montant_total" readonly />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Num chéque</label>
+                    <input type="text" class="form-control border-warning" placeholder="Num chéque"
+                      formControlName="cheq_remb" />
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label">Observation</label>
+                    <textarea class="form-control border-primary" formControlName="obs_retraite"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-10">
+    <div class="container d-flex justify-content-center align-items-center">
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow mb-4">
+            <div class="card-header   text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Liste des Beneficiaires</h5>
+              <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#showModal"
+                (click)="openModalTab(content1)">
+                <i class="ri-add-fill me-1"></i> Ajouter Beneficiaires
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive table-card">
+                <p-table [value]="listBenef" [paginator]="true" [rows]="10"
+                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th *ngFor="let column of ['num_fam','nom_benef','montant_benef','num_cheq']"
+                        [pSortableColumn]="column">
+                        <div class="d-flex align-items-center">
+                          <span class="me-2" (click)="onSort2(column)">{{ columnTitles2[column] || column }}<i
+                              class="ri-arrow-up-down-line ms-1"></i></span>
+                          <p-sortIcon [field]="column"></p-sortIcon>
+                        </div>
+                      </th>
+                      <th>Actions</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                      <td class="text-center">{{ rowData.num_fam }}</td>
+                      <td class="text-center">{{ rowData.nom_benef }}</td>
+                      <td class="text-center">{{ rowData.montant_benef | number:'1.3-3' }}</td>
+                      <td class="text-center">{{ rowData.num_cheq }}</td>
+                      <td>
+                        <ul class="list-inline hstack gap-2 mb-0">
+                          <li class="list-inline-item">
+                            <a class="edit-item-btn" data-bs-toggle="modal"
+                              (click)="editDataGet(rowIndex, rowData, content1)"><i
+                                class="ri-pencil-fill align-bottom text-muted"></i></a>
+                          </li>
+                          <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
+                            <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)"><i
+                                class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <pagination-controls id="table2" (pageChange)="pSusp2 = $event"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Recherche -->
+  <div *ngIf="isSearch" class="d-flex justify-content-center">
+    <app-search-lov [listData]="listPrimeRetr" [columns]="columnsPrimeRetr" (selectedValue)="search($event)">
+    </app-search-lov>
+  </div>
+
+
+  <ng-template #content1 role="document" let-modal>
+    <div class="modal-header bg-info-subtle p-3">
+      <h5 class="modal-title" id="exampleModalLabel">Ajouter beneficiaire</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+        (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <form [formGroup]="formBenef" class="tablelist-form" autocomplete="off">
+      <div formArrayName="Benef" class="scrollable-container">
+        <div *ngFor="let certif of Benef.controls; let i = index" [formGroupName]="i" class="row g-3">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-2">
+                <label class="form-label">Num Fam</label>
+                <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam" [selectedCode]="numFam"
+                  (selectedValue)="onSelectedValueFamille($event)">
+                </app-lov>
+              </div>
+
+              <div class="col-lg-5">
+                <div>
+                  <label for="industry_type-field" class="form-label">Prénom</label>
+                  <input type="text" class="form-control border-warning" placeholder="Enter Prénom"
+                    formControlName="nom_benef" />
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Montant benef</label>
+                <input type="text" class="form-control border-warning montant-input" placeholder="Montant benef"
+                  appMontantMask formControlName="montant_benef" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Num chéque</label>
+                <input type="text" class="form-control border-warning" placeholder="Num chéque"
+                  formControlName="num_cheq" mask="0000000000" />
+              </div>
+            </div>
+          </div>
+          <div class="hstack gap-2 justify-content-center" *ngIf="edit">
+            <button type="button" class="btn btn-success" id="add-btn" (click)="addBenef()">
+              Ajouter benefeciaire
+            </button>
+            <button type="button" class="btn btn-info" (click)="removeBenef(i)">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="validateFamille(); modal.close('Close click')">
+            Valider
+          </button>
+        </div>
+        <br>
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Close
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-template>

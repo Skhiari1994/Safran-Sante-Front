@@ -1,0 +1,144 @@
+:host ::ng-deep .modern-table .p-datatable {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  width: 100%;
+  table-layout: auto;
+}
+
+:host ::ng-deep .modern-table .p-datatable-wrapper {
+  overflow-x: auto !important;
+}
+
+:host ::ng-deep .modern-table .p-datatable table {
+  min-width: 100%;
+}
+
+:host ::ng-deep .modern-table .p-datatable-thead > tr > th {
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 0;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 1rem 1rem;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
+  border: 0;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.875rem 1rem;
+  vertical-align: middle;
+  color: #475569;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr {
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr:hover {
+  background: #f0f7ff;
+  
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tfoot > tr > td {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
+  border: 0;
+  border-top: 2px solid #e2e8f0;
+  padding: 1rem 1rem;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+:host ::ng-deep .modern-table .p-paginator {
+  border: 0;
+  background: #fafbfc;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e2e8f0;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+:host ::ng-deep .modern-table .p-paginator .p-paginator-current {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+:host ::ng-deep .modern-table .p-paginator .p-paginator-page,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-first,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-prev,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-next,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-last {
+  border-radius: 6px;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  margin: 0 0.125rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  font-weight: 500;
+}
+
+:host ::ng-deep .modern-table .p-paginator .p-paginator-page:not(.p-highlight):hover,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-first:not(.p-disabled):hover,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-prev:not(.p-disabled):hover,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-next:not(.p-disabled):hover,
+:host ::ng-deep .modern-table .p-paginator .p-paginator-last:not(.p-disabled):hover {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+:host ::ng-deep .modern-table .p-paginator .p-paginator-page.p-highlight {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+:host ::ng-deep .modern-table .p-sortable-column .p-sortable-column-icon {
+  margin-left: 0.5rem;
+  color: #94a3b8;
+}
+
+:host ::ng-deep .modern-table .p-sortable-column:hover .p-sortable-column-icon {
+  color: #3b82f6;
+}
+
+:host ::ng-deep .modern-table .p-sortable-column:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Empty message styling */
+:host ::ng-deep .modern-table .p-datatable-emptymessage > td {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Number formatting */
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td span[style*="text-align:right"] {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Table card container */
+:host ::ng-deep .table-card {
+  overflow-x: auto;
+}

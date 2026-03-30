@@ -1,0 +1,65 @@
+.table-responsive {
+    max-height: 300px; /* Set your desired maximum height */
+    overflow: hidden; /* Hide overflow to keep it clean */
+}
+
+.table-scrollable {
+    max-height: 200px; /* Set the maximum height for the scrollable body */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.table-scrollable table {
+    border-collapse: collapse; /* Ensures borders are joined */
+    width: 100%; /* Make the table take full width */
+}
+
+.table th, .table td {
+    padding: 0.75rem; /* Add padding to cells for better spacing */
+    vertical-align: middle; /* Center align the content */
+    border: 1px solid #dee2e6; /* Add a border */
+}
+.form-group .col-form-label {
+    display: flex;
+    align-items: center; /* Align the label vertically in the middle of the input */
+  }
+  
+  .input-group {
+    display: flex;
+    align-items: center; /* Ensures the input and button stay aligned */
+  }
+  
+  .table-container {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto;  /* Enable vertical scrolling */
+}
+.search-lov-container {
+    .modal-body {
+      .form-label {
+        font-weight: bold;
+        margin-bottom: 0; /* Remove extra margin from labels */
+      }
+  
+      .search-input {
+        background-color: #dfe4e9;
+        color: rgb(12, 13, 24);
+        border-color: #ccc; /* Or use a variable for border color if you want */
+        padding: 10px 14px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        height: 30px;
+        
+        &:focus {
+          background-color: #b6c2d1; /* Customize focus background color */
+          border-color: #aab7c4;  /* Customize focus border color */
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+          outline: none; /* Remove default outline */
+        }
+      }
+    }
+  }
+  
+  
+  

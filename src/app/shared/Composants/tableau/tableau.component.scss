@@ -1,0 +1,271 @@
+/* General Table Styling */
+$datepicker-bg-color: #ffffff;
+$datepicker-text-color: rgb(221, 19, 36);
+$datepicker-border-color: rgb(70, 41, 201);
+$datepicker-focus-bg-color: #bfe2fff8;
+$datepicker-focus-border-color: #aaa;
+
+.myDateField {
+  background-color: $datepicker-bg-color;
+  color: $datepicker-text-color;
+  border-color: $datepicker-border-color;
+  padding: 1px 2px;
+  font-size: 12px;
+  line-height: 1.2;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height: 25px;
+}
+
+.select {
+  background-color: #f1f1f1;
+  color: #000000;
+  border-color: $datepicker-border-color;
+  padding: 4px 6px;
+  font-size: 11px;
+  line-height: 1.2;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height: 28px;
+}
+
+.code {
+  background-color: #f3ecee;
+  color: rgb(32, 10, 224);
+  border-color: $datepicker-border-color;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.2;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height: 25px;
+
+  &:focus {
+    background-color: $datepicker-focus-bg-color;
+    border-color: $datepicker-focus-border-color;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  }
+}
+.table-scroll-container {
+  max-height: 300px; /* Adjust this height as needed */
+  overflow-y: auto;
+  border: 1px solid #ddd; /* Optional border for visual distinction */
+}
+
+ 
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+  background-color: rgb(61, 120, 227);
+  color: white;
+}
+
+th, td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 12px;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  th, td {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .table-container {
+    overflow-x: scroll;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  tbody tr {
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    font-size: 11px;
+    text-align: left;
+  }
+
+  td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+input {
+  width: 100%;
+  padding: 4px;
+  font-size: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+/* Button Styling */
+button {
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #e64a19;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.add-button {
+  background-color: #4caf50;
+  color: white;
+  font-size: 12px;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+  font-size: 12px;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+tbody tr {
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+}
+
+tbody tr:last-child {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th, td {
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+}
+
+thead th:first-child,
+tbody td:first-child {
+  border-left: none;
+}
+
+thead th:last-child,
+tbody td:last-child {
+  border-right: none;
+}
+.resizable-column {
+  position: relative;
+}
+
+.resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: transparent;
+}
+
+.resizable-column:hover .resize-handle {
+  background-color: #ccc; /* Optional hover effect */
+}
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.sort-icons {
+  margin-left: 5px;
+}
+
+.sort-icons i {
+  font-size: 12px;
+}
+.column-filter {
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+/* Supprimer les marges et paddings inutiles */
+.search-row {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Ajustement des champs de recherche */
+.search-input {
+  width: 100%; /* Occupation totale de la cellule */
+  height: 25px; /* Hauteur compacte */
+  border: 1px solid #ccc; /* Bordure fine */
+  padding: 0 5px; /* Padding interne minimal */
+  box-sizing: border-box; /* Inclure le padding et la bordure dans la largeur */
+  font-size: 12px; /* Taille de texte réduite */
+}
+
+/* Suppression des espaces pour la table */
+table {
+  border-spacing: 0; /* Pas d'espacement entre les cellules */
+  border-collapse: collapse; /* Coller les bordures */
+}
+
+
+
+.table-container {
+  overflow-x: auto; /* Pour permettre le défilement horizontal si nécessaire */
+}
+
+.table-scroll-container {
+  width: 100%; /* S'assurer que la table prend toute la largeur */
+}
+

@@ -1,0 +1,125 @@
+/* Responsive container with maximum height and scrollable body */
+.table-responsive {
+  max-height: 300px;
+  /* Set your desired maximum height */
+  overflow: hidden;
+  /* Hide overflow for a clean layout */
+}
+
+.table-scrollable {
+  max-height: 200px;
+  /* Set the maximum height for the scrollable body */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+}
+
+.table-scrollable table {
+  border-collapse: collapse;
+  /* Ensure borders are joined */
+  width: 100%;
+  /* Table takes full width */
+}
+
+/* General table styling */
+.table th,
+.table td {
+  padding: 0.75rem;
+  /* Spacing for better layout */
+  vertical-align: middle;
+  /* Center align cell content */
+  border: 1px solid #dee2e6;
+  /* Border between cells */
+}
+
+/* Align labels and input fields */
+.form-group .col-form-label {
+  display: flex;
+  align-items: center;
+  /* Vertically align labels */
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  /* Ensure input and button stay aligned */
+}
+
+/* Scrollable table container with adjustable height */
+.table-container {
+  max-height: 400px;
+  /* Adjust height as needed */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+}
+
+/* LOV container enhancements */
+.lov-container {
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .text-danger {
+    color: #dc3545;
+    /* Bootstrap danger color */
+  }
+}
+
+/* Search input field styling */
+.custom-table .form-control {
+  background-color: #eaf9fc;
+  /* Light blue background */
+  border-radius: 4px;
+  /* Rounded corners */
+  padding: 8px 10px;
+  /* Comfortable padding */
+  transition: all 0.3s ease;
+  /* Smooth focus transition */
+}
+
+/* Focus effect for search inputs */
+.custom-table .form-control:focus {
+  outline: none;
+  /* Remove default outline */
+}
+
+/* Search input label styling */
+.custom-table label {
+  font-weight: bold;
+  /* Bold labels for emphasis */
+}
+
+/* Table header with gradient styling */
+.custom-table thead {
+  background: linear-gradient(to right, #7b9196, #c7d7db);
+  /* Gradient background */
+  color: white;
+  /* White text for contrast */
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px solid #94abb1;
+  /* Stronger header division */
+}
+
+/* Alternate row colors for better readability */
+.custom-table tbody tr:nth-child(odd) {
+  background-color: #c6f2fa;
+  /* Light blue for odd rows */
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background-color: #eaf9fc;
+  /* Even lighter blue for even rows */
+}
+
+/* Hover effect on rows */
+
+
+/* Table cell padding for both header and body */
+.custom-table td,
+.custom-table th {
+  padding: 12px;
+  text-align: left;
+}
+
+
+/* Style pour le message d'erreur */

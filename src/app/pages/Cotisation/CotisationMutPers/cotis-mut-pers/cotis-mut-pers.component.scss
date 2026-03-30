@@ -1,0 +1,15 @@
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+label {
+    margin-right: 10px; /* Space between label and input */
+  /*  width: 100px; /* Optional: Set a fixed width for alignment */
+}
+
+input {
+    flex: 1; /* Allow input to stretch */
+    padding: 5px;
+}

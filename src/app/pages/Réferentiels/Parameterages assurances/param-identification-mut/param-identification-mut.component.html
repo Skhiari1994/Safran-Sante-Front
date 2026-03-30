@@ -1,0 +1,637 @@
+<div class="row" style="margin-top: 25px"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs
+    title="Identification mutuelle"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-breadcrumbs>
+</div>
+
+<div class="col-md-12">
+  <!-- Card Wrapper -->
+  <div class="card">
+    <div class="card-header">
+      <h4>Identification mutuelle</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="formAssurance">
+        <div class="row">
+          <div class="col-md-2">
+            <label for="code" class="col-form-label">Code</label>
+            <input
+              id="libelle"
+              formControlName="cod_assur"
+              type="text"
+              class="form-control"
+              placeholder="Entrez le libelle"
+            />
+          </div>
+
+          <div class="col-md-5">
+            <label for="libelle" class="col-form-label">Libelle</label>
+            <input
+              id="libelle"
+              formControlName="lib_assur"
+              type="text"
+              class="form-control"
+              placeholder="Entrez le libelle"
+            />
+          </div>
+
+          <div class="col-md-5">
+            <label for="libelle_arabe" class="col-form-label"
+              >Libelle en Arabe</label
+            >
+            <input
+              id="libelle_arabe"
+              type="text"
+              class="form-control"
+              formControlName="lib_assur_a"
+              placeholder="الاسم بالعربية"
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="tel" class="col-form-label">Tel</label>
+            <input
+              id="tel"
+              type="text"
+              class="form-control"
+              placeholder="Entrez le numéro de téléphone"
+              formControlName="tel_assur"
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="fax" class="col-form-label">Fax</label>
+            <input
+              id="fax"
+              type="text"
+              class="form-control"
+              placeholder="Entrez le numéro de fax"
+              formControlName="fax_assur"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label for="type_plafond" class="col-form-label"
+              >Type Plafond</label
+            >
+            <select
+              id="type_plafond"
+              class="form-control"
+              formControlName="typ_plafond"
+            >
+              <option value="">Sélectionner</option>
+              <option value="A">Adhérent</option>
+              <option value="F">Famille</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="duree_bulletin" class="col-form-label"
+              >Durée Bulletin</label
+            >
+            <input
+              id="duree_bulletin"
+              type="text"
+              class="form-control"
+              placeholder="Durée du bulletin"
+              formControlName="duree_bult_mut"
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="regime" class="col-form-label">Regime</label>
+            <select
+              id="regime"
+              class="form-control"
+              formControlName="cod_retr"
+            >
+              <option value="">Sélectionner</option>
+              <option value="CNSS">CNSS</option>
+              <option value="CNRPS">CNRPS</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="taux_cautisation_mutuelle" class="col-form-label"
+              >Taux Cautisation Mutuelle</label
+            >
+            <input
+              id="taux_cautisation_mutuelle"
+              type="text"
+              class="form-control"
+              placeholder="Taux de cautisation"
+              formControlName="taux_mut"
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="prefixe_code_borderau" class="col-form-label"
+              >Prefixe Code Borderau</label
+            >
+
+            <input
+              id="fax"
+              type="text"
+              class="form-control"
+              placeholder="Prefixe Code Borderau"
+              formControlName="prefixe"
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="duree_bulletin_cnam" class="col-form-label"
+              >Durée Bulletin CNAM</label
+            >
+            <input
+              id="duree_bulletin_cnam"
+              type="text"
+              class="form-control"
+              placeholder="Durée du bulletin CNAM"
+              formControlName="duree_bult_cnam"
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="numero_affiliation" class="col-form-label"
+              >Numéro Affiliation</label
+            >
+            <input
+              id="numero_affiliation"
+              type="text"
+              class="form-control"
+              placeholder="Numéro d'affiliation"
+              formControlName="num_retr"
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="plafond_cautisation_mutuelle" class="col-form-label"
+              >Plafond Cautisation Mutuelle</label
+            >
+            <input
+              id="plafond_cautisation_mutuelle"
+              type="text"
+              class="form-control"
+              placeholder="Plafond de cautisation"
+              formControlName="plaf_mut"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ FIXED: Both cards now properly in the same row -->
+<div class="col-md-12">
+  <div class="row">
+    <!-- Left Column: Valeurs des remboursements -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Valeurs des remboursements</h4>
+            <button
+              class="btn btn-info"
+              data-bs-toggle="modal"
+              data-bs-target="#showModal"
+              (click)="openModalTab(content)"
+              *ngIf="formAssurance.get('cod_assur')?.value"
+            >
+              <i class="ri-add-fill me-1"></i> Ajouter Filiere
+            </button>
+          </div>
+          <br>            
+          <p-table [value]="ListeFiliere" [paginator]="true" [rows]="3" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+            <ng-template pTemplate="header">
+              <tr class="table-primary">
+                <th *ngFor="let column of ['cod_fil','libelle','mnt_adher','mnt_enf','mnt_conj','mnt_pere','mnt_mere','prorat_pec']">
+                  <div class="d-flex align-items-center">
+                    <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }}
+                      <i class="ri-arrow-up-down-line ms-1"></i>
+                    </span>
+                    <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                  </div>
+                </th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+              <tr [ngClass]="{'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0}">
+                <td>{{ rowData.cod_fil }}</td>
+                <td>{{ rowData.libelle }}</td>
+                <td>{{ rowData.mnt_adher | number : '1.3-3' }}</td>
+                <td>{{ rowData.mnt_enf | number : '1.3-3' }}</td>
+                <td>{{ rowData.mnt_conj | number : '1.3-3' }}</td>
+                <td>{{ rowData.mnt_pere | number : '1.3-3' }}</td>
+                <td>{{ rowData.mnt_mere | number : '1.3-3' }}</td>
+                <td>{{ rowData.prorat_pec == 'O' ? 'Oui' : rowData.prorat_pec == 'N' ? 'Non' : '' }}</td>
+                <td>
+                  <ul class="list-inline hstack gap-2 mb-0">
+                    <li class="list-inline-item">
+                      <a class="edit-item-btn" data-bs-toggle="modal" (click)="editFiliere( rowData, content)">
+                        <i class="ri-pencil-fill align-bottom text-muted"></i>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
+                        <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Activité Famille -->
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Activité Famille</h4>
+            <button
+              class="btn btn-info"
+              data-bs-toggle="modal"
+              data-bs-target="#showModal"
+              (click)="openModalFamille(content1)"
+              *ngIf="formAssurance.get('cod_assur')?.value"
+            >
+              <i class="ri-add-fill me-1"></i> Ajouter Activité Famille
+            </button>
+          </div>
+          <br> 
+          <p-table [value]="ListAcivMutuelle" [paginator]="true" [rows]="3" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+            <ng-template pTemplate="header">
+              <tr class="table-primary">
+                <th *ngFor="let column of ['cod_activite', 'libelle', 'age_max','age_alert']">
+                  <div class="d-flex align-items-center">
+                    <span class="me-2" (click)="onSort1(column)"> {{ columnTitlesFamille[column] || column }} 
+                      <i class="ri-arrow-up-down-line ms-1"></i>
+                    </span>
+                    <i class="ri-search-line text-muted ms-2" (click)="toggleFilter1(column)"></i>
+                    <input *ngIf="showFilters1[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz1[column]" (input)="applyFilter1()" placeholder="..." />
+                  </div>
+                </th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+              <tr [ngClass]="{'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0}">
+                <td>{{ rowData.cod_activite }}</td>
+                <td>{{ rowData.libelle }}</td>
+                <td>{{ rowData.age_max }}</td>
+                <td>{{ rowData.age_alert }}</td>
+                <td>
+                  <ul class="list-inline hstack gap-2 mb-0">
+                    <li class="list-inline-item">
+                      <a class="edit-item-btn" data-bs-toggle="modal" (click)="editActiviteFamille( rowData, content1)">
+                        <i class="ri-pencil-fill align-bottom text-muted"></i>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirmActiviteFamille(deleteModelActiviteFamille, rowData)">
+                        <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isSearch">
+  <app-search-lov
+    [listData]="listAssurance"
+    [columns]="columnMat"
+    (selectedValue)="search($event)"
+  >
+  </app-search-lov>
+</div>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">Ajouter Filiere</h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      id="close-modal"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form [formGroup]="FormFiliere" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-lg-2">
+          <div>
+            <label for="cod_fil-field" class="form-label">Filiere</label>
+            <select
+              class="form-control border-warning"
+              formControlName="cod_fil"
+            >
+              <option
+                *ngFor="let filiere of ListeAllFiliere"
+                [value]="filiere.cod_fil"
+              >
+                {{ filiere.lib_fill }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Mnt. Adhérant</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary montant-input"
+              placeholder="Entrer montant adhérant"
+              formControlName="mnt_adher"
+              appMontantMask
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Mnt. Enfant</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary montant-input"
+              placeholder="Entrer montant enfant"
+              formControlName="mnt_enf"
+              appMontantMask
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Mnt. Conjoint</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary montant-input" 
+              placeholder="Entrer montant conjoint"
+              formControlName="mnt_conj"
+              appMontantMask
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Mnt. Père</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary montant-input"
+              placeholder="Entrer montant père"
+              formControlName="mnt_pere"
+              appMontantMask
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Mnt. Mère</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary montant-input" 
+              placeholder="Entrer montant Mère"
+              formControlName="mnt_mere"
+              appMontantMask
+            />
+          </div>
+        </div>
+
+        <div class="col-lg-2">
+          <div>
+            <label for="prorat_pec-field" class="form-label"
+              >Proratisation PEC</label
+            >
+            <select
+              class="form-control border-warning"
+              formControlName="prorat_pec"
+            >
+              <option [value]="'O'">Oui</option>
+              <option [value]="'N'">Non</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="hstack gap-2 justify-content-end">
+            <button
+              type="button"
+              class="btn btn-success"
+              data-bs-dismiss="modal"
+              (click)="AjouterFiliere(); modal.close('Close click')"
+            >
+              Valider
+            </button>
+          </div>
+          <br />
+          <div class="hstack gap-2 justify-content-end">
+            <button
+              type="button"
+              class="btn btn-light"
+              data-bs-dismiss="modal"
+              (click)="modal.close('Close click')"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">Ajouter Activité Famille</h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      id="close-modal"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form [formGroup]="FormAssurActive" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-4">
+        <div class="col-lg-2">
+          <div>
+            <label for="cod_activite-field" class="form-label">Activité</label>
+            <select
+              class="form-control border-warning"
+              formControlName="cod_activite"
+            >
+              <option
+                *ngFor="let filiere of ListActiviteFamille"
+                [value]="filiere.cod_activite"
+              >
+                {{ filiere.lib_activite }}
+              </option>
+            </select>
+          </div>  
+        </div>
+ 
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Age maximum</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary"
+              placeholder="Entrer Age maximum"
+              formControlName="age_max"
+            />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Age d'alerte</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary"
+              placeholder="Entrer Age d'alerte"
+              formControlName="age_alert"
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="hstack gap-2 justify-content-end">
+            <button
+              type="button"
+              class="btn btn-success"
+              data-bs-dismiss="modal"
+              (click)="AjouterActiviteAssur(); modal.close('Close click')"
+            >
+              Valider
+            </button>
+          </div>
+          <br />
+          <div class="hstack gap-2 justify-content-end">
+            <button
+              type="button"
+              class="btn btn-light"
+              data-bs-dismiss="modal"
+              (click)="modal.close('Close click')"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+
+<ng-template #deleteModel let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+        id="btn-close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-2 text-center">
+        <lord-icon
+          src="https://cdn.lordicon.com/gsqxdxog.json"
+          trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548"
+          style="width: 100px; height: 100px"
+        ></lord-icon>
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Es-tu sûr ?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Etes-vous sûr de vouloir supprimer cette filière ?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <button
+          type="button"
+          class="btn w-sm btn-light"
+          data-bs-dismiss="modal"
+          (click)="modal.close('Close click')"
+        >
+          Fermer
+        </button>
+        <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
+          Oui, supprimez-le !
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteModelActiviteFamille let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+        id="btn-close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-2 text-center">
+        <lord-icon
+          src="https://cdn.lordicon.com/gsqxdxog.json"
+          trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548"
+          style="width: 100px; height: 100px"
+        ></lord-icon>
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Es-tu sûr ?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Etes-vous sûr de vouloir supprimer cette activité ?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <button
+          type="button"
+          class="btn w-sm btn-light"
+          data-bs-dismiss="modal"
+          (click)="modal.close('Close click')"
+        >
+          Fermer
+        </button>
+        <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteActiviteFamille()" (click)="modal.close('Close click')">
+          Oui, supprimez-le !
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

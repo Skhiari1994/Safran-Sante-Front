@@ -1,0 +1,290 @@
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Préparation Fichier Salarié" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<br>
+
+<div class="card shadow-sm">
+  <div class="card-body p-3">
+
+    <!-- Première ligne -->
+    <div class="row mb-3">
+      <div class="d-flex flex-wrap gap-3">
+
+        <div class="col-md-2">
+          <label for="nomFichier" class="form-label mb-0 me-2">Statut :</label>
+          <app-lov [listData]="listAffectation" [columns]="columnsSearch" codeField="cod_affect"
+            [selectedCode]="codAffect" (selectedValue)="onSelectedValue($event)" class="flex-grow-1">
+          </app-lov>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label mb-0 me-5">Libelle </label>
+          <input type="text" class="form-control border-primary flex-grow-1" placeholder="Libelle" [value]="nom" />
+        </div>
+        <div class="col-md-2">
+          <br>
+          <button class="btn btn-primary" (click)="confirmPhar(deleteModelPhar)">
+            <i class="ri-add-fill me-2"></i> Vidage table
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Deuxième ligne -->
+    <div class="row">
+      <div class="d-flex flex-wrap gap-3 align-items-end">
+
+        <div class="col-md-2">
+          <label for="typePersonnel" class="form-label mb-1">Type personnel</label>
+          <select class="form-select" id="typePersonnel" [(ngModel)]="etat">
+            <option value=""></option>
+            <option value="C">Création</option>
+            <option value="S">Suppression</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="nomFichier" class="form-label mb-1">Fichier</label>
+          <input type="text" id="nomFichier" class="form-control border-primary" placeholder="Nom fichier"
+            [(ngModel)]="nomFichier" />
+        </div>
+
+        <div class="col flex-grow-1">
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="chargerEtTelecharger()">
+              <i class="ri-download-cloud-line me-1"></i> Charger & Télécharger
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Troisième ligne : Import Excel -->
+    <div class="row mt-3">
+      <div class="col-md-6">
+        <div class="input-group">
+          <label class="input-group-text bg-success text-white" for="excelUpload">
+            <i class="ri-file-excel-2-line me-1"></i> Import Excel
+          </label>
+          <input type="file" class="form-control" id="excelUpload" (change)="onExcelFileSelected($event)"
+            accept=".xlsx, .xls" />
+          <button *ngIf="importedData.length > 0" class="btn btn-primary" (click)="saveAll()">
+            <i class="ri-save-line me-1"></i> Enregistrer Tout ({{importedData.length}})
+          </button>
+        </div>
+        <div class="mt-1">
+          <small class="text-muted">Le fichier doit contenir une colonne <b>mat_pers</b></small>
+          <span *ngIf="invalidMatricules.length > 0" class="ms-3 badge bg-danger-subtle text-danger">
+            {{invalidMatricules.length}} matricules inexistants
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="card">
+  <div class="card-header   text-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"></h5>
+    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#showModal"
+      (click)="openModalTab(content)">
+      <i class="ri-add-fill me-1"></i> Ajouter pers
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive table-card">
+      <p-table [value]="listTrs" [paginator]="true" [rows]="9" styleClass="modern-table">
+        <ng-template pTemplate="header">
+          <tr class="table-primary">
+            <th *ngFor="
+                let column of [
+                  'mat',
+                  'nom',
+                  'cin',
+                  'retr',
+                  'tel',
+                  'typ',
+                  
+                ]
+              ">
+              <div class="d-flex align-items-center">
+                <span class="me-2" (click)="onSort(column)">
+                  {{ columnTitles[column] || column }}
+                  <i class="ri-arrow-up-down-line ms-1"></i>
+                </span>
+                <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2"
+                  style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-data>
+
+          <tr>
+            <td>{{ data.mat }}</td>
+            <td>{{ data.nom }}</td>
+            <td>{{ data.cin }}</td>
+            <td>{{ data.retr }}</td>
+            <td>{{ data.tel }}</td>
+            <td>{{ data.typ=='S'?'Suspension':'Création' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">
+              <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+
+    <div *ngIf="listTrs.length > 0" class="d-flex justify-content-between mt-3">
+      <span>{{ listTrs.length }} ligne(s) trouvée(s)</span>
+    </div>
+
+  </div>
+</div>
+
+
+<ng-template #deleteModelPhar let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+        (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-2 text-center">
+        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Etes vous sûr ?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Etes vous sûr de vider le tableau ?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Fermer
+        </button>
+        <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="vidageTableau()"
+          (click)="modal.close('Close click')">
+          Oui ,supprimer!
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /.modal-content -->
+</ng-template>
+
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} département<p></p>
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="trsFormPers" class="tablelist-form" autocomplete="off">
+
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-lg-2">
+          <div>
+            <label for="industry_type-field" class="form-label">Matricule</label>
+            <app-lov [listData]="listPersonnel" [columns]="columnPers" [codeField]="'mat_pers'"
+              [selectedCode]="matPersVal" (selectedValue)="onSelectedValuePers($event)">
+            </app-lov>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div>
+            <label for="industry_type-field" class="form-label">Nom & Prénom</label>
+            <input type="text" class="form-control border-warning" [value]="nomPren" />
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div>
+            <label for="industry_type-field" class="form-label">CIN</label>
+            <input type="text" class="form-control border-warning" formControlName="cin" />
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div>
+            <label for="industry_type-field" class="form-label">Id CNRPS</label>
+            <input type="text" class="form-control border-warning" formControlName="num_retr" />
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div>
+            <label for="industry_type-field" class="form-label">Tel </label>
+            <input type="text" class="form-control border-warning" formControlName="tel" />
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <label for="typ" class="form-label">Type création</label>
+          <select id="typ" class="form-select border-success" formControlName="typ">
+            <option value="C">Création</option>
+            <option value="S">Suppression</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+          (click)="AddTrsPers(); modal.close('Close click')">
+          Valider
+        </button>
+      </div>
+      <br>
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Close
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- removeItemModal -->
+<ng-template #deleteModel let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+        (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-2 text-center">
+        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Êtes-vous sûr ?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Êtes-vous sûr de vouloir supprimer ce departement ?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Fermer
+        </button>
+        <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()"
+          (click)="modal.close('Close click')">
+          Oui, Supprimer!
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /.modal-content -->
+</ng-template>

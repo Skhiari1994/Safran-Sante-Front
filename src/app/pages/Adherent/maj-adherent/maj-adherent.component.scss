@@ -1,0 +1,16 @@
+.error-message {
+    color: red;
+    font-size: 0.8em; /* Smaller font size */
+    margin-top: 2px; /* Add some spacing */
+  }
+
+  ::ng-deep .my-class .modal-dialog { 
+    max-width: 70%;
+    width: 70%;
+  }
+
+  .transparent-card {
+    opacity: 0.8; /* Réduit l'opacité à 90% */
+    background-color: transparent; /* Garde le fond transparent */
+  }
+  

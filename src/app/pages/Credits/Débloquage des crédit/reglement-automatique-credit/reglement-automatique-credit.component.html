@@ -1,0 +1,161 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Règlement automatique des crédits" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<div class="col-md-12">
+  <div class="collapse show" id="paymentmethodCollapse">
+    <div class="card p-4 border shadow-none mb-0 mt-4">
+      <!-- Search Form -->
+      <form action="javascript:void(0);" class="row g-3" [formGroup]="formSearch">
+        <div class="row">
+          <!-- First Column -->
+          <div class="col-md-12">
+            <div class="row">
+              <!-- Month Input -->
+              <div class="col-md-2">
+                <label for="billinginfo-firstName" class="form-label">Mois prêt</label>
+                <input type="text" class="form-control border-primary montant-input" placeholder="Mois prêt"
+                  appFormatMonthYear mask="00/0000" formControlName="mois" />
+              </div>
+
+              <!-- Filter Dropdown -->
+              <div class="col-md-1">
+                <label for="billinginfo-firstName" class="form-label">Matricule</label>
+                <!-- <app-matricule-lov  [listData]="listPersonnel"
+                                       [columns]="columnPersonnels"
+                                       codeField="mat_pers"
+                                       [selectedCode]="matPersVal"
+                                       (selectedValue)="onSelectedValuePers($event)" ></app-matricule-lov> -->
+
+
+                <app-lov [listData]="listPersonnel" [columns]="columnPersonnels" codeField="mat_pers"
+                  [selectedCode]="matPersVal" (selectedValue)="onSelectedValuePers($event)">
+                </app-lov>
+
+
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Nom & Prénom</label>
+                <input type="text" class="form-control border-primary" [value]="nomPren" readonly />
+              </div>
+
+              <!-- Corps Dropdown -->
+              <div class="col-md-2">
+                <label for="country" class="form-label">Corps</label>
+                <select class="form-select border-success" data-plugin="choices" (change)="getDiskPret()"
+                  formControlName="corps">
+                  <option value="">Select corps...</option>
+                  <option value="C">Cadre commun</option>
+                  <option value="S">Sécurité</option>
+                  <option value="M">Mediateur administratif</option>
+                  <option value="H">HCCAF</option>
+                  <option value="I">ITES</option>
+                  <option value="P">Minéstère d'intérieur</option>
+                  <option value="D">Divers</option>
+                </select>
+              </div>
+
+              <!-- Group Loan Dropdown -->
+              <div class="col-md-1">
+                <label for="billinginfo-phone" class="form-label">Grp prêt</label>
+                <app-lov [listData]="listDetailPret" [columns]="columnsDetailPret" codeField="codGrpPret"
+                  [selectedCode]="grpPret" (selectedValue)="onSelectedDetailPret($event)"></app-lov>
+              </div>
+
+              <!-- Libelle Input -->
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary montant-input" placeholder="Libelle"
+                  [value]="libPret" readonly />
+              </div>
+              <!-- Bouton Rechercher -->
+              <div class="col-sm-3 col-md-1">
+                <label class="form-label d-block">&nbsp;</label>
+                <button type="button" class="btn btn-primary flex-fill" style="max-width: 250px;"
+                  (click)="getDiskPret()">
+                  <i class="ri-search-line me-1"></i> Rechercher
+                </button>
+              </div>
+              <div class="col-md-12">
+                <div class="d-flex justify-content-center mt-3">
+                  <button class="btn btn-success" (click)="ValiderAutomatique()">
+                    <i class="ri-add-fill me-1"></i> Calculer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<br>
+<hr>
+
+<!-- Table Section -->
+<div class="row">
+  <div class="card">
+    <div class="card-body">
+      <div class="table-card">
+        <p-table [value]="listLigReg" [paginator]="true" [rows]="10"
+          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+          <ng-template pTemplate="header">
+            <tr class="bg-light">
+              <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.type"
+                  (input)="applyFilter()" placeholder="Filtre..." /></th>
+              <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.numRetr"
+                  (input)="applyFilter()" placeholder="Filtre..." /></th>
+              <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.matPers"
+                  (input)="applyFilter()" placeholder="Filtre..." /></th>
+              <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.nom"
+                  (input)="applyFilter()" placeholder="Filtre..." /></th>
+              <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mntPeriod"
+                  (input)="applyFilter()" placeholder="Filtre..." /></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr class="table-primary">
+              <th (click)="onSort('pret_disk')">Pret desk</th>
+              <th (click)="onSort('num_retr')">CNRPS</th>
+              <th (click)="onSort('mat_pers')">Matricule</th>
+              <th (click)="onSort('nom')">Nom & prénom</th>
+              <th (click)="onSort('montant')">Mnt</th>
+              <th (click)="onSort('observation')">Observation</th>
+              <th (click)="onSort('valid')">Valid</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData>
+            <tr>
+              <td>{{ rowData.pret_disk }}</td>
+              <td>{{ rowData.num_retr }}</td>
+              <td>{{ rowData.mat_pers }}</td>
+              <td>{{ rowData.nom }}</td>
+              <td>{{ rowData.montant | number:'1.3-3' }}</td>
+              <td>{{ rowData.observation }}</td>
+              <td> 
+               <span 
+    class="badge"
+    [ngClass]="{
+      'bg-warning text-dark': rowData?.valid === 'I',
+      'bg-success': rowData?.valid === 'V'
+    }"
+  >
+    {{ rowData?.valid === 'I' ? 'En instance' : 'Validé' }}
+  </span>
+</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr class="table-secondary fw-bold">
+              <td colspan="4" class="text-end">Total ({{listLigReg.length}} lignes) :</td>
+              <td>{{ getTotalMontant() | number:'1.3-3' }}</td>
+              <td colspan="2"></td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

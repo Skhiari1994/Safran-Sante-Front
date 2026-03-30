@@ -1,0 +1,59 @@
+<div class="lov-container">
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Sélectionnez une valeur</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')">
+        &times;
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Search fields -->
+      <div class="row mb-3">
+        <div *ngFor="let col of columns" class="col-md-12 form-group d-flex align-items-center mb-2">
+          <!-- Label for the search input -->
+          <label for="{{ col.key }}" class="mr-2" style="width: 150px;">
+            {{ col.label }}
+          </label>
+
+          <!-- Search input field -->
+          <input type="text" [(ngModel)]="searchQueries[col.key]" (input)="onSearch()"
+            placeholder="Recherche {{ col.label }}" class="form-control" style="width: 250px;" />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+        <table class="table table-striped">
+          <thead class="table-light">
+            <tr>
+              <th *ngFor="let col of columns">{{ col.label }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredData; trackBy: trackByFn" (click)="selectItem(item); modal.close()">
+              <td *ngFor="let col of columns">
+                <ng-container *ngIf="col.key === 'dat_nais'; else normalCell">
+                  {{ formatDateValue(item[col.key]) }}
+                </ng-container>
+                <ng-template #normalCell>
+                  {{ item[col.key] }}
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+
+
+
+
+        </table>
+
+      </div>
+      <div colspan="{{ columns.length }}" class="alert alert-info text-end">
+        Nombre d'enregistrement : <b> {{ filteredData.length }} </b> ligne(s)
+      </div>
+      <div *ngIf="filteredData.length === 0" class="alert alert-warning text-center">
+        Aucun résultat trouvé
+      </div>
+    </div>
+  </ng-template>
+</div>

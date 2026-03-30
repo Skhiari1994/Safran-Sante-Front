@@ -1,0 +1,772 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row">
+  <app-breadcrumbs title="Saisie manuelle des décomptes libres CNAM"
+    [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+  <div class="row">
+
+
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <form [formGroup]="BordArriverForm" class="row g-3" autocomplete="off">
+            <!-- First row -->
+            <div class="row">
+              <!-- Show input if boolCodBord is true -->
+              <div class="col-md-2" *ngIf="boolCodBord === true">
+                <label for="codBord" class="form-label">Code bordereau</label>
+                <input type="text" id="codBord" class="form-control border-primary" formControlName="cod_bord"
+                  placeholder="Code bordereau" readonly />
+              </div>
+
+              <!-- Show app-lov if boolCodBord is false -->
+              <div class="col-md-2" *ngIf="boolCodBord === false">
+                <label for="codBord" class="form-label">Code bordereau</label>
+                <app-lov [listData]="AllBordArrive" [columns]="columnBordArriver" codeField="cod_bord"
+                  [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriver($event)"></app-lov>
+              </div>
+
+              <div class="col-md-2">
+                <label for="dateBord" class="form-label">Date</label>
+                <input type="text" id="dateBord" class="form-control border-primary" mask="00/00/0000"
+                  placeholder="Date" formControlName="dat_bord" />
+              </div>
+
+              <div class="col-md-2">
+                <label for="codAssur" class="form-label">Code Assurance</label>
+                <app-lov [listData]="ListeAssurance" [columns]="columnAssuranc" codeField="cod_assur"
+                  [selectedCode]="codAssur" (selectedValue)="onSelectedValueAssur($event)">
+                </app-lov>
+              </div>
+
+              <div class="col-md-4">
+                <label for="lib_assurance" class="form-label">Assurance</label>
+                <input type="text" id="lib_assurance" class="form-control border-primary" placeholder="Assurance"
+                  readonly [value]="libAssur" />
+              </div>
+
+
+            </div>
+
+            <!-- Second row - starts from Tot. Remb. -->
+            <div class="row">
+              <div class="col-md-2">
+                <label for="tot_remb" class="form-label">Tot. Remb.</label>
+                <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Remb."
+                  formControlName="tot_remb" readonly />
+              </div>
+
+              <div class="col-md-2">
+                <label for="nbr_bult" class="form-label">Nombre de Bulletin</label>
+                <input type="text" id="nbr_bult" class="form-control border-primary" placeholder="Nombre de Bulletin"
+                  formControlName="nbr_bult" readonly />
+              </div>
+
+              <div class="col-md-2">
+                <label for="tot" class="form-label">Mode Remb</label>
+                <select id="tot" class="form-control" formControlName="tot">
+                  <option value=""></option>
+                  <option value="T">Tot Remb</option>
+                  <option value="M">Tot Mut</option>
+                </select>
+              </div>
+
+              <div class="col-md-2">
+                <label for="valid" class="form-label">Validité Bord</label>
+                <select id="valid" class="form-control" formControlName="valid">
+                  <option value=""></option>
+                  <option value="O">Oui</option>
+                  <option value="N">Non</option>
+                </select>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12" *ngIf="codBord">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Bulletins</h5>
+          <button class="btn btn-info" type="button" (click)="addLigne()">
+            Ajouter une ligne
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <form [formGroup]="SaisieBulletinForm">
+              <div class="table-responsive" [ngStyle]="{
+                  'max-height': lignes.length > 3 ? '300px' : 'auto',
+                  'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'
+                }">
+                <div formArrayName="lignes">
+                  <p-table [value]="lignes.controls" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                    <ng-template pTemplate="header">
+                      <tr class="bg-primary text-white">
+                        <th>#</th>
+                        <th style="width: 250px">Numéro Aff.</th>
+                        <th style="width: 250px">Matricule</th>
+                        <th style="width: 450px">Nom & Prénom</th>
+                        <th style="width: 100px">Fill</th>
+                        <th style="width: 150px">Prés.</th>
+                        <th style="width: 250px">Nom</th>
+                        <th style="width: 250px">Date soin</th>
+                        <th style="width: 250px">Regime Remb.</th>
+                        <th style="width: 250px">Tot. Net</th>
+                        <th>Actions</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                      <tr [formGroupName]="rowIndex" [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="load(rowData.value, rowIndex)">
+                        <td>{{ rowIndex + 1 }}</td>
+                        <td>
+                          <app-lov [listData]="ListePersonnel" [columns]="columnPersonnel" codeField="num_retr" [selectedCode]="numRetr[rowIndex]" (selectedValue)="onSelectedPersonnel($event, rowIndex)"></app-lov>
+                        </td>
+                        <td>
+                          <input type="text" id="matPers" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" readonly />
+                        </td>
+                        <td>
+                          <input type="text" id="NomPrenom" class="form-control border-primary" placeholder="Nom & prénom" [value]="NomPrenom[rowIndex] || ''" readonly />
+                        </td>
+                        <td>
+                          <input type="text" id="Fill" class="form-control border-primary" placeholder="Filiere" formControlName="cod_fil" readonly />
+                        </td>
+                        <td>
+                          <app-lov [listData]="ListeFamillePersonnelParLigne[rowIndex]" [columns]="columneFamillePersonnel" codeField="num_fam" [selectedCode]="NumFam[rowIndex]" (selectedValue)="onSelectedFamillePersonnel($event, rowIndex)"></app-lov>
+                        </td>
+                        <td>
+                          <input type="text" id="Nom" class="form-control border-primary" placeholder="Nom" [value]="Nom[rowIndex] || ''" readonly />
+                        </td>
+                        <td>
+                          <input type="text" id="DatSoin" class="form-control border-primary" placeholder="Date de soin" formControlName="dat_soin" mask="00/00/0000" />
+                        </td>
+                        <td>
+                          <select class="form-control border-warning" formControlName="reg_remb">
+                            <option *ngFor="let regimeRemb of ListeRegimeRemb" [value]="regimeRemb.reg_remb">{{ regimeRemb.lib_remb }}</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input type="text" class="form-control border-primary text-end" placeholder="Tot. remb" formControlName="tot_remb" (change)="calculateTotalTotRemb()" />
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                      <tr class="bg-light fw-bold">
+                        <td colspan="9" class="text-end">Total :</td>
+                        <td>
+                          <input class="form-control montant-input text-end" type="text" [value]="calculateTotalTotRemb() | number:'1.2-2'" readonly />
+                        </td>
+                        <td colspan="10"></td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="11">
+                          <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xxl-12" *ngIf="num_fam">
+  <div class="card h-100"> <!-- Ajout de h-100 -->
+    <div class="card-body d-flex flex-column"> <!-- Ajout de flex-column -->
+      <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
+        <div class="col-lg-1">
+          <div class="" role="tablist" aria-orientation="vertical">
+            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1"
+              class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+              <li [ngbNavItem]="1">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Les visites
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addLigneVisite()">➕ Ajouter
+                          Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+
+                      <div class="card-body">
+                        <form [formGroup]="ligVisiteForm">
+                          <div class="table-responsive">
+                            <div formArrayName="visite">
+                              <p-table [value]="visite.controls" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                                <ng-template pTemplate="header">
+                                  <tr class="bg-primary text-white">
+                                    <th>#</th>
+                                    <th style="width: 150px;">Date Acte</th>
+                                    <th style="width: 250px;">visite</th>
+                                    <th style="width: 450px;">Libelle</th>
+                                    <th style="width: 150px;">Mnt Hr App</th>
+                                    <th style="width: 150px;">Net</th>
+                                    <th style="width: 250px;">Type etablis</th>
+                                    <th style="width: 200px;">Code</th>
+                                    <th style="width: 250px;">Etablissement</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                  <tr [formGroupName]="rowIndex">
+                                    <td>{{ rowIndex + 1 }}</td>
+                                    <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                    <td>
+                                      <app-lov [listData]="listVisite" [columns]="columnVisite" codeField="cod_Visit" [selectedCode]="visiteCode[rowIndex]" (selectedValue)="onSelectedVisite($event, rowIndex)"></app-lov>
+                                    </td>
+                                    <td><textarea class="form-control" type="text" [value]="libVisite[rowIndex]" readonly></textarea></td>
+                                    <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_net_visite($event,rowIndex)" formControlName="mnt_honor"></td>
+                                    <td><input class="form-control montant-input" type="number" readonly appMontantMask formControlName="mnt_remb" [value]="mntNetArrayVisite[rowIndex]"></td>
+                                    <td>
+                                      <select class="form-select border-success" data-plugin="choices" formControlName="prf_typ" (change)="OnselectRefTypVisite($event)">
+                                        <option value="1">Personne Physique</option>
+                                        <option value="2">Etablissement</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <app-lov [listData]="listRefEtablisVisit" [columns]="columnsRefEtablisVisit" codeField="prf_cod" [selectedCode]="refEtablisVisit[rowIndex]" (selectedValue)="onSelectedEtablisVisite($event, rowIndex)"></app-lov>
+                                    </td>
+                                    <td><input class="form-control" type="text" [value]="etab_rsoc_visite[rowIndex]" readonly></td>
+                                    <td>
+                                      <button class="btn btn-danger btn-sm" type="button" (click)="confirm(rowIndex,deleteModelVisit,rowData.value)">🗑️</button>
+                                    </td>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                  <tr class="bg-light fw-bold">
+                                    <td colspan="4" class="text-end">Total :</td>
+                                    <td><input class="form-control montant-input" type="text" [value]="totalHonorairesVisite | number:'1.2-2'" readonly></td>
+                                    <td><input class="form-control montant-input" type="text" [value]="totalNetVisite | number:'1.2-2'" readonly></td>
+                                    <td colspan="6"></td>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                  <tr>
+                                    <td colspan="10">
+                                      <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                                    </td>
+                                  </tr>
+                                </ng-template>
+                              </p-table>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Les actes
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addActe()">➕ Ajouter Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+                      <div class="card-body">
+                        <form [formGroup]="ligPretForm">
+                          <!-- Table avec défilement si plus de 5 lignes -->
+                          <div class="table-responsive">
+                            <div formArrayName="acte">
+                              <p-table [value]="acte.controls" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                                <ng-template pTemplate="header">
+                                  <tr class="bg-primary text-white">
+                                    <th>#</th>
+                                    <th style="width: 150px;">Date Acte</th>
+                                    <th style="width: 250px;">Acte</th>
+                                    <th style="width: 450px;">Libelle</th>
+                                    <th style="width: 100px;">Unit</th>
+                                    <th style="width: 150px;">Honoraires</th>
+                                    <th style="width: 150px;">Net</th>
+                                    <th style="width: 100px;">Accord</th>
+                                    <th style="width: 100px;">Num Pec Act</th>
+                                    <th style="width: 250px;">Type etablis</th>
+                                    <th style="width: 200px;">Code</th>
+                                    <th style="width: 250px;">Etablissement</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                  <tr [formGroupName]="rowIndex">
+                                    <td>{{ rowIndex + 1 }}</td>
+                                    <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                    <td>
+                                      <app-lov [listData]="listActe" [columns]="columnActe" codeField="cod_act" [selectedCode]="actes[rowIndex]" (selectedValue)="onSelectedActe($event, rowIndex)"></app-lov>
+                                    </td>
+                                    <td><textarea class="form-control" type="text" [value]="libAct[rowIndex]" readonly></textarea></td>
+                                    <td><input class="form-control" type="text" formControlName="indice"></td>
+                                    <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_net($event,rowIndex)" formControlName="mnt_honor"></td>
+                                    <td><input class="form-control montant-input" type="number" readonly appMontantMask formControlName="mnt_remb" [value]="mntNetArray[rowIndex]"></td>
+                                    <td>
+                                      <select class="form-select border-success" data-plugin="choices" formControlName="accord_act">
+                                        <option value=""></option>
+                                        <option value="O">Oui</option>
+                                        <option value="N">Non</option>
+                                      </select>
+                                    </td>
+                                    <td><input class="form-control" type="text" formControlName="num_pec_act"></td>
+                                    <td>
+                                      <select class="form-select border-success" data-plugin="choices" formControlName="prf_typ" (change)="OnselectRefTyp($event)">
+                                        <option value="1">Personne Physique</option>
+                                        <option value="2">Etablissement</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <app-lov [listData]="listRefEtablis" [columns]="columnsRefEtablis" codeField="prf_cod" [selectedCode]="refEtablis[rowIndex]" (selectedValue)="onSelectedEtablis($event, rowIndex)"></app-lov>
+                                    </td>
+                                    <td><input class="form-control" type="text" [value]="etab_rsoc[rowIndex]" readonly></td>
+                                    <td>
+                                      <button class="btn btn-danger btn-sm" type="button" (click)="confirm(rowIndex,deleteModel,rowData.value)">🗑️</button>
+                                    </td>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                  <tr class="bg-light fw-bold">
+                                    <td colspan="5" class="text-end">Total :</td>
+                                    <td><input class="form-control montant-input" type="text" [value]="totalHonoraires | number:'1.2-2'" readonly></td>
+                                    <td><input class="form-control montant-input" type="text" [value]="totalNet | number:'1.2-2'" readonly></td>
+                                    <td colspan="7"></td>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                  <tr>
+                                    <td colspan="13"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
+                                  </tr>
+                                </ng-template>
+                              </p-table>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="3">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Pharmacies
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addLignePhar(phar.length)">➕ Ajouter
+                          Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+
+                      <div class="card-body">
+                        <form [formGroup]="ligPharForm">
+                          <div class="table-responsive">
+                            <div formArrayName="phar">
+                              <p-table [value]="phar.controls" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                                <ng-template pTemplate="header">
+                                  <tr class="bg-primary text-white">
+                                    <th>#</th>
+                                    <th style="width: 150px;">Date med</th>
+                                    <th style="width: 200px;">Med</th>
+                                    <th style="width: 250px;">Libelle</th>
+                                    <th style="width: 100px;">Unit</th>
+                                    <th style="width: 150px;">Honoraires</th>
+                                    <th style="width: 150px;">Net</th>
+                                    <th style="width: 100px;">Nbr j</th>
+                                    <th style="width: 100px;">Accord</th>
+                                    <th style="width: 100px;">Num Pec</th>
+                                    <th style="width: 250px;">Type etablis</th>
+                                    <th style="width: 200px;">Code</th>
+                                    <th style="width: 250px;">Etablissement</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                  <tr [formGroupName]="rowIndex">
+                                    <td>{{ rowIndex + 1 }}</td>
+                                    <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                    <td>
+                                      <app-lov [listData]="listMed" [columns]="columnsMed" codeField="cod_med" [selectedCode]="Med[rowIndex]" (selectedValue)="onSelectedMed($event, rowIndex)"></app-lov>
+                                    </td>
+                                    <td><textarea class="form-control" type="text" [value]="libMed[rowIndex]" readonly></textarea></td>
+                                    <td><input class="form-control" type="text" (change)="verif_indice_phar($event,rowIndex)" formControlName="indice"></td>
+                                    <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_netPhar($event,rowIndex)" formControlName="mnt_honor"></td>
+                                    <td><input class="form-control montant-input" type="number" appMontantMask readonly formControlName="mnt_remb" [value]="mntNetArrayPhar[rowIndex]"></td>
+                                    <td><input class="form-control" type="number" (change)="verif_piece_pahr($event,rowIndex)" formControlName="nbr_j"></td>
+                                    <td>
+                                      <select class="form-select border-success" data-plugin="choices" formControlName="accord_med">
+                                        <option value=""></option>
+                                        <option value="O">Oui</option>
+                                        <option value="N">Non</option>
+                                      </select>
+                                    </td>
+                                    <td><input class="form-control" type="number" (change)="verif_vign_pahr($event,rowIndex)" formControlName="num_pec_med"></td>
+                                    <td>
+                                      <select class="form-select border-success" data-plugin="choices" formControlName="prf_typ" (change)="OnselectRefTypMed($event)">
+                                        <option value="1">Personne Physique</option>
+                                        <option value="2">Etablissement</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <app-lov [listData]="listRefEtablisMed" [columns]="columnsRefEtablisMed" codeField="prf_cod" [selectedCode]="refEtablisPhar[rowIndex]" (selectedValue)="onSelectedEtablisPhar($event, rowIndex)"></app-lov>
+                                    </td>
+                                    <td><input class="form-control" type="text" [value]="etab_rsoc_phar[rowIndex]" readonly></td>
+                                    <td>
+                                      <button class="btn btn-danger btn-sm" type="button" (click)="confirm(rowIndex,deleteModelMed,rowData.value)">🗑️</button>
+                                    </td>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                  <tr class="bg-light fw-bold">
+                                    <td colspan="5" class="text-end">Total :</td>
+                                    <td><input class="form-control montant-input" type="text" [value]="totalHonorairesPhar | number:'1.2-2'" readonly></td>
+                                    <td><input class="form-control montant-input" type="text" [value]="totalNetPhar | number:'1.2-2'" readonly></td>
+                                    <td colspan="7"></td>
+                                  </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                  <tr>
+                                    <td colspan="14"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
+                                  </tr>
+                                </ng-template>
+                              </p-table>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="4">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Les appareils
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addLigneAppareil(appareil.length)">➕
+                          Ajouter Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+
+                      <div class="card-body">
+                        <form [formGroup]="ligAppareilForm">
+                          <!-- Table avec défilement si plus de 5 lignes -->
+                          <div class="table-responsive">
+                            <table class="table table-striped table-bordered w-100">
+                              <thead>
+                                <tr>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left">#</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:150px">Date app</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:250px">Appareil</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:450px">Libelle</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:right;width:150px">Mnt Hr App</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:right;width:150px">Net</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:100px">Accord</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:100px">Num Pec</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:250px">Type etablis</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:200px">Code</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left;width:250px">Etablissement</th>
+                                  <th style="background-color:#f5faff;color:#111827;text-align:left">Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody formArrayName="appareil">
+                                <tr *ngFor="let ligne of appareil.controls; let i = index" [formGroupName]="i">
+                                  <td>{{ i + 1 }}</td>
+                                  <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text"
+                                      formControlName="dat_act"></td>
+                                  <td>
+                                    <app-lov [listData]="listAppareil" [columns]="columnsAppareil" codeField="cod_app"
+                                      [selectedCode]="appareilCode[i]"
+                                      (selectedValue)="onSelectedAppareil($event, i)"></app-lov>
+                                  </td>
+                                  <td><textarea class="form-control" type="text" [value]="libAppareil[i]"
+                                      readonly></textarea></td>
+                                  <td><input class="form-control montant-input" type="number" appMontantMask
+                                      (change)="calcul_mnt_net_app($event,i)" formControlName="mnt_honor"></td>
+                                  <td><input class="form-control montant-input" type="number" readonly appMontantMask
+                                      formControlName="mnt_remb" [value]="mntNetArrayAppareil[i]"></td>
+                                  <td> <select class="form-select border-success" data-plugin="choices"
+                                      formControlName="accord_app">
+                                      <option value=""></option>
+                                      <option value="O">Oui</option>
+                                      <option value="N">Non</option>
+
+
+                                    </select></td>
+                                  <td><input class="form-control" type="number" formControlName="num_pec_app"></td>
+                                  <td>
+                                    <select class="form-select border-success" data-plugin="choices"
+                                      formControlName="prf_typ" (change)="OnselectRefTypApp($event)">
+                                      <option value="1">Personne Physique</option>
+                                      <option value="2">Etablissement</option>
+                                    </select>
+                                  </td>
+                                  <td> <app-lov [listData]="listRefEtablisApp" [columns]="columnsRefEtablisApp"
+                                      codeField="prf_cod" [selectedCode]="refEtablisApp[i]"
+                                      (selectedValue)="onSelectedEtablisApp($event, i)"></app-lov></td>
+                                  <td><input class="form-control" type="text" [value]="etab_rsoc_appareil[i]" readonly>
+                                  </td>
+                                  <td>
+                                    <button class="btn btn-danger btn-sm" type="button"
+                                      (click)="confirm(i,deleteModelApp,ligne.value)">🗑️</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <!-- Pied de tableau pour afficher les totaux -->
+                              <tfoot>
+                                <tr class="bg-light fw-bold">
+                                  <td colspan="4" class="text-end">Total :</td>
+                                  <td><input class="form-control montant-input" type="text"
+                                      [value]="totalHonorairesAppareil | number:'1.2-2'" readonly></td>
+                                  <td><input class="form-control montant-input" type="text"
+                                      [value]="totalNetAppareil | number:'1.2-2'" readonly></td>
+                                  <td colspan="6"></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </ng-template>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-10">
+          <div class="tab-content text-muted mt-3 mt-lg-0">
+            <div [ngbNavOutlet]="CustomVertical"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #deleteModel let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+          (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete(selectedIndex)"
+            (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+
+  <ng-template #deleteModelMed let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+          (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product"
+            (click)="ConfirmDeleteMed(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+  <ng-template #deleteModelVisit let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+          (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product"
+            (click)="ConfirmDeleteVisit(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+
+  <ng-template #deleteModelApp let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+          (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product"
+            (click)="ConfirmDeleteApp(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+</div>
+
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">
+      {{ edit == true ? "Ajouter" : "Modifier" }} Saisie manuelle de bordereau
+      CNAM
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="SaisieBordEnvoiForm" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="row">
+          <div class="col-md-2">
+            <label class="form-label">Assurance</label>
+            <app-lov [listData]="ListeAssurance" [columns]="columnAssuranc" codeField="cod_assur"
+              [selectedCode]="codeAssur" (selectedValue)="onSelectedValueAssur($event)">
+            </app-lov>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Libelle</label>
+            <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libAssur" readonly />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2">
+            <label class="col-form-label">Code bordereau</label>
+            <input type="text" class="form-control border-primary" placeholder="Entrer Code bordereau"
+              formControlName="cod_bord" />
+          </div>
+          <div class="col-md-2">
+            <label class="col-form-label">Date bordereau</label>
+            <input type="text" class="form-control border-primary" placeholder="Entrer Date bordereau"
+              formControlName="dat_bord" (input)="formatDate2($event)" maxlength="10" />
+          </div>
+          <div class="col-md-2">
+            <label class="col-form-label">Tot. Remb</label>
+            <input type="text" class="form-control border-primary text-end" placeholder="Entrer Tot. Remb"
+              formControlName="tot_remb" />
+          </div>
+          <div class="col-md-2">
+            <label class="col-form-label">Nbre. Bulletin</label>
+            <input type="text" class="form-control border-primary text-end" placeholder="Entrer Nbre. Bulletin"
+              formControlName="nbr_bult" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+          (click)="AjouterBordereau(); modal.close('Close click')">
+          Valider
+        </button>
+      </div>
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>

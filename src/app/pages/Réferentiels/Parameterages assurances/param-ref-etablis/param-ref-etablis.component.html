@@ -1,0 +1,173 @@
+<div class="row" style="margin-top: 25px"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+<app-breadcrumbs
+title="Référentiel des établissements conventionnées"
+[breadcrumbItems]="breadCrumbItems"
+></app-breadcrumbs>
+<br>
+   <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none mb-0 mt-4">
+                <form [formGroup]="formRefEtablis">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label">Prf code</label>
+                                    <input type="text" class="form-control border-primary" placeholder="Prf code"
+                                        formControlName="prf_cod" readonly />
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Etab Rsoc</label>
+                                    <input type="text" class="form-control border-primary" placeholder="Etab Rsoc"
+                                        formControlName="etab_rsoc" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Etab Rsoc a</label>
+                                    <input type="text" class="form-control border-primary" placeholder="Etab Rsoc a"
+                                        formControlName="etab_rsoc_a" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Code activité</label>
+                                    <input type="text" class="form-control border-primary montant-input"
+                                        placeholder="Code activité" formControlName="cod_activ"
+                                        readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Libelle</label>
+                                    <input type="text" class="form-control border-primary" placeholder="Libelle"
+                                        readonly  [value]="libActiv"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Réf conv etat</label>
+                                    <input type="text" class="form-control border-primary montant-input"
+                                        placeholder="Réf conv etat" formControlName="ref_conv_etat"
+                                        [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Date conv etab</label>
+                                    <input type="text" class="form-control border-primary" placeholder="Date conv etab"
+                                        formControlName="dat_conv_etab" mask="00/00/0000" #prtDatAcc
+                                        [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Etat Cnam</label>
+                                    <select class="form-select border-success" data-plugin="choices"
+                                        formControlName="etat_act_cnam" [attr.disabled]="canModify ? '' : null">
+                                        <option value="A">ACTIF</option>
+                                        <option value="B">BLOQUE</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tel etablis</label>
+                                    <input type="text" class="form-control border-primary" placeholder="Tel etablis"
+                                        formControlName="tel_etablis" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Fax etablis</label>
+                                    <input type="text" class="form-control border-warning" placeholder="Fax etablis"
+                                        formControlName="fax_etablis" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Responsable</label>
+                                    <input type="text" class="form-control border-warning" placeholder="Responsable"
+                                        formControlName="resp" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Email etablis</label>
+                                    <input type="text" class="form-control border-warning" placeholder="Email etablis"
+                                        formControlName="email_etablis" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Rib etablis</label>
+                                    <input type="text" class="form-control border-warning" placeholder="Rib etablis"
+                                        formControlName="rib_etab" [attr.readonly]="canModify ? '' : null" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Conventionner etablis</label>
+                                    <select class="form-select border-success" data-plugin="choices"
+                                        formControlName="conv_etab" [attr.disabled]="canModify ? '' : null">
+                                        <option value="O">CONVENTIONNER</option>
+                                        <option value="N">NON CONVENTIONNER</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Etat etablis</label>
+                                    <select class="form-select border-success" data-plugin="choices"
+                                        formControlName="etat_act_mut" [attr.disabled]="canModify ? '' : null">
+                                        <option value="A">ACTIF</option>
+                                        <option value="B">BLOQUE</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+            <div class="col-md-12">
+                <div class="collapse show" id="paymentmethodCollapse">
+                    <div class="card p-4 border shadow-none mb-0 mt-4">
+                        <form [formGroup]="formRefEtablis">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="billinginfo-firstName" class="form-label">Code gouv</label>
+                                            <input type="text" class="form-control border-primary"
+                                                placeholder="Code gouv" formControlName="cod_gouv" readonly  />
+                                        </div>
+
+
+                                        <div class="col-md-6">
+                                            <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                                            <input type="text" class="form-control border-primary" placeholder="Libelle"
+                                            readonly [value]="libGouv" />
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-2">
+                                            <label for="billinginfo-firstName" class="form-label">Code poste</label>
+                                            <input type="text" class="form-control border-primary"
+                                                placeholder="Code poste" formControlName="cod_post" readonly />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                                            <input type="text" class="form-control border-primary" placeholder="Libelle"
+                                            readonly    [value]="libPoste" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="billinginfo-firstName" class="form-label">Adresse
+                                                etablis</label>
+                                            <input type="text" class="form-control border-primary montant-input"
+                                                placeholder="Adresse etablis" formControlName="adr_etablis" [attr.readonly]="canModify ? '' : null" />
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label for="billinginfo-firstName" class="form-label">Adresse etablis 2eme
+                                                langue</label>
+                                            <input type="text" class="form-control border-primary montant-input"
+                                                placeholder="Adresse etablis 2eme langue"
+                                                formControlName="adr_etablis_a" [attr.readonly]="canModify ? '' : null" />
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+
+                <div *ngIf="isSearch">
+                    <app-search-lov [listData]="listRefEtablis" [columns]="columnsSearch"
+                        (selectedValue)="search($event)"></app-search-lov>
+                </div>
+            </div>
+        </div>

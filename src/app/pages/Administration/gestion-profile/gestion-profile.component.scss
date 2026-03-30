@@ -1,0 +1,27 @@
+.tree-indicator {
+    cursor: pointer;
+  }
+  
+  /*.tree-indicator:before {
+    content: "\f067";
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    width: 1.2em;
+    text-align: center;
+  }
+  
+  .tree-indicator.tree-open:before {
+    content: "\f068";
+  }*/
+  
+  .table-wrapper {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  
+  .table thead {
+    position: sticky;
+    top: 0;
+    background-color:#f3f3f9;
+    z-index: 1;
+  }

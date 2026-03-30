@@ -1,0 +1,100 @@
+<div class="col-md-12 d-flex justify-content-center">
+    <div style="width: 70%;"> <!-- Largeur du conteneur -->
+      <div class="collapse show" id="paymentmethodCollapse">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <form
+            action="javascript:void(0);"
+            class="row g-3"
+            [formGroup]="formAdherent"
+          >
+            <div class="row">
+              <div class="col-md-12">
+                <!-- Bloc 1 -->
+                <div class="row">
+                  <div class="row mt-3">
+                    <!-- Champ Mois -->
+ 
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <label class="form-label">Matricule début</label>
+                    <app-lov
+                      [listData]="personnelList"
+                      [columns]="columnsSearch"
+                      codeField="mat_pers"
+                      [selectedCode]="formAdherent.get('mat_pers')?.value"
+                      (selectedValue)="onSelectedVMat($event)"
+                    ></app-lov>
+                  </div>
+           
+                  <div class="col-md-5">
+                    <label class="form-label">Nom</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="nom_deb"
+                      readonly
+                    />
+                  </div>
+                </div>
+  
+                <!-- Bloc 2 -->
+                <div class="row mt-3">
+                  <div class="col-md-2">
+                    <label class="form-label">Matricule fin</label>
+                    <app-lov
+                      [listData]="personnelList"
+                      [columns]="columnsSearch"
+                      codeField="mat_pers"
+                      [selectedCode]="formAdherent.get('mat_pers2')?.value"
+                      (selectedValue)="onSelectedVMat2($event)"
+                    ></app-lov>
+                  </div>
+           
+                  <div class="col-md-5">
+                    <label class="form-label">Nom</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="nom_fin"
+                      readonly
+                    />
+                  </div>
+                </div>
+           
+                
+
+                  <div class="row mt-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Parente</label>
+                        <select
+                          class="form-select border-success"
+                          formControlName="parente">
+                           <option value="E"> Enfant</option>
+                          <option value="C"> Conjoint</option>
+                          <option value="P"> Père</option>
+                          <option value="M"> Mère</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-3">
+                        <label class="form-label">Pec</label>
+                        <select
+                          class="form-select border-success"
+                          formControlName="pec"
+                          
+                        >
+                           <option value="O"> Oui</option>
+                          <option value="N"> Non</option>
+                        </select>
+                      </div>
+                  </div>
+                  
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

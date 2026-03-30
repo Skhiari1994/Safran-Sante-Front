@@ -1,0 +1,46 @@
+<div class="col-xl-12">
+    <div class="card p-4 border shadow-none mb-0 mt-4">
+        <form action="javascript:void(0);" class="row g-3" [formGroup]="traitement">
+
+            <!-- Row 1: Direction -->
+
+           
+              <div class="col-md-6">
+                <label for="billinginfo-phone" class="form-label">
+                  Chemin</label>
+                    <input 
+                    type="file" (change)="onFileSelected($event)" accept=".dat,.txt"
+                      required
+                    />
+              </div>
+           
+              <div class="col-md-4">
+                <label for="billinginfo-phone" class="form-label">
+                  Actions </label>
+                <select   class="form-select" formControlName="action">
+                  <option value="MMed">MAJ médicaments</option>
+                  <option value="MET">MAJ Etablissement</option>
+                  <option value="MPY">MAJ Pers physiques</option>
+                  <option value="ACT">MAJ Actes</option>
+                  <option value="APP">MAJ Appareil</option>
+              </select>
+              </div>
+       
+              
+          
+              
+              <div class="row">
+                <div class="text-white d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0"></h5>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary" (click)="onUpload()" [disabled]="!selectedFile">
+                      <i class="ri-add-fill me-1"></i> Charger
+                    </button>
+               
+                  </div>
+                </div>
+              </div>
+           
+        </form>
+    </div>
+</div>

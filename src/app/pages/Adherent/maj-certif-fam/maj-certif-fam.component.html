@@ -1,0 +1,594 @@
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs
+    title="Prise en charge des certificats de scolarité enfants"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-breadcrumbs>
+</div>
+<div class="row">
+    <div class="col-xl-10">
+
+        <div
+          class="container d-flex justify-content-center align-items-center">
+          <div class="col-md-12">
+            <div class="collapse show" id="paymentmethodCollapse">
+              <div
+                class="card p-4 border shadow-none mb-0 mt-4"
+               >
+                 <form
+              action="javascript:void(0);"
+              class="row g-3"
+              [formGroup]="formAdherent"
+             >
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label"
+                  >Matricule</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-info"
+                  placeholder="Entrer Matriucle"
+                  formControlName="mat_pers"
+                 />
+            
+              </div>
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label"
+                  >Nom</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Entrer Nom"
+                  formControlName="nom_pers"
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="billinginfo-lastName" class="form-label"
+                  >Prénom</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Entrer prénom"
+                  formControlName="pren_pers"
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-lastName" class="form-label"
+                  >Etat</label
+                >
+                <select
+                  class="form-select border-success"
+                  data-plugin="choices"
+                  formControlName="etat_act"
+                >
+                  <option value="">Select état...</option>
+                  <option value="A">Actif</option>
+                  <option value="B">Bloqué</option>
+                  <option value="I">En Instance</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label"
+                  >Date d'embauche</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  mask="00/00/0000"
+                  placeholder="Entrer la date d'embauche"
+                  formControlName="dat_emb"
+                  appDateFormatter
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="country" class="form-label"
+                  >Situation sociale</label
+                >
+                <select
+                  class="form-select border-success"
+                  data-plugin="choices"
+                  formControlName="cod_sit"
+                >
+                  <option value="">Select situation...</option>
+                  <option value="C">Célibataire</option>
+                  <option value="M">Marié(e)</option>
+                  <option value="D">Divorcé(e)</option>
+                  <option value="V">Voeuf(ve)</option>
+                </select>
+              </div>
+              <div
+              class="col-md-2"
+              
+            >
+              <label for="billinginfo-phone" class="form-label"
+                >Nombre d'enfants</label
+              >
+              <input
+                type="text"
+                class="form-control border-primary"
+                placeholder="Entrer le nombre d'enfants"
+                formControlName="nbr_enf"
+              />
+            </div>
+            <div class="col-3">
+                <label for="billinginfo-phone" class="form-label"
+                  >Numéro d'affiliation mutuelle</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Num affil mutuelle"
+                  formControlName="num_assur"
+                />
+              </div>
+<div class="col-5"></div>
+              <div class="col-3">
+                <label for="billinginfo-phone" class="form-label"
+                  >Date d'effet</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  mask="00/00/0000"
+                  placeholder="Entrer d'éffet"
+                  formControlName="dat_ass"
+                  appDateFormatter
+                />
+              </div>
+            </form>
+              </div>
+            </div>
+          </div>
+        </div>
+ 
+    </div>
+
+    <div class="col-xl-10">
+
+        <div
+          class="container d-flex justify-content-center align-items-center">
+          <div class="col-md-12">
+            <div class="collapse show" id="paymentmethodCollapse">
+              <div
+                class="card p-4 border shadow-none mb-0 mt-4"
+               >
+ 
+              <div class="card-body">
+                <div class="table-responsive table-card mb-2">
+                  <table class="table">
+                    <thead>
+                      <!-- Ligne des champs de recherche -->
+                
+                      <tr class="bg-light">
+                        <th scope="col">
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="checkAll"
+                              value="option"
+                              />
+                          </div>
+                        </th>
+                        <th class="sort" (click)="onSort('num_fam')">Numéro</th>
+                        <th class="sort" (click)="onSort('nom_pren')">
+                          Nom & Prénom
+                        </th>
+                        <th class="sort" (click)="onSort('dat_naiss')">
+                          Date naissance
+                        </th>
+                
+                        <th class="sort" (click)="onSort('cod_activite')">
+                          Code activité
+                        </th>
+                        <th class="sort" (click)="onSort('lib_activite')">Libellé</th>
+                        <th class="sort" (click)="onSort('Pec')">Pec</th>
+                        <th class="sort" (click)="onSort('dat_pec')">Date Pec</th>
+                        <th class="sort" (click)="onSort('dat_dece')">Date décès</th>
+                       </tr>
+                      <!-- Ligne des libellés -->
+                    </thead>
+        
+                    <tbody>
+                      <tr *ngFor="let data of listEnfants  | paginate : { itemsPerPage: 2, currentPage: p }; let i = index"   [ngClass]="{ 'table-active': selectedRow === i }"
+                       (click)="getCertifEnf(data)">
+                     
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 ms-2 name">
+                              {{ data.num_fam }}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="flex-grow-1 ms-2 name">
+                            {{ data.nom_pren }}
+                          </div>
+                        </td>
+                        <td>
+                          <div class="flex-grow-1 ms-2 name">
+                            {{ data.dat_naiss }}
+                          </div>
+                        </td>
+                        <td>
+                          <div class="flex-grow-1 ms-2 name">
+                            {{ data.cod_activite }}
+                          </div>
+                        </td>
+                        <td>
+                          <div class="flex-grow-1 ms-2 name">
+                            {{ data.lib_activite }}
+                          </div>
+                        </td>
+                        <td>
+                          <div class="flex-grow-1 ms-2 name">
+                            {{ data.Pec }}
+                          </div>
+                        </td>
+                        <td>
+                          <div class="flex-grow-1 ms-2 name">
+                            {{ data.dat_pec }}
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                    
+                  </table>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end mt-3">
+                <!-- Pagination -->
+                <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                <!-- End Pagination -->
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+ 
+    </div>
+
+    <div class="col-xl-10">
+
+        <div
+          class="container d-flex justify-content-center align-items-center">
+          <div class="col-md-12">
+            <div class="collapse show" id="paymentmethodCollapse">
+              <div
+                class="card p-4 border shadow-none mb-0 mt-4"
+               >
+ 
+               <div class="card-header">
+                <div class="d-flex align-items-center flex-wrap gap-9">
+                  <div class="flex-grow-1"></div>
+        
+                  <div class="flex-shrink-0">
+                    <div class="hstack text-nowrap gap-2" ngbDropdown>
+                      <button
+                        class="btn btn-info add-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#showModal"
+                        (click)="openModalTab(content1)"
+                      >
+                        <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Certif
+                      </button>
+  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive table-card mb-2">
+                  <table class="table">
+                    <thead>
+                      <!-- Ligne des champs de recherche -->
+                       
+                      <tr class="bg-light">
+                        <th scope="col">
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              id="checkAll"
+                              value="option"
+                              />
+                          </div>
+                        </th>
+                        <th class="sort" (click)="onSort('num_fam')">Date certificat</th>
+                        <th class="sort" (click)="onSort('nom_pren')">
+                          Année certificat
+                        </th>
+                        <th class="sort" (click)="onSort('dat_naiss')">
+                          Année scolaire
+                        </th>
+                        <th class="sort" (click)="onSort('dat_naiss')" style="width: 30%;">
+                            Obs
+                          </th>
+                      
+                        <th>Action</th>
+                      </tr>
+                      <!-- Ligne des libellés -->
+                    </thead>
+        
+                    <tbody *ngFor="let data of listCertifFam  | paginate : { itemsPerPage: 2, currentPage: pCertif }; let i = index">
+                      
+                      <tr id="c_{{ data._id }}">
+                        <th scope="row">
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              name="checkAll"
+                              value="{{ data._id }}"
+                              />
+                          </div>
+                        </th>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 ms-2 name">
+                              {{ data.dat_certif }}
+                            </div>
+                          </div>
+                        </td>
+                         
+                        <td>
+                            <div class="flex-grow-1 ms-2 name">
+                                {{ data.annee_certif }}
+                              </div>
+                        </td>
+                        <td>
+                            <div class="flex-grow-1 ms-2 name">
+                                {{ data.annee_scol }}
+                              </div>
+                        </td>
+                        <td>
+                            <div class="flex-grow-1 ms-2 name">
+                                {{ data.obs }}
+                              </div>
+                        </td>
+                       
+        
+                        <td>
+                          <ul class="list-inline hstack gap-2 mb-0">
+                            <li
+                              class="list-inline-item"
+                              ngbTooltip="Edit"
+                              placement="top"
+                            >
+                              <a
+                                class="edit-item-btn"
+                                data-bs-toggle="modal"
+                                (click)="editDataGet(i, data, content1)"
+                                ><i class="ri-pencil-fill align-bottom text-muted"></i
+                              ></a>
+                            </li>
+                            <li
+                              class="list-inline-item me-0"
+                              ngbTooltip="Delete"
+                              placement="top"
+                            >
+                              <a
+                                class="remove-item-btn"
+                                data-bs-toggle="modal"
+                                (click)="confirm(deleteModel, data)"
+                              >
+                                <i
+                                  class="ri-delete-bin-fill align-bottom text-muted"
+                                ></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </td>
+                      </tr>
+                     
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+          
+              <div class="d-flex justify-content-end mt-3">
+                <!-- Pagination -->
+                <pagination-controls (pageChange)="pCertif = $event"></pagination-controls>
+                <!-- End Pagination -->
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+ 
+    </div>
+
+    <div *ngIf="isSearch">
+        <app-search-lov
+          [listData]="listPersonnel"
+          [columns]="columnsSearch"
+          (selectedValue)="search($event)"
+        >
+        </app-search-lov>
+      </div>
+      <ng-template #content1 role="document" let-modal>
+        <div class="modal-header bg-info-subtle p-3">
+          <h5 class="modal-title" id="exampleModalLabel">Ajouter certificat</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            id="close-modal"
+            (click)="modal.dismiss('Cross click')"
+          ></button>
+        </div>
+        <form [formGroup]="formCertif" class="tablelist-form" autocomplete="off">
+          <div formArrayName="CertifFam" class="scrollable-container">
+            <div
+              *ngFor="let certif of CertifFam.controls; let i = index"
+              [formGroupName]="i"
+              class="row g-3"
+            >
+              <div class="modal-body">
+                <div class="row g-3">
+ 
+                 
+                  <div class="col-lg-3">
+                    <div>
+                      <label for="owner-field" class="form-label">
+                        Date certif
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control border-primary"
+                        placeholder="Enter Date naissance"
+                        required
+                        appDateFormatter
+                        mask="00/00/0000"
+                        formControlName="dat_certif"
+                        [ngClass]="{
+                          'is-invalid': submitted && form['dat_certif'].errors
+                        }"
+                      />
+                      @if(submitted && form['dat_certif'].errors){
+                      <div class="invalid-feedback" align="left">
+                        @if(form['dat_certif'].errors['required']){
+                        <div>Date dat_certif is required</div>
+                        }
+                      </div>
+                      }
+                    </div>
+                  </div>
+                   
+                 
+    
+               
+                  <div class="col-lg-3">
+                    <div>
+                      <label for="industry_type-field" class="form-label"
+                        >Année certificat</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control border-warning"
+                         placeholder="Enter Année certificat"
+                        formControlName="annee_certif"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3">
+                    <div>
+                      <label for="industry_type-field" class="form-label"
+                        >Année scolarite</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control border-warning"
+                         placeholder="Enter Année certificat"
+                        formControlName="annee_scol"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div>
+                      <label for="industry_type-field" class="form-label"
+                        >Observation</label
+                      >
+                      <textarea
+                        type="text"
+                        class="form-control border-warning"
+                         placeholder="Enter obs"
+                        formControlName="obs"
+                      ></textarea>
+                    </div>
+                  </div>
+        
+                </div>
+              </div>
+              <div class="hstack gap-2 justify-content-center" *ngIf="edit">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  id="add-btn"
+                  (click)="addCertifFam()"
+                >
+                  Ajouter certificat
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-info"
+                  (click)="removeEnfant(i)"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="hstack gap-2 justify-content-end">
+              <button
+                type="button"
+                class="btn btn-success"
+                data-bs-dismiss="modal"
+                (click)="validatelistCertifFam(); modal.close('Close click')"
+              >
+                Valider
+              </button>
+            </div>
+            <div class="hstack gap-2 justify-content-end">
+              <button
+                type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+                (click)="modal.close('Close click')"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </form>
+      </ng-template>
+    <!-- removeItemModal -->
+    <ng-template #deleteModel let-modal>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            id="btn-close"
+            (click)="modal.dismiss('Cross click')"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mt-2 text-center">
+            <lord-icon
+              src="https://cdn.lordicon.com/gsqxdxog.json"
+              trigger="loop"
+              colors="primary:#f7b84b,secondary:#f06548"
+              style="width: 100px; height: 100px"
+            ></lord-icon>
+            <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+              <h4>Are you sure ?</h4>
+              <p class="text-muted mx-4 mb-0">
+                Are you sure you want to remove this address ?
+              </p>
+            </div>
+          </div>
+          <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+            <button
+              type="button"
+              class="btn w-sm btn-light"
+              data-bs-dismiss="modal"
+              (click)="modal.close('Close click')"
+            >
+              Close
+            </button>
+            <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
+              Yes, Delete It!
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </ng-template>
+  </div>

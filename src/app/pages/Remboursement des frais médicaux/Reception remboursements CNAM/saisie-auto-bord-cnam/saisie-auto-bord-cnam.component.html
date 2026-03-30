@@ -1,0 +1,381 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs [title]="pageTitle" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
+          <div class="row mb-4">
+            <div class="col-sm-2 col-md-1">
+              <label for="codBordArriv" class="form-label">Bordereau Arrivé</label>
+              <app-lov [listData]="AllBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
+                [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriverPage($event)">
+              </app-lov>
+            </div>
+
+            <div class="col-sm-2 col-md-1">
+              <label for="codBordEnvoi" class="form-label">Bordereau Envoi</label>
+              <app-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
+                [selectedCode]="codBord" (selectedValue)="search($event)">
+              </app-lov>
+            </div>
+
+            <div class="col-sm-4 col-md-2">
+              <label for="fileUpload" class="form-label">Charger fichier CNAM (.txt)</label>
+              <input type="file" id="fileUpload" class="form-control" (change)="onFileSelected($event)" accept=".txt" />
+            </div>
+
+            <div class="col-sm-2 col-md-1">
+              <label for="dateBord" class="form-label">Date</label>
+              <input type="text" id="dateBord" class="form-control border-primary" placeholder="Date" [value]="dateBord"
+                readonly style="filter: blur(0.3px); opacity: 0.85;" />
+            </div>
+
+            <div class="col-md-1">
+              <label class="form-label">Assurance</label>
+              <input type="text" class="form-control border-primary" placeholder="Assurance" [value]="codeAssur"
+                readonly style="filter: blur(0.3px); opacity: 0.85;" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Libelle</label>
+              <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libAssur" readonly
+                style="filter: blur(0.3px); opacity: 0.85;" />
+            </div>
+
+            <div class="col-sm-4 col-md-1">
+              <label for="tot_remb" class="form-label">Tot. Remb.</label>
+              <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Remb."
+                formControlName="tot_remb" readonly style="filter: blur(0.3px); opacity: 0.85;" />
+            </div>
+
+            <div class="col-sm-4 col-md-1">
+              <label for="nbr_bult" class="form-label">Nbre. Bult.</label>
+              <input type="text" id="nbr_bult" class="form-control border-primary" placeholder="Nombre"
+                formControlName="nbr_bult" readonly style="filter: blur(0.3px); opacity: 0.85;" />
+            </div>
+
+            <div class="col-sm-4 col-md-1">
+              <label for="valid" class="form-label">Validité</label>
+              <select class="form-control border-warning" formControlName="valid" disabled
+                style="filter: blur(0.3px); opacity: 0.85;">
+                <option value="O"> Oui </option>
+                <option value="N"> Non </option>
+              </select>
+            </div>
+            <div class="col-md-12 d-flex justify-content-center align-items-center gap-3 mt-3">
+              <button type="button" class="btn btn-success" [disabled]="isPrintButtonsDisabled"
+                (click)="printBordArrivGlobal()">
+                Imprimer Global
+              </button>
+              <button type="button" class="btn btn-info" [disabled]="isPrintButtonsDisabled"
+                (click)="printBordArrivDetail()">
+                Imprimer Détail
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Bulletins</h5>
+        <button class="btn btn-info" type="button" (click)="addLigne()">
+          Ajouter une ligne
+        </button>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="SaisieBulletinForm">
+          <div class="table-responsive">
+            <div formArrayName="lignes">
+              <p-table [value]="lignes.controls" dataKey="num_retr"
+                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th style="width: 200px">Numéro Aff.</th>
+                    <th style="width: 150px">Matricule</th>
+                    <th style="width: 300px">Nom & Prénom</th>
+                    <th style="width: 80px">Fill</th>
+                    <th style="width: 150px">Prés.</th>
+                    <th style="width: 200px">Nom</th>
+                    <th style="width: 150px">Date soin</th>
+                    <th style="width: 200px">Regime Remb.</th>
+                    <th style="width: 150px">Tot. Net</th>
+                    <th style="width: 80px">Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-ri="rowIndex">
+                  <tr [formGroupName]="ri" [class.row-selected-highlight]="selectedRow === ri"
+                    (click)="load(lignes.value[ri], ri)" style="cursor: pointer">
+                    <td>
+                      {{ ri + 1 }}
+                      <i *ngIf="selectedRow === ri" class="ri-arrow-right-circle-fill text-success fs-16 ms-1"
+                        style="vertical-align: middle;"></i>
+                    </td>
+                    <td>
+                      <app-lov [listData]="ListePersonnel" [columns]="columnPersonnel" codeField="num_retr"
+                        [selectedCode]="numRetr[ri]" (selectedValue)="onSelectedPersonnel($event, ri)"
+                        [readonly]="selectedRow !== ri">
+                      </app-lov>
+                    </td>
+                    <td>{{ row.value.mat_pers }}</td>
+                    <td>{{ NomPrenom[ri] }}</td>
+                    <td>{{ row.value.cod_fil }}</td>
+                    <td>
+                      <app-lov [listData]="ListeFamillePersonnelParLigne[ri] || []" [columns]="columneFamillePersonnel"
+                        codeField="num_fam" [selectedCode]="NumFam[ri]"
+                        (selectedValue)="onSelectedFamillePersonnel($event, ri)" [readonly]="selectedRow !== ri">
+                      </app-lov>
+                    </td>
+                    <td>{{ Nom[ri] }}</td>
+                    <td>
+                      <input type="text" class="form-control border-primary" formControlName="dat_soin"
+                        [readonly]="selectedRow !== ri" style="padding: 0.2rem 0.4rem; height: auto;" />
+                    </td>
+                    <td>
+                      <select class="form-control border-warning" formControlName="reg_remb"
+                        [attr.disabled]="selectedRow !== ri ? '' : null" style="padding: 0.2rem 0.4rem; height: auto;">
+                        <option *ngFor="let regimeRemb of ListeRegimeRemb" [value]="regimeRemb.reg_remb">
+                          {{ regimeRemb.lib_remb }}</option>
+                      </select>
+                    </td>
+                    <td class="text-end">
+                      <input type="text" class="form-control border-primary text-end" formControlName="tot_net"
+                        (change)="calculateTotalsTot()" [readonly]="selectedRow !== ri"
+                        style="padding: 0.2rem 0.4rem; height: auto;" />
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-outline-danger btn-sm"
+                        (click)="ConfirmDeleteBulletin(ri); $event.stopPropagation()">
+                        <i class="ri-delete-bin-line"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr class="table-secondary fw-bold">
+                    <td colspan="9" class="text-end">Total :</td>
+                    <td>
+                      <input class="form-control text-end" type="text" [value]="totalNetTot | number:'1.3-3'"
+                        readonly />
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-xxl-12" *ngIf="selectedRow !== null">
+  <div class="card">
+    <div class="card-body">
+      <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" (navChange)="onNavChange($event)"
+        class="nav nav-tabs nav-tabs-custom nav-success mb-3">
+        <li [ngbNavItem]="1">
+          <a ngbNavLink>Visites</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="ligVisiteForm">
+              <div class="d-flex justify-content-end mb-2">
+                <button class="btn btn-sm btn-primary" type="button" (click)="addLigneVisite()">➕ Ajouter</button>
+              </div>
+              <p-table [value]="visite.controls" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th>Date Acte</th>
+                    <th style="width: 200px;">Visite</th>
+                    <th style="width: 400px;">Libelle</th>
+                    <th>Mnt Honor</th>
+                    <th>Net</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-ri="rowIndex">
+                  <tr [formGroupName]="ri">
+                    <td>{{ ri + 1 }}</td>
+                    <td><input class="form-control form-control-sm" type="text" formControlName="dat_act"
+                        placeholder="dd/mm/yyyy" mask="00/00/0000"></td>
+                    <td><app-lov [listData]="listVisite" [columns]="columnVisite" codeField="cod_Visit"
+                        [selectedCode]="visiteCode[ri]" (selectedValue)="onSelectedVisite($event, ri)"></app-lov></td>
+                    <td>{{ libVisite[ri] }}</td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_honor"
+                        (change)="calculateTotalsVisite()"></td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_remb"
+                        (change)="calculateTotalsVisite()"></td>
+                    <td><button class="btn btn-danger btn-sm"
+                        (click)="visite.removeAt(ri); calculateTotalsVisite()">🗑️</button></td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr class="fw-bold">
+                    <td colspan="4" class="text-end">Total :</td>
+                    <td class="text-end">{{ totalHonorairesVisite | number:'1.3-3' }}</td>
+                    <td class="text-end">{{ totalNetVisite | number:'1.3-3' }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </form>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+          <a ngbNavLink>Actes</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="ligPretForm">
+              <div class="d-flex justify-content-end mb-2">
+                <button class="btn btn-sm btn-primary" type="button" (click)="addActe()">➕ Ajouter</button>
+              </div>
+              <p-table [value]="acte.controls" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th>Date Acte</th>
+                    <th style="width: 200px;">Acte</th>
+                    <th style="width: 400px;">Libelle</th>
+                    <th>Indice</th>
+                    <th>Honoraires</th>
+                    <th>Net</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-ri="rowIndex">
+                  <tr [formGroupName]="ri">
+                    <td>{{ ri + 1 }}</td>
+                    <td><input class="form-control form-control-sm" type="text" formControlName="dat_act"
+                        placeholder="dd/mm/yyyy" mask="00/00/0000"></td>
+                    <td><app-lov [listData]="listActe" [columns]="columnActe" codeField="cod_act"
+                        [selectedCode]="actes[ri]" (selectedValue)="onSelectedActe($event, ri)"></app-lov></td>
+                    <td>{{ libAct[ri] }}</td>
+                    <td><input class="form-control form-control-sm" type="text" formControlName="indice"></td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_honor"
+                        (change)="calculateTotals()"></td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_remb"
+                        (change)="calculateTotals()"></td>
+                    <td><button class="btn btn-danger btn-sm"
+                        (click)="acte.removeAt(ri); calculateTotals()">🗑️</button></td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr class="fw-bold">
+                    <td colspan="5" class="text-end">Total :</td>
+                    <td class="text-end">{{ totalHonoraires | number:'1.3-3' }}</td>
+                    <td class="text-end">{{ totalNet | number:'1.3-3' }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </form>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="3">
+          <a ngbNavLink>Pharmacies</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="ligPharForm">
+              <div class="d-flex justify-content-end mb-2">
+                <button class="btn btn-sm btn-primary" type="button" (click)="addLignePhar()">➕ Ajouter</button>
+              </div>
+              <p-table [value]="phar.controls" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th>Date Med</th>
+                    <th style="width: 200px;">Med</th>
+                    <th style="width: 400px;">Libelle</th>
+                    <th>Unit</th>
+                    <th>Honoraires</th>
+                    <th>Net</th>
+                    <th>Nbr j</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-ri="rowIndex">
+                  <tr [formGroupName]="ri">
+                    <td>{{ ri + 1 }}</td>
+                    <td><input class="form-control form-control-sm" type="text" formControlName="dat_act"
+                        placeholder="dd/mm/yyyy" mask="00/00/0000"></td>
+                    <td><app-lov [listData]="listMed" [columns]="columnsMed" codeField="cod_med"
+                        [selectedCode]="Med[ri]" (selectedValue)="onSelectedMed($event, ri)"></app-lov></td>
+                    <td>{{ libMed[ri] }}</td>
+                    <td><input class="form-control form-control-sm" type="text" formControlName="indice"></td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_honor"
+                        (change)="calculateTotalsPhar()"></td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_remb"
+                        (change)="calculateTotalsPhar()"></td>
+                    <td><input class="form-control form-control-sm" type="number" formControlName="nbr_j"
+                        (change)="calculateTotalsPhar()"></td>
+                    <td><button class="btn btn-danger btn-sm"
+                        (click)="phar.removeAt(ri); calculateTotalsPhar()">🗑️</button></td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr class="fw-bold">
+                    <td colspan="5" class="text-end">Total :</td>
+                    <td class="text-end">{{ totalHonorairesPhar | number:'1.3-3' }}</td>
+                    <td class="text-end">{{ totalNetPhar | number:'1.3-3' }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </form>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="4">
+          <a ngbNavLink>Appareils</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="ligAppareilForm">
+              <div class="d-flex justify-content-end mb-2">
+                <button class="btn btn-sm btn-primary" type="button" (click)="addLigneAppareil()">➕ Ajouter</button>
+              </div>
+              <p-table [value]="appareil.controls" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>#</th>
+                    <th>Date App</th>
+                    <th style="width: 250px;">Appareil</th>
+                    <th style="width: 450px;">Libelle</th>
+                    <th>Honor</th>
+                    <th>Net</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-ri="rowIndex">
+                  <tr [formGroupName]="ri">
+                    <td>{{ ri + 1 }}</td>
+                    <td><input class="form-control form-control-sm" type="text" formControlName="dat_act"
+                        placeholder="dd/mm/yyyy" mask="00/00/0000"></td>
+                    <td><app-lov [listData]="listAppareil" [columns]="columnsAppareil" codeField="cod_app"
+                        [selectedCode]="appareilCode[ri]" (selectedValue)="onSelectedAppareil($event, ri)"></app-lov>
+                    </td>
+                    <td>{{ libAppareil[ri] }}</td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_honor"
+                        (change)="calculateTotalsAppareil()"></td>
+                    <td><input class="form-control form-control-sm text-end" type="text" formControlName="mnt_remb"
+                        (change)="calculateTotalsAppareil()"></td>
+                    <td><button class="btn btn-danger btn-sm"
+                        (click)="appareil.removeAt(ri); calculateTotalsAppareil()">🗑️</button></td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr class="fw-bold">
+                    <td colspan="4" class="text-end">Total :</td>
+                    <td class="text-end">{{ totalHonorairesAppareil | number:'1.3-3' }}</td>
+                    <td class="text-end">{{ totalNetAppareil | number:'1.3-3' }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </form>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="CustomVertical"></div>
+    </div>
+  </div>
+</div>

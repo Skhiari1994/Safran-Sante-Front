@@ -1,0 +1,18 @@
+/* Style pour le message d'erreur */
+.error-popup {
+  position: absolute;
+  top: 100%; /* Juste en dessous de l'input */
+  left: 0;
+  background-color: #f8d7da; /* Rouge clair pour le fond */
+  color: #721c24; /* Rouge foncé pour le texte */
+  border: 1px solid #f5c6cb; /* Bordure rouge */
+  border-radius: 4px; /* Coins arrondis */
+  padding: 5px 10px; /* Espacement interne */
+  margin-top: 5px; /* Un petit espace entre l'input et l'erreur */
+  font-size: 0.85rem; /* Taille du texte */
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); /* Légère ombre pour l'effet "popup" */
+  white-space: nowrap; /* Empêche le texte de sauter à la ligne */
+  z-index: 100; /* S'assure que la boîte reste au-dessus des autres éléments */
+}
+
+ 

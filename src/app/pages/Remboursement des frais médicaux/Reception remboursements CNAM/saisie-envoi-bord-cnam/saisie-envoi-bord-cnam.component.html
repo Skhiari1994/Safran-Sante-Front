@@ -1,0 +1,710 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+    <app-breadcrumbs title="Saisie Bordereau Envoi CNAM" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-top border-primary border-3">
+                <div class="card-body">
+                    <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
+                        <div class="row mb-4 align-items-end">
+                            <!-- Code Bordereau -->
+                            <div class="col-sm-2 col-md-2">
+                                <label for="codBord" class="form-label fw-bold">Code Bordereau</label>
+                                <app-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
+                                    [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriver($event)"
+                                    [readonly]="isReadOnly">
+                                </app-lov>
+                            </div>
+
+                            <!-- Date -->
+                            <div class="col-sm-2 col-md-2">
+                                <label for="dateBord" class="form-label">Date Bordereau</label>
+                                <input type="text" id="dateBord" class="form-control border-primary bg-light"
+                                    placeholder="Date" [value]="dateBord" readonly />
+                            </div>
+
+                            <!-- Assurance -->
+                            <div class="col-md-2">
+                                <label class="form-label">Assurance</label>
+                                <app-lov [listData]="ListeAssurance" [columns]="columnAssuranc" codeField="cod_assur"
+                                    [selectedCode]="codeAssur"
+                                    (selectedValue)="codeAssur = $event.cod_assur; libAssur = $event.lib_assur"
+                                    [readonly]="isReadOnly">
+                                </app-lov>
+                            </div>
+
+                            <!-- Libellé Assurance -->
+                            <div class="col-md-3">
+                                <label class="form-label">Libellé Assurance</label>
+                                <input type="text" class="form-control border-primary bg-light" placeholder="Libellé"
+                                    [value]="libAssur" readonly />
+                            </div>
+
+                            <!-- Total Remboursement -->
+                            <div class="col-sm-2 col-md-2">
+                                <label for="tot_remb" class="form-label">Total Remb.</label>
+                                <div id="tot_remb" class="form-control border-primary text-end bg-light pt-2"
+                                    style="height: 37.5px;">
+                                    {{ (BordEnvoiForm.get('tot_remb')?.value || 0) | number:'1.3-3' }}
+                                </div>
+                            </div>
+
+                            <!-- Nombre de Bulletins -->
+                            <div class="col-sm-1 col-md-1">
+                                <label for="nbr_bult" class="form-label">Nbre Bult.</label>
+                                <input type="text" id="nbr_bult" class="form-control border-primary bg-light"
+                                    placeholder="Nombre" formControlName="nbr_bult" readonly />
+                            </div>
+
+                            <!-- Print Buttons -->
+                            <div class="col-md-12 d-flex justify-content-center align-items-center gap-3 mt-3">
+                                <button type="button" class="btn btn-success" [disabled]="isPrintButtonsDisabled"
+                                    (click)="printBordArrivGlobal()">
+                                    <i class="ri-printer-line me-1"></i> Imprimer Bordereau Global
+                                </button>
+                                <button type="button" class="btn btn-info" [disabled]="isPrintButtonsDisabled"
+                                    (click)="printBordArrivDetail()">
+                                    <i class="ri-printer-fill me-1"></i> Imprimer Bordereau Détaillé
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Validation Status Alert -->
+                        <div *ngIf="isReadOnly" class="alert alert-info alert-dismissible fade show" role="alert">
+                            <i class="ri-information-line me-2"></i>
+                            <strong>Bordereau Validé:</strong> Ce bordereau est validé et ne peut pas être modifié.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulletins Section -->
+    <div class="row mt-3" *ngIf="lignes.length > 0">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="ri-file-list-3-line me-2"></i>
+                        Liste des Bulletins
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="SaisieBulletinForm">
+                        <div class="table-responsive">
+                            <p-table #dt [value]="lignes.controls" [paginator]="true" [rows]="10"
+                                [globalFilterFields]="['value.num_retr', 'value.mat_pers', 'value.nom_prenom', 'value.cod_fil', 'value.num_fam', 'value.nom', 'value.dat_soin', 'value.tot_net']"
+                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 50px">#</th>
+                                        <th style="width: 180px" pSortableColumn="value.num_retr">Numéro Aff.
+                                            <p-sortIcon field="value.num_retr"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 180px" pSortableColumn="value.mat_pers">Matricule <p-sortIcon
+                                                field="value.mat_pers"></p-sortIcon></th>
+                                        <th style="width: 300px" pSortableColumn="value.nom_prenom">Nom & Prénom
+                                            <p-sortIcon field="value.nom_prenom"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 80px" pSortableColumn="value.cod_fil">Fill <p-sortIcon
+                                                field="value.cod_fil"></p-sortIcon></th>
+                                        <th style="width: 100px" pSortableColumn="value.num_fam">Prés. <p-sortIcon
+                                                field="value.num_fam"></p-sortIcon></th>
+                                        <th style="width: 200px" pSortableColumn="value.nom">Nom <p-sortIcon
+                                                field="value.nom"></p-sortIcon></th>
+                                        <th style="width: 150px" pSortableColumn="value.dat_soin">Date soin <p-sortIcon
+                                                field="value.dat_soin"></p-sortIcon></th>
+                                        <th style="width: 180px" pSortableColumn="value.reg_remb">Regime Remb.
+                                            <p-sortIcon field="value.reg_remb"></p-sortIcon>
+                                        </th>
+                                        <th style="width: 150px" pSortableColumn="value.tot_net">Tot. Net <p-sortIcon
+                                                field="value.tot_net"></p-sortIcon></th>
+                                        <th style="width: 80px">Actions</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.num_retr', 'contains')"
+                                                class="form-control form-control-sm" placeholder="Filtrer..."></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.mat_pers', 'contains')"
+                                                class="form-control form-control-sm" placeholder="Filtrer..."></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.nom_prenom', 'contains')"
+                                                class="form-control form-control-sm" placeholder="Filtrer..."></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.cod_fil', 'contains')"
+                                                class="form-control form-control-sm" placeholder="..."></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.num_fam', 'contains')"
+                                                class="form-control form-control-sm" placeholder="..."></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.nom', 'contains')"
+                                                class="form-control form-control-sm" placeholder="Filtrer..."></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.dat_soin', 'contains')"
+                                                class="form-control form-control-sm" placeholder="Filtrer..."></th>
+                                        <th></th>
+                                        <th><input pInputText type="text"
+                                                (input)="dt.filter($any($event.target).value, 'value.tot_net', 'contains')"
+                                                class="form-control form-control-sm" placeholder="Filtrer..."></th>
+                                        <th></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-ligne let-ri="rowIndex">
+                                    <tr [formGroup]="$any(ligne)"
+                                        [ngClass]="{ 'table-active': selectedRow === ligne.get('originalIndex')?.value, 'table-secondary': isReadOnly }"
+                                        (click)="load(ligne.value, ligne.get('originalIndex')?.value)"
+                                        style="cursor: pointer">
+                                        <td>{{ ri + 1 }}</td>
+                                        <td>{{ ligne.get('num_retr')?.value }}</td>
+                                        <td>{{ ligne.get('mat_pers')?.value }}</td>
+                                        <td>{{ ligne.get('nom_prenom')?.value }}</td>
+                                        <td>{{ ligne.get('cod_fil')?.value }}</td>
+                                        <td>{{ ligne.get('num_fam')?.value }}</td>
+                                        <td>{{ ligne.get('nom')?.value }}</td>
+                                        <td>{{ ligne.get('dat_soin')?.value }}</td>
+                                        <td>
+                                            <select class="form-select form-select-sm" formControlName="reg_remb"
+                                                [attr.disabled]="(selectedRow !== ligne.get('originalIndex')?.value || isReadOnly) ? '' : null"
+                                                [style.opacity]="(selectedRow !== ligne.get('originalIndex')?.value || isReadOnly) ? '0.7' : '1'">
+                                                <option *ngFor="let regimeRemb of ListeRegimeRemb"
+                                                    [value]="regimeRemb.reg_remb">
+                                                    {{ regimeRemb.lib_remb }}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td class="text-end">{{ (ligne.get('tot_net')?.value || 0) | number:'1.3-3' }}
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-1">
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    (click)="load(ligne.value, ligne.get('originalIndex')?.value); $event.stopPropagation()"
+                                                    title="Charger les détails">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger"
+                                                    (click)="ConfirmDeleteBulletin(ligne.get('originalIndex')?.value); $event.stopPropagation()"
+                                                    [disabled]="isReadOnly" title="Supprimer le bulletin">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr class="table-light fw-bold shadow-sm">
+                                        <td colspan="9" class="text-end text-primary">Total Bordereau :</td>
+                                        <td class="text-end text-success">{{ getCalculateTotNet() | number:'1.3-3' }}
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11" class="text-center">
+                                            <span class="badge bg-danger-subtle text-danger p-2 mt-2">Aucun bulletin
+                                                trouvé !</span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Section (Actes, Visites, Médicaments, Appareils) -->
+    <div class="row mt-3" *ngIf="selectedRow !== null">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0 text-white">
+                        <i class="ri-stethoscope-line me-2"></i>
+                        Détails du Bulletin - Ligne {{ selectedRow + 1 }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs nav-justified mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" [class.active]="activeTab === 'visites'"
+                                (click)="activeTab = 'visites'" type="button">
+                                <i class="ri-user-heart-line me-1"></i>
+                                Visites ({{ visite.length }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" [class.active]="activeTab === 'actes'"
+                                (click)="activeTab = 'actes'" type="button">
+                                <i class="ri-hospital-line me-1"></i>
+                                Actes ({{ acte.length }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" [class.active]="activeTab === 'medicaments'"
+                                (click)="activeTab = 'medicaments'" type="button">
+                                <i class="ri-capsule-line me-1"></i>
+                                Médicaments ({{ phar.length }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" [class.active]="activeTab === 'appareils'"
+                                (click)="activeTab = 'appareils'" type="button">
+                                <i class="ri-wheelchair-line me-1"></i>
+                                Appareils ({{ appareil.length }})
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Visites Tab Content -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'visites'"
+                            [class.active]="activeTab === 'visites'">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-end gap-2">
+                                    <button class="btn btn-primary btn-sm" type="button" (click)="addLigneVisite()"
+                                        [disabled]="isReadOnly">
+                                        <i class="ri-add-line"></i> Ajouter Ligne
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <form [formGroup]="ligVisiteForm">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered table-hover">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 50px">#</th>
+                                                        <th style="width: 150px">Date Acte</th>
+                                                        <th style="width: 200px">Visite</th>
+                                                        <th>Libellé</th>
+                                                        <th style="width: 150px">Mnt Honoraire</th>
+                                                        <th style="width: 150px">Net</th>
+                                                        <th style="width: 80px">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody formArrayName="visite">
+                                                    <tr *ngFor="let item of visite.controls; let i = index"
+                                                        [formGroupName]="i">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td>
+                                                            <input placeholder="dd/mm/yyyy" mask="00/00/0000"
+                                                                class="form-control form-control-sm" type="text"
+                                                                formControlName="dat_act" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <app-lov [listData]="listVisite" [columns]="columnVisite"
+                                                                codeField="cod_Visit" [selectedCode]="visiteCode[i]"
+                                                                (selectedValue)="onSelectedVisite($event, i)"
+                                                                [readonly]="isReadOnly"></app-lov>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm"
+                                                                [value]="libVisite[i]" readonly rows="2"></textarea>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calcul_mnt_net_visite($event, i)"
+                                                                formControlName="mnt_honor" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calculateTotalsVisite()"
+                                                                formControlName="mnt_remb" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-danger btn-sm" type="button"
+                                                                (click)="confirmVisit(i, deleteModelVisit)"
+                                                                [disabled]="isReadOnly">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot class="table-light">
+                                                    <tr>
+                                                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalHonorairesVisite | number:'1.3-3'"
+                                                                readonly>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalNetVisite | number:'1.3-3'" readonly>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actes Tab Content -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'actes'"
+                            [class.active]="activeTab === 'actes'">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-end gap-2">
+                                    <button class="btn btn-primary btn-sm" type="button" (click)="addActe()"
+                                        [disabled]="isReadOnly">
+                                        <i class="ri-add-line"></i> Ajouter Ligne
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <form [formGroup]="ligActeForm">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered table-hover">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 50px">#</th>
+                                                        <th style="width: 150px">Date Acte</th>
+                                                        <th style="width: 200px">Acte</th>
+                                                        <th>Libellé</th>
+                                                        <th style="width: 100px">Unité</th>
+                                                        <th style="width: 150px">Honoraires</th>
+                                                        <th style="width: 150px">Net</th>
+                                                        <th style="width: 80px">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody formArrayName="acte">
+                                                    <tr *ngFor="let item of acte.controls; let i = index"
+                                                        [formGroupName]="i">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td>
+                                                            <input placeholder="dd/mm/yyyy" mask="00/00/0000"
+                                                                class="form-control form-control-sm" type="text"
+                                                                formControlName="dat_act" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <app-lov [listData]="listActe" [columns]="columnActe"
+                                                                codeField="cod_act" [selectedCode]="actes[i]"
+                                                                (selectedValue)="onSelectedActe($event, i)"
+                                                                [readonly]="isReadOnly"></app-lov>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm"
+                                                                [value]="libAct[i]" readonly rows="2"></textarea>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm" type="text"
+                                                                formControlName="indice" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calcul_mnt_net($event, i)"
+                                                                formControlName="mnt_honor" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calculateTotals('acte')"
+                                                                formControlName="mnt_remb" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-danger btn-sm" type="button"
+                                                                (click)="confirm(i, deleteModel)"
+                                                                [disabled]="isReadOnly">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot class="table-light">
+                                                    <tr>
+                                                        <td colspan="5" class="text-end fw-bold">Total:</td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalHonoraires | number:'1.3-3'" readonly>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalNet | number:'1.3-3'" readonly>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Médicaments Tab Content -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'medicaments'"
+                            [class.active]="activeTab === 'medicaments'">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-end gap-2">
+                                    <button class="btn btn-primary btn-sm" type="button" (click)="addLignePhar()"
+                                        [disabled]="isReadOnly">
+                                        <i class="ri-add-line"></i> Ajouter Ligne
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <form [formGroup]="ligPharForm">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered table-hover">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 50px">#</th>
+                                                        <th style="width: 150px">Date</th>
+                                                        <th style="width: 200px">Médicament</th>
+                                                        <th>Libellé</th>
+                                                        <th style="width: 100px">Nbr Jours</th>
+                                                        <th style="width: 150px">Honoraires</th>
+                                                        <th style="width: 150px">Net</th>
+                                                        <th style="width: 80px">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody formArrayName="phar">
+                                                    <tr *ngFor="let item of phar.controls; let i = index"
+                                                        [formGroupName]="i">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td>
+                                                            <input placeholder="dd/mm/yyyy" mask="00/00/0000"
+                                                                class="form-control form-control-sm" type="text"
+                                                                formControlName="dat_act" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <app-lov [listData]="listMed" [columns]="columnsMed"
+                                                                codeField="cod_med" [selectedCode]="Med[i]"
+                                                                (selectedValue)="onSelectedMed($event, i)"
+                                                                [readonly]="isReadOnly"></app-lov>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm"
+                                                                [value]="libMed[i]" readonly rows="2"></textarea>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm" type="text"
+                                                                formControlName="nbr_j" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calcul_mnt_netPhar($event, i)"
+                                                                formControlName="mnt_honor" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calculateTotalsPhar()"
+                                                                formControlName="mnt_remb" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-danger btn-sm" type="button"
+                                                                (click)="confirmMed(i, deleteModelMed)"
+                                                                [disabled]="isReadOnly">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot class="table-light">
+                                                    <tr>
+                                                        <td colspan="5" class="text-end fw-bold">Total:</td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalHonorairesPhar | number:'1.3-3'" readonly>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalNetPhar | number:'1.3-3'" readonly>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Appareils Tab Content -->
+                        <div class="tab-pane fade" [class.show]="activeTab === 'appareils'"
+                            [class.active]="activeTab === 'appareils'">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-end gap-2">
+                                    <button class="btn btn-primary btn-sm" type="button" (click)="addLigneAppareil()"
+                                        [disabled]="isReadOnly">
+                                        <i class="ri-add-line"></i> Ajouter Ligne
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <form [formGroup]="ligAppareilForm">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered table-hover">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 50px">#</th>
+                                                        <th style="width: 150px">Date</th>
+                                                        <th style="width: 200px">Appareil</th>
+                                                        <th>Libellé</th>
+                                                        <th style="width: 150px">Honoraires</th>
+                                                        <th style="width: 150px">Net</th>
+                                                        <th style="width: 80px">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody formArrayName="appareil">
+                                                    <tr *ngFor="let item of appareil.controls; let i = index"
+                                                        [formGroupName]="i">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td>
+                                                            <input placeholder="dd/mm/yyyy" mask="00/00/0000"
+                                                                class="form-control form-control-sm" type="text"
+                                                                formControlName="dat_act" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <app-lov [listData]="listAppareil"
+                                                                [columns]="columnsAppareil" codeField="cod_app"
+                                                                [selectedCode]="appareilCode[i]"
+                                                                (selectedValue)="onSelectedAppareil($event, i)"
+                                                                [readonly]="isReadOnly">
+                                                            </app-lov>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm"
+                                                                [value]="libAppareil[i]" readonly rows="2"></textarea>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calcul_mnt_net_app($event, i)"
+                                                                formControlName="mnt_honor" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end"
+                                                                type="text" appMontantMask
+                                                                (change)="calculateTotalsAppareil()"
+                                                                formControlName="mnt_remb" [readonly]="isReadOnly">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-danger btn-sm" type="button"
+                                                                (click)="confirmApp(i, deleteModelApp)"
+                                                                [disabled]="isReadOnly">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot class="table-light">
+                                                    <tr>
+                                                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalHonorairesAppareil | number:'1.3-3'"
+                                                                readonly>
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control form-control-sm text-end fw-bold"
+                                                                [value]="totalNetAppareil | number:'1.3-3'" readonly>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals for Deletion Confirmation -->
+<ng-template #deleteModel let-modal>
+    <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirmation de suppression</h5>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+            <i class="ri-error-warning-line display-4 text-danger mb-3"></i>
+            <p class="fs-5">Voulez-vous vraiment supprimer cet acte ?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="modal.dismiss('cancel')">Annuler</button>
+            <button type="button" class="btn btn-danger" (click)="ConfirmDelete(selectedIndex!)">Supprimer</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #deleteModelMed let-modal>
+    <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirmation de suppression</h5>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+            <i class="ri-error-warning-line display-4 text-danger mb-3"></i>
+            <p class="fs-5">Voulez-vous vraiment supprimer ce médicament ?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="modal.dismiss('cancel')">Annuler</button>
+            <button type="button" class="btn btn-danger"
+                (click)="ConfirmDeleteMed(selectedIndexMed!)">Supprimer</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #deleteModelVisit let-modal>
+    <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirmation de suppression</h5>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+            <i class="ri-error-warning-line display-4 text-danger mb-3"></i>
+            <p class="fs-5">Voulez-vous vraiment supprimer cette visite ?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="modal.dismiss('cancel')">Annuler</button>
+            <button type="button" class="btn btn-danger"
+                (click)="ConfirmDeleteVisit(selectedIndexVisit!)">Supprimer</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #deleteModelApp let-modal>
+    <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirmation de suppression</h5>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+            <i class="ri-error-warning-line display-4 text-danger mb-3"></i>
+            <p class="fs-5">Voulez-vous vraiment supprimer cet appareil ?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="modal.dismiss('cancel')">Annuler</button>
+            <button type="button" class="btn btn-danger"
+                (click)="ConfirmDeleteApp(selectedIndexApp!)">Supprimer</button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Search Modal -->
+<div *ngIf="isSearch">
+    <app-search-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" (selectedValue)="search($event)">
+    </app-search-lov>
+</div>

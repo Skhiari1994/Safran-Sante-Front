@@ -1,0 +1,172 @@
+<div class="col-md-12 d-flex justify-content-center">
+    <div style="width: 70%;"> <!-- Largeur du conteneur -->
+      <div class="collapse show" id="paymentmethodCollapse">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <form
+            action="javascript:void(0);"
+            class="row g-3"
+            [formGroup]="formAdherent"
+          >
+            <div class="row">
+              <div class="col-md-12">
+                <!-- Bloc 1 -->
+                <div class="row">
+                  <div class="row mt-3">
+                    <!-- Champ Mois -->
+ 
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <label class="form-label">Matricule début</label>
+                    <app-lov
+                      [listData]="personnelList"
+                      [columns]="columnsSearch"
+                      codeField="mat_pers"
+                      [selectedCode]="formAdherent.get('mat_pers')?.value"
+                      (selectedValue)="onSelectedVMat($event)"
+                    ></app-lov>
+                  </div>
+           
+                  <div class="col-md-5">
+                    <label class="form-label">Nom</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="nom_deb"
+                      readonly
+                    />
+                  </div>
+                </div>
+  
+                <!-- Bloc 2 -->
+                <div class="row mt-3">
+                  <div class="col-md-2">
+                    <label class="form-label">Matricule fin</label>
+                    <app-lov
+                      [listData]="personnelList"
+                      [columns]="columnsSearch"
+                      codeField="mat_pers"
+                      [selectedCode]="formAdherent.get('mat_pers2')?.value"
+                      (selectedValue)="onSelectedVMat2($event)"
+                    ></app-lov>
+                  </div>
+           
+                  <div class="col-md-5">
+                    <label class="form-label">Nom</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="nom_fin"
+                      readonly
+                    />
+                  </div>
+                </div>
+           
+                <div class="row mt-3">
+                    <div class="col-2">
+                      <label for="billinginfo-phone" class="form-label">
+                        Département</label
+                      >
+      
+                      <app-lov
+                        [listData]="listLieu"
+                        [columns]="columnsLieu"
+                        codeField="cod_lieu_geog"
+                        [selectedCode]="codLieuVal"
+                        (selectedValue)="onSelectedValueLieu($event)"
+                      >
+                      </app-lov>
+                    </div>
+                    <div class="col-md-5">
+                      <label for="billinginfo-phone" class="form-label">
+                        Libellé</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control border-primary"
+                        [value]="libLieu"
+                        placeholder="Département"
+                        readonly
+                      />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="country" class="form-label"
+                          >Type tri</label
+                        >
+                        <select
+                          class="form-select border-success"
+                          data-plugin="choices"
+                          formControlName="etat_act"
+                        >
+                          <option value="A">Actif</option>
+                          <option value="B">Bloqué</option>
+                          
+                        </select>
+                      </div>
+                  </div>
+
+                  <div class="row mt-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Corps</label>
+                        <select
+                          class="form-select border-success"
+                          formControlName="corps"
+                          
+                        >
+                          <option value=""></option>
+                          <option
+                            *ngFor="let i of listCorps"
+                            [value]="i.cod_corps"
+                          >
+                            {{ i.lib_corps }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-3">
+                        <label class="form-label">Type tri</label>
+                        <select
+                          class="form-select border-success"
+                          formControlName="corps"
+                          
+                        >
+                          <option value=""></option>
+                          <option value="1"> Matricule</option>
+                          <option value="2"> Cnrps</option>
+                        </select>
+                      </div>
+                  </div>
+                  <div class="row mt-3"> 
+                    <div class="col-md-2">
+                        <label for="billinginfo-phone" class="form-label">Code</label>
+                        <app-lov
+                          [listData]="listTypeDepart"
+                          [columns]="columnsTypDepart"
+                          codeField="cod_typ_depart"
+                          [selectedCode]="codTypDepartVal"
+                          (selectedValue)="onSelectedValueTypDepart($event)"
+                        >
+                        </app-lov>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="billinginfo-phone" class="form-label"
+                          >Libellé de motif de départ</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-primary"
+                          placeholder="Type départ"
+                          [value]="libTypDepart"
+                          readonly
+                        />
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

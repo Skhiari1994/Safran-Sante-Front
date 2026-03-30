@@ -1,0 +1,141 @@
+<div class="col-md-12 d-flex justify-content-center">
+  <div style="width: 70%;"> <!-- Largeur du conteneur -->
+    <div class="collapse show" id="paymentmethodCollapse">
+      <div class="card p-4 border shadow-none mb-0 mt-4">
+        <form
+          action="javascript:void(0);"
+          class="row g-3"
+          [formGroup]="formAdherent"
+        >
+          <div class="row">
+            <div class="col-md-12">
+              <!-- Bloc 1 -->
+              <div class="row">
+                <div class="row mt-3">
+                  <!-- Champ Mois -->
+                  <div class="col-md-2">
+                    <label class="form-label">Mois de la paie</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="mois"
+                      readonly
+                    />
+                  </div>
+                <div class="col-md-5"></div>
+                  <!-- Champ Année -->
+                  <div class="col-md-2">
+                    <label class="form-label">Année</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="annee"
+                      readonly
+                    />
+                  </div>
+                </div>
+                
+                <div class="col-md-2">
+                  <label class="form-label">Matricule début</label>
+                  <app-lov
+                    [listData]="personnelList"
+                    [columns]="columnsSearch"
+                    codeField="mat_pers"
+                    [selectedCode]="formAdherent.get('mat_pers')?.value"
+                    (selectedValue)="onSelectedVMat($event)"
+                  ></app-lov>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">N°CNRPS</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="num_retr_deb"
+                    readonly
+                  />
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label">Nom</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="nom_deb"
+                    readonly
+                  />
+                </div>
+              </div>
+
+              <!-- Bloc 2 -->
+              <div class="row mt-3">
+                <div class="col-md-2">
+                  <label class="form-label">Matricule fin</label>
+                  <app-lov
+                    [listData]="personnelList"
+                    [columns]="columnsSearch"
+                    codeField="mat_pers"
+                    [selectedCode]="formAdherent.get('mat_pers2')?.value"
+                    (selectedValue)="onSelectedVMat2($event)"
+                  ></app-lov>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">N°CNRPS</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="num_retr_fin"
+                    readonly
+                  />
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label">Nom</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="nom_fin"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="row mt-3">
+              <div class="col-md-3">
+                <label class="form-label">Etat cotisation</label>
+                <select class="form-select" formControlName="etat_cotis">
+                  <option  value="I">En instance</option>
+                  <option  value="V">Valider</option>
+                </select>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Corps</label>
+                <select
+                  class="form-select border-success"
+                  formControlName="corps"
+                  
+                >
+                  <option value=""></option>
+                  <option
+                    *ngFor="let i of listCorps"
+                    [value]="i.cod_corps"
+                  >
+                    {{ i.lib_corps }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Etat agent</label>
+                <select class="form-select" formControlName="etat_act">
+                  <option  value="A">actif</option>
+                  <option  value="N">Non actif</option>
+                </select>
+              </div>
+
+              
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="lov-container">
+  <div class="row">
+    <!-- Champ Code qui prend 100% de la largeur du parent -->
+    <div class="form-group col-md-12">
+      <label for="code">Code</label>
+      <div class="input-group">
+        <input type="text" [(ngModel)]="selectedCode" class="form-control" id="code" placeholder="Code" >
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" (click)="openModal(content)">...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Champ Libellé qui prend 100% de la largeur du parent -->
+    <!-- <div class="form-group col-md-12">
+      <label for="libelle">Libellé</label>
+      <input type="text" [(ngModel)]="selectedLabel" class="form-control" id="libelle" placeholder="Libellé" readonly>
+    </div> -->
+  </div>
+
+  <!-- Modal content -->
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Liste des valeurs</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')">
+        <span>&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" [placeholder]="placeholder" class="form-control mb-2">
+
+      <!-- Affichage du tableau seulement après une recherche -->
+      <table class="table table-bordered" *ngIf="filteredData.length > 0">
+        <thead>
+          <tr>
+            <th *ngFor="let col of columns">{{ col.label }}</th> <!-- En-tête dynamique -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredData" (click)="selectItem(item); modal.close()">
+            <td *ngFor="let col of columns">{{ item[col.key] }}</td> <!-- Cellules dynamiques -->
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Message si aucune donnée n'est trouvée -->
+      <div *ngIf="filteredData.length === 0">
+        <p>Aucun résultat trouvé pour "{{ searchQuery }}"</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.close()">Fermer</button>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,13 @@
+<form [formGroup]="form">
+
+
+<app-lov 
+  [listData]="listValues" 
+  [columns]="columns" 
+  [codeField]="codeField" 
+  [labelField]="labelField" 
+  (selectedValue)="onSelectedValue($event)">
+</app-lov>
+<input type="text" class="form-control" id="code" placeholder="Code" formControlName="autre">
+<button type="submit" class="btn btn-success" (click)="submit()"> valider</button>
+</form>

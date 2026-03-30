@@ -1,0 +1,219 @@
+<div class="row" style="margin-top: 25px"> 
+  <app-breadcrumbs
+  title="Type département"
+  [breadcrumbItems]="breadCrumbItems"
+></app-breadcrumbs>
+
+     <br>
+<div class="row">
+ 
+
+    <div class="col-xl-10">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div class="col-md-12">
+          <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow mb-4">
+              <div class="card-header   text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Liste des Types départ</h5>
+                <button
+                  class="btn btn-light"
+                  data-bs-toggle="modal"
+                  data-bs-target="#showModal"
+                  (click)="openModalTab(content)"
+                >
+                  <i class="ri-add-fill me-1"></i> Ajouter Type départ
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive table-card">
+                  <p-table [value]="listTypDepart" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                    <ng-template pTemplate="header">
+                      <tr class="table-primary">
+                        <th *ngFor="let column of ['cod_typ_depart', 'lib_typ_depart','lib_typ_depart_a','etat_act']">
+                          <div class="d-flex align-items-center">
+                            <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
+                            <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                            <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                          </div>
+                        </th>
+                        <th class="text-center">Action</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                      <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }">
+                        <td class="text-center">{{ rowData.cod_typ_depart }}</td>
+                        <td class="text-center">{{ rowData.lib_typ_depart }}</td>
+                        <td class="text-center">{{ rowData.lib_typ_depart_a }}</td>
+                        <td class="text-center">{{ rowData.etat_act=='A'?'Actif':'Bloqué' }}</td>
+                        <td>
+                          <ul class="list-inline hstack gap-2 mb-0">
+                            <li class="list-inline-item">
+                              <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, rowData, content)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                            </li>
+                            <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
+                              <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                            </li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+   
+  
+      
+        <ng-template #content role="document" let-modal>
+          <div class="modal-header bg-info-subtle p-3">
+            <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} Affect.<p></p></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="close-modal"
+              (click)="modal.dismiss('Cross click')"
+            ></button>
+          </div>
+          <form [formGroup]="formTypDepart" class="tablelist-form" autocomplete="off">
+             
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-lg-2">
+                      <div>
+                        <label for="industry_type-field" class="form-label"
+                          >Code Type départ</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-warning"
+                           placeholder="Enter code "
+                          formControlName="cod_typ_depart"
+                        />
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-4">
+                      <div>
+                        <label for="industry_type-field" class="form-label"
+                          >Libelle Type départ</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-warning"
+                           placeholder="Enter Libelle"
+                          formControlName="lib_typ_depart"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div>
+                        <label for="industry_type-field" class="form-label"
+                          >Libelle en arabe</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-warning"
+                           placeholder="Enter Libelle en arabe"
+                          formControlName="lib_typ_depart_a"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <label for="country" class="form-label"
+                          >Etat</label
+                        >
+                        <select
+                          class="form-select border-success"
+                          data-plugin="choices"
+                          formControlName="etat_act"
+                        >
+                          <option value=""></option>
+                          <option value="A">Actif</option>
+                          <option value="B">Bloqué</option>
+ 
+                        </select>
+                      </div>
+ 
+                  </div>
+                </div>
+            
+            <div class="modal-footer">
+              <div class="hstack gap-2 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  data-bs-dismiss="modal"
+                  (click)="AddTypeDepart(); modal.close('Close click')"
+                >
+                  Valider
+                </button>
+              </div>
+              <br>
+              <div class="hstack gap-2 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  data-bs-dismiss="modal"
+                  (click)="modal.close('Close click')"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+ 
+      <!-- removeItemModal -->
+      <ng-template #deleteModel let-modal>
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="btn-close"
+              (click)="modal.dismiss('Cross click')"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mt-2 text-center">
+              <lord-icon
+                src="https://cdn.lordicon.com/gsqxdxog.json"
+                trigger="loop"
+                colors="primary:#f7b84b,secondary:#f06548"
+                style="width: 100px; height: 100px"
+              ></lord-icon>
+              <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                <h4>Êtes-vous sûr ?</h4>
+              <p class="text-muted mx-4 mb-0">
+                Êtes-vous sûr de vouloir supprimer cette affectation ?
+              </p>
+              </div>
+            </div>
+            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+              <button
+                type="button"
+                class="btn w-sm btn-light"
+                data-bs-dismiss="modal"
+                (click)="modal.close('Close click')"
+              >
+                Fermer
+              </button>
+              <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
+                Oui, Supprimer!
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </ng-template>
+    </div>

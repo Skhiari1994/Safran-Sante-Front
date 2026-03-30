@@ -1,0 +1,149 @@
+.montant-input {
+    text-align: right;
+    width: 100%; /* Optionnel pour s'assurer que l'input est bien dimensionné */
+  }
+
+
+  // Variables globales
+$primary-color: #4A90E2;
+$secondary-color: #6c757d;
+$danger-color: #dc3545;
+$success-color: #28a745;
+$light-gray: #f8f9fa;
+$dark-gray: #495057;
+
+// Styles globaux
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  color: $dark-gray;
+  margin-bottom: 20px;
+}
+
+// Table stylée
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+
+  th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+
+  thead {
+    background-color: $light-gray;
+    color: $dark-gray;
+    font-weight: bold;
+  }
+
+  tbody tr {
+    &:hover {
+      background-color: #f1f1f1;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+}
+
+// Boutons stylés
+.buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+
+  button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border: none;
+
+    &:nth-child(1) {
+      background: $primary-color;
+      color: white;
+
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
+
+    &:nth-child(2) {
+      background: $secondary-color;
+      color: white;
+
+      &:hover {
+        background: darken($secondary-color, 10%);
+      }
+    }
+
+    &:nth-child(3) {
+      background: $success-color;
+      color: white;
+
+      &:hover {
+        background: darken($success-color, 10%);
+      }
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Bouton supprimer
+button[type="button"] {
+  background: $danger-color;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  border: none;
+
+  &:hover {
+    background: darken($danger-color, 10%);
+  }
+}
+
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  min-width: 1500px; /* Ajuster selon le besoin */
+  table-layout: auto; /* Permet d'ajuster la largeur des colonnes automatiquement */
+}
+
+th, td {
+  white-space: nowrap; /* Empêche le texte de se couper */
+  text-align: center;
+}

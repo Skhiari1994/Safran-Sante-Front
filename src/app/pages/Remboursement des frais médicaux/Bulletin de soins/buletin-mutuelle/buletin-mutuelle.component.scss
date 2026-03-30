@@ -1,0 +1,228 @@
+/* FORCE table layout to be fixed - THIS IS CRITICAL */
+:host ::ng-deep .p-datatable-wrapper {
+  overflow-x: auto !important;
+}
+
+:host ::ng-deep .press-theme {
+  table-layout: fixed !important;
+}
+
+:host ::ng-deep .press-theme .p-datatable-tbody>tr>td {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* When in edit mode, allow wrapping but constrain width */
+:host ::ng-deep .press-theme .p-datatable-tbody>tr>td.p-cell-editing {
+  white-space: normal !important;
+  overflow: hidden !important;
+}
+
+/* CRITICAL FIX: Prevent table from expanding in edit mode */
+::ng-deep .press-theme .p-datatable-wrapper {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+}
+
+/* Force cells to maintain their width even in edit mode */
+::ng-deep .press-theme .p-datatable-tbody>tr>td {
+  max-width: inherit !important;
+  min-width: inherit !important;
+}
+
+/* Critical: Make all input elements respect cell width */
+::ng-deep .press-theme .p-datatable-tbody>tr>td input[type="text"],
+::ng-deep .press-theme .p-datatable-tbody>tr>td input[type="number"],
+::ng-deep .press-theme .p-datatable-tbody>tr>td .p-inputtext {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix LOV component width in cells */
+::ng-deep .press-theme app-lov {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+::ng-deep .press-theme app-lov input {
+  max-width: calc(100% - 35px) !important;
+  /* Account for search button */
+}
+
+::ng-deep .press-theme app-lov .form-group {
+  margin-bottom: 0 !important;
+  width: 100% !important;
+}
+
+::ng-deep .press-theme app-lov .input-group {
+  display: flex !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+::ng-deep .press-theme app-lov .input-group input {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+::ng-deep .press-theme app-lov .input-group-append {
+  margin-left: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Fix dropdown width */
+::ng-deep .press-theme .p-dropdown {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Remove any default margins/padding that cause expansion */
+::ng-deep .press-theme .p-cell-editor-input,
+::ng-deep .press-theme .p-cell-editor-output {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Fix for pEditableColumn cells */
+::ng-deep .press-theme td[peditablecolumn] {
+  padding: 0.25rem !important;
+}
+
+/* Ensure cell editors don't overflow */
+::ng-deep .press-theme .p-cell-editing {
+  overflow: hidden !important;
+  padding: 0.25rem !important;
+  vertical-align: middle !important;
+}
+
+/* Ensure dropdown panels position near trigger and above content */
+
+
+/* Fix LOV overlay positioning */
+::ng-deep .p-dialog,
+::ng-deep .p-overlaypanel {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+/* Specific column widths for better visibility */
+::ng-deep .press-theme th:nth-child(1),
+::ng-deep .press-theme td:nth-child(1) {
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+}
+
+::ng-deep .press-theme th:nth-child(2),
+::ng-deep .press-theme td:nth-child(2) {
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+}
+
+::ng-deep .press-theme th:nth-child(3),
+::ng-deep .press-theme td:nth-child(3) {
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+}
+
+::ng-deep .press-theme th:nth-child(4),
+::ng-deep .press-theme td:nth-child(4) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+::ng-deep .press-theme th:nth-child(5),
+::ng-deep .press-theme td:nth-child(5) {
+  width: 180px !important;
+  min-width: 180px !important;
+}
+
+::ng-deep .press-theme th:nth-child(6),
+::ng-deep .press-theme td:nth-child(6) {
+  width: 70px !important;
+  min-width: 70px !important;
+  max-width: 70px !important;
+}
+
+::ng-deep .press-theme th:nth-child(7),
+::ng-deep .press-theme td:nth-child(7) {
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+}
+
+::ng-deep .press-theme th:nth-child(8),
+::ng-deep .press-theme td:nth-child(8) {
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+}
+
+::ng-deep .press-theme th:nth-child(9),
+::ng-deep .press-theme td:nth-child(9) {
+  width: 70px !important;
+  min-width: 70px !important;
+  max-width: 70px !important;
+}
+
+::ng-deep .press-theme th:nth-child(10),
+::ng-deep .press-theme td:nth-child(10) {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+}
+
+::ng-deep .press-theme th:nth-child(11),
+::ng-deep .press-theme td:nth-child(11) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+::ng-deep .press-theme th:nth-child(12),
+::ng-deep .press-theme td:nth-child(12) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+::ng-deep .press-theme th:nth-child(13),
+::ng-deep .press-theme td:nth-child(13) {
+  width: 200px !important;
+  min-width: 200px !important;
+}
+
+::ng-deep .press-theme th:nth-child(14),
+::ng-deep .press-theme td:nth-child(14) {
+  width: 150px !important;
+  min-width: 150px !important;
+}
+
+::ng-deep .press-theme th:nth-child(15),
+::ng-deep .press-theme td:nth-child(15) {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+
+
+
+/* Ensure dropdown overlay doesn't interfere */
+
+
+/* Prevent row edit events from interfering with dropdown */
+::ng-deep .press-theme .p-datatable-tbody>tr>td.p-cell-editing {
+  pointer-events: auto !important;
+}
+
+::ng-deep .press-theme .p-dropdown {
+  pointer-events: auto !important;
+}

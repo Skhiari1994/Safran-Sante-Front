@@ -1,0 +1,57 @@
+<div class="col-md-12 d-flex justify-content-center">
+  <div style="width: 70%;"> <!-- Largeur du conteneur -->
+    <div class="collapse show" id="paymentmethodCollapse">
+      <div class="card p-4 border shadow-none mb-0 mt-4">
+        <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+          <div class="row">
+            <div class="col-md-12">
+              <!-- Bloc 1 -->
+              <div class="row">
+
+                <div class="col-md-2">
+                  <label class="form-label">Matricule début</label>
+                  <app-lov [listData]="personnelList" [columns]="columnsSearch" codeField="mat_pers"
+                    [selectedCode]="formAdherent.get('mat_pers')?.value"
+                    (selectedValue)="onSelectedVMat($event)"></app-lov>
+                </div>
+
+                <div class="col-md-5">
+                  <label class="form-label">Nom</label>
+                  <input type="text" class="form-control" formControlName="nom_deb" readonly />
+                </div>
+              </div>
+
+
+
+
+              <div class="row mt-3">
+                <div class="col-md-2">
+                  <label class="form-label">Type prêt</label>
+                  <app-lov [listData]="listTypPret" [columns]="columnTypPret" codeField="typ_pret"
+                    [selectedCode]="formAdherent.get('typ_pret')?.value"
+                    (selectedValue)="onSelectedTypPret($event)"></app-lov>
+                </div>
+
+                <div class="col-md-5">
+                  <label class="form-label">Libelle</label>
+                  <input type="text" class="form-control" formControlName="lib_pret" readonly />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Num prêt</label>
+                  <input type="text" class="form-control" formControlName="cod_pret" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Format</label>
+                  <select class="form-select" formControlName="format">
+                    <option value="PDF">PDF</option>
+                    <option value="Excel">Excel</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

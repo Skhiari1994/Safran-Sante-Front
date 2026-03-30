@@ -1,0 +1,112 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs title="Réglement des conventions" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <form [formGroup]="form" class="tablelist-form" autocomplete="off">
+            <div class="row mb-4">
+
+
+
+
+              <div class="col-sm-2 col-md-2">
+                <label for="dateBord" class="form-label">Mois</label>
+                <input type="text" id="dateBord" class="form-control border-primary" placeholder="mm/yyyy"
+                  formControlName="mois" appFormatMonthYear mask="00/0000" (change)="onChange()" />
+              </div>
+              <div class=" col-md-3">
+
+              </div>
+
+              <div class="col-md-2">
+                <label class="form-label">Corps</label>
+                <select class="form-select border-success" formControlName="corps" (change)="onChange()">
+                  <option value=""></option>
+                  <option *ngFor="let i of listCorps" [value]="i.cod_corps">{{i.lib_corps}}</option>
+
+                </select>
+              </div>
+
+
+
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive table-card">
+            <p-table [value]="listOffConv" [paginator]="true" [rows]="9"
+              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th
+                    *ngFor="let column of ['mat_pers','num_retr','nom','cod_off','cod_conv','num_tel','mnt_off','mod_p','etat_lig_off']"
+                    [pSortableColumn]="column">
+                    <div class="d-flex align-items-center">
+                      <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i
+                          class="ri-arrow-up-down-line ms-1"></i></span>
+                      <i class="ri-search-line text-muted ms-2"
+                        (click)="toggleFilter(column); $event.stopPropagation()"></i>
+                      <input *ngIf="showFilters[column]" (click)="$event.stopPropagation()" type="text"
+                        class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]"
+                        (input)="applyFilter()" placeholder="..." />
+                      <p-sortIcon [field]="column"></p-sortIcon>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }">
+                  <td>{{ rowData.mat_pers }}</td>
+                  <td>{{ rowData.num_retr }}</td>
+                  <td>{{ rowData.nom }}</td>
+                  <td>{{ rowData.cod_off }}</td>
+                  <td>{{ rowData.cod_conv }}</td>
+                  <td>{{ rowData.num_tel }}</td>
+                  <td>{{ rowData.mnt_off | number: '1.3-3' }}</td>
+                  <td>
+                    <select class="form-select border-success" [(ngModel)]="rowData.mod_p"
+                      (change)="changeModPay(rowData, rowData.mod_p)">
+                      <option value="E">Espèce</option>
+                      <option value="V">Virement</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-select border-success" [(ngModel)]="rowData.etat_lig_off"
+                      (ngModelChange)="onValid(rowData, $event)">
+                      <option value="I">En instance</option>
+                      <option value="V">Valider</option>
+                    </select>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td>
+                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+
+          <div *ngIf="listOffConv.length > 0" class="d-flex justify-content-between mt-3">
+            <span>{{ listOffConv.length }} ligne(s) trouvée(s) sur {{ getTotalPages() }} page(s)</span>
+
+
+            <div class="d-flex justify-content-end mt-3">
+              <pagination-controls (pageChange)="pSusp = $event"></pagination-controls>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

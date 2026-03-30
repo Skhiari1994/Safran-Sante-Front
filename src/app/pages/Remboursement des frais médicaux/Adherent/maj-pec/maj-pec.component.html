@@ -1,0 +1,292 @@
+<div class="d-flex justify-content-center mt-4">
+    <div class="col-md-10">
+        <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none">
+                <!-- Search Form -->
+                <form action="javascript:void(0);" class="row g-3" [formGroup]="formPersonnel">
+                    <div class="row">
+                        <!-- First Column -->
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label">Matricule</label>
+
+                                    <input type="text" class="form-control border-primary" formControlName="mat_pers"
+                                        readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Nom</label>
+                                    <input type="text" class="form-control border-primary" formControlName="nom_pers"
+                                        readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Prénom</label>
+                                    <input type="text" class="form-control border-primary" formControlName="pren_pers"
+                                        readonly />
+                                </div>
+
+                                <div class="col-md-1"></div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label">Etat</label>
+                                    <select class="form-select border-success" formControlName="etat_act">
+                                        <option value="A">ACTIF</option>
+                                        <option value="B">Bloqué(e)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Date emb</label>
+                                    <input type="text" class="form-control border-primary" formControlName="dat_emb"
+                                        readonly mask="00/00/0000" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="country" class="form-label">Situation sociale</label>
+                                    <select class="form-select border-success" data-plugin="choices"
+                                        formControlName="cod_sit">
+                                        <option value="">Select situation...</option>
+                                        <option value="C">Célibataire</option>
+                                        <option value="M">Marié(e)</option>
+                                        <option value="D">Divorcé(e)</option>
+                                        <option value="V">Voeuf(ve)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label">Nbre Enf</label>
+                                    <input type="text" class="form-control border-primary" formControlName="nbr_enf"
+                                        readonly />
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label">Assurance</label>
+                                    <input type="text" class="form-control border-primary" formControlName="cod_assur"
+                                        readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Libelle</label>
+                                    <input type="text" class="form-control border-primary" [value]="libAssur"
+                                        readonly />
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Num assurance</label>
+                                    <input type="text" class="form-control border-primary" formControlName="num_assur"
+                                        placeholder="Num assurance" readonly />
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label">Date assur</label>
+                                    <input type="text" class="form-control border-warning" placeholder="Date assur"
+                                        formControlName="dat_ass" readonly />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <div class="card p-4 border shadow mb-4">
+        <div class="card-header   text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Liste des Doss APCI</h5>
+            <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#showModal"
+                (click)="openModalTab(content1)">
+                <i class="ri-add-fill me-1"></i> Ajouter Doss APCI
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table-card">
+                <p-table [value]="listPriseCharge" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th *ngFor="let column of ['num_pec','dat_pec','num_fam','nom','typ_etablis','prf_cod','nomEtab','dat_eff','etat_pec']" [pSortableColumn]="column">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <span (click)="onSort2(column)">{{ columnTitles2[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
+                                </div>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                        <tr>
+                            <td>{{ rowData.num_pec }}</td>
+                            <td>{{ rowData.dat_pec }}</td>
+                            <td>{{ rowData.num_fam }}</td>
+                            <td>{{ rowData.nom }}</td>
+                            <td>{{ rowData.prf_typ == 1 ? 'Personne phy' : 'Etablissement' }}</td>
+                            <td>{{ rowData.prf_cod }}</td>
+                            <td>{{ rowData.nomEtab }}</td>
+                            <td>{{ rowData.dat_eff }}</td>
+                            <td>{{ rowData.etat_pec == 'I' ? 'En Instance' : rowData.etat_dos_mld == 'V' ? 'Validée' : 'Refusée' }}</td>
+                            <td>
+                                <ul class="list-inline hstack gap-2 mb-0">
+                                    <li class="list-inline-item">
+                                        <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, rowData, content1)">
+                                            <i class="ri-pencil-fill align-bottom text-muted"></i>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
+                                        <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
+                                            <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="10">
+                                <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+<!-- Section Recherche -->
+<div *ngIf="isSearch" class="d-flex justify-content-center">
+    <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
+    </app-search-lov>
+</div>
+
+
+<ng-template #content1 role="document" let-modal>
+    <div class="modal-header bg-info-subtle p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Ajouter Doss APCI</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <form [formGroup]="formPriseCharge" class="tablelist-form" autocomplete="off">
+        <div formArrayName="charge" class="scrollable-container">
+            <div *ngFor="let certif of charge.controls; let i = index" [formGroupName]="i" class="row g-3">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-lg-2">
+                            <label class="form-label">Num pec</label>
+                            <input type="text" class="form-control border-info" placeholder="Num pec"
+                                formControlName="num_pec" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Date pec</label>
+                            <input type="text" class="form-control border-warning" mask="00/00/0000"
+                                formControlName="dat_pec" placeholder="dd/mm/yyyy" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label">Code</label>
+                            <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam"
+                                [selectedCode]="certif.get('num_fam')?.value"
+                                (selectedValue)="onSelectedValueFamille($event, i)">
+                            </app-lov>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <label class="form-label">Nom</label>
+                            <input type="text" class="form-control border-warning" placeholder="Nom"
+                                [value]="nom?.[i] || ''" readonly />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Type établis</label>
+                            <select class="form-select border-success" data-plugin="choices" formControlName="prf_typ"
+                                (change)="OnselectRefTyp($event)">
+                                <option value="1">Personne Physique</option>
+                                <option value="2">Etablissement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Code</label>
+                            <app-lov [listData]="listRefEtablis" [columns]="columnRefEtablis" codeField="prf_cod"
+                                [selectedCode]="certif.get('prf_cod')?.value"
+                                (selectedValue)="onSelectedEtablis($event, i)"></app-lov>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <label class="form-label">Libelle</label>
+                            <input class="form-control border-warning" type="text" [value]="etab_rsoc?.[i] || ''"
+                                readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Mnt pec</label>
+                            <input type="text" class="form-control border-info montant-input" appMontantMask
+                                formControlName="mnt_pec" placeholder="mnt pec" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Date effet</label>
+                            <input type="text" class="form-control border-warning" mask="00/00/0000"
+                                formControlName="dat_eff" placeholder="dd/mm/yyyy" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Etat</label>
+                            <select class="form-select border-success" formControlName="etat_pec">
+                                <option value="I">En instance</option>
+                                <option value="V">Validée</option>
+                                <option value="R">Refusée</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!-- Boutons d'ajout/suppression -->
+                <div class="hstack gap-2 justify-content-center" *ngIf="edit">
+                    <button type="button" class="btn btn-success" (click)="addDoss()">Ajouter Doss APCI</button>
+                    <button type="button" class="btn btn-info" (click)="removeDoss(i)">Annuler</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer modal -->
+        <div class="modal-footer">
+            <div class="hstack gap-2 justify-content-end">
+                <button type="button" class="btn btn-success" (click)="saveDossAPCI(); modal.close('Close click')">
+                    Valider
+                </button>
+                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </form>
+
+</ng-template>
+
+<ng-template #deleteModel let-modal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+                (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mt-2 text-center">
+                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                    colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                    <h4>Êtes-vous sûr ?</h4>
+                    <p class="text-muted mx-4 mb-0">
+                        Êtes-vous sûr de vouloir supprimer ce dossier ?
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal"
+                    (click)="modal.close('Close click')">
+                    Fermer
+                </button>
+                <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()"
+                    (click)="modal.close('Close click')">
+                    Oui, Supprimer!
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</ng-template>

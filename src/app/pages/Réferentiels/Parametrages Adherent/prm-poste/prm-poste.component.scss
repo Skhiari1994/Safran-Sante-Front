@@ -1,0 +1,26 @@
+.selected-row {
+    background-color: #3f9cca; /* Couleur d'arrière-plan */
+    font-weight: bold; /* Texte en gras pour accentuer */
+    cursor: pointer; /* Curseur pour montrer que c'est interactif */
+  }
+  .table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .table-active {
+    background-color: #f8f9fa !important;
+  }
+  
+  .card {
+    border-radius: 8px;
+  }
+  
+  .add-btn {
+    font-weight: bold;
+  }
+  
+  .btn-group .btn {
+    padding: 0.375rem 0.75rem;
+  }
+  

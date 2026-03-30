@@ -1,0 +1,123 @@
+<div class="container-fluid">
+    <!-- Header Form -->
+    <div class="card p-3 border shadow-none mb-4 mt-2">
+        <form [formGroup]="importForm" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Date de demande</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                    <input type="text" class="form-control border-primary" formControlName="dat_dem_don" mwlFlatpickr
+                        [altInput]="true" [altFormat]="'d/m/Y'" [dateFormat]="'d/m/Y'">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Date de déblocage</label>
+                <div class="input-group">
+                    <span class="input-group-text text-success"><i class="ri-calendar-check-line"></i></span>
+                    <input type="text" class="form-control border-success" formControlName="dat_deblocage" mwlFlatpickr
+                        [altInput]="true" [altFormat]="'d/m/Y'" [dateFormat]="'d/m/Y'">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Montant Par défaut</label>
+                <input type="number" class="form-control border-info" formControlName="mnt_dem_don">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Mode de paiement</label>
+                <select class="form-select border-warning" formControlName="mode_payement">
+                    <option value="V">Virement</option>
+                    <option value="E">Espèce</option>
+                    <option value="C">Chèque</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-outline-primary w-100" (click)="fileInput.click()">
+                    <i class="ri-upload-2-line me-1"></i> Importer Excel
+                </button>
+                <input #fileInput type="file" (change)="onFileSelected($event)" accept=".xlsx, .xls"
+                    style="display:none">
+            </div>
+        </form>
+    </div>
+
+    <!-- Valid Records Preview Table -->
+    <div class="card p-3 border shadow-none" *ngIf="importedData.length > 0">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 text-primary">Aperçu de l'importation</h5>
+            <button class="btn btn-success px-4" (click)="saveAll()">
+                <i class="ri-save-line me-1"></i> Enregistrer Tout
+            </button>
+        </div>
+
+        <p-table [value]="importedData" [paginator]="true" [rows]="10"
+            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="mat_pers">Matricule <p-sortIcon field="mat_pers"></p-sortIcon></th>
+                    <th>Nom & Prénom</th>
+                    <th>Direction</th>
+                    <th>Corps</th>
+                    <th class="text-center">Statut</th>
+                    <th class="text-end">Montant</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td><span class="fw-medium">{{row.mat_pers}}</span></td>
+                    <td>{{ row.nom_pers }}</td>
+                    <td>{{ row.lib_lieu }}</td>
+                    <td>{{ row.lib_corps }}</td>
+                    <td class="text-center">
+                        <span class="badge"
+                            [ngClass]="row.isValid ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                            <i [ngClass]="row.isValid ? 'ri-checkbox-circle-line' : 'ri-error-warning-line'"
+                                class="me-1"></i>
+                            {{row.isValid ? 'Valide' : 'Invalide'}}
+                        </span>
+                    </td>
+                    <td class="text-end fw-bold">{{ row.mnt_dem_don | number:'1.3-3' }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td colspan="5" class="text-end fw-bold">Total Général:</td>
+                    <td class="text-end fw-bold text-primary">{{ getTotalAmount() | number:'1.3-3' }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="text-center">Aucun matricule trouvé dans le fichier</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <!-- Invalid Matricules Table -->
+    <div class="card p-3 border shadow-none mt-4" *ngIf="invalidMatricules.length > 0">
+        <div class="d-flex align-items-center mb-3">
+            <i class="ri-error-warning-fill text-danger fs-3 me-2"></i>
+            <h5 class="mb-0 text-danger">Matricules inexistants dans le système</h5>
+        </div>
+        <div class="table-responsive">
+            <p-table [value]="invalidMatricules" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 200px;">Matricule</th>
+                        <th>Observations</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr class="table-danger">
+                        <td><span class="fw-bold text-danger">{{row.mat_pers}}</span></td>
+                        <td><span class="text-danger">Ce matricule ne figure pas dans la liste du personnel de la
+                                société.</span></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

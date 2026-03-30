@@ -1,0 +1,125 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+    <app-breadcrumbs title="Règlement manuel des crédits"
+        [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<div class="col-md-12">
+    <div class="collapse show" id="paymentmethodCollapse">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+            <!-- Search Form -->
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="formSearch">
+                <div class="row">
+                    <!-- First Column -->
+                    <div class="col-md-12">
+                        <div class="row">
+                            <!-- Month Input -->
+                            <div class="col-md-2">
+                                <label for="billinginfo-firstName" class="form-label">Mois prêt</label>
+                                <input type="text" class="form-control border-primary montant-input" placeholder="Mois prêt" appFormatMonthYear mask="00/0000" formControlName="mois" />
+                            </div>
+
+                            <!-- Filter Dropdown -->
+                            <div class="col-md-2">
+                                <label for="country" class="form-label">Filtrer</label>
+                                <select class="form-select border-success" data-plugin="choices" formControlName="filtrer">
+                                    <option value="G">Global</option>
+                                    <option value="D">Par Date</option>
+                                </select>
+                            </div>
+
+                            <!-- Corps Dropdown -->
+                            <div class="col-md-2">
+                                <label for="country" class="form-label">Corps</label>
+                                <select class="form-select border-success" data-plugin="choices" (change)="onSelectedLigPretCorps($event)" formControlName="corps">
+                                    <option value="">Select corps...</option>
+                                    <option value="C">Cadre commun</option>
+                                    <option value="S">Sécurité</option>
+                                    <option value="M">Mediateur administratif</option>
+                                    <option value="H">HCCAF</option>
+                                    <option value="I">ITES</option>
+                                    <option value="P">Minéstère d'intérieur</option>
+                                    <option value="D">Divers</option>
+                                </select>
+                            </div>
+
+                            <!-- Group Loan Dropdown -->
+                            <div class="col-md-1">
+                                <label for="billinginfo-phone" class="form-label">Grp prêt</label>
+                                <app-lov [listData]="listDetailPret" [columns]="columnsDetailPret" codeField="codGrpPret" [selectedCode]="grpPret" (selectedValue)="onSelectedDetailPret($event)"></app-lov>
+                            </div>
+
+                            <!-- Libelle Input -->
+                            <div class="col-md-3">
+                                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                                <input type="text" class="form-control border-primary montant-input" placeholder="Libelle" [value]="libPret" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br>
+<hr>
+
+<!-- Table Section -->
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-card">
+              <p-table [value]="listLigReg" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="bg-light">
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.matPers" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.numRetr" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.nom" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.type" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.codPret" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.lpret" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mntPeriod" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mntInt" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.capRest" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                    <th><input type="text" class="form-control form-control-sm" (input)="applyFilter()" placeholder="Rechercher..." /></th>
+                  </tr>
+                  <tr class="table-primary">
+                    <th (click)="onSort('matPers')">Matricule</th>
+                    <th (click)="onSort('numRetr')">CNRPS</th>
+                    <th (click)="onSort('nom')">Nom & prénom</th>
+                    <th (click)="onSort('type')">Type</th>
+                    <th (click)="onSort('codPret')">N°</th>
+                    <th (click)="onSort('lpret')">Lpret</th>
+                    <th (click)="onSort('mntPeriod')">Mnt</th>
+                    <th (click)="onSort('mntInt')">Int</th>
+                    <th (click)="onSort('mntInt')">Mnt ech</th>
+                    <th (click)="onSort('capRest')">Cap Rest</th>
+                    <th (click)="onSort('regPret')">Reg</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                    <td>{{ rowData.matPers }}</td>
+                    <td>{{ rowData.numRetr }}</td>
+                    <td>{{ rowData.nom }}</td>
+                    <td>{{ rowData.type }}</td>
+                    <td>{{ rowData.codPret }}</td>
+                    <td>{{ rowData.lpret }}</td>
+                    <td>{{ rowData.mntPeriod | number:'1.3-3' }}</td>
+                    <td>{{ rowData.mntInt | number:'1.3-3' }}</td>
+                    <td>{{ rowData.mntPeriod + rowData.mntInt | number:'1.3-3' }}</td>
+                    <td style="color: chocolate;">{{ rowData.capRest | number:'1.3-3' }}</td>
+                    <td>
+                      <select [(ngModel)]="rowData.regPret" (change)="onValidChange(rowData, rowData.regPret)" class="form-select">
+                        <option value="N">Non</option>
+                        <option value="O">Oui</option>
+                      </select>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+        </div>
+    </div>
+</div>

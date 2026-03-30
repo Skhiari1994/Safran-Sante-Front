@@ -1,0 +1,168 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Préparation commission crédits" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    <div class="row">
+      <!-- First Card -->
+
+
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow-none mb-0 mt-4">
+
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="commissionForm">
+
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Num comm</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer num comm"
+                  formControlName="num_comm" readonly />
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Réf comm</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer ref comm"
+                  formControlName="ref_comm" />
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Date début</label>
+                <input type="text" class="form-control border-warning" mask="00/00/0000"
+                  placeholder="Entrer la date début" formControlName="dat_deb_comm" appDateFormatter />
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Date fin</label>
+                <input type="text" class="form-control border-warning" mask="00/00/0000"
+                  placeholder="Entrer la date fin" formControlName="dat_fin_comm" appDateFormatter />
+              </div>
+
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Date commission</label>
+                <input type="text" class="form-control border-warning" mask="00/00/0000"
+                  placeholder="Entrer la date comm" formControlName="dat_comm" appDateFormatter />
+              </div>
+
+
+
+
+              <div class="col-md-3">
+                <label for="country" class="form-label">Etat commission</label>
+                <select class="form-select border-success" data-plugin="choices" formControlName="cod_etat_pret">
+                  <option value=""></option>
+                  <option value="P">Préparer</option>
+                  <option value="V">Validée</option>
+                  <option value="C">CLOTURE</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="country" class="form-label">Observation</label>
+                <textarea type="text" class="form-control border-warning" placeholder="Enter obs"
+                  formControlName="observ"></textarea>
+              </div>
+
+              <div class="   text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"> </h5>
+                <button class="btn btn-secondary" (click)="preparCommission()">
+                  <i class="ri-add-fill me-1"></i> Charger
+                </button>
+              </div>
+
+              <div class="d-flex justify-content-center mt-3">
+                <!-- First Button -->
+                <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="goToFirst()">
+                  <i class="bx bx-first-page"></i>
+                </button>
+                &nbsp;&nbsp;
+
+                <!-- Previous Button -->
+                <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="navigate(-1)"><i
+                    class="bx bx-skip-previous"></i></button>
+                &nbsp;&nbsp;
+
+                <!-- Next Button -->
+                <button [disabled]="currentIndex === listCommission.length - 1" (click)="navigate(1)"
+                  class="btn btn-primary"><i class="bx bx-skip-next"></i></button>
+                &nbsp;&nbsp;
+
+                <!-- Last Button -->
+                <button class="btn btn-primary" [disabled]="currentIndex ===listCommission.length - 1"
+                  (click)="goToLast()">
+                  <i class="bx bx-last-page"></i>
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow-none mb-4 mt-4">
+
+            <div class="card-body">
+              <div class="table-responsive table-card mb-2">
+                <table class="table table-striped table-hover table-bordered align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="text-center sort" (click)="onSort('mat_pers')">Matricule</th>
+                      <th class="text-center sort" (click)="onSort('nomPren')">Nom & prénom</th>
+
+                      <th class="text-center sort" (click)="onSort('numDemPret')">Num comm</th>
+                      <th class="text-center sort" (click)="onSort('dat_dem_pret')">Date dem prêt</th>
+                      <th class="text-center sort" (click)="onSort('codGrpPret')">Type prêt</th>
+                      <th class="text-center sort" (click)="onSort('typPret')">Date dem prêt</th>
+
+                      <th class="text-center sort" (click)="onSort('libPret')">Lib prêt</th>
+                      <th class="text-center sort" (click)="onSort('mntDem')">Mnt dem</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let data of detailCommissionForm | paginate: { itemsPerPage: 10, currentPage: p }; let i = index"
+                      [ngClass]="{ 'table-active': selectedRow === i }">
+                      <td class="text-center">{{ data.matPers }}</td>
+                      <td class="text-center">{{ data.nomPren }}</td>
+
+                      <td class="text-center">{{ data.numDemPret }}</td>
+                      <td class="text-center">{{ data.dat_dem_pret }}</td>
+                      <td class="text-center">{{ data.codGrpPret }}</td>
+                      <td class="text-center">{{ data.typPret }}</td>
+                      <td class="text-center">{{ data.libPret }}</td>
+                      <td class="text-center">{{ data.mntDem }}</td>
+
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <pagination-controls (pageChange)="onPageChangeForGouv($event)"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Second Card -->
+    </div>
+    <!-- <div class="d-flex justify-content-center mt-3">
+        <button (click)="previousParent()"      [disabled]="currentIndex === 0" class="btn btn-primary"><i class="bx bx-skip-previous" style=" font-size: small;"></i></button>
+        &nbsp;&nbsp;
+        <button (click)="nextParent()" [disabled]="currentIndex === listCommission.length - 1" class="btn btn-primary"><i class="bx bx-skip-next" style=" font-size: x-small;"></i></button>
+      </div> -->
+
+  </div>
+
+
+
+
+  <!-- end row -->
+  <div *ngIf="isSearch">
+    <app-search-lov [listData]="listCommission" [columns]="columnsCommission" (selectedValue)="search($event)">
+    </app-search-lov>
+  </div>
+  <!-- editItemModal -->
+
+
+
+</div>

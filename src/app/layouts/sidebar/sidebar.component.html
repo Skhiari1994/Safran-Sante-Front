@@ -1,0 +1,133 @@
+<!-- ========== App Menu ========== -->
+<div class="app-menu navbar-menu">
+  <!-- LOGO -->
+  <div class="navbar-brand-box">
+    <br><bR>
+    <!-- Dark Logo-->
+    <a routerLink="/" class="logo logo-dark">
+      <span class="logo-sm">
+        <img src="assets/images/Mutuelle presidence_after-01.png" alt="" style="height: auto; width: 80%; max-width: 150px; object-fit: contain;">
+      </span>
+      <span class="logo-lg">
+        <img src="assets/images/Mutuelle presidence_after-01.png" alt="" style="height: auto; width: 80%; max-width: 150px; object-fit: contain;">
+      </span>
+    </a>
+    <!-- Light Logo-->
+    <a routerLink="/" class="logo logo-light">
+      <span class="logo-sm">
+        <img src="assets/images/Mutuelle presidence_after-01.png" alt="" style="height: auto; width: 80%; max-width: 150px; object-fit: contain;">
+      </span>
+      <span class="logo-lg">
+        <img src="assets/images/Mutuelle presidence_after-01.png" alt="" style="height: auto; width: 80%; max-width: 150px; object-fit: contain;">
+      </span>
+    </a>
+    <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+      <i class="ri-record-circle-line"></i>
+    </button>
+  </div>
+<br><br>
+  <div id="scrollbar">
+    <div class="container-fluid">
+      <div id="two-column-menu">
+      </div>
+      <ngx-simplebar class="sidebar-menu-scroll" style="max-height: calc(100vh - 70px)">
+        <ul class="metismenu list-unstyled navbar-nav" id="navbar-nav">
+          <!-- Iterate through menu items -->
+          @for (item of menuItems; track $index) {
+            <li class="nav-item">
+              <!-- Check if item has sub-items -->
+              @if (hasItems(item)) {
+                <a href="javascript:void(0);" class="is-parent nav-link menu-link" data-bs-toggle="collapse" [attr.aria-expanded]="!item.collapsed" (click)="toggleItem(item)">
+                  <i class="{{ item.icon }} icon nav-icon"></i>
+                  <span>{{ item.label | translate }}</span>
+                </a>
+      
+                <!-- Collapsible sub-menu -->
+                <div class="collapse menu-dropdown" #collapse="ngbCollapse" [(ngbCollapse)]="item.collapsed">
+                  <ul class="nav nav-sm flex-column" aria-expanded="false">
+                    @for (subitem of item.subItems; track $index) {
+                      <li class="nav-item">
+                        @if (hasItems(subitem)) {
+                          <a class="nav-link" href="javascript:void(0);" [attr.data-parent]="subitem.parentId" data-bs-toggle="collapse" [attr.aria-expanded]="!subitem.collapsed" (click)="toggleItem(subitem)">
+                            {{ subitem.label | translate }}
+                          </a>
+      
+                          <!-- Collapsible sub-sub-menu -->
+                          <div class="collapse menu-dropdown sub-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subitem.collapsed">
+                            <ul class="nav nav-sm flex-column" aria-expanded="false">
+                              @for (subSubitem of subitem.subItems; track $index) {
+                                <li class="nav-item">
+                                  @if (hasItems(subSubitem)) {
+                                    <a class="nav-link" href="javascript:void(0);" [attr.data-parent]="subSubitem.parentId" data-bs-toggle="collapse" [attr.aria-expanded]="!subSubitem.collapsed" (click)="toggleItem(subSubitem)">
+                                      {{ subSubitem.label | translate }}
+                                    </a>
+      
+                                    <!-- Collapsible sub-sub-sub-menu -->
+                                    <div class="collapse menu-dropdown extra-sub-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subSubitem.collapsed">
+                                      <ul class="nav nav-sm flex-column" aria-expanded="false">
+                                        @for (subSubitem1 of subSubitem.subItems; track $index) {
+                                          <li class="nav-item">
+                                            @if (hasItems(subSubitem1)) {
+                                              <a class="nav-link" href="javascript:void(0);" [attr.data-parent]="subSubitem1.parentId" data-bs-toggle="collapse" [attr.aria-expanded]="!subSubitem1.collapsed" (click)="toggleItem(subSubitem1)">
+                                                {{ subSubitem1.label | translate }}
+                                              </a>
+      
+                                              <!-- Collapsible 4th level menu -->
+                                              <div class="collapse menu-dropdown fourth-level-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subSubitem1.collapsed">
+                                                <ul class="nav nav-sm flex-column" aria-expanded="false">
+                                                  @for (fourthLevelItem of subSubitem1.subItems; track $index) {
+                                                    <li class="nav-item">
+                                                      <a [routerLink]="fourthLevelItem.link" class="nav-link" [attr.data-parent]="fourthLevelItem.parentId" (click)="updateActive($event)">
+                                                        {{ fourthLevelItem.label | translate }}
+                                                      </a>
+                                                    </li>
+                                                  }
+                                                </ul>
+                                              </div>
+                                            } @else {
+                                              <a [routerLink]="subSubitem1.link" class="nav-link" [attr.data-parent]="subSubitem1.parentId" (click)="updateActive($event)">
+                                                {{ subSubitem1.label | translate }}
+                                              </a>
+                                            }
+                                          </li>
+                                        }
+                                      </ul>
+                                    </div>
+                                  } @else {
+                                    <a [routerLink]="subSubitem.link" class="nav-link" [attr.data-parent]="subSubitem.parentId" (click)="updateActive($event)">
+                                      {{ subSubitem.label | translate }}
+                                    </a>
+                                  }
+                                </li>
+                              }
+                            </ul>
+                          </div>
+                        } @else {
+                          <a [routerLink]="subitem.link" class="nav-link" [attr.data-parent]="subitem.parentId" (click)="updateActive($event)">
+                            {{ subitem.label | translate }}
+                          </a>
+                        }
+                      </li>
+                    }
+                  </ul>
+                </div>
+              } @else {
+                <a [routerLink]="item.link" routerLinkActive="active" class="side-nav-link-ref nav-link menu-link">
+                  @if (item.icon) { <i class="bx {{ item.icon }} icon nav-icon"></i> }
+                  <span>{{ item.label | translate }}</span>
+                </a>
+              }
+            </li>
+          }
+        </ul>
+      </ngx-simplebar>
+      
+    </div>
+    <!-- Sidebar -->
+  </div>
+  <div class="sidebar-background"></div>
+</div>
+<!-- Left Sidebar End -->
+
+<!-- Vertical Overlay-->
+<div class="vertical-overlay" (click)="SidebarHide()"></div>

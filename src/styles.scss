@@ -1,0 +1,476 @@
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+// Swiper
+
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+
+/* Modern Table Styles */
+.modern-table .p-datatable {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  width: 100%;
+  table-layout: auto;
+}
+
+.modern-table .p-datatable-wrapper {
+  overflow-x: auto !important;
+}
+
+.modern-table .p-datatable table {
+  min-width: 100%;
+}
+
+.modern-table .p-datatable-thead>tr>th {
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 0;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 1rem 1rem;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+.modern-table .p-datatable-tbody>tr>td {
+  border: 0;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.875rem 1rem;
+  vertical-align: middle;
+  color: #475569;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+.modern-table .p-datatable-tbody>tr {
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.modern-table .p-datatable-tbody>tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+.modern-table .p-datatable-tbody>tr:hover {
+  background: #f0f7ff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+}
+
+.modern-table .p-datatable-tbody>tr:last-child>td {
+  border-bottom: 0;
+}
+
+.modern-table .p-datatable-tfoot>tr>td {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
+  border: 0;
+  border-top: 2px solid #e2e8f0;
+  padding: 1rem 1rem;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+.modern-table .p-paginator {
+  border: 0;
+  background: #fafbfc;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e2e8f0;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+.modern-table .p-paginator .p-paginator-current {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.modern-table .p-paginator .p-paginator-page,
+.modern-table .p-paginator .p-paginator-first,
+.modern-table .p-paginator .p-paginator-prev,
+.modern-table .p-paginator .p-paginator-next,
+.modern-table .p-paginator .p-paginator-last {
+  border-radius: 6px;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  margin: 0 0.125rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  font-weight: 500;
+}
+
+.modern-table .p-paginator .p-paginator-page:not(.p-highlight):hover,
+.modern-table .p-paginator .p-paginator-first:not(.p-disabled):hover,
+.modern-table .p-paginator .p-paginator-prev:not(.p-disabled):hover,
+.modern-table .p-paginator .p-paginator-next:not(.p-disabled):hover,
+.modern-table .p-paginator .p-paginator-last:not(.p-disabled):hover {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+.modern-table .p-paginator .p-paginator-page.p-highlight {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.modern-table .p-sortable-column .p-sortable-column-icon {
+  margin-left: 0.5rem;
+  color: #94a3b8;
+}
+
+.modern-table .p-sortable-column:hover .p-sortable-column-icon {
+  color: #3b82f6;
+}
+
+.modern-table .p-sortable-column:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.modern-table .p-datatable-emptymessage>td {
+  text-align: center;
+  padding: 2rem;
+}
+
+.modern-table .p-datatable-tbody>tr>td span[style*="text-align:right"] {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.table-card {
+  overflow-x: auto;
+}
+
+.coverflowslide .slide {
+  position: relative;
+  transition: transform 0.3s;
+}
+
+.coverflowslide .slick-list {
+  overflow: hidden !important;
+}
+
+.coverflowslide .slick-center {
+  transform: scale(1.2); // Adjust the scale factor for the "Coverflow" effect
+  z-index: 1;
+}
+
+.btn-danger {
+  visibility: visible !important;
+  display: inline-block !important;
+}
+
+td button {
+  visibility: visible !important;
+}
+
+.coverflowslide .carousel {
+  width: 100%;
+  max-width: 600px; // Adjust the carousel width as needed
+  margin: 0 auto;
+}
+
+.space .slick-slide {
+  margin: 10px;
+}
+
+#notificationItemsTabContent {
+  .avatar-title {
+    height: 30px !important;
+    width: 30px !important;
+  }
+}
+
+[data-bs-theme="dark"] {
+  .fc {
+    .fc-multimonth-daygrid {
+      background: #212529 !important;
+
+    }
+
+    .fc-day-disabled {
+      background: #282b2e !important;
+    }
+
+    .fc-multimonth {
+      border-color: #32383e !important;
+    }
+  }
+}
+
+
+#landingnft {
+  .slick-dots {
+    bottom: -36px;
+    z-index: 1;
+
+    .slick-active {
+      button {
+        background-color: #3577f1 !important;
+      }
+    }
+  }
+
+  .slick-dots li {
+    height: 7px !important;
+  }
+
+  .slick-dots li button {
+    width: 22px !important;
+    height: 5px !important;
+    border: none;
+    background-color: rgba(109, 98, 253, .2) !important;
+    padding: 0px;
+    margin: 0px;
+    transition: all .3s;
+    border-radius: 50px;
+
+    &::before {
+      display: none;
+    }
+  }
+
+}
+
+$datepicker-bg-color: #ffffff;
+$datepicker-text-color: rgb(221, 19, 36);
+$datepicker-border-color: rgb(70, 41, 201);
+$datepicker-focus-bg-color: #bfe2fff8;
+$datepicker-focus-border-color: #aaa;
+
+#myDateField {
+  background-color: $datepicker-bg-color;
+  color: $datepicker-text-color;
+  border-color: $datepicker-border-color;
+  padding: 2px 2px; // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+
+  height: 30px;
+
+
+}
+
+#input {
+  background-color: #deeffd;
+  color: rgb(12, 13, 24);
+  border-color: $datepicker-border-color;
+  padding: 10px 14px; // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  /*   width: 100%; */
+  height: 30px;
+
+  &:focus {
+    background-color: $datepicker-focus-bg-color;
+    border-color: $datepicker-focus-border-color;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+}
+
+#display-input {
+  background-color: #dfe4e9;
+  color: rgb(12, 13, 24);
+  border-color: $datepicker-border-color;
+  padding: 10px 14px; // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  /*   width: 100%; */
+  height: 30px;
+
+  &:focus {
+    background-color: $datepicker-focus-bg-color;
+    border-color: $datepicker-focus-border-color;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+}
+
+#code {
+  background-color: #f3ecee;
+  color: rgb(32, 10, 224);
+  ;
+  border-color: $datepicker-border-color;
+  padding: 10px 14px; // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+
+  height: 30px;
+
+  &:focus {
+    background-color: $datepicker-focus-bg-color;
+    border-color: $datepicker-focus-border-color;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+}
+
+#heure {
+  background-color: #deeffd;
+  color: rgb(38, 45, 136);
+  ;
+  border-color: $datepicker-border-color;
+  padding: 10px 14px; // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  width: 4rem;
+  height: 30px;
+
+  &:focus {
+    background-color: $datepicker-focus-bg-color;
+    border-color: $datepicker-focus-border-color;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+}
+
+#select {
+
+  background-color: #f1f1f1;
+  color: #000000;
+  border-color: $datepicker-border-color;
+  padding: 5px 7px; // Ajustez les valeurs selon votre préférence
+  font-size: 12px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  /* width: 80%; */
+  height: 33px;
+}
+
+#file {
+  background-color: #deeffd;
+  color: rgb(0, 0, 0);
+  border-color: $datepicker-border-color;
+  padding: 10px 14px; // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height: 35px;
+
+
+
+}
+
+#textarea {
+  background-color: #deeffd;
+  color: rgb(12, 13, 24);
+  /* padding: 10px 14px; */
+  // Ajustez les valeurs selon votre préférence
+  font-size: 14px; // Ajustez la taille de police selon votre préférence
+  line-height: 1.42857143; // Ajustez selon votre préférence
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  /* width: 100%;
+  height: 110px; */
+
+  // &:focus {
+  //   background-color: $datepicker-focus-bg-color;
+  //   border-color: $datepicker-focus-border-color;
+  //   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  // }
+}
+
+#fixed-width-matricule {
+  flex-grow: 0;
+  flex-basis: 100px;
+}
+
+#fixed-width-label {
+  flex-grow: 0;
+  flex-basis: 300px;
+}
+
+#fixed-width-date {
+  flex-grow: 0;
+  flex-basis: 110px;
+}
+
+#fixed-width-select {
+  flex-grow: 0;
+  flex-basis: 150px;
+}
+
+#fixed-width-lov {
+  flex-grow: 0;
+  flex-basis: 150px;
+}
+
+#fixed-width-input-display {
+  flex-grow: 0;
+  flex-basis: 350px;
+}
+
+body {
+  background-image: url('/assets/images/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+
+}
+
+.error-popup {
+  position: absolute;
+  top: 100%;
+  /* Juste en dessous de l'input */
+  left: 0;
+  background-color: #f8d7da;
+  /* Rouge clair pour le fond */
+  color: #721c24;
+  /* Rouge foncé pour le texte */
+  border: 1px solid #f5c6cb;
+  /* Bordure rouge */
+  border-radius: 4px;
+  /* Coins arrondis */
+  padding: 5px 10px;
+  /* Espacement interne */
+  margin-top: 5px;
+  /* Un petit espace entre l'input et l'erreur */
+  font-size: 0.85rem;
+  /* Taille du texte */
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  /* Légère ombre pour l'effet "popup" */
+  white-space: nowrap;
+  /* Empêche le texte de sauter à la ligne */
+  z-index: 100;
+  /* S'assure que la boîte reste au-dessus des autres éléments */
+}
+
+// html, body, app-root {
+//   height: 100%;
+//   width: 100%;
+// } 
+
+// body::before {
+//   content: '';
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   height: 100%;
+//   width: 100%;
+//   background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+//   z-index: -1; /* Ensure it stays behind content */
+// }

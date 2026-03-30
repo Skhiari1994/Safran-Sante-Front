@@ -1,0 +1,12 @@
+ 
+<app-tableau 
+#tableauComponentRef 
+[config]="tableConfig" 
+[initialRows]="dataRows" 
+(onRowAdded)="handleRowAdded($event)"
+(deleteRowEvent)="deleteRow($event)">
+</app-tableau>
+<input type="text" [(ngModel)]="label">
+
+<!-- Add a button to test accessing rowsForm -->
+<button (click)="testAccessToRowsForm()">Test Access to RowsForm</button>

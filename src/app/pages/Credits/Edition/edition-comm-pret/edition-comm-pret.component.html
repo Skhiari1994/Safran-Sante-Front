@@ -1,0 +1,132 @@
+<div class="col-md-12 d-flex justify-content-center">
+    <div style="width: 70%;"> <!-- Largeur du conteneur -->
+        <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none mb-0 mt-4">
+                <form action="javascript:void(0);" class="row g-3" [formGroup]="formCommission">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Bloc 1 -->
+                            <div class="row">
+                                <div class="row mt-3">
+                                    <!-- Champ Mois -->
+
+                                    <div class="col-md-2">
+                                        <label class="form-label">Num commission</label>
+                                        <input type="text" class="form-control border-success"
+                                            formControlName="num_comm" />
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                    </div>
+                                    <!-- Champ Année -->
+                                    <div class="col-md-3">
+                                        <label class="form-label">Ref commission</label>
+                                        <input type="text" class="form-control border-success"
+                                            formControlName="ref_comm" />
+                                    </div>
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Date début</label>
+                                        <input type="text" class="form-control border-warning"
+                                            formControlName="dat_deb_comm" mask="00/00/0000" placeholder="dd/mm/yyyy" />
+                                    </div>
+                                    <!-- Champ Année -->
+                                    <div class="col-md-2">
+                                        <label class="form-label">Date fin</label>
+                                        <input type="text" class="form-control border-warning"
+                                            formControlName="dat_fin_comm" mask="00/00/0000" placeholder="dd/mm/yyyy" />
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label">Date commission</label>
+                                        <input type="text" class="form-control border-warning"
+                                            formControlName="dat_comm" mask="00/00/0000" placeholder="dd/mm/yyyy" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Etat commission</label>
+                                        <select class="form-select border-success" formControlName="cod_etat_pret">
+                                            <option value="P">Préparer</option>
+                                            <option value="V">Validée</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Format</label>
+                                        <select class="form-select border-success" formControlName="format">
+                                            <option value="PDF">PDF</option>
+                                            <option value="Excel">Excel</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Obeservation</label>
+                                        <textarea class="form-control" formControlName="observ"></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">Corps</label>
+                        <select class="form-select border-success" [(ngModel)]="corps">
+                            <option value=""></option>
+                            <option *ngFor="let i of listCorps" [value]="i.cod_corps">
+                                {{ i.lib_corps }}
+                            </option>
+                        </select>
+
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">Choix</label>
+                        <select class="form-select border-success" [(ngModel)]="choix">
+                            <option value=""></option>
+                            <option value="1">Liste des prêts de la commission </option>
+                            <option value="2">Liste des prêts de la commission DAF</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-3">
+                    <!-- First Button -->
+                    <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="goToFirst()">
+                        <i class="bx bx-first-page"></i>
+                    </button>
+                    &nbsp;&nbsp;
+
+                    <!-- Previous Button -->
+                    <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="navigate(-1)"><i
+                            class="bx bx-skip-previous"></i></button>
+                    &nbsp;&nbsp;
+
+                    <!-- Next Button -->
+                    <button [disabled]="currentIndex === listCommission.length - 1" (click)="navigate(1)"
+                        class="btn btn-primary"><i class="bx bx-skip-next"></i></button>
+                    &nbsp;&nbsp;
+
+                    <!-- Last Button -->
+                    <button class="btn btn-primary" [disabled]="currentIndex ===listCommission.length - 1"
+                        (click)="goToLast()">
+                        <i class="bx bx-last-page"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="isSearch">
+    <app-search-lov [listData]="listCommission" [columns]="columnsCommission" (selectedValue)="search($event)">
+    </app-search-lov>
+</div>

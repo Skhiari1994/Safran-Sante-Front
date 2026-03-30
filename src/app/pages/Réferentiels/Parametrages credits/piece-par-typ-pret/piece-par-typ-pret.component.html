@@ -1,0 +1,271 @@
+
+<div class="row" style="margin-top: 25px"> 
+  <app-breadcrumbs
+  title="Affectation des pieces par type de pret"
+  [breadcrumbItems]="breadCrumbItems"
+></app-breadcrumbs>
+
+     <br>
+<div class="row">
+ 
+    <div class="col-xl-10">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div class="col-md-12">
+          <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow mb-4">
+              <div class="card-header   text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Types crédits</h5>
+   
+              </div>
+              <div class="card-body">
+                <div class="table-responsive table-card">
+                  <p-table [value]="listTypePret" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table" id="table1">
+                    <ng-template pTemplate="header">
+                      <tr class="table-primary">
+                        <th *ngFor="let column of ['cod_grp_pret', 'lib_grp_pret', 'typ_pret', 'lib_pret']">
+                          <div class="d-flex align-items-center">
+                            <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }}
+                              <i class="ri-arrow-up-down-line ms-1"></i>
+                            </span>
+                            <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                            <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                          </div>
+                        </th>
+                       </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                      <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="getPiecePret(rowData)">
+                         <td class="text-center">{{ rowData.cod_grp_pret }}</td>
+                        <td class="text-center">{{ rowData.lib_grp_pret }}</td>
+                        <td class="text-center">{{ rowData.typ_pret }}</td>
+                        <td class="text-center">{{ rowData.lib_pret }}</td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <pagination-controls  id="table1"
+                (pageChange)="pCertif = $event"
+              ></pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  
+      <div class="col-xl-10">
+        <div class="container d-flex justify-content-center align-items-center">
+          <div class="col-md-12">
+            <div class="collapse show" id="paymentmethodCollapse">
+              <div class="card p-4 border shadow mb-4">
+                <div class="card-header   text-white d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Piéces prêts</h5>
+                  <button
+                    class="btn btn-light"
+                    data-bs-toggle="modal"
+                    data-bs-target="#showModal"
+                    (click)="openModalTab(content)"
+                  >
+                    <i class="ri-add-fill me-1"></i> Ajouter Piéce Prêt
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive table-card">
+                    <p-table [value]="listPiecePret" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                      <ng-template pTemplate="header">
+                        <tr class="table-primary">
+                          <th *ngFor="let column of ['cod_piece_pret', 'lib_piece_pret', 'nat_piece', 'oblig_piece','nbr_copie']">
+                            <div class="d-flex align-items-center">
+                              <span class="me-2" (click)="onSort1(column)"> {{ columnTitles1[column] || column }}
+                                <i class="ri-arrow-up-down-line ms-1"></i>
+                              </span>
+                              <i class="ri-search-line text-muted ms-2" (click)="toggleFilter1(column)"></i>
+                              <input *ngIf="showFilters1[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz1[column]" (input)="applyFilter1()" placeholder="..." />
+                            </div>
+                         </th>
+                          <th class="text-center">Action</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                        <tr>
+                          <td class="text-center">{{ rowData.cod_piece_pret }}</td>
+                          <td class="text-center">{{ rowData.lib_piece_pret }}</td>
+                          <td class="text-center">{{ rowData.nat_piece }}</td>
+                          <td class="text-center">{{ rowData.oblig_piece }}</td>
+                          <td class="text-center">{{ rowData.nbr_copie }}</td>
+                          <td>
+                            <ul class="list-inline hstack gap-2 mb-0">
+                              <li class="list-inline-item">
+                                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                              </li>
+                              <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
+                                <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
+                                  <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                                </a>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                  </div>
+                </div>
+          
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+  
+      
+    
+       
+          <ng-template #content role="document" let-modal>
+            <div class="modal-header bg-info-subtle p-3">
+              <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} piéce</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close-modal"
+                (click)="modal.dismiss('Cross click')"
+              ></button>
+            </div>
+            <form [formGroup]="formPiecePret" class="tablelist-form" autocomplete="off">
+               
+                  <div class="modal-body">
+                    <div class="row g-3">
+                      <div class="col-md-2">
+                        <label for="billinginfo-phone" class="form-label"
+                          >Code
+                        </label>
+                        <app-lov
+                          [listData]="listPiece"
+                          [columns]="columnPiece"
+                          codeField="cod_piece_pret"
+                          [selectedCode]="codPieceVal"
+                          (selectedValue)="onSelectedValuePiece($event)"
+                        >
+                        </app-lov>
+                      </div>
+                      <div class="col-6">
+                        <label for="billinginfo-lastName" class="form-label"
+                          >Libelle  
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control border-primary"
+                          placeholder="Libelle"
+                          [value]="libPiece"
+                          readonly
+                        />
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label">Type Prêt</label>
+                        <select class="form-select border-success" formControlName="nat_piece"  >
+                          <option value="P">Prêt</option>
+                          <option value="D">Demande</option>
+ 
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label">Obligatoire</label>
+                        <select class="form-select border-success" formControlName="oblig_piece"  >
+                          <option value="O">Oui</option>
+                          <option value="N">Non</option>
+ 
+                        </select>
+                      </div>
+                      <div class="col-2">
+                        <label for="billinginfo-lastName" class="form-label"
+                          >Nbre copie  
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control border-primary"
+                          placeholder="Libelle"
+                          formControlName="nbr_copie"
+                           
+                        />
+                      </div>
+                    </div>
+                  </div>
+              
+              <div class="modal-footer">
+                <div class="hstack gap-2 justify-content-end">
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    data-bs-dismiss="modal"
+                    (click)="savePosition(); modal.close('Close click')"
+                  >
+                    Valider
+                  </button>
+                </div>
+                <br>
+                <div class="hstack gap-2 justify-content-end">
+                  <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal"
+                    (click)="modal.close('Close click')"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+      
+   
+  
+        <ng-template #deleteModel let-modal>
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="btn-close"
+                (click)="modal.dismiss('Cross click')"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mt-2 text-center">
+                <lord-icon
+                  src="https://cdn.lordicon.com/gsqxdxog.json"
+                  trigger="loop"
+                  colors="primary:#f7b84b,secondary:#f06548"
+                  style="width: 100px; height: 100px"
+                ></lord-icon>
+                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                  <h4>Etes vous sûr ?</h4>
+                  <p class="text-muted mx-4 mb-0">
+                    Etes vous sûr de supprimer ce type ?
+                  </p>
+                </div>
+              </div>
+              <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                <button
+                  type="button"
+                  class="btn w-sm btn-light"
+                  data-bs-dismiss="modal"
+                  (click)="modal.close('Close click')"
+                >
+                  Fermer
+                </button>
+                <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
+                  Oui ,supprimer!
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </ng-template>
+      </div>

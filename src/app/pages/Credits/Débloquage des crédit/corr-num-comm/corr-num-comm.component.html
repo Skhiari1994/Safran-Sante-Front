@@ -1,0 +1,464 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Règlement automatique des crédits" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<div class="col-md-12">
+  <div class="collapse show" id="paymentmethodCollapse">
+    <div class="card p-4 border shadow-none mb-0 mt-4">
+      <form action="javascript:void(0);" class="row g-3">
+        <div class="row" [formGroup]="formPretPers">
+          <!-- Première colonne -->
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Matricule</label>
+                <input type="text" class="form-control border-primary" placeholder="Matricule"
+                  formControlName="mat_pers" readonly />
+
+              </div>
+              <div class="col-md-8">
+                <label for="billinginfo-firstName" class="form-label">Nom & prénom</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer Nom" [value]="nomPers"
+                  readonly />
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Département</label>
+                <input type="text" class="form-control border-primary" placeholder="Département" [value]="codLieuGeog"
+                  readonly />
+              </div>
+              <div class="col-md-8">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="LibLieuGeog"
+                  readonly />
+              </div>
+
+
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Motif départ</label>
+                <input type="text" class="form-control border-primary" placeholder="Motif départ" [value]="codTypDep"
+                  readonly />
+              </div>
+              <div class="col-md-8">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libDeprt"
+                  readonly />
+              </div>
+
+
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Pos. admin</label>
+                <input type="text" class="form-control border-primary" placeholder="Motif départ" [value]="codAffect"
+                  readonly />
+              </div>
+              <div class="col-md-8">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libAffect"
+                  readonly />
+              </div>
+              <div class="col-md-3">
+                <label for="billinginfo-phone" class="form-label">Comm</label>
+                <app-lov [listData]="listComm" [columns]="columnsComm" codeField="num_comm" [selectedCode]="commission"
+                  (selectedValue)="onSelectedComm($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libRefComm"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Ligne de séparation -->
+          <div class="col-md-1 d-flex align-items-stretch">
+            <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
+          </div>
+
+          <!-- Deuxième colonne -->
+          <div class="col-md-5">
+            <div class="row">
+              <div class="col-md-4">
+                <label for="country" class="form-label">CNRPS</label>
+                <input type="text" class="form-control border-primary" placeholder="CNRPS" [value]="cnrps" readonly />
+              </div>
+              <div class="col-md-8"></div>
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label">Date embauche</label>
+                <input type="text" class="form-control border-primary" placeholder="Date embauche" [value]="datEmb"
+                  readonly />
+              </div>
+
+              <div class="col-md-2"></div>
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label">Anciente</label>
+                <input type="text" class="form-control border-primary" placeholder="Anciente" [value]="anc" readonly />
+              </div>
+
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label">Date naissance</label>
+                <input type="text" class="form-control border-primary" placeholder="Date naissance" [value]="datNais"
+                  readonly />
+              </div>
+              <div class="col-md-2"></div>
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label">Date retraite</label>
+                <input type="text" class="form-control border-primary" placeholder="Date retraite" [value]="DatRetr"
+                  readonly />
+              </div>
+
+
+
+              <div class="col-md-4">
+                <label for="country" class="form-label">Situation sociale</label>
+                <select class="form-select border-success" data-plugin="choices" [value]="codSit" disabled>
+                  <option value="C">Célibataire</option>
+                  <option value="M">Marié(e)</option>
+                  <option value="D">Divorcé(e)</option>
+                  <option value="V">Voeuf(ve)</option>
+                </select>
+              </div>
+              <div class="col-md-2"></div>
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Nbre enfants</label>
+                <input type="text" class="form-control border-primary" placeholder="Nbre enfants" [value]="nbrEnf"
+                  readonly />
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+          <!-- First Button -->
+          <button class="btn btn-secondary" [disabled]="currentIndex === lisPrets.length - 1" (click)="goToLast()">
+            <i class="bx bx-first-page"></i>
+          </button>
+          &nbsp;&nbsp;
+
+          <!-- Previous Button -->
+          <button class="btn btn-secondary" [disabled]="currentIndex === lisPrets.length - 1" (click)="navigate(1)"><i
+              class="bx bx-skip-previous"></i></button>
+          &nbsp;&nbsp;
+
+          <!-- Next Button -->
+          <button [disabled]="currentIndex ===0" (click)="navigate(-1)" class="btn btn-primary"><i
+              class="bx bx-skip-next"></i></button>
+          &nbsp;&nbsp;
+
+          <!-- Last Button -->
+          <button class="btn btn-primary" [disabled]="currentIndex ===0" (click)="goToFirst()">
+            <i class="bx bx-last-page"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="col-md-12">
+  <div class="collapse show" id="paymentmethodCollapse">
+    <div class="card p-4 border shadow-none mb-0 mt-4">
+      <form [formGroup]="formPretPers">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-1">
+                <label for="billinginfo-phone" class="form-label">Organisme</label>
+                <input type="text" class="form-control border-primary" placeholder="Organisme"
+                  formControlName="org_pret" readonly />
+
+
+              </div>
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer Nom" [value]="libOrg"
+                  readonly />
+              </div>
+              <div class="col-md-1">
+                <label for="billinginfo-phone" class="form-label">Grp prêt</label>
+                <input type="text" class="form-control border-primary" placeholder="Type prêt"
+                  formControlName="cod_grp_pret" readonly />
+
+              </div>
+              <div class="col-md-1">
+                <label for="billinginfo-firstName" class="form-label d-flex align-items-center">Type prêt <p
+                    style="color: red; margin-bottom: 0; margin-left: 5px;">*</p></label>
+                <input type="text" class="form-control border-primary" placeholder="Type prêt"
+                  formControlName="typ_pret" readonly />
+              </div>
+              <div class="col-md-4">
+                <label for="billinginfo-firstName" class="form-label">Libelle</label>
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libPret"
+                  readonly />
+              </div>
+              <!-- <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Montant prév</label>
+                    <input type="text" class="form-control border-primary montant-input" placeholder="Montant prév" 
+                       [value]="mntPrev | number:'1.3-3'" readonly  />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Taux int</label>
+                    <input type="text" class="form-control border-primary montant-input" placeholder="Taux int"    formControlName="prt_taux" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Nbre ech</label>
+                    <input type="text" class="form-control border-primary" placeholder="Nbre ech" formControlName="prt_ech" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Delai grâce</label>
+                    <input type="text" class="form-control border-primary" placeholder="Delai grâce" formControlName="delai_grace" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Nbre tranche</label>
+                    <input type="text" class="form-control border-primary" placeholder="Nbre tranche" formControlName="nbr_tranche" readonly />
+                  </div>
+                  <div class="col-md-4"></div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Prêt antérieur</label>
+                    <input type="text" class="form-control border-warning" placeholder="Prêt antérieur"  formControlName="cod_pret_ant" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Montant antérieur</label>
+                    <input type="text" class="form-control border-warning montant-input" placeholder="Montant antérieur"   formControlName="mnt_report"  readonly  />
+                  </div> -->
+
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="col-md-12">
+      <div class="collapse show" id="paymentmethodCollapse">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <form [formGroup]="formPretPers">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row">
+
+
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label d-flex align-items-center">
+                      Montant demande
+                      <p style="color: red; margin-bottom: 0; margin-left: 5px;">*</p>
+                    </label>
+                    <input type="text" class="form-control border-primary montant-input" placeholder="Montant demande"
+                      formControlName="prt_mnt_glb" (change)="VerifMntDem($event)" readonly />
+
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Taux int</label>
+                    <input type="text" class="form-control border-primary montant-input" placeholder="Taux int"
+                      formControlName="prt_taux" (change)="VerifTauxInt($event)" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Nbre ech</label>
+                    <input type="text" class="form-control border-primary" placeholder="Montant prév"
+                      formControlName="prt_ech" (change)="VerifPrtEch($event)" readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Nbre tranche</label>
+                    <input type="text" class="form-control border-primary" placeholder="Nbre tranche"
+                      formControlName="nbr_tranche" readonly />
+                  </div>
+
+                  <div class="col-md-4">
+
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label d-flex align-items-center">Date Accord <p
+                        style="color: red; margin-bottom: 0; margin-left: 5px;">*</p></label>
+                    <input type="text" class="form-control border-primary" placeholder="Date Accord"
+                      formControlName="prt_dat_acc" mask="00/00/0000" appDateFormatter (change)="VerifDatAccord($event)"
+                      readonly />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label d-flex align-items-center">Date début <p
+                        style="color: red; margin-bottom: 0; margin-left: 5px;">*</p></label>
+                    <input type="text" class="form-control border-primary" placeholder="Date début"
+                      formControlName="prt_dat_deb" mask="00/00/0000" (change)="VerifDatDebut($event)" appDateFormatter
+                      readonly />
+                  </div>
+                  <!-- <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Date fin</label>
+                    <input type="text" class="form-control border-primary" placeholder="Date fin" [value]="datFin" mask="00/00/0000"  appDateFormatter/>
+                  </div> -->
+
+                  <div class="col-md-2">
+                    <label for="billinginfo-firstName" class="form-label">Delai grâce</label>
+                    <input type="text" class="form-control border-primary" placeholder="Delai grâce"
+                      formControlName="delai_grace" (change)="VerifDatAccord($event)" readonly />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="country" class="form-label">Mode remb</label>
+                    <select class="form-select border-success" data-plugin="choices" formControlName="mod_remb">
+                      <option value="E">Espéce</option>
+                      <option value="V">Virement</option>
+                      <option value="C">Chèque</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="country" class="form-label">Objet prêt</label>
+                    <textarea type="text" class="form-control border-warning" placeholder="Enter obs"
+                      formControlName="objet_pret"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+
+
+
+
+        <div class="col-md-12">
+          <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none mb-0 mt-4">
+              <form action="javascript:void(0);" class="row g-3" [formGroup]="formPretPers">
+                <div class="row">
+                  <!-- Première colonne -->
+                  <div class="col-md-10">
+                    <div class="row">
+
+
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Date fin</label>
+                        <input type="text" class="form-control border-primary" placeholder="Date fin" mask="00/00/0000"
+                          appDateFormatter formControlName="prt_dat_fin" readonly />
+                      </div>
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Mnt remb</label>
+                        <input type="text" class="form-control border-primary montant-input" placeholder="Mnt remb"
+                          formControlName="prt_mnt_rem" readonly />
+                      </div>
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Total int</label>
+                        <input type="text" class="form-control border-primary montant-input" placeholder="Total int"
+                          formControlName="prt_interet" readonly />
+                      </div>
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Remb mensuel</label>
+                        <input type="text" class="form-control border-primary montant-input" placeholder="Remb mensuel"
+                          formControlName="rem_men" readonly />
+                      </div>
+
+
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Dernier remb men</label>
+                        <input type="text" class="form-control border-primary montant-input" placeholder="Date Accord"
+                          formControlName="dern_rem_men" readonly />
+                      </div>
+                      <div class="col-md-2">
+
+                      </div>
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Date saisie</label>
+                        <input type="text" class="form-control border-primary " placeholder="Date début"
+                          formControlName="dat_saisie" mask="00/00/0000" appDateFormatter readonly />
+                      </div>
+                      <div class="col-md-3">
+                        <label for="country" class="form-label">Etat</label>
+                        <select class="form-select border-success" data-plugin="choices"
+                          formControlName="cod_etat_pret">
+                          <option></option>
+                          <option *ngFor="let i of etatPret" value="i.cod_etat_pret"> {{i.lib_etat_pret}}</option>
+
+
+
+                        </select>
+                      </div>
+                      <!-- <div class="col-md-2">
+                  <label for="billinginfo-firstName" class="form-label">Date déblocage</label>
+                  <input type="text" class="form-control border-primary" placeholder="Date déblocage" formControlName="dat_deblocage" mask="00/00/0000"  appDateFormatter/>
+                </div> -->
+
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Numéro</label>
+                        <input type="text" class="form-control border-primary" placeholder="Numéro"
+                          formControlName="cod_pret" readonly />
+                      </div>
+
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Mnt remboursé</label>
+                        <input type="text" class="form-control border-primary montant-input" placeholder="Mnt remboursé"
+                          formControlName="prt_rendu" readonly />
+                      </div>
+
+                      <div class="col-md-2">
+                        <label for="billinginfo-firstName" class="form-label">Nbre ech</label>
+                        <input type="text" class="form-control border-primary" placeholder="Nbre ech"
+                          formControlName="nbr_retenue" readonly />
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Ligne de séparation -->
+
+
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="collapse show" id="paymentmethodCollapse">
+                <div class="card p-6 border shadow mb-4">
+                  <div class="card-body">
+                    <div class="table-responsive table-card mb-4">
+                      <table class="table table-striped table-hover table-bordered align-middle w-100">
+                        <thead class="table-light">
+                          <tr>
+                            <th class="text-center sort" (click)="onSort('l_pret')">Ligne</th>
+                            <th class="text-center sort" (click)="onSort('mois_pret')">Mois</th>
+                            <th class="text-center sort" (click)="onSort('mnt_period')">Montant</th>
+                            <th class="text-center sort" (click)="onSort('mnt_int')">Intérêt</th>
+                            <th class="text-center sort" (click)="onSort('cap_rest')">Cap rest</th>
+                            <th class="text-center sort" (click)="onSort('val_pret')">Valide</th>
+                            <th class="text-center sort" (click)="onSort('reg_pret')">Réglé</th>
+                            <th class="text-center sort" (click)="onSort('nature_etat_pret')">Etat</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="let data of listLigPret | paginate: { itemsPerPage: 8, currentPage: p }; let i = index">
+                            <td class="text-center">{{ data.l_pret }}</td>
+                            <td class="text-center">{{ data.mois_pret }}</td>
+                            <td class="text-center">{{ data.mnt_period | number:'1.3-3' }}</td>
+                            <td class="text-center">{{ data.mnt_int | number:'1.3-3'}}</td>
+                            <td class="text-center">{{ data.cap_rest | number:'1.3-3'}}</td>
+                            <td class="text-center">{{ data.val_pret=='O'?'Oui':'Non' }}</td>
+                            <td class="text-center">{{ data.reg_pret=='O'?'Reglé':'Non Reglé' }}</td>
+                            <td class="text-center">{{ data.nature_etat_pret }}</td>
+
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <pagination-controls (pageChange)="onPageChangeForGouv($event)"></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+
+
+      <div *ngIf="isSearch">
+        <app-pret-search [columns]="columnsPret" (selectedValue)="search($event)">
+        </app-pret-search>
+
+      </div>

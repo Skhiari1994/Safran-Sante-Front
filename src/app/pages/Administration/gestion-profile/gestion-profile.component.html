@@ -1,0 +1,79 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="container-fluid">
+    <app-page-title title="Gestion d'autorisations" [breadcrumbItems]="breadCrumbItems">
+    </app-page-title>
+    <div class="row">
+  <div class="col-md-12" style="display: flex;">
+    <div class="col-md-10">
+      <div  style="display: flex;"  class="col-md-4">
+        <label for="roles" class="col-md-4" style="margin-top: auto;">Selectionner un role :</label>
+        <select id="select"  class="form-select" aria-label="Default select example" (change)="onRoleChange($event)">
+          <option></option>
+          <option *ngFor="let i of roles" [value]="i.id" style="font-size: 11px;">
+            {{ i.name }}
+          </option>
+        </select>
+      </div>
+      <br>
+      <div class="card ">
+        <div class="card-body">
+          <div class="table-wrapper"  >
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="font-size: 15px;">Pages</th>
+                  <th style="font-size: 15px;">Affiché</th>  
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let item of menuData">
+                  <tr style="border-width: 3px;">
+                    <td>
+                      <span *ngIf="item.subItems && item.subItems.length" class="tree-indicator" (click)="toggleChildren(item)">
+                        <span [innerHTML]="item.expanded ? '&#9660;' : '&#9654;'"></span>
+                      </span>
+                      {{ item.label | translate }}
+                    </td>
+                    <td>
+                      <input type="checkbox" [checked]="item.checked" (change)="handleCheckboxChangeSub($event, item.id)">
+                    </td>
+                  </tr>
+      
+                  <ng-container *ngIf="item.subItems && item.subItems.length && item.expanded">
+                    <ng-container *ngTemplateOutlet="recursiveTemplate; context: { $implicit: item.subItems, level: 1, parentId: item.id }"></ng-container>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+     
+    </div>&nbsp;&nbsp;<br>
+    <div class="col-md-2">
+     </div>
+  </div>
+  
+  <ng-template #recursiveTemplate let-subItems let-level="level" let-parentId="parentId">
+    <ng-container *ngFor="let subItem of subItems">
+      <tr>
+        <td [style.padding-left.px]="getIndentationLevel(level)">
+          <span *ngIf="subItem.subItems && subItem.subItems.length" class="tree-indicator" (click)="toggleChildren(subItem)">
+            <span [innerHTML]="subItem.expanded ? '&#9660;' : '&#9654;'"></span>
+          </span>
+          {{ subItem.label | translate }}
+        </td>
+        <td>
+          <!-- Pass the parentId (which is item.id from the first parent) -->
+          <input type="checkbox" [checked]="subItem.checked" (change)="handleCheckboxChange($event, parentId, subItem.id)" >
+        </td>
+      </tr>
+  
+      <ng-container *ngIf="subItem.subItems && subItem.subItems.length && subItem.expanded">
+        <ng-container *ngTemplateOutlet="recursiveTemplate; context: { $implicit: subItem.subItems, level: level + 1, parentId: parentId }"></ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-template>
+  </div>
+  </div>

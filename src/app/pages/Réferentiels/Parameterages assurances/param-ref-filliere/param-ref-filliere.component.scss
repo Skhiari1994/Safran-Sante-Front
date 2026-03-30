@@ -1,0 +1,11 @@
+.montant-input {
+    text-align: right;
+    width: 100%; /* Optionnel pour s'assurer que l'input est bien dimensionné */
+  }
+
+  .table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  

@@ -1,0 +1,333 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Saisie des Cotisation des non actifs par période"
+    [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<div class="row  sticky-top" style="z-index: 1010;  top: 50px;">
+  <div class="col-xl-10">
+    <div class="row" style="margin-top: -24px">
+      <div class="col-md-12 sticky-top">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow-none mb-0 mt-4">
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+
+
+              <div class="col-md-2">
+                <label for="billinginfo-phone" class="form-label">Matricule
+                </label>
+                <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="codMatVal" (selectedValue)="onSelectedValue($event)"></app-lov>
+              </div>
+
+              <div class="col-md-2">
+                <label for="billinginfo-firstName" class="form-label">Nom</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer Nom"
+                  formControlName="nom_pers" readonly />
+              </div>
+              <div class="col-md-2">
+                <label for="billinginfo-lastName" class="form-label">Prénom</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer prénom"
+                  formControlName="pren_pers" readonly />
+              </div>
+              <div class="col-2">
+                <label for="country" class="form-label">Caisse de retraite</label>
+                <select class="form-select border-success" data-plugin="choices" formControlName="cod_retr">
+                  <option value=""></option>
+                  <option value="1">CNSS</option>
+                  <option value="2">CNRPS</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="billinginfo-phone" class="form-label">ID CNRPS</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer Identifiant unique CNRPS"
+                  formControlName="num_retr" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<div class="col-xl-10">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+
+      <!-- Row 1: Matricule, Nom, Prénom -->
+
+
+      <div class="col-md-4">
+        <label for="billinginfo-nom" class="form-label">Nom</label>
+        <input type="text" class="form-control border-primary" placeholder="Entrer Nom" formControlName="nom_pers" />
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-prenom" class="form-label">Prénom</label>
+        <input type="text" class="form-control border-primary" placeholder="Entrer Prénom" formControlName="pren_pers"
+          readonly />
+      </div>
+
+      <!-- Row 2: Corps, Date Embauche -->
+      <div class="col-md-2">
+        <label for="country" class="form-label">Corps</label>
+        <select class="form-select border-success" data-plugin="choices" formControlName="corps">
+          <option value="">Select corps...</option>
+          <option *ngFor="let corps of corpsList" [value]="corps.cod_corps">
+            {{ corps.lib_corps }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label for="billinginfo-date-embauche" class="form-label">Date Embauche</label>
+        <input type="text" class="form-control border-warning" mask="00/00/0000" placeholder="Entrer la date d'embauche"
+          formControlName="dat_emb" appDateFormatter readonly />
+      </div>
+
+      <!-- Row 3: Position adm., Libelle position administratif -->
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Code
+        </label>
+        <app-lov [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
+          [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)">
+        </app-lov>
+
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-lastName" class="form-label">Libelle position administratif
+        </label>
+        <input type="text" class="form-control border-primary" placeholder="Lib Affectation" [value]="libAffect"
+          readonly />
+      </div>
+
+      <!-- Row 4: Motif de départ, Libellé de motif de départ, Etat Actif -->
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Code</label>
+        <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
+          [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)">
+        </app-lov>
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-phone" class="form-label">Libellé de motif de départ</label>
+        <input type="text" class="form-control border-primary" placeholder="Type départ" [value]="libTypDepart"
+          readonly />
+
+      </div>
+
+      <div class="col-md-3">
+        <label for="etat-actif" class="form-label">Etat Actif</label>
+        <select class="form-select border-success" formControlName="etat_act">
+          <option value="">Sélectionner Etat...</option>
+          <option value="A">Actif</option>
+          <option value="I">Inactif</option>
+        </select>
+      </div>
+
+      <!-- Row 5: Situation, Nbre Enfants, Assiette Cotisation -->
+      <div class="col-md-3">
+        <label for="country" class="form-label">Situation sociale</label>
+        <select class="form-select border-success" data-plugin="choices" formControlName="cod_sit">
+          <option value="">Select situation...</option>
+          <option value="C">Célibataire</option>
+          <option value="M">Marié(e)</option>
+          <option value="D">Divorcé(e)</option>
+          <option value="V">Voeuf(ve)</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <div class="col-md-4" *ngIf="
+                  formAdherent.get('cod_sit')?.value === 'M' ||
+                  formAdherent.get('cod_sit')?.value === 'D' ||
+                  formAdherent.get('cod_sit')?.value === 'V'
+                ">
+          <label for="billinginfo-phone" class="form-label">Nbr enf</label>
+          <input type="text" class="form-control border-primary" placeholder="Entrer le nombre d'enfants"
+            formControlName="nbr_enf" />
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <label for="assiette-cotisation" class="form-label">Assiette Cotisation</label>
+        <input type="text" class="form-control border-info text-end" placeholder="Entrer Assiette Cotisation"
+          formControlName="mnt_param" />
+      </div>
+
+    </form>
+
+  </div>
+</div>
+<div class="col-xl-10">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form action="javascript:void(0);" class="row g-3" [formGroup]="formCotisMutPersForm">
+
+      <!-- Row 1: Matricule, Nom, Prénom -->
+
+      <div class="col-md-6">
+        <div class="col-md-3">
+          <label for="billinginfo-nom" class="form-label">Date Début</label>
+          <input type="text" class="form-control border-warning" mask="00/0000" formControlName="dat_deb" />
+        </div>
+      </div>
+      <div class="col-md-6">
+
+        <div class="col-md-3">
+          <label for="billinginfo-prenom" class="form-label">Date Fin</label>
+          <input type="text" class="form-control border-warning" mask="00/0000" formControlName="dat_fin" />
+        </div>
+      </div>
+
+      <!-- Row 2: Corps, Date Embauche -->
+      <div class="col-md-4">
+        <label for="country" class="form-label">Montant à payer</label>
+        <input type="text" class="form-control border-primary text-end" formControlName="mnt_a_payer"
+          [readonly]="true" />
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-date-embauche" class="form-label">Montant payer</label>
+        <input type="text" class="form-control border-primary text-end" placeholder="Entrer le montant payer"
+          formControlName="mnt_payer" />
+      </div>
+
+      <!-- Row 3: Position adm., Libelle position administratif -->
+      <div class="col-md-4">
+        <label for="billinginfo-phone" class="form-label">Mode payment
+        </label>
+        <select class="form-select border-success" formControlName="mod_pay">
+          <option value="V">Virement</option>
+          <option value="E">Espéce</option>
+          <option value="C">Chèque</option>
+
+        </select>
+      </div>
+
+
+
+      <!-- Row 4: Motif de départ, Libellé de motif de départ, Etat Actif -->
+      <div class="col-md-8">
+        <label for="billinginfo-phone" class="form-label">Référence </label>
+        <input type="text" class="form-control border-primary" formControlName="ref_pay" />
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-5">
+          <label for="billinginfo-phone" class="form-label">Origine Cotisations</label>
+          <select class="form-select border-success" formControlName="typ_cot">
+            <option value="M">Manuelle</option>
+            <option value="T">Transfert</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-5">
+          <label for="etat-actif" class="form-label">Etat Cotisation</label>
+          <select class="form-select border-success" formControlName="etat_cot" disabled>
+
+            <option value="I">En Instance</option>
+            <option value="V">Validé</option>
+          </select>
+        </div>
+      </div>
+      <!-- Row 5: Dat Saisie ,Numéro cot-->
+
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <label for="billinginfo-phone" class="form-label">Dat Saisie </label>
+          <input type="text" class="form-control border-warning" mask="00/00/0000" [readonly]="true"
+            formControlName="dat_saisie" appDateFormatter />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-5">
+          <label for="assiette-cotisation" class="form-label">Numéro cot</label>
+          <input type="text" class="form-control border-primary" [readonly]="true" formControlName="num_cot" />
+        </div>
+      </div>
+
+    </form>
+    <div class="d-flex justify-content-center mt-3">
+
+
+    </div>
+
+    <div class="d-flex justify-content-center mt-3">
+      <!-- First Button -->
+      <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="goToFirst()">
+        <i class="bx bx-first-page"></i>
+      </button>
+      &nbsp;&nbsp;
+
+      <!-- Previous Button -->
+      <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="navigate(-1)"><i
+          class="bx bx-skip-previous"></i></button>
+      &nbsp;&nbsp;
+
+      <!-- Next Button -->
+      <button [disabled]="currentIndex === listCotis.length - 1" (click)="navigate(1)" class="btn btn-primary"><i
+          class="bx bx-skip-next"></i></button>
+      &nbsp;&nbsp;
+
+      <!-- Last Button -->
+      <button class="btn btn-primary" [disabled]="currentIndex ===listCotis.length - 1" (click)="goToLast()">
+        <i class="bx bx-last-page"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<br>
+<div class="card p-4 border shadow-none  align-self-center  col-sm-10">
+  <h5 class="mb-1 text-primary mb-3">Affiliation</h5>
+
+  <div class="card-header">
+    <div class="d-flex align-items-center flex-wrap gap-9">
+      <div class="flex-grow-1"></div>
+
+
+    </div>
+  </div>
+  <div class="card-body">
+    <p-table [value]="filteredDataRows" [paginator]="true" [rows]="10" styleClass="modern-table">
+      <ng-template pTemplate="header">
+        <tr class="table-primary">
+          <th *ngFor="let column of ['dat_cot', 'mnt_payer']" [pSortableColumn]="column">
+            <div class="d-flex align-items-center">
+              <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }} </span>
+              <p-sortIcon [field]="column"></p-sortIcon>
+              <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+              <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-data>
+        <tr id="c_{{ data._id }}">
+          <td><ngb-highlight [result]="data.dat_cot" [term]="searchTerm"></ngb-highlight></td>
+          <td>
+            <ngb-highlight [result]="(data.mnt_payer | number:'1.2-2')" [term]="searchTerm">
+              {{ data.mnt_payer | number:'1.2-2' }}
+            </ngb-highlight>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="2">
+            <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+<!-- end row -->
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>

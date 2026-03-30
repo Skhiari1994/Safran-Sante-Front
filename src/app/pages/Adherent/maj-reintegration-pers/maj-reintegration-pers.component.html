@@ -1,0 +1,323 @@
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs
+    title="Saisie des décisions de réintégration"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-breadcrumbs>
+</div>
+<br />
+<div class="row">
+  <!-- Header with Add Button -->
+  <div class="card-header">
+    <div class="d-flex align-items-center flex-wrap gap-3">
+      <div class="flex-grow-1"></div>
+      <div class="flex-shrink-0">
+        <div class="hstack text-nowrap gap-2">
+          <button
+            class="btn btn-info add-btn mb-3"
+            data-bs-toggle="modal"
+            data-bs-target="#showModal"
+            (click)="openModalTab(content1)"
+          >
+            <i class="ri-add-fill me-1 align-bottom"></i> Réintegration
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Wrapper -->
+  <div class="card">
+    <div class="card-body">
+      <p-table [value]="listReinteg" [paginator]="true" [rows]="10" styleClass="modern-table">
+        <ng-template pTemplate="header">
+          <tr class="table-primary">
+            <th *ngFor="let column of ['mat_pers', 'nomPers', 'dat_depart', 'libDepart', 'dat_sais_depart','etat_depart','obs_depart']" [pSortableColumn]="column">
+              <div class="d-flex align-items-center">
+                <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }} </span>
+                <p-sortIcon [field]="column"></p-sortIcon>
+                <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-data>
+          <tr>
+            <td>{{ data.mat_pers }}</td>
+            <td>{{ data.nomPers }}</td>
+            <td>{{ data.dat_depart }}</td>
+            <td>{{ data.libDepart }}</td>
+            <td>{{ data.dat_sais_depart }}</td>
+            <td>{{ data.etat_depart==='V'?'Validé':'En instance' }}</td>
+            <td>{{ data.obs_depart }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <div class="d-flex justify-content-end mt-3"></div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">Ajouter une réintégration</h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      id="close-modal"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form [formGroup]="formReintegPers" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="billinginfo-firstName" class="form-label"
+            >Matricule</label>
+           <div *ngIf="!edit">
+            <app-lov
+              [listData]="listPersonnelReinteg"
+              [columns]="columnsSearch"
+              [codeField]="'mat_pers'"
+              [selectedCode]="matPersVal"
+              (selectedValue)="onSelectedValuePers($event)"
+            >
+            </app-lov>
+          </div>
+ 
+          <div *ngIf="edit">
+            <input
+              type="text"
+              class="form-control border-primary"
+              [value]="matPersVal"
+              readonly
+            />
+          </div>
+        </div>
+        <div class="col-md-8">
+          <label for="billinginfo-firstName" class="form-label"
+            >Nom & Prénom</label
+          >
+          <input
+            type="text"
+            class="form-control border-primary"
+            [value]="nomPren"
+            readonly
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label for="billinginfo-phone" class="form-label">Code</label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            [value]="cod_lieu_geog"
+            readonly
+          />
+        </div>
+        <div class="col-md-8">
+          <label for="billinginfo-phone" class="form-label">Département </label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            placeholder="Type départ"
+            [value]="lib_lieu"
+            readonly
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label for="billinginfo-phone" class="form-label">Code </label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            [value]="cod_affect"
+            readonly
+          />
+        </div>
+        <div class="col-8">
+          <label for="billinginfo-lastName" class="form-label"
+            >Position administratif
+          </label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            [value]="libAffect"
+            readonly
+          />
+        </div>
+
+        <div class="col-md-5">
+          <label for="country" class="form-label">Corps</label>
+          <select
+            class="form-select border-success"
+            data-plugin="choices"
+            formControlName="corps"
+            [value]="corps"
+          >
+            <option value="">Select corps...</option>
+            <option value="C">Cadre commun</option>
+            <option value="S">Sécurité</option>
+            <option value="M">Mediateur administratif</option>
+            <option value="H">HCCAF</option>
+            <option value="I">ITES</option>
+            <option value="P">Minéstère d'intérieur</option>
+            <option value="D">Divers</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="billinginfo-phone" class="form-label"
+            >Date naissance</label
+          >
+          <input
+            type="text"
+            class="form-control border-warning"
+            mask="00/00/0000"
+            [value]="datNais"
+            appDateFormatter
+            readonly
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label for="billinginfo-phone" class="form-label"
+            >Date d'embauche</label
+          >
+          <input
+            type="text"
+            class="form-control border-warning"
+            mask="00/00/0000"
+            [value]="datEmb"
+            appDateFormatter
+            readonly
+          />
+        </div>
+        <div class="col-md-2">
+            <label for="billinginfo-phone" class="form-label">Code</label>
+    
+            <input
+            type="text"
+            class="form-control border-primary"
+            placeholder="Type départ"
+            [value]="codDepart"
+            readonly
+          />
+          </div>
+          <div class="col-md-7">
+            <label for="billinginfo-phone" class="form-label"
+              >Libellé de motif de départ</label
+            >
+            <input
+              type="text"
+              class="form-control border-primary"
+              placeholder="Type départ"
+              [value]="libDepart"
+              readonly
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="billinginfo-phone" class="form-label">Date départ</label>
+            <input
+              type="text"
+              class="form-control border-warning"
+              mask="00/00/0000"
+              placeholder="Entrer la date départ"
+              [value]="datDepart"
+              appDateFormatter
+              readonly
+            />
+          </div>
+      </div>
+      <hr />
+      <div class="row g-4">
+        <div class="col-md-3">
+            <label for="billinginfo-phone" class="form-label">Date départ</label>
+            <input
+              type="text"
+              class="form-control border-warning"
+              mask="00/00/0000"
+              placeholder="Entrer la date départ"
+              formControlName="dat_depart"
+              appDateFormatter
+             />
+          </div>
+          <div class="col-md-3"></div>
+         <div class="col-md-4">
+          <label for="billinginfo-phone" class="form-label">Date Saisie</label>
+          <input
+            type="text"
+            class="form-control border-warning"
+            mask="00/00/0000"
+            placeholder="Entrer la date saisie"
+            formControlName="dat_sais_depart"
+            appDateFormatter
+          />
+        </div>
+
+        <div class="col-lg-12">
+          <div>
+            <label for="industry_type-field" class="form-label"
+              >Observation</label
+            >
+            <textarea
+              type="text"
+              class="form-control border-warning"
+              placeholder="Enter obs"
+              formControlName="obs_depart"
+            ></textarea>
+          </div>
+        </div>
+        <div class="col-md-7"></div>
+        <!-- <div class="col-4">
+          <label for="country" class="form-label">Etat </label>
+          <select
+            class="form-select border-success"
+            data-plugin="choices"
+            formControlName="etat_depart"
+          >
+            <option value="">Select état...</option>
+            <option value="I">En instance</option>
+            <option value="V">Validée</option>
+          </select>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-success"
+          data-bs-dismiss="modal"
+          (click)="validatelistDepartPers(); modal.close('Close click')"
+        >
+          Valider
+        </button>
+      </div>
+      <div class="hstack gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-bs-dismiss="modal"
+          (click)="modal.close('Close click')"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+ 

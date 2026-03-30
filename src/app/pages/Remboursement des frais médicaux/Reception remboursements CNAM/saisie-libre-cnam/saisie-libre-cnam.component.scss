@@ -1,0 +1,22 @@
+:host ::ng-deep .modern-table thead th {
+  background-color: #f5faff;
+  color: #111827;
+}
+
+:host ::ng-deep .table-responsive {
+  overflow-x: auto;
+}
+
+@media (max-width: 576px) {
+  :host ::ng-deep .nav-pills.custom-verti-nav-pills {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  :host ::ng-deep .nav-pills.custom-verti-nav-pills .nav-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  :host ::ng-deep .card .table {
+    font-size: 0.875rem;
+  }
+}

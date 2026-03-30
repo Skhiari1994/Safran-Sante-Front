@@ -1,0 +1,410 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Saisie des indemnités" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+<div class="col-xl-10">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+
+      <!-- Row 1: Matricule, Nom, Prénom,Corps -->
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Matricule
+        </label>
+        <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="codMatVal"
+          (selectedValue)="onSelectedValue($event)"></app-lov>
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-nom" class="form-label">Nom</label>
+        <input type="text" class="form-control border-primary" placeholder="Entrer Nom" formControlName="nom_pers" />
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-prenom" class="form-label">Prénom</label>
+        <input type="text" class="form-control border-primary" placeholder="Entrer Prénom"
+          formControlName="pren_pers" />
+      </div>
+
+      <div class="col-md-2">
+        <label for="country" class="form-label">Corps</label>
+        <select class="form-select border-success" data-plugin="choices" formControlName="corps">
+          <option value="">Select corps...</option>
+          <option *ngFor="let corps of corpsList" [value]="corps.cod_corps">
+            {{ corps.lib_corps }}
+          </option>
+        </select>
+        <div *ngIf="errorMessageMat" class="error-message">
+          {{ errorMessageMat }}
+        </div>
+      </div>
+
+      <!-- Row 2: position, -->
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Code
+        </label>
+        <app-lov [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
+          [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)">
+        </app-lov>
+      </div>
+
+      <div class="col-md-4">
+        <label for="billinginfo-lastName" class="form-label">Libelle position administratif
+        </label>
+        <input type="text" class="form-control border-primary" placeholder="Lib Affectation" [value]="libAffect"
+          readonly />
+      </div>
+
+      <div class="col-2">
+        <label for="billinginfo-phone" class="form-label">
+          Département</label>
+
+        <app-lov [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu" [selectedCode]="codLieuVal"
+          (selectedValue)="onSelectedValueLieu($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-4">
+        <label for="billinginfo-phone" class="form-label">
+          Libellé</label>
+        <input type="text" class="form-control border-primary" [value]="libLieu" placeholder="Département" readonly />
+      </div>
+      <!-- Row 3: Libellé de motif de départ...., -->
+
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Code</label>
+        <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
+          [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-4">
+        <label for="billinginfo-phone" class="form-label">Libellé de motif de départ</label>
+        <input type="text" class="form-control border-primary" placeholder="Type départ" [value]="libTypDepart"
+          readonly />
+      </div>
+
+      <div class="col-md-2">
+        <label for="billinginfo-nom" class="form-label">Date Motif</label>
+        <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_depart"
+          appDateFormatter />
+
+      </div>
+    </form>
+  </div>
+</div>
+<div class="col-xl-10">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form class="row g-3" [formGroup]="demandeDonsForm">
+
+      <!-- Row 1: Date demande,  Plafond -->
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <label for="billinginfo-nom" class="form-label">Date demande</label>
+          <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_saisie"
+            appDateFormatter />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="col-md-6">
+          <label for="billinginfo-prenom" class="form-label">Plafond </label>
+
+          <input type="text" class="form-control border-primary" [value]=max_mnt_don />
+        </div>
+
+
+      </div>
+
+      <!-- Row 1: Date demande,  Plafond -->
+
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Type don</label>
+        <app-lov [listData]="listTypDon" [columns]="columnsNat" codeField="nat_Don" [selectedCode]="typDonVal"
+          (selectedValue)="onSelectedValueTypDon($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-4">
+        <label for="billinginfo-phone" class="form-label">Libellé don</label>
+        <input type="text" class="form-control border-primary" placeholder="Type don" [value]="libNatDon" readonly />
+      </div>
+
+      <div class="col-md-4">
+
+        <div class="col-md-4">
+          <label for="billinginfo-phone" class="form-label">N° Virement</label>
+          <input type="text" class="form-control border-primary" placeholder="N° Virement" formControlName="num_vir"
+            readonly />
+        </div>
+      </div>
+
+      <!-- Row 3 : Corps, Date Embauche -->
+      <div class="col-md-3">
+        <label for="billinginfo-phone" class="form-label">Type bénificaire</label>
+        <select class="form-select border-success" formControlName="typ_benificiaire"
+          (change)="changeBenifi($event.target.value)">
+          <option value="A">Agent</option>
+          <option value="C">Conjointe</option>
+          <option value="E">Enfants</option>
+          <option value="P">Parents</option>
+        </select>
+      </div>
+      <div class="col-md-6" *ngIf="concern ==='A'">
+        <div class="col-md-3">
+          <label for="name-field" class="form-label">Numéro famille</label>
+          <input type="text" class="form-control" formControlName="num_fam" placeholder="Code" />
+        </div>
+      </div>
+
+      <!-- Group common conditions for numFam into one block -->
+
+      <div class="col-md-2" *ngIf="concern !== 'M' && concern !== 'P' && concern !=='A'">
+        <label for="name-field" class="form-label">Numéro famille</label>
+        <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam" [selectedCode]="codActiviteVal"
+          (selectedValue)="onSelectedValueFamille($event)"></app-lov>
+      </div>
+
+      <div class="col-md-4" *ngIf="concern !== 'M' && concern !== 'P' && concern !=='A'">
+        <label for="owner-field" class="form-label">Prénom</label>
+        <input type="text" class="form-control border-primary" readonly [value]="libNom" />
+      </div>
+
+
+      <!-- Row 4:Montant., Mode payment -->
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <label for="name-field" class="form-label">Montant demander</label>
+          <input type="text" class="form-control border-primary" placeholder="Entrer le montant demander"
+            formControlName="mnt_dem_don" />
+          <!-- Error message for required validation -->
+          <div
+            *ngIf="demandeDonsForm.get('mnt_dem_don')?.hasError('required') && demandeDonsForm.get('mnt_dem_don')?.touched"
+            class="text-danger">
+            Le montant demandé est obligatoire.
+          </div>
+          <!-- Error message for plafond validation -->
+          <div
+            *ngIf="demandeDonsForm.get('mnt_dem_don')?.hasError('exceedsPlafond') && demandeDonsForm.get('mnt_dem_don')?.touched"
+            class="text-danger">
+            Le montant demandé doit être inférieur ou égal à la valeur du plafond.
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <label for="billinginfo-phone" class="form-label">Mode payment</label>
+          <select class="form-select border-success" formControlName="mode_payement"
+            (change)="getValueModPay($event.target.value)">
+            <option value="V">Virement</option>
+            <option value="E">Espéce</option>
+            <option value="C">Chèque</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 5: Raison -->
+      <div class="col-md-11">
+        <label for="billinginfo-phone" class="form-label">Raison</label>
+        <input type="texarea" class="form-control border-primary" formControlName="raison" />
+      </div>
+      <!-- Row 6:Date Saisie., Etat demande... -->
+
+      <div class="col-md-2">
+        <label for="billinginfo-date-embauche" class="form-label">Date Saisie</label>
+        <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_saisie"
+          [readonly]="true" />
+      </div>
+
+      <div class="col-md-3">
+        <label for="etat-actif" class="form-label">Etat demande</label>
+        <select class="form-select border-success" formControlName="etat_dem"
+          (change)="getValueEtatCot($event.target.value)">
+          <option value="I">En Instance</option>
+          <option value="V">Validée</option>
+          <option value="R">Rejetée</option>
+          <option value="A">Accordée</option>
+          <option value="D">Débloquée</option>
+        </select>
+      </div>
+
+
+      <div class="col-md-3">
+        <label for="billinginfo-date-embauche" class="form-label">Montant accordée</label>
+        <input type="text" class="form-control border-primary" placeholder="Entrer le montant demander"
+          formControlName="mnt_acc_don" [readonly]="true" />
+      </div>
+
+      <div class="col-md-3">
+        <label for="billinginfo-date-embauche" class="form-label">Date déblocage</label>
+        <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_deblocage"
+          [readonly]="true" />
+      </div>
+
+      <div class="col-md-2">
+        <label for="assiette-cotisation" class="form-label">Numéro piéce</label>
+        <input type="text" class="form-control border-primary" [readonly]="true" formControlName="num_piece" />
+      </div>
+      <div class="col-md-5">
+        <label for="assiette-cotisation" class="form-label">RIB</label>
+        <input type="text" class="form-control border-primary" [readonly]="true" formControlName="rib" />
+      </div>
+
+    </form>
+    <div class="d-flex justify-content-center mt-3">
+      <!-- First Button -->
+      <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="goToFirst()">
+        <i class="bx bx-first-page"></i>
+      </button>
+      &nbsp;&nbsp;
+
+      <!-- Previous Button -->
+      <button class="btn btn-secondary" [disabled]="currentIndex === 0" (click)="navigate(-1)"><i
+          class="bx bx-skip-previous"></i></button>
+      &nbsp;&nbsp;
+
+      <!-- Next Button -->
+      <button [disabled]="currentIndex === listInd.length - 1" (click)="navigate(1)" class="btn btn-primary"><i
+          class="bx bx-skip-next"></i></button>
+      &nbsp;&nbsp;
+
+      <!-- Last Button -->
+      <button class="btn btn-primary" [disabled]="currentIndex ===listInd.length - 1" (click)="goToLast()">
+        <i class="bx bx-last-page"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- <div class="d-flex justify-content-center mt-3">
+    <button   class="btn btn-primary"
+    [disabled]="currentIndex === 0"
+    (click)="navigate(-1)"><i class="bx bx-skip-previous"></i></button>
+    &nbsp;&nbsp;
+    <button  [disabled]="currentIndex === lisPrets.length - 1"
+    (click)="navigate(1)" class="btn btn-primary"><i class="bx bx-skip-next"></i></button>
+  </div> -->
+</div>
+
+<br>
+<div class="card p-4 border shadow-none  align-self-center  col-sm-10">
+  <h5 class="mb-1 text-primary mb-3">Piéce associées à la demande</h5>
+
+  <div class="card-header">
+    <div class="d-flex align-items-center flex-wrap gap-9">
+      <div class="flex-grow-1"></div>
+
+
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <!-- Header with Add Button -->
+    <div class="card-header">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <div class="flex-grow-1"></div>
+        <div class="flex-shrink-0">
+          <div class="hstack text-nowrap gap-2">
+            <button class="btn btn-info add-btn mb-3" data-bs-toggle="modal" data-bs-target="#showModal"
+              (click)="openModalTab(content1)">
+              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Piéces
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Wrapper -->
+    <div class="card">
+      <div class="card-body">
+        <!-- Table -->
+        <div class="table-responsive table-card">
+          <p-table [value]="listPiece" [paginator]="true" [rows]="10"
+            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th [pSortableColumn]="'cod_piece'"><span class="me-2" (click)="onSort('cod_piece')">Code piece<i
+                      class="ri-arrow-up-down-line ms-1"></i></span><p-sortIcon field="cod_piece"></p-sortIcon></th>
+                <th [pSortableColumn]="'lib_piece'"><span class="me-2" (click)="onSort('lib_piece')">Libellé<i
+                      class="ri-arrow-up-down-line ms-1"></i></span><p-sortIcon field="lib_piece"></p-sortIcon></th>
+                <th [pSortableColumn]="'nbr_copie'">Nombre piéce<p-sortIcon field="nbr_copie"></p-sortIcon></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr>
+                <td>{{ rowData.cod_piece }}</td>
+                <td>{{ rowData.lib_piece }}</td>
+                <td>{{ rowData.nbr_copie }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="3"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible
+                    !</span></td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-end mt-3">
+          <pagination-controls (pageChange)="pSusp = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #content1 role="document" let-modal>
+    <div class="modal-header bg-info-subtle p-3">
+      <h5 class="modal-title" id="exampleModalLabel">Ajouter piéce</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+        (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <form [formGroup]="formPiece" class="tablelist-form" autocomplete="off">
+      <div class="modal-body">
+        <div class="row g-2">
+          <!-- Code Piece -->
+          <div class="col-md-2">
+            <label for="cod_piece" class="form-label">Code pièce</label>
+            <app-lov [listData]="listPieceSelected" [columns]="columnsSearchPiece" codeField="cod_piece"
+              [selectedCode]="formPiece.get('cod_piece')?.value"
+              (selectedValue)="onSelectedValuePiece($event)"></app-lov>
+          </div>
+
+          <!-- Libellé -->
+          <div class="col-md-5">
+            <label for="lib_piece" class="form-label">Libellé</label>
+            <input type="text" class="form-control border-warning" placeholder="lib_piece"
+              formControlName="lib_piece" />
+          </div>
+
+          <!-- Nbr Copie -->
+          <div class="col-md-5">
+            <label for="nbr_copie" class="form-label">Nbr copie</label>
+            <input type="number" class="form-control border-warning" placeholder="nbr_copie"
+              formControlName="nbr_copie" />
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="savePieceDon(); modal.close('Close click')">
+            Valider
+          </button>
+        </div>
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Close
+          </button>
+        </div>
+      </div>
+    </form>
+
+  </ng-template>
+
+
+
+</div>
+<!-- end row -->
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>

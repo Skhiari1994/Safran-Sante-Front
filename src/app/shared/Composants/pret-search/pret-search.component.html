@@ -1,0 +1,74 @@
+<div class="search-lov-container">
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Select a Value</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Clear Search Button -->
+
+
+      <!-- Search Fields Section (Each label and input field horizontally aligned) -->
+      <div class="mb-3">
+        <!-- Loop through columns and create a label + search input pair for each column -->
+        <div *ngFor="let col of columns" class="d-flex align-items-center mb-3">
+          <!-- Label for the search field -->
+          <label for="{{ col.key }}" class="form-label mr-2" style="width: 150px;">{{ col.label }}</label>
+          <!-- Search input field for each column -->
+          <ng-container [ngSwitch]="col.key">
+            <!-- Select for Mode of Payment -->
+            <select *ngSwitchCase="'mod_remb'" id="{{ col.key }}" [(ngModel)]="searchQueries[col.key]"
+              (change)="onSearch()" class="form-select search-input">
+              <option value="">Tous</option>
+              <option value="E">Espéce</option>
+              <option value="V">Virement</option>
+              <option value="C">Chèque</option>
+            </select>
+
+            <!-- Select for Loan State -->
+            <select *ngSwitchCase="'cod_etat_pret'" id="{{ col.key }}" [(ngModel)]="searchQueries[col.key]"
+              (change)="onSearch()" class="form-select search-input">
+              <option value="">Tous</option>
+              <option *ngFor="let i of etatPret" [value]="i.cod_etat_pret"> {{i.lib_etat_pret}}</option>
+            </select>
+
+            <!-- Date Input for Date de Saisie -->
+            <input *ngSwitchCase="'dat_saisie'" id="{{ col.key }}" type="date" [(ngModel)]="searchQueries[col.key]"
+              (input)="onSearch()" class="form-control search-input" />
+
+            <!-- Default Text Input -->
+            <input *ngSwitchDefault id="{{ col.key }}" type="text" [(ngModel)]="searchQueries[col.key]"
+              (input)="onSearch()" [placeholder]="'Search ' + col.label" class="form-control search-input" />
+          </ng-container>
+
+        </div>
+      </div>
+      <div class="d-flex justify-content-between mb-2" style="flex-flow: row-reverse;">
+        <button class="btn btn-primary mb-2" (click)="showAll()">Recherche</button>
+      </div>
+      <!-- Table Display -->
+      <div class="table table-striped">
+        <div class="table-container">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <!-- Table headers -->
+                <th *ngFor="let col of columns">{{ col.label }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of filteredData" (click)="selectItem(item); modal.close()" class="cursor-pointer">
+                <!-- Table rows -->
+                <td *ngFor="let col of columns">{{ item[col.key] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="filteredData.length === 0" class="alert alert-warning text-center">
+        No results found for the current search
+      </div>
+    </div>
+  </ng-template>
+</div>

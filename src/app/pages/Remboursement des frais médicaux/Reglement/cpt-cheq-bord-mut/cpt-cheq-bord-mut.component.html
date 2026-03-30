@@ -1,0 +1,211 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs
+    title="Comtabilisation bordereau mutuelle par chéque"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-breadcrumbs>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <form
+            [formGroup]="BordEnvoiForm"
+            class="tablelist-form"
+            autocomplete="off"
+          >
+            <div class="row mb-4">
+                
+              <div class="col-sm-4 col-md-2">
+                <label for="codBord" class="form-label">Code bordereau</label>
+                <app-lov
+                  [listData]="AllBordEnvoi"
+                  [columns]="columnBordEnvoi"
+                  codeField="cod_bord"
+                  [selectedCode]="codBord"
+                  (selectedValue)="onSelectedValueBordEnvoi($event)"
+                >
+                </app-lov>
+              </div>
+
+             
+              <div class="col-sm-4 col-md-1">
+                <label for="dateBord" class="form-label">Date</label>
+                <input
+                  type="text"
+                  id="dateBord"
+                  class="form-control border-primary"
+                  placeholder="Date"
+                  [value]="dateBord"
+                  readonly
+                />
+              </div>
+              <div class="col-sm-4 col-md-1">
+                <label for="dateBord" class="form-label">Code ass</label>
+                <input
+                  type="text"
+                  id="dateBord"
+                  class="form-control border-primary"
+                  placeholder="Code ass"
+                  formControlName="cod_assur"
+                  readonly
+                />
+              </div>
+              <div class="col-sm-4 col-md-3">
+                <label for="lib_assurance" class="form-label">Assurance</label>
+                <input
+                  type="text"
+                  id="lib_assurance"
+                  class="form-control border-primary"
+                  placeholder="Assurance"
+                  formControlName="lib_assurance"
+                />
+              </div>
+
+              <div class="col-sm-4 col-md-1">
+                <label for="tot_remb" class="form-label">Tot. Remb.</label>
+                <input
+                  type="text"
+                  id="tot_remb"
+                  class="form-control border-primary text-end"
+                  placeholder="Tot. Remb."
+                  formControlName="tot_net"
+                />
+              </div>
+
+              <div class="col-sm-4 col-md-1">
+                <label for="tot_remb" class="form-label">Tot. Hono.</label>
+                <input
+                  type="text"
+                  id="tot_remb"
+                  class="form-control border-primary text-end"
+                  placeholder="Tot. Hono.."
+                  formControlName="tot_honor"
+                />
+              </div>
+
+              <div class="col-sm-4 col-md-1">
+                <label for="nbr_bult" class="form-label"
+                  >Nbre. Bulletin</label
+                >
+                <input
+                  type="text"
+                  id="nbr_bult"
+                  class="form-control border-primary text-end"
+                  placeholder="Nombre de Bulletin"
+                  formControlName="nbr_bult"
+                />
+              </div>
+
+              <div class="col-sm-4 col-md-1">
+                <label for="tot_remb" class="form-label">Date début</label>
+                <input
+                  type="text"
+                  id="tot_remb"
+                  class="form-control border-primary"
+                  placeholder="Date début"
+                  formControlName="dat_deb"
+                />
+              </div>
+              <div class="col-sm-4 col-md-1">
+                <label for="tot_remb" class="form-label">Date fin</label>
+                <input
+                  type="text"
+                  id="tot_remb"
+                  class="form-control border-primary "
+                  placeholder="Date fin"
+                  formControlName="dat_fin"
+                />
+              </div>
+ 
+ 
+            </div>
+          </form>
+          <hr>
+          <div class="row">
+              <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+              
+
+                  <button class="btn btn-primary mt-3 mt-sm-0" (click)="majRegAdh()">
+                      <i class="ri-add-fill me-1"></i> Comptabilisation Cheque
+                  </button>
+
+             
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive table-card">
+            <p-table [value]="bordArriver" [paginator]="true" [rows]="9" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','dat_soin','solde','tot_honor','tot_net','Mod paie','Reg adh']" [pSortableColumn]="column">
+                    <div class="d-flex align-items-center">
+                      <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
+                      <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="logRowData(rowData, rowIndex)">
+                  <td>{{ rowData.mat_pers }}</td>
+                  <td>{{ rowData.nom_complet_pers }}</td>
+                  <td>{{ rowData.cod_fil }}</td>
+                  <td>{{ rowData.num_fam }}</td>
+                  <td>{{ rowData.dat_soin }}</td>
+                  <td>{{ rowData.solde | number: '1.3-3' }}</td>
+                  <td>{{ rowData.tot_honor | number: '1.3-3' }}</td>
+                  <td>{{ rowData.tot_net | number: '1.3-3' }}</td>
+                  <td>
+    <select
+      class="form-select"
+      [(ngModel)]="rowData.mod_pay"
+      name="modPay{{ rowIndex }}"
+    >
+      <option value="E">Espèce</option>
+      <option value="C">Chèque</option>
+      <option value="V">Virement</option>
+    </select>
+  </td>  <td>
+    <select
+      [(ngModel)]="rowData.reg_adh"
+      name="regAdh{{ rowIndex }}"
+      (change)="onValidChange(rowData, rowData.reg_adh)"
+      class="form-select"
+    >
+      <option value="N">Non</option>
+      <option value="O">Oui</option>
+    </select>
+  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td>
+                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr *ngIf="bordArriver.length > 0" class="fw-bold table-secondary">
+                  <td colspan="6" class="text-end">Total :</td>
+                  <td>{{ totalRem | number: '1.3-3' }}</td>
+                  <td>{{ totalMut | number: '1.3-3' }}</td>
+                  <td colspan="8" class="text-end"></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+

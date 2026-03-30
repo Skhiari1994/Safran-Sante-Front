@@ -1,0 +1,278 @@
+.montant-input {
+    text-align: right;
+    width: 100%; /* Optionnel pour s'assurer que l'input est bien dimensionné */
+  }
+
+
+  // Variables globales
+$primary-color: #4A90E2;
+$secondary-color: #6c757d;
+$danger-color: #dc3545;
+$success-color: #28a745;
+$light-gray: #f8f9fa;
+$dark-gray: #495057;
+
+// Styles globaux
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  color: $dark-gray;
+  margin-bottom: 20px;
+}
+
+// Table stylée
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+
+  th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+
+  thead {
+    background-color: $light-gray;
+    color: $dark-gray;
+    font-weight: bold;
+  }
+
+  tbody tr {
+    &:hover {
+      background-color: #f1f1f1;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+}
+
+// Boutons stylés
+.buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+
+  button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border: none;
+
+    &:nth-child(1) {
+      background: $primary-color;
+      color: white;
+
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
+
+    &:nth-child(2) {
+      background: $secondary-color;
+      color: white;
+
+      &:hover {
+        background: darken($secondary-color, 10%);
+      }
+    }
+
+    &:nth-child(3) {
+      background: $success-color;
+      color: white;
+
+      &:hover {
+        background: darken($success-color, 10%);
+      }
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Bouton supprimer
+button[type="button"] {
+  background: $danger-color;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  border: none;
+
+  &:hover {
+    background: darken($danger-color, 10%);
+  }
+}
+
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  min-width: 1500px; /* Ajuster selon le besoin */
+  table-layout: auto; /* Permet d'ajuster la largeur des colonnes automatiquement */
+}
+
+th, td {
+  white-space: nowrap; /* Empêche le texte de se couper */
+  text-align: center;
+}
+.press-theme {
+}
+
+:host ::ng-deep .p-datatable-wrapper {
+  overflow-x: auto !important;
+}
+
+:host ::ng-deep .press-theme {
+  table-layout: fixed !important;
+}
+
+:host ::ng-deep .press-theme .p-datatable-tbody>tr>td {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+:host ::ng-deep .press-theme .p-datatable-tbody>tr>td.p-cell-editing {
+  white-space: normal !important;
+  overflow: hidden !important;
+}
+
+::ng-deep .press-theme .p-datatable-wrapper {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+}
+
+::ng-deep .press-theme .p-datatable-tbody>tr>td {
+  max-width: inherit !important;
+  min-width: inherit !important;
+}
+
+::ng-deep .press-theme .p-datatable-tbody>tr>td input[type="text"],
+::ng-deep .press-theme .p-datatable-tbody>tr>td input[type="number"],
+::ng-deep .press-theme .p-datatable-tbody>tr>td .p-inputtext {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+::ng-deep .press-theme app-lov {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+::ng-deep .press-theme app-lov .form-group {
+  margin-bottom: 0 !important;
+  width: 100% !important;
+}
+
+::ng-deep .press-theme app-lov .input-group {
+  display: flex !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+::ng-deep .press-theme app-lov .input-group input {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+::ng-deep .press-theme app-lov .input-group-append {
+  margin-left: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+::ng-deep .press-theme .p-dropdown {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+::ng-deep .press-theme .p-cell-editor-input,
+::ng-deep .press-theme .p-cell-editor-output {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+::ng-deep .press-theme td[peditablecolumn] {
+  padding: 0.25rem !important;
+}
+
+::ng-deep .press-theme .p-cell-editing {
+  overflow: hidden !important;
+  padding: 0.25rem !important;
+  vertical-align: middle !important;
+}
+
+::ng-deep .p-dialog,
+::ng-deep .p-overlaypanel {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+::ng-deep .press-theme th:nth-child(1),
+::ng-deep .press-theme td:nth-child(1) { width: 50px !important; min-width: 50px !important; max-width: 50px !important; }
+::ng-deep .press-theme th:nth-child(2),
+::ng-deep .press-theme td:nth-child(2) { width: 50px !important; min-width: 50px !important; max-width: 50px !important; }
+::ng-deep .press-theme th:nth-child(3),
+::ng-deep .press-theme td:nth-child(3) { width: 110px !important; min-width: 110px !important; max-width: 110px !important; }
+::ng-deep .press-theme th:nth-child(4),
+::ng-deep .press-theme td:nth-child(4) { width: 120px !important; min-width: 120px !important; max-width: 120px !important; }
+::ng-deep .press-theme th:nth-child(5),
+::ng-deep .press-theme td:nth-child(5) { width: 180px !important; min-width: 180px !important; }
+::ng-deep .press-theme th:nth-child(6),
+::ng-deep .press-theme td:nth-child(6) { width: 70px !important; min-width: 70px !important; max-width: 70px !important; }
+::ng-deep .press-theme th:nth-child(7),
+::ng-deep .press-theme td:nth-child(7) { width: 110px !important; min-width: 110px !important; max-width: 110px !important; }
+::ng-deep .press-theme th:nth-child(8),
+::ng-deep .press-theme td:nth-child(8) { width: 110px !important; min-width: 110px !important; max-width: 110px !important; }
+::ng-deep .press-theme th:nth-child(9),
+::ng-deep .press-theme td:nth-child(9) { width: 70px !important; min-width: 70px !important; max-width: 70px !important; }
+::ng-deep .press-theme th:nth-child(10),
+::ng-deep .press-theme td:nth-child(10) { width: 80px !important; min-width: 80px !important; max-width: 80px !important; }
+::ng-deep .press-theme th:nth-child(11),
+::ng-deep .press-theme td:nth-child(11) { width: 120px !important; min-width: 120px !important; max-width: 120px !important; }
+::ng-deep .press-theme th:nth-child(12),
+::ng-deep .press-theme td:nth-child(12) { width: 120px !important; min-width: 120px !important; max-width: 120px !important; }
+::ng-deep .press-theme th:nth-child(13),
+::ng-deep .press-theme td:nth-child(13) { width: 200px !important; min-width: 200px !important; }
+::ng-deep .press-theme th:nth-child(14),
+::ng-deep .press-theme td:nth-child(14) { width: 150px !important; min-width: 150px !important; }
+::ng-deep .press-theme th:nth-child(15),
+::ng-deep .press-theme td:nth-child(15) { width: 100px !important; min-width: 100px !important; max-width: 100px !important; }
+
+::ng-deep .press-theme .p-datatable-tbody>tr>td.p-cell-editing { pointer-events: auto !important; }
+::ng-deep .press-theme .p-dropdown { pointer-events: auto !important; }

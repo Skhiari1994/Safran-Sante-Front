@@ -1,0 +1,43 @@
+<div class="col-md-12 d-flex justify-content-center">
+    <div style="width: 70%;"> <!-- Largeur du conteneur -->
+      <div class="collapse show" id="paymentmethodCollapse">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <form
+            action="javascript:void(0);"
+            class="row g-3"
+            [formGroup]="formAdherent"
+          >
+            <div class="row">
+              <div class="col-md-12">
+                <!-- Bloc 1 -->
+                <div class="row">
+                    <div class="col-md-3"></div>
+            
+                  <div class="col-md-3">
+                    <label class="form-label">Age début</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="age_deb"
+                     />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">Age fin</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="age_fin"
+                     />
+                  </div>
+                </div> 
+                
+ 
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

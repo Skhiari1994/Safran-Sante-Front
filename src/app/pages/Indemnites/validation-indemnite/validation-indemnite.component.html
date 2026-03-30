@@ -1,0 +1,224 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Validation des Indemnités" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+<div class="col-xl-12">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form action="javascript:void(0);" class="row g-3" [formGroup]="demandeDonsForm">
+
+      <!-- Row 1: Direction -->
+
+      <div class="col-2">
+        <label for="billinginfo-phone" class="form-label">
+          Direction</label>
+
+        <app-lov [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu" [selectedCode]="codLieuVal"
+          (selectedValue)="onSelectedValueLieu($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-6">
+        <label for="billinginfo-phone" class="form-label">
+          Libellé</label>
+        <input type="text" class="form-control border-primary" [value]="libLieu" placeholder="Direction" readonly />
+      </div>
+
+      <div class="col-md-4">
+
+      </div>
+      <!-- Row 2: Motif de départ, Libellé de motif de départ, Etat Actif -->
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Type don</label>
+        <app-lov [listData]="listTypDon" [columns]="columnsNat" codeField="nat_Don" [selectedCode]="typDonVal"
+          (selectedValue)="onSelectedValueTypDon($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-5">
+        <label for="billinginfo-phone" class="form-label">Libellé don</label>
+        <input type="text" class="form-control border-primary" placeholder="Type don" [value]="libNatDon" readonly />
+      </div>
+
+      <div class="col-md-3">
+        <label for="billinginfo-prenom" class="form-label">Plafond </label>
+
+        <input type="text" class="form-control border-primary" [value]=max_mnt_don />
+      </div>
+   <div class="col-md-3">
+                <label for="billinginfo-prenom" class="form-label">Date début</label>
+                <input type="text" class="form-control border-warning" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    [(ngModel)]="datDeb" [ngModelOptions]="{standalone: true}" appDateFormatter />
+            </div>
+
+            <div class="col-md-4">
+                <label for="billinginfo-prenom" class="form-label">Date fin</label>
+                <input type="text" class="form-control border-warning" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    [(ngModel)]="datFin" [ngModelOptions]="{standalone: true}" appDateFormatter />
+            </div>
+         <div class="col-md-3">
+                    </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="ValiderTout()">Tout
+          valider</button>
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-success waves-effect waves-light" (click)="ValiderInd()"
+          [disabled]="!selectedRows || selectedRows.length === 0">Valider sélection</button>
+      </div>
+        <div class="col-md-3">
+
+        <button type="button" class="btn btn-primary waves-effect waves-light"
+          (click)="PersIndValid()">Rechercher</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="col-xl-12">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <div class="card-body">
+      <div class="table-responsive table-card mb-2">
+        <p-table #dt [value]="filteredDataRows" [rows]="12" [paginator]="true" [rowHover]="true" dataKey="mat_pers"
+          editMode="row" selectionMode="multiple" [(selection)]="selectedRows"
+          (selectionChange)="onSelectionChange($event)" styleClass="p-datatable-gridlines p-datatable-striped">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 3rem;"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+              <th pSortableColumn="mat_pers">Matricule <p-sortIcon field="mat_pers"></p-sortIcon></th>
+              <th pSortableColumn="nom_pers">Nom & Prénom <p-sortIcon field="nom_pers"></p-sortIcon></th>
+              <th pSortableColumn="dat_dem_don">Date Demande <p-sortIcon field="dat_dem_don"></p-sortIcon></th>
+              <th pSortableColumn="num_fam">Num Famille <p-sortIcon field="num_fam"></p-sortIcon></th>
+              <th pSortableColumn="nat_don">Nature Don <p-sortIcon field="nat_don"></p-sortIcon></th>
+              <th>Libellé</th>
+              <th pSortableColumn="mnt_dem_don" style="text-align: right;">Montant Demandé <p-sortIcon
+                  field="mnt_dem_don"></p-sortIcon></th>
+              <th pSortableColumn="mnt_acc_don" style="text-align: right;">Montant Accordé <p-sortIcon
+                  field="mnt_acc_don"></p-sortIcon></th>
+              <th pSortableColumn="mnt_livre" style="text-align: right;">Montant Livré <p-sortIcon
+                  field="mnt_livre"></p-sortIcon></th>
+              <th pSortableColumn="num_piece">Num Pièce <p-sortIcon field="num_piece"></p-sortIcon></th>
+              <th pSortableColumn="etat_dem">Etat Demande <p-sortIcon field="etat_dem"></p-sortIcon></th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="rowData">
+              <td>
+                <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+              </td>
+              <td>{{ rowData.mat_pers }}</td>
+              <td>{{ rowData.nom_pers }}</td>
+              <td>{{ rowData.dat_dem_don }}</td>
+              <td>{{ rowData.num_fam }}</td>
+              <td>{{ rowData.nat_don }}</td>
+              <td>{{ rowData.lib_nat_don }}</td>
+              <td style="text-align: right;">{{ rowData.mnt_dem_don | number: '1.3-3' }}</td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText inputmode="decimal" [(ngModel)]="rowData.mnt_acc_don" class="w-full"
+                      style="text-align: right;" (input)="applyThreeDecimalsMask(rowData, $event)"
+                      (focus)="$event.target.select()" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span style="display: block; text-align: right;">
+                      {{ rowData.mnt_acc_don | number: '1.3-3' }}
+                    </span>
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td style="text-align: right;">{{ rowData.mnt_livre | number: '1.3-3' }}</td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText [(ngModel)]="rowData.num_piece" class="w-full" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ rowData.num_piece }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown [options]="[{label: 'En Instance', value: 'I'}, {label: 'Validé', value: 'V'}]"
+                      [(ngModel)]="rowData.etat_dem" (onChange)="getEtat(rowData)" appendTo="body"
+                      class="w-full"></p-dropdown>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ rowData.etat_dem === 'V' ? 'Validé' : 'En Instance' }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <button type="button" pButton pRipple pInitEditableRow icon="pi pi-pencil"
+                  class="p-button-rounded p-button-text" *ngIf="!editing" (click)="startRowEdit(rowData)"></button>
+                <button type="button" pButton pRipple icon="pi pi-times"
+                  class="p-button-rounded p-button-text p-button-warning" style="margin-left: 0.25rem;" *ngIf="editing"
+                  (click)="closeRowEdit(rowData)"></button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Table Footer -->
+          <tfoot>
+            <tr class="table-secondary fw-bold">
+              <td colspan="8" class="text-end">Total :</td>
+              <td class="text-end">{{ total | number: '1.3-3'}}</td>
+              <td></td> <!-- Empty cell for montant livré -->
+              <td></td> <!-- Empty cell for num_piece -->
+              <td></td> <!-- Empty cell for etat_dem -->
+              <td></td> <!-- Empty cell for actions -->
+            </tr>
+          </tfoot>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-end mt-3">
+      <pagination-controls (pageChange)="pSusp = $event"></pagination-controls>
+    </div>
+
+  </div>
+
+</div>
+<br>
+
+
+<br>
+<!-- end row -->
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>
+
+<ng-template #deleteModel let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+        (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-2 text-center">
+        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Are you sure ?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Are you sure you want to remove this address ?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Close
+        </button>
+        <button type="button" class="btn w-sm btn-danger" id="delete-product">
+          Yes, Delete It!
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /.modal-content -->
+</ng-template>

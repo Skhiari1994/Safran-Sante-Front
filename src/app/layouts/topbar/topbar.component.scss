@@ -1,0 +1,46 @@
+
+
+/* 
+  .second-navbar {
+    background-color: #2a3042;  /* Dark grayish-blue background */
+   // width: 100%;                 /* Cover 80% of the screen */
+   // margin-left: 0;          /* Align to the right */
+   // margin-right: auto;            /* No margin on the right */
+   // display: flex;
+    //justify-content: flex-end;  /* Ensure the content starts from the right */
+   // position: absolute;         /* Allow positioning relative to the page */
+   // top: 60px;                  /* Adjust the distance from the top of the page */
+   //to_date(substr(ligne, 15, 2) || '/' || substr(ligne, 13, 2) || '/' || substr(ligne, 9, 2), 'dd/MM/yyyy') yyyyto_date(substr(ligne, 15, 2) || '/' || substr(ligne, 13, 2) || '/' || substr(ligne, 9, 2), 'dd/MM/yyyy') yyyyto_date(substr(ligne, 15, 2) || '/' || substr(ligne, 13, 2) || '/' || substr(ligne, 9, 2), 'dd/MM/yyyy') yyyy*/
+  
+/* General styles for the button group */
+.second-navbar .nav {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    list-style-type: none;
+    gap: 10px; /* Add space between the buttons */
+    width: 100%; /* Ensure the nav takes up the full width */
+    padding-right: 20px; /* Optional: fine-tuning the alignment */
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+    .second-navbar .nav {
+        justify-content: flex-end; /* Still align to the right on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .second-navbar .nav {
+        flex-wrap: wrap; /* Stack the buttons on smaller screens */
+        justify-content: center; /* Center the buttons when they stack vertically */
+    }
+
+    .second-navbar .nav-item {
+        margin-bottom: 10px; /* Add spacing between buttons in vertical layout */
+    }
+}
+
+/* Additional styling for the buttons, if needed */
+.second-navbar button {
+    margin: 0;
+}

@@ -1,0 +1,284 @@
+<div class="row" style="margin-top: 25px"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+<app-breadcrumbs
+title="Référentielle des établissements conventionnées"
+[breadcrumbItems]="breadCrumbItems"
+></app-breadcrumbs>
+<br>
+  <div class="collapse show" id="paymentmethodCollapse">
+    <div class="card p-4 border shadow-none mb-0 mt-4">
+      <form [formGroup]="formRefEtablis">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row g-3">
+              <div class="col-md-2">
+                <label class="form-label">Prf code</label>
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Prf code"
+                  formControlName="prf_cod"
+                />
+              </div>
+              <div class="col-md-5">
+                <label class="form-label">Nom</label>
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Etab Rsoc"
+                  formControlName="etab_rsoc"
+                />
+              </div>
+              <div class="col-md-5">
+                <label class="form-label">Prénom</label>
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Prénom"
+                  formControlName="pr_rsoc"
+                />
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label">Activite</label>
+                  <app-lov
+                    [listData]="ListeActiviteEtabliss"
+                    [columns]="columnActiviteEtabliss"
+                    codeField="cod_activ"
+                    [selectedCode]="codeActivite"
+                     (selectedValue)="onSelectedValueActivite($event)"
+                  >
+                  </app-lov>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Libelle</label>
+                  <input
+                    type="text"
+                    class="form-control border-primary"
+                    placeholder="Libelle"
+                    [value]="libActiv"
+                    readonly
+                  />
+                </div>
+              </div>
+             <!--  <div class="col-md-2">
+                <label class="form-label">Code activité</label>
+                <input
+                  type="text"
+                  class="form-control border-primary montant-input"
+                  placeholder="Code activité"
+                  formControlName="cod_activ"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Libelle</label>
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Libelle"
+                  [value]="libActiv"
+                />
+              </div> -->
+              <div class="col-md-2">
+                <label class="form-label">Réf conv etat</label>
+                <input
+                  type="text"
+                  class="form-control border-primary montant-input"
+                  placeholder="Réf conv etat"
+                  formControlName="ref_conv_etat"
+                />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Date conv etab</label>
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Date conv etab"
+                  formControlName="dat_conv_etab"
+                  mask="00/00/0000"
+                  (input)="formatDate2($event)"
+                  #prtDatAcc
+                />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Etat Cnam</label>
+                <select
+                  class="form-select border-success"
+                  data-plugin="choices"
+                  formControlName="etat_act_cnam"
+                >
+                  <option value="A">ACTIF</option>
+                  <option value="B">BLOQUE</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Tel etablis</label>
+                <input
+                  type="text"
+                  class="form-control border-primary"
+                  placeholder="Tel etablis"
+                  formControlName="tel_etablis"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Fax etablis</label>
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  placeholder="Fax etablis"
+                  formControlName="fax_etablis"
+                />
+              </div>
+
+              <div class="col-md-2">
+                <label class="form-label">Email etablis</label>
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  placeholder="Email etablis"
+                  formControlName="email_etablis"
+                />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Rib etablis</label>
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  placeholder="Rib etablis"
+                  formControlName="rib_etab"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Met etablis</label>
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  placeholder="Met etablis"
+                  formControlName="met_etab"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Compte etablis</label>
+                <input
+                  type="text"
+                  class="form-control border-warning"
+                  placeholder="Compte etablis"
+                  formControlName="comp_etab"
+                />
+              </div>
+          
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="collapse show" id="paymentmethodCollapse">
+      <div class="card p-4 border shadow-none mb-0 mt-4">
+        <div class="card card-title"><b>Adresse</b></div><br>
+          <form [formGroup]="formRefEtablis">
+            <div class="row g-3">
+                <div class="col-md-12">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="row align-items-center">
+                       
+                        <div class="col-md-4">
+                            <label class="form-label">Gouvernorat</label>
+                            <app-lov
+                              [listData]="ListeGouv"
+                              [columns]="columnGouv"
+                              codeField="cod_gouv"
+                              [selectedCode]="codeGouv"
+                       
+                              (selectedValue)="onSelectedValueGouv($event)"
+                            >
+                            </app-lov>
+                          </div>
+                          <div class="col-md-8">
+                            <label class="form-label">Libelle</label>
+                            <input
+                              type="text"
+                              class="form-control border-primary"
+                              placeholder="Libelle"
+                              [value]="libGouv"
+                              readonly
+                            />
+                          </div> 
+                    </div>
+              
+                      <div class="row align-items-center mt-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Poste</label>
+                            <app-lov
+                                [listData]="ListePoste"
+                                [columns]="columnPoste"
+                                codeField="cod_poste"
+                                [selectedCode]="codePoste"
+                                (selectedValue)="onSelectedValuePoste($event)"
+                                >
+                                </app-lov>
+                          </div>
+                          <div class="col-md-8">
+                            <label class="form-label">Libelle</label>
+                            <input
+                              type="text"
+                              class="form-control border-primary"
+                              placeholder="Libelle"
+                              [value]="libPoste"
+                              readonly
+                            />
+                          </div> 
+
+
+                    </div>
+                    </div>
+              
+                    <div class="col-md-6">
+                      <div class="row g-3">
+                        <div class="col-md-12">
+                          <label for="adr_etablis" class="form-label">Adresse etablis</label>
+                          <input
+                            type="text"
+                            class="form-control border-primary montant-input"
+                            placeholder="Adresse etablis"
+                            formControlName="adr_etablis"
+                          />
+                        </div>
+              
+                        <div class="col-md-12 mt-2">
+                          <label for="adr_etablis_a" class="form-label">Adresse etablis 2eme langue</label>
+                          <input
+                            type="text"
+                            class="form-control border-primary montant-input"
+                            placeholder="Adresse etablis 2eme langue"
+                            formControlName="adr_etablis_a"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+        </form>
+      </div>
+    </div>
+
+    
+  </div>
+</div>
+
+
+
+<div *ngIf="isSearch">
+  <app-search-lov
+    [listData]="listRefEtablis"
+    [columns]="columnsSearch"
+    (selectedValue)="search($event)"
+  >
+  </app-search-lov>
+</div>

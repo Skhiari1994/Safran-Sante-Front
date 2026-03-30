@@ -1,0 +1,120 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+    <app-breadcrumbs title="Chargement et Validation mensuelle des cotisations de la période d'activité "
+        [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+
+<div class="col-xl-12">
+    <div class="card p-4 border shadow-none mb-0 mt-4">
+        <form action="javascript:void(0);" class="row g-3" [formGroup]="form">
+
+            <div class="col-md-2">
+                <label for="billinginfo-date-embauche" class="form-label">Mois</label>
+                 <input type="text" class="form-control border-warning" mask="00/0000"
+                     placeholder="mm/yyyy" formControlName="mois" />
+            </div>
+            
+            <div class="col-md-2">
+                <label for="country" class="form-label">Corps</label>
+                <select class="form-select border-success" data-plugin="choices" formControlName="corps">
+                    <option value="">Select corps...</option>
+                    <option *ngFor="let corps of corpsList" [value]="corps.cod_corps">
+                        {{ corps.lib_corps }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label for="billinginfo-date-embauche" class="form-label">Matricule</label>
+                 <input type="text" class="form-control border-primary" formControlName="mat" />
+            </div>
+
+            <div class="col-md-1 d-flex align-items-end">
+<button type="button" class="btn btn-primary flex-fill" style="max-width: 250px;" (click)="getPrimeMutPers()">
+                    <i class="ri-search-line me-1"></i> Rechercher
+                </button>
+            </div>
+
+            <div class="col-12">
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="button" class="btn btn-success" (click)="ValidCotisPrime()">
+                        <i class="ri-add-fill me-1"></i> Chargement Actif Inex
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="card p-4 border shadow-none  align-self-center  col-sm-12">
+    <h5 class="mb-1 text-primary mb-3">Affiliation</h5>
+
+    <div class="card-header">
+        <div class="d-flex align-items-center flex-wrap gap-9">
+            <div class="flex-grow-1"></div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive table-card">
+                <p-table [value]="listPrime" [paginator]="true" [rows]="9" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th *ngFor="let column of ['mat_pers','num_retr','nom','dat_deb','mnt_payer','mod_pay','etat']" [pSortableColumn]="column">
+                                <div class="d-flex align-items-center">
+                                    <span class="me-2" (click)="onSort(column)">
+                                        {{ columnTitles[column] || column }}
+                                        <i class="ri-arrow-up-down-line ms-1"></i>
+                                    </span>
+                                    <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                                    <p-sortIcon [field]="column"></p-sortIcon>
+                                </div>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                        <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }">
+                            <td>{{ rowData.mat_pers }}</td>
+                            <td>{{ rowData.num_retr }}</td>
+                            <td>{{ rowData.nom }}</td>
+                            <td>{{ rowData.dat_deb }}</td>
+                            <td>{{ rowData.mnt_payer | number: '1.3-3' }}</td>
+                            <td>{{ rowData.mod_pay=='V'?'VIREMENT':'ESPECE' }}</td>
+                            <td>{{ rowData.etat=='V'?'Validée':'En instance' }}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">
+                                <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr *ngIf="listPrime.length > 0" class="fw-bold table-secondary">
+                            <td colspan="4" class="text-end">Total :</td>
+                            <td>{{ totalMnt | number: '1.3-3' }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <div *ngIf="listPrime.length > 0" class="d-flex justify-content-between mt-3">
+                <span>{{ listPrime.length }} ligne(s) trouvée(s) sur {{ getTotalPages() }} page(s)</span>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

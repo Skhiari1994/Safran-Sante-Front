@@ -1,0 +1,124 @@
+<!-- Breadcrumb -->
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Chargement des retenus par mois" [breadcrumbItems]="breadCrumbItems">
+  </app-breadcrumbs>
+</div>
+
+<br />
+
+<!-- Filters -->
+<div class="row sticky-top" style="z-index: 1010; top: 50px;">
+  <div class="col-xl-12">
+    <div class="card p-4 border shadow-none mt-4">
+      <form class="row g-3">
+
+        <!-- Mois -->
+        <div class="col-md-2">
+          <label class="form-label">Mois</label>
+          <input type="text" class="form-control border-primary" placeholder="MM/YYYY" mask="00/0000" [(ngModel)]="mois"
+            name="mois" />
+        </div>
+
+        <!-- Matricule -->
+        <div class="col-md-2">
+          <label class="form-label">Matricule</label>
+          <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="codMatVal"
+            (selectedValue)="onSelectedValue($event)">
+          </app-lov>
+        </div>
+
+        <!-- File -->
+        <div class="col-md-3">
+          <label class="form-label">Fichier</label>
+          <input type="file" class="form-control" (change)="onFileSelected($event)" />
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="col-xl-12 mt-4">
+  <div class="card p-4 border shadow-none">
+    <h5 class="text-primary mb-3"></h5>
+
+    <div class="card-body">
+      <p-table [value]="filteredDataRows || []" [paginator]="true" [rows]="12" styleClass="modern-table">
+
+        <!-- HEADER -->
+        <ng-template pTemplate="header">
+          <tr class="table-primary">
+            <th *ngFor="let column of ['pret_disk','num_retr','mat_pers','nom_pers','montant','observation','valid']"
+              [pSortableColumn]="column">
+
+              <div class="d-flex align-items-center">
+                <span class="me-2">
+                  {{ columnTitles[column] || column }}
+                </span>
+
+                <p-sortIcon [field]="column"></p-sortIcon>
+
+                <i class="ri-search-line text-muted ms-2" role="button"
+                  (click)="toggleFilter(column); $event.stopPropagation()">
+                </i>
+
+                <input *ngIf="showFilters?.[column]" (click)="$event.stopPropagation()" type="text"
+                  class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]"
+                  [name]="'search_' + column" (input)="applyFilter()" placeholder="..." />
+              </div>
+
+            </th>
+          </tr>
+        </ng-template>
+
+        <!-- BODY -->
+        <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+          <tr [ngClass]="{
+              'bg-light': rowIndex % 2 === 0,
+              'bg-white': rowIndex % 2 !== 0,
+              'table-active': selectedRow === rowIndex
+            }" (click)="getAffect(data, rowIndex)">
+
+            <td>{{ data?.pret_disk }}</td>
+            <td>{{ data?.num_retr }}</td>
+            <td>{{ data?.mat_pers }}</td>
+            <td>{{ data?.nom }}</td>
+            <td>{{ data?.montant | number:'1.3-3' }}</td>
+            <td>{{ data?.observation }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+      'bg-warning text-dark': data?.valid === 'I',
+      'bg-success': data?.valid === 'V'
+    }">
+                {{ data?.valid === 'I' ? 'En instance' : 'Validé' }}
+              </span>
+            </td>
+
+
+          </tr>
+        </ng-template>
+
+        <!-- FOOTER -->
+        <ng-template pTemplate="footer">
+          <tr class="table-secondary fw-bold">
+            <th colspan="6" class="text-end">Total :</th>
+            <th>{{ total | number:'1.2-2' }}</th>
+          </tr>
+        </ng-template>
+
+        <!-- EMPTY -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              <span class="badge bg-danger-subtle text-danger">
+                Aucune donnée disponible !
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+    </div>
+  </div>
+</div>

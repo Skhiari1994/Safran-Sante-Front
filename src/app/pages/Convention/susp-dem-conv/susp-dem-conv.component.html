@@ -1,0 +1,295 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs title="Suspension des conventions" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+  <div class="row">
+    <div class="col-md-12">
+
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive table-card">
+            <p-table [value]="listConv" [paginator]="true" [rows]="10"
+              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th
+                    *ngFor="let column of ['cod_conv','lib_conv','mat_pers','nom','dat_dem_conv','dat_min_fin','etat_dem','dat_susp']">
+                    <div class="d-flex align-items-center">
+                      <span class="me-2">{{ columnTitles[column] || column }}</span>
+                      <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column); $event.stopPropagation()"
+                        style="cursor: pointer;"></i>
+                      <input *ngIf="showFilters[column]" (click)="$event.stopPropagation()" type="text"
+                        class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]"
+                        (input)="applyFilter()" placeholder="..." />
+                    </div>
+                  </th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="logRowData(rowData, rowIndex)">
+                  <td>{{ rowData.cod_conv }}</td>
+                  <td>{{ rowData.lib_conv }}</td>
+                  <td>{{ rowData.mat_pers }}</td>
+                  <td>{{ rowData.nom }}</td>
+                  <td>{{ rowData.dat_dem_conv }}</td>
+                  <td>{{ rowData.dat_min_fin }}</td>
+                  <td>{{ rowData.etat_dem =='V'?'Valide':'Suspendue' }}</td>
+                  <td>{{ rowData.dat_susp }}</td>
+                  <td class="text-center">
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" (click)="editDataGet(rowData, content)">
+                        <i class="ri-pencil-fill"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="10"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée
+                      disponible !</span></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          <div *ngIf="listConv.length > 0" class="d-flex justify-content-between mt-3">
+            <span>{{ listConv.length }} ligne(s) trouvée(s) sur {{ getTotalPages() }} page(s)</span>
+
+
+            <div class="d-flex justify-content-end mt-3">
+              <pagination-controls (pageChange)="pSusp = $event"></pagination-controls>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive table-card">
+            <p-table [value]="listOffConv" [paginator]="true" [rows]="12"
+              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th
+                    *ngFor="let column of ['cod_off','lib_off','num_tel','dat_off_dem','dat_saisie','mnt_off','etat_off_dem','dat_susp','cod_mot_susp','lib_mot']">
+                    <div class="d-flex align-items-center">
+                      <span class="me-2">{{ columnTitlesOff[column] || column }}</span>
+                    </div>
+                  </th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }">
+                  <td>{{ rowData.cod_off }}</td>
+                  <td>{{ rowData.lib_off }}</td>
+                  <td>{{ rowData.num_tel }}</td>
+                  <td>{{ rowData.dat_off_dem }}</td>
+                  <td>{{ rowData.dat_saisie }}</td>
+                  <td>{{ rowData.mnt_off | number : '1.3-3' }}</td>
+                  <td>{{ rowData.etat_off_dem =='V'?'Valide':'Suspendue' }}</td>
+                  <td>{{ rowData.dat_susp }}</td>
+                  <td>{{ rowData.cod_mot_susp }}</td>
+                  <td>{{ rowData.lib_mot }}</td>
+                  <td class="text-center">
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" (click)="editOffConv(rowData, content1)">
+                        <i class="ri-pencil-fill"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td>
+                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} banque</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="formDemConv" class="tablelist-form" autocomplete="off">
+
+    <div class="modal-body">
+      <div class="row g-12">
+
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Code
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_conv"
+            readonly />
+        </div>
+        <div class="col-3">
+          <label for="billinginfo-lastName" class="form-label">Libelle
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libConv" readonly />
+        </div>
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Matricule
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers"
+            readonly />
+        </div>
+
+        <div class="col-4">
+          <label for="billinginfo-lastName" class="form-label">Nom & Prénom
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Matricule" [value]="nom" readonly />
+        </div>
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Date dem
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Date dem" formControlName="dat_dem_conv"
+            readonly />
+        </div>
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Date fin
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Date dem" formControlName="dat_min_fin"
+            readonly />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Etat</label>
+          <select class="form-select border-success" formControlName="etat_dem">
+            <option value="V">Valide</option>
+            <option value="S">Suspendue</option>
+
+          </select>
+        </div>
+
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Date fin
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="dd/mm/yyyy" formControlName="dat_susp"
+            mask="00/00/0000" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="saveSusp()">
+          Valider
+        </button>
+      </div>
+      <br>
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Close
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} banque</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="formOffConv" class="tablelist-form" autocomplete="off">
+
+    <div class="modal-body">
+      <div class="row g-12">
+
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Code
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_off"
+            readonly />
+        </div>
+        <div class="col-3">
+          <label for="billinginfo-lastName" class="form-label">Libelle
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_off" readonly />
+        </div>
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Num Tel
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Num Tel" formControlName="num_tel"
+            readonly />
+        </div>
+
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Date offre
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="dat_off_dem"
+            readonly />
+        </div>
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Date Saisie
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Date Saisie" formControlName="dat_saisie"
+            readonly />
+        </div>
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Mnt Off
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="Mnt Off" formControlName="mnt_off"
+            readonly />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Etat</label>
+          <select class="form-select border-success" formControlName="etat_off_dem">
+            <option value="V">Valide</option>
+            <option value="S">Suspendue</option>
+
+          </select>
+        </div>
+
+        <div class="col-2">
+          <label for="billinginfo-lastName" class="form-label">Date Susp
+          </label>
+          <input type="text" class="form-control border-primary" placeholder="dd/mm/yyyy" formControlName="dat_susp"
+            mask="00/00/0000" />
+        </div>
+
+        <div class="col-md-2">
+          <label for="billinginfo-phone" class="form-label">Motif</label>
+          <app-lov [listData]="listMotif" [columns]="columnMotif" codeField="cod_mot_susp" [selectedCode]="motifConv"
+            (selectedValue)="onSelectedValue($event)">
+          </app-lov>
+        </div>
+
+        <div class="col-md-3">
+          <label for="billinginfo-firstName" class="form-label">Libelle</label>
+          <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libMotif" readonly />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="saveOffSusp()">
+          Valider
+        </button>
+      </div>
+      <br>
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Close
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>

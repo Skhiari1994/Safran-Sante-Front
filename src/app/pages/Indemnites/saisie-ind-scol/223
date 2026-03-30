@@ -1,0 +1,1429 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Saisie des indemnités Scolaire" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+<div class="col-xl-12">
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form action="javascript:void(0);" class="row g-3">
+
+      <!-- Row 1: Direction -->
+
+      <div class="col-2">
+        <label for="billinginfo-phone" class="form-label">
+          Direction</label>
+
+        <app-lov [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu" [selectedCode]="codLieuVal"
+          (selectedValue)="onSelectedValueLieu($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-6">
+        <label for="billinginfo-phone" class="form-label">
+          Libellé</label>
+        <input type="text" class="form-control border-primary" [value]="libLieu" placeholder="Direction" readonly />
+      </div>
+
+      <div class="col-md-4">
+
+      </div>
+      <!-- Row 2: Motif de départ, Libellé de motif de départ, Etat Actif -->
+      <div class="col-md-2">
+        <label for="billinginfo-phone" class="form-label">Type don</label>
+        <app-lov [listData]="listTypDon" [columns]="columnsNat" codeField="nat_Don" [selectedCode]="typDonVal"
+          (selectedValue)="onSelectedValueTypDon($event)">
+        </app-lov>
+      </div>
+      <div class="col-md-6">
+        <label for="billinginfo-phone" class="form-label">Libellé don</label>
+        <input type="text" class="form-control border-primary" placeholder="Type don" [value]="libNatDon" readonly />
+      </div>
+
+      <div class="col-md-3">
+        <label for="billinginfo-prenom" class="form-label">Plafond </label>
+
+        <input type="text" class="form-control border-primary" [value]=max_mnt_don />
+      </div>
+
+
+    </form>
+  </div>
+</div>
+
+<div class="col-xl-12">
+
+
+
+
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <div class="card-body">
+      <!-- Header with Add Button -->
+      <div class="card-header">
+        <div class="d-flex align-items-center flex-wrap gap-3">
+          <div class="flex-grow-1"></div>
+          <div class="flex-shrink-0">
+            <div class="hstack text-nowrap gap-2">
+              <button class="btn btn-info add-btn mb-3" data-bs-toggle="modal" data-bs-target="#showModal"
+                (click)="openModalTab(content1)">
+                <i class="ri-add-fill me-1 align-bottom"></i> Saisie indémnité
+              </button>
+
+              <button class="btn btn-danger add-btn mb-3" data-bs-toggle="modal" data-bs-target="#showModal"
+                (click)="deleteInd()">
+                <i class="ri-delete-bin-6-line me-1 align-bottom"></i> Supprimer indémnité
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+      <div class="table-responsive table-card mb-2">
+        <table class="table">
+          <thead>
+            <!-- Search Filters Row -->
+
+            <tr class="bg-light">
+              <th>Sélectionner Tous</th>
+              <th>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mat_pers"
+                  (input)="applyFilter()" placeholder="Rechercher..." />
+
+              </th>
+              <th>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.nom_pers"
+                  (input)="applyFilter()" placeholder="Rechercher..." />
+              </th>
+              <th>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.num_fam"
+                  (input)="applyFilter()" placeholder="Rechercher..." />
+              </th>
+              <th>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mnt_dem_don"
+                  (input)="applyFilter()" placeholder="Rechercher..." />
+              </th>
+              <th>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mnt_livre"
+                  (input)="applyFilter()" placeholder="Rechercher..." />
+              </th>
+              <th>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="searchz.mode_payement"
+                  (input)="applyFilter()" placeholder="Rechercher..." />
+              </th>
+            </tr>
+            <!-- Table Headers Row -->
+            <tr class="table-primary">
+              <th scope="col" style="width: 50px">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="checkAll" [(ngModel)]="masterSelected"
+                    (change)="checkUncheckAll($event)" />
+                </div>
+              </th>
+              <th class="sort" (click)="onSort('mat_pers')">Matricule</th>
+              <th class="sort" (click)="onSort('nom_pers')">Nom & Prénom</th>
+              <th class="sort" (click)="onSort('num_fam')">Num Famille</th>
+
+              <th class="sort" (click)="onSort('mnt_dem_don')">Montant</th>
+              <th class="sort" (click)="onSort('mnt_livre')">Montant livre</th>
+
+              <th class="sort" (click)="onSort('mode_payement')">Mode payement</th>
+              <th class="sort">Action</th>
+
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let data of listDem | paginate: { itemsPerPage: 12, currentPage: pSusp }; let i = index"
+              [ngClass]="{'bg-light': i % 2 === 0, 'bg-white': i % 2 !== 0}"
+              [ngClass]="{ 'table-active': selectedRow === i }">
+
+              <th scope="row">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="checkAll" [(ngModel)]="data.state"
+                    (change)="onCheckboxChange()" />
+                </div>
+              </th>
+              <td>{{ data.mat_pers }}</td>
+
+              <td>
+                {{data.nom_pers }}
+              </td>
+              <td>
+                {{data.num_fam }}
+              </td>
+
+              <td class="text-end">
+                {{data.mnt_dem_don | number: '1.3-3'}}
+              </td>
+              <td class="text-end">
+                {{ data.mnt_livre | number: '1.3-3'}}
+              </td>
+              <td >
+                {{
+                data.mode_payement === 'E' ? 'Espèce' :
+                data.mode_payement === 'V' ? 'Virement' :
+                data.mode_payement === 'C' ? 'Chèque' :
+                data.mode_payement
+                }}
+              </td>
+
+              <td>
+                <button class="btn btn-info add-btn mb-3" data-bs-toggle="modal" data-bs-target="#showModal"
+                  (click)="openModalEdit(content1)">
+                  <i class="ri-edit-line"></i>
+                </button>
+              </td>
+            </tr>
+
+          </tbody>
+
+
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-end mt-3">
+      <pagination-controls (pageChange)="pSusp = $event"></pagination-controls>
+    </div>
+    <br>
+
+  </div>
+
+</div>
+<br>
+
+
+<br>
+<!-- end row -->
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>
+
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">Saisie indémnité</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="formSaiseIndScol" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-2">
+        <div class="col-md-2">
+          <label for="billinginfo-phone" class="form-label">Matricule
+          </label>
+          <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="codMatVal"
+            (selectedValue)="onSelectedValue($event)"></app-lov>
+        </div>
+
+        <div class="col-md-4">
+          <label for="billinginfo-nom" class="form-label">Nom & Prénom</label>
+          <input type="text" class="form-control border-primary" placeholder="Entrer Nom" formControlName="nom_pers" />
+        </div>
+
+        <div class="col-md-2">
+          <label for="name-field" class="form-label">Numéro famille</label>
+          <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam"
+            [selectedCode]="codActiviteVal" (selectedValue)="onSelectedValueFamille($event)">
+          </app-lov>
+        </div>
+
+        <div class="col-md-4">
+          <label for="owner-field" class="form-label">Prénom</label>
+          <input type="text" class="form-control border-primary" formControlName="nom_fam" />
+        </div>
+
+
+
+        <div class="col-md-3">
+          <label for="name-field" class="form-label">Montant</label>
+          <input type="text" class="form-control border-primary" placeholder="Entrer le montant demander"
+            formControlName="mnt_dem_don" />
+          <!-- Error message for required validation -->
+
+        </div>
+        <div class="col-md-3">
+          <label for="name-field" class="form-label">Montant Livre</label>
+          <input type="text" class="form-control border-primary" placeholder="Entrer le montant demander"
+            formControlName="mnt_livre" />
+          <div
+            *ngIf="formSaiseIndScol.get('mnt_livre')?.hasError('required') && formSaiseIndScol.get('mnt_livre')?.touched"
+            class="text-danger">
+            Le montant demandé est obligatoire.
+          </div>
+          <!-- Error message for plafond validation -->
+          <div
+            *ngIf="formSaiseIndScol.get('mnt_livre')?.hasError('exceedsPlafond') && formSaiseIndScol.get('mnt_livre')?.touched"
+            class="text-danger">
+            Le montant demandé doit être inférieur ou égal à la valeur du plafond.
+          </div>
+
+        </div>
+        <div class="col-md-3">
+          <label for="billinginfo-phone" class="form-label">Mode payment</label>
+          <select class="form-select border-success" formControlName="mode_payement"
+            (change)="getValueModPay($event.target.value)">
+            <option value="V">Virement</option>
+            <option value="E">Espéce</option>
+            <option value="C">Chèque</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal" [disabled]="!isFormValid"
+          (click)="addDemDon(); modal.close('Close click')">
+          Valider
+        </button>
+      </div>
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Close
+        </button>
+      </div>
+    </div>
+  </form>
+
+</ng-template>
+<ng-template #deleteModel let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
+        (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-2 text-center">
+        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+          <h4>Are you sure ?</h4>
+          <p class="text-muted mx-4 mb-0">
+            Are you sure you want to remove this address ?
+          </p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+        <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+          Close
+        </button>
+        <button type="button" class="btn w-sm btn-danger" id="delete-product">
+          Yes, Delete It!
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- /.modal-content -->
+</ng-template>//
+import { Component } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
+import { SaveService } from 'src/app/shared/Service/save.service';
+import Swal from 'sweetalert2';
+import { PaginationService } from 'src/app/core/services/pagination.service';
+import { SharedModule } from "../../../shared/shared.module";
+import { IndemnitesService } from '../indemnites.service';
+import { TokenStorage } from 'src/app/account/token-storage.service';
+@Component({
+  selector: 'app-saisie-ind-scol',
+  templateUrl: './saisie-ind-scol.component.html',
+  styleUrl: './saisie-ind-scol.component.scss'
+})
+export class SaisieIndScolComponent {
+
+  imageURL: string | undefined;
+  isReadOnly: boolean = true;  // Set to 'true' to visually make it readonly
+
+  dataRows!: any[];
+  listDataFiltred!: any[];
+  selectedCodeLieu: string = '';
+
+  listActivite!: any[];
+  CarteSoinList!: any[];
+  filteredDataRows: any
+  filteredDataCarteSoint: any
+  codeField: string = "cod_natp";
+  codLieu: string = "cod_lieu_geog";
+  codAffect: string = "";
+  codTypDepart: string = "cod_typ_depart";
+  codBanque: string = "cod_banq";
+  codAgence: string = "cod_agc";
+  codPost: string = "cod_poste";
+  codGouv: string = "cod_gouv";
+  codNatP?: String = "";
+  codLieuVal?: string;
+  codMatVal?: string
+  typDonVal: string = "";
+
+
+  ///list /////
+
+  listAffectation: any[] = [];
+  listBanque: any[] = [];
+  listLieu: any[] = [];
+  listPersonnel: any[] = [];
+  listMatInt: any[] = [];
+  listMat: any[] = [];
+  listDem: any[] = [];
+
+  columnsNat: any[] = [];
+  columnsLieu: any[] = [];
+  columnsMatInt: any[] = [];
+  columnsSearch: any[] = [];
+  listTypDon: any[] = [];
+  selectedRows: any[] = [];
+  columnFamille: any[] = [];
+
+  isFormValid: boolean = false; // Default disabled
+  breadCrumbItems!: Array<{}>;
+
+  ////////////////////////lib
+  libNat: string = "";
+  libLieu: string = "";
+  libAffect: string = "";
+  libMatInt: string = "";
+  libNom: string = "";
+  libNatDon: string = "";
+
+  pSusp: any
+  formCotisMutPersForm!: FormGroup;
+  formSaiseIndScol!: FormGroup;
+  formCotisMutPersFormIns!: FormGroup;
+  formAdherent!: FormGroup;
+  save!: boolean;
+  isDisabled!: boolean;
+  masterSelected!: boolean;
+
+  file!: File;
+  max_mnt_don!: number;
+
+  isSearch: boolean = true;
+  rows: any;
+  searchResults: any;
+  allcompany: any;
+  searchTerm: any;
+  company!: any[];
+  checkedValGet: any[] = [];
+  isRemoveActionsVisible!: boolean;
+  checkedVal: any;
+  donData: IdDonData = {
+    typ_don: "",
+    cod_soc: "",
+    mat_pers: "",
+    num_fam: 0,
+    dat_dem_don: "",
+    demandeDon: {
+      mnt_acc_don: 0,
+      etat_dem: ""
+    }
+  };
+  EtaDem: any;
+  mntAccDon: any;
+  total: number = 0;
+  numFam: any;
+  listFamille: any;
+  modPay: any;
+  dataFamProcScol: { codSoc: any; matPers: any; numFam: any; natDon: any; datDemDon: any; };
+  codActiviteVal!: number;
+  data1!: { typ_don: string; cod_soc: any; mat_pers: (matricule: any) => void; num_fam: number; dat_dem_don: any; };
+  datProcTypDon!: {
+    natDon: any; codAffect: any; typDon: string; codSoc: any; matPers: any; numFam: any; // Adjust as necessary
+    datDemDon: string; // Replace with a dynamic value if required
+  };
+  saveVal!: boolean;
+  concern: any;
+  benif!: string;
+  corps: any;
+  matricule: any;
+  mntLivre: number =0;
+
+
+  constructor(private tokenStorage: TokenStorage, public paginationService: PaginationService, private adherentServ: AdherentService, private indemniteServ: IndemnitesService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
+
+    this.dataFamProcScol = {
+      codSoc: null,
+      matPers: null,
+      numFam: '',
+      natDon: null,
+      datDemDon: '',
+    };
+
+    this.formCotisMutPersForm = this.fb.group({
+      cod_soc: [''],
+      mat_pers: [''],
+      num_cot: [{ value: '', disabled: true }],
+      typ_cot: [{ value: 'M', disabled: true }],
+      dat_deb: ['', Validators.required],
+      dat_fin: ['', Validators.required],
+      mnt_a_payer: [{ value: 0.000, disabled: true }],
+      mnt_payer: ['', Validators.required],
+      mod_pay: ['V', Validators.required],
+      ref_pay: [''],
+      dat_saisie: [''],
+      etat_cot: [{ value: 'I', disabled: true }],
+      corps: [''],
+      cod_typ_depart: [''],
+      cod_affect: [''],
+      mnt_param: [''],
+      num_retr: [''],
+      seq_ecrt1: ['null'],
+      seq_ecrt2: ['null'],
+      imput: ['']
+
+    });
+
+    this.formCotisMutPersForm.get('dat_deb')?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.formCotisMutPersForm.patchValue({ dat_fin: value });
+      }
+    });
+    this.formCotisMutPersFormIns = this.fb.group({
+
+
+
+    });
+    this.formSaiseIndScol = this.fb.group({
+      mat_pers: [''],
+      nom_pers: [''],
+      num_fam: [''],
+      nom_fam: [''],
+      mnt_dem_don: [0, [Validators.required, this.montantValidator.bind(this)]],
+      mnt_livre: [''],
+      mode_payement: ['V'],
+
+    });
+
+  }
+  ngOnInit() {
+    this.numFam = ''
+    this.formSaiseIndScol = this.fb.group({
+      mat_pers: [''],
+      nom_pers: [''],
+      num_fam: [''],
+      nom_fam: [''],
+      mnt_dem_don: [''], // Ajout de Validators.required
+      mnt_livre: ['', [Validators.required, this.exceedsPlafondValidator.bind(this)]],
+      mode_payement: ['V'],
+      max_mnt_don: [''] // Ajout du champ plafond pour l'exemple
+    });
+
+    this.datProcTypDon = {
+      natDon: null,
+      codAffect: null,
+      typDon: '',
+      codSoc: null,
+      matPers: null,
+      numFam: null,
+      datDemDon: '', // You can replace this with a dynamic date
+    };
+
+    this.libNatDon = ''
+    this.max_mnt_don = 0
+
+    this.formAdherent = this.fb.group({
+      cod_soc: [""],
+      mat_pers: ["", Validators.required],
+      cod_assur: [""],
+      nom_pers: [""],
+      sexe: [""],
+      cin: [""],
+      dat_nais: [""],
+      pren_pers: [""],
+      dat_emb: [""],
+      cod_sit: [""],
+      nbr_enf: [""],
+      cod_retr: [""],
+      num_retr: [""],
+      num_assur: [""],
+      dat_ass: [""],
+      cod_pay: [""],
+      rib: [""],
+      nom_pers_a: [""],
+      pren_pers_a: [""],
+      cod_natp: [""],
+      cod_banq: [""],
+      cod_agc: [""],
+      dat_dece: [""],
+      etat_act: [""],
+      dat_motif: [""],
+      cod_lieu_geog: [""],
+      bas_plafond: [""],
+      nom_jf: [""],
+      nom_jf_a: [""],
+      photo_pers: [""],
+      lieu_nais: [""],
+      mnt_param: [""],
+      etat_prof: [""],
+      dat_aff_cnam: [""],
+      corps: [""],
+      cod_affect: [""],
+      dat_affect: [""],
+      cod_typ_depart: [""],
+      dat_depart: [""],
+      typ_aff: [""],
+      cod_user: [""],
+      dat_maj: [""],
+      mat_int: [""],
+      pers_carte: [""],
+    });
+
+
+    this.getDepartement();
+
+    this.saveService.canSave$.subscribe((canSave) => {
+      this.save = canSave;
+      if (this.save) {
+        // this.submit();
+        //   this.onSubmit()
+      }
+    });
+
+
+
+    ///////////////////////////save
+    this.saveService.registerSaveCallback(() => this.saveInd());
+
+
+
+    this.saveService.isSearch$.subscribe((canSearch) => {
+      this.isSearch = canSearch
+
+      console.log("is search valid", canSearch)
+    })
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Subscribe to resetObservable to reset the form
+    this.saveService.add$.subscribe((reset) => {
+      if (reset) {
+        this.formCotisMutPersForm.reset();
+        this.formCotisMutPersForm.enable()
+        this.dataRows = []
+        this.listDataFiltred = []
+        this.filteredDataRows = []
+
+        this.formAdherent.reset()
+        this.formCotisMutPersForm.get("num_cot")
+        this.formCotisMutPersForm.get("num_cot")?.setValue("");
+        this.formCotisMutPersForm.get("typ_cot")?.setValue("M");
+        this.formCotisMutPersForm.get("mnt_a_payer")?.setValue(0.000);
+        this.formCotisMutPersForm.get("etat_cot")?.setValue("I");
+        this.formCotisMutPersForm.get("mod_pay")?.setValue("V");
+
+        this.formCotisMutPersForm.get("typ_cot")?.disable()
+        this.formCotisMutPersForm.get("mnt_a_payer")?.disable()
+        this.formCotisMutPersForm.get("etat_cot")?.disable()
+
+
+        this.libAffect = ''
+
+
+      }
+    });
+    this.getgetListTypDon()
+    // Listen for form changes
+    this.formSaiseIndScol.statusChanges.subscribe(status => {
+      this.isFormValid = status === 'VALID';
+    });
+  }
+
+  ngOnChanges() {
+    this.total = this.calculateTotalMntAccDem();
+  }
+  ngOnDestroy() {
+    // Clear the callback to avoid memory leaks
+    this.saveService.clearSaveCallback();
+    //this.saveService.setCanSave(false)
+  }
+
+  /*  getPersonnels() {
+     this.indemniteServ.PersCotisActif('01').subscribe((data) => {
+       console.log("personnel", data);
+       this.listPersonnel = data;
+       this.columnsSearch = [
+         { key: "mat_pers", label: "Matricule" },
+         { key: "nom_pers", label: "Nom" },
+         { key: "pren_pers", label: "Prénom" },
+         { key: "num_retr", label: "Id unique" },
+         { key: "cin", label: "CIN" },
+       ];
+     });
+   } */
+
+
+
+
+  formatDate(dateString: any): string {
+    // Ensure the string is in the format 'ddmmyyyy'
+    if (dateString && dateString.length === 8) {
+      const day = dateString.substring(0, 2);
+      const month = dateString.substring(2, 4);
+      const year = dateString.substring(4, 8);
+      return `${day}/${month}/${year}`;
+    }
+    return dateString;
+  }
+
+
+
+  getPersonnels() {
+    this.indemniteServ.getPersIndAff(this.tokenStorage.getUser().codSoc, this.selectedCodeLieu).subscribe((data) => {
+      console.log("personnel", data);
+      this.listPersonnel = data;
+      this.columnsSearch = [
+        { key: "mat_pers", label: "Matricule" },
+        { key: "nom_pers", label: "Nom" },
+        { key: "pren_pers", label: "Prénom" },
+        { key: "num_retr", label: "Id unique" },
+        { key: "cin", label: "CIN" },
+      ];
+    });
+  }
+
+  onSelectedValue(item: any) {
+    if (!item || !item.mat_pers) {
+      console.error("onSelectedValue: item is undefined or missing mat_pers", item);
+      return;
+    }
+
+    console.log("Selected item:", item);
+    // Met à jour les champs du formulaire
+    this.formSaiseIndScol.patchValue({
+      mat_pers: item.mat_pers,
+      nom_pers: item.nom_pers + " " + item.pren_pers,
+    });
+    // Récupération des informations associées
+    this.getFamille(item.mat_pers);
+
+    // Met à jour la variable matricule
+    this.matricule = item.mat_pers;
+    this.corps = item.corps
+    // Vérifie si la liste de famille est vide
+    if (!this.listFamille || this.listFamille.length === 0) {
+
+      this.formSaiseIndScol.patchValue({
+        num_fam: 0,
+        nom_fam: "Adhérent",
+        mnt_dem_don: this.max_mnt_don,
+      });
+      this.codActiviteVal = 0
+      this.numFam = 0
+    } else {
+
+
+      console.log("Form updated with:", this.formSaiseIndScol.value);
+    }
+
+
+  }
+
+
+  onSelectedValueLieu(item: any) {
+    this.selectedCodeLieu = item.cod_lieu_geog; // Mise à jour du champ code
+    this.libLieu = item.lib_lieu; // Mise à jour du champ libellé
+    this.formAdherent.patchValue({
+      cod_lieu_geog: item.cod_lieu_geog,
+    });
+    this.codAffect = item.cod_lieu_geog;
+    this.getPersonnels();
+
+  }
+
+
+  convertDateFormatToMounth(dateString: string): string {
+    // Ensure the input string is in the format dd/mm/yyyy
+    const [day, month, year] = dateString.split('/');
+    return `${month}/${year}`;
+  }
+
+  onSubmit(data: any[]): void {
+
+  }
+
+  transformDate(input: string): string {
+    const regexWithMonthSlash = /^\d{2}\/\d{4}$/; // Matches "mm/yyyy" or "01/yyyy"
+    const regexWithoutSlash = /^\d{6}$/;         // Matches "mmyyyy"
+
+    let month: string, year: string;
+
+    if (regexWithMonthSlash.test(input)) {
+      [month, year] = input.split('/');
+      if (month === "01" && year.length === 4) {
+        return `${month}/${year}`;
+      }
+    } else if (regexWithoutSlash.test(input)) {
+      month = input.substring(0, 2);
+      year = input.substring(2);
+    } else {
+      throw new Error('Invalid date format. Expected "mm/yyyy", "mmyyyy", or "01/yyyy".');
+    }
+
+    return `${month}/${year}`;
+  }
+  getCurrentDate(): string {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Mois basé sur 0
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year}`; // Format: DD/MM/YYYY HH:mm:ss
+  }
+
+  formatDateToMonthYear(date: string): string {
+    if (typeof date !== "string" || !date.trim()) {
+      console.error("Invalid input: The date must be a non-empty string.");
+      return "";
+    }
+
+    const parts = date.split("/");
+    if (parts.length !== 3) {
+      console.error("Invalid date format: Expected 'dd/mm/yyyy', received:", date);
+      return "";
+    }
+
+    const [day, month, year] = parts;
+
+    if (!day || !month || !year) {
+      console.error("Invalid date components: Missing day, month, or year in:", date);
+      return "";
+    }
+
+    return `${month}/${year}`;
+  }
+
+  changePage() {
+    this.filteredDataRows = this.paginationService.changePage(this.filteredDataRows);
+  }
+
+  searchz: any = {
+    mat_pers: '',
+    num_retr: '',
+    nom_pers: '',
+    dat_deb: '',
+    mnt_payer: '',
+    mod_pay: '',
+    etat_cot: ''
+  };
+
+  applyFilter() {
+    console.log('this.filteredDataRows :', this.filteredDataRows);
+
+    this.filteredDataRows = this.dataRows.filter((row) => {
+      return Object.keys(this.searchz).every((key) => {
+        const searchValue = this.searchz[key]?.toString().toLowerCase() || ''; // Si null/undefined -> ''
+        const rowValue = row[key] ? row[key].toString().toLowerCase() : ''; // Si null/undefined -> ''
+
+        return !searchValue || rowValue.includes(searchValue);
+      });
+    });
+  }
+
+  onSort(column: any) {
+    console.log("this.dataRows :", this.dataRows)
+    this.filteredDataCarteSoint = this.paginationService.onSort(column, this.filteredDataCarteSoint);
+  }
+
+  // Delete Data
+  deleteData(id: any) {
+
+    this.masterSelected = false;
+  }
+  // Search Data
+  performSearch(): void {
+    this.searchResults = this.allcompany.filter((item: any) => {
+      return item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+    });
+    this.company = this.paginationService.changePage(this.searchResults);
+  }
+
+
+  ChargActInxx() {
+    const datDebControl = this.transformDate(this.formCotisMutPersForm.get("dat_deb")?.value);
+    const datDeb = datDebControl ? `01/${datDebControl}` : '';
+    const data = {
+      soc: '01',
+      mois: datDeb,
+      mat: this.formCotisMutPersForm.get("mat_pers")?.value
+
+    }
+
+
+  }
+  ChargActInx() {
+    const datDebControl = this.transformDate(this.formCotisMutPersForm.get("dat_deb")?.value);
+    const datDeb = datDebControl ? `01/${datDebControl}` : '';
+
+    const data = {
+      soc: '01',
+      mois: datDeb,
+      mat: this.formCotisMutPersForm.get("mat_pers")?.value
+    };
+
+    // Show loading alert
+    Swal.fire({
+      title: 'Chargement en cours...',
+      text: 'La procédure est en cours de traitement',
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();  // Show the loading spinner
+      }
+    });
+
+
+  }
+
+
+
+  getEtat(data: any) {
+    this.EtaDem = data.etat_dem
+    this.saveService.setDisabled(true);
+
+  }
+
+  getDepartement() {
+    this.adherentServ.getLieu().subscribe((data) => {
+      this.listLieu = data;
+      this.columnsLieu = [
+        { key: "cod_lieu_geog", label: "Code" },
+        { key: "lib_lieu", label: "Libelle" },
+        { key: "lib_lieu_a", label: "Libelle arabe" },
+      ];
+    });
+  }
+
+  getgetListTypDon() {
+    this.indemniteServ.getgetListNatDon().subscribe((data) => {
+      this.listTypDon = data;
+      console.log(this.listTypDon);
+      // Définir les colonnes dynamiques du tableau
+      this.columnsNat = [
+        { key: "lib_nat_Don", label: "Libelle" },
+        { key: "max_mnt_don", label: "Plafond" },
+        { key: "concerne", label: "Concerne" },
+        { key: "cod_affect", label: "Affectation" },
+
+
+        // { key: 'lib_tit_a', label: 'Libellé 2éme langue' }
+      ];
+    });
+  }
+
+  onSelectedValueTypDon(item: any) {
+
+    this.libNatDon = item.lib_nat_Don;
+    this.typDonVal = item.nat_Don
+    this.max_mnt_don = item.max_mnt_don
+    // Prepare data objects
+    this.concern = item.concerne
+    this.codAffect = item.cod_affect
+    this.PersIndValid();
+
+  }
+
+  PersIndValid() {
+    this.indemniteServ.PersIndValid(this.tokenStorage.getUser().codSoc, this.selectedCodeLieu, this.typDonVal).subscribe((data) => {
+
+      this.dataRows = data
+      this.listDem = data
+
+      this.filteredDataRows = [...this.dataRows];
+      console.log("demande en instance ", data, this.codAffect, this.typDonVal)
+
+    })
+
+  }
+  updateMontant(data: any) {
+    this.mntAccDon = data.mnt_acc_don
+
+
+    this.saveService.setDisabled(true);
+
+    console.log("Montant mis à jour :", data.mnt_acc_don);
+    this.total = this.calculateTotalMntAccDem()
+
+    // You can send an API request here to save changes if necessary
+  }
+
+  onCheckboxChange(): void {
+    this.saveService.setDisabled(true);
+    const totalRows: number = this.listDem.length;
+    const selectedCount: number = this.listDem.filter((row: DataRow) => row.state).length;
+
+    this.masterSelected = totalRows > 0 && selectedCount === totalRows;
+
+    // Update selected rows list
+    this.selectedRows = this.listDem.filter((row: DataRow) => row.state);
+
+    console.log("Updated Selected Rows:", this.selectedRows);
+    this.total = this.calculateTotalMntAccDem()
+  }
+deleteInd() {
+  console.log("List before delete:", this.listDem);
+
+  // Prepare the payload by removing unwanted fields
+  const updatedData: any[] = this.listDem
+    .filter(row => this.selectedRows.includes(row)) // Only send selected rows
+    .map((row: any) => {
+      const { nom_pers, nom_fam, state, lib_nat_don, ...rest } = row;
+      return rest; // Return the object with excluded fields
+    });
+
+  console.log("Payload to delete:", updatedData);
+
+  this.indemniteServ.deleteDelocage(updatedData).subscribe({
+    next: (data: any) => {
+      // Update the local list by removing the deleted rows
+      this.listDem = this.listDem.filter(row => !this.selectedRows.includes(row));
+
+      console.log("List after delete:", this.listDem);
+
+      // Optionally show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Suppression réussie',
+        text: 'Les lignes sélectionnées ont été supprimées.',
+      });
+    }
+  });
+}
+
+
+  checkUncheckAll(event: any): void {
+    const isChecked: boolean = event.target.checked;
+
+    this.listDem.forEach((row: DataRow) => {
+      row.state = isChecked;
+    });
+
+    this.selectedRows = isChecked ? [...this.listDem] : [];
+    if(isChecked){
+    this.saveService.setDisabled(true);
+  }
+
+    console.log("Selected Rows:", this.selectedRows);
+    this.total = this.calculateTotalMntAccDem()
+  }
+
+  updatedData: IdDonData[] = []
+
+
+  calculateTotalMntAccDem(): number {
+    console.log("selectedRows:", this.selectedRows);
+
+    if (!this.selectedRows || this.selectedRows.length === 0) {
+      console.warn("selectedRows est vide ou non défini !");
+      return 0;
+    }
+
+    const total = this.selectedRows.reduce((sum, row) => {
+      const montant = row?.mnt_acc_don ?? 0; // Si `mnt_acc_don` est null, on prend 0
+      console.log("Row montant:", montant);
+      return sum + montant;
+    }, 0);
+
+    console.log("Total montant accumulé:", total);
+    return total;
+  }
+
+
+  saveInd(): void {
+
+    this.indemniteServ.chekExisteDem(this.datProcTypDon).subscribe((data => {
+
+      console.log("data.p_status :", data.p_status);
+
+      if (data.p_status === 1) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Entrée en double',
+          text: "Veuillez vérifier si cet adhérent n'a pas encore bénéficié de cette indemnité pour le même prestataire.",
+          confirmButtonText: 'OK'
+        });
+      } else
+        if (data.p_status === 0) {
+          // S'assurer que c'est un tableau pour contenir les données mises à jour
+          this.updatedData = [];
+
+          let updatedData: any[] = this.listDem.map((row: any) => {
+            // Exclude `nom_pers` while keeping the rest of the properties
+            const { nom_pers, nom_fam, state, lib_nat_don, ...rest } = row;
+            return {
+              ...rest,
+              dat_saisie: this.getCurrentDate(),
+              etat_dem: 'I',
+              dat_dem_don: this.getCurrentDate()
+            };
+          });
+          this.indemniteServ.saveDelocage(updatedData).subscribe(
+            (data: any[]) => {
+              if (data && data.length > 0) {
+                console.log("Données enregistrées :", data);
+                this.filteredDataRows = data
+                Swal.fire('Enregistré !', 'Vos changements ont été enregistrés.', 'success');
+                this.saveService.setDisabled(false);
+    this.PersIndValid();
+               
+                this.datProcTypDon = {
+                  natDon: this.typDonVal,
+                  codAffect: this.codAffect,
+                  typDon: "I",
+                  codSoc: '',
+                  matPers:null,
+                  numFam: null,
+                  datDemDon: ''
+                };
+              } else {
+                console.error("Réponse vide ou erronée de l'API :", data);
+                Swal.fire('Erreur !', 'Problème lors de l\'enregistrement.', 'error');
+                this.saveService.setDisabled(true);
+              }
+            },
+            (error) => {
+              console.error('Erreur lors de la mise à jour:', error);
+              Swal.fire('Erreur !', 'Une erreur s\'est produite lors de l\'enregistrement.', 'error');
+              this.saveService.setDisabled(true);
+            }
+          );
+        }
+    }));
+  }
+
+
+
+  onSelectedValueFamille(item: any) {
+    this.numFam = item.num_fam
+
+
+
+    const datSaisie = this.getCurrentDate();
+    console.log("data proc fam ", item)
+
+    this.dataFamProcScol = {
+      codSoc: this.tokenStorage.getUser().codSoc,
+      matPers: this.matricule,
+      numFam: item.num_fam,
+      natDon: this.typDonVal,
+      datDemDon: datSaisie,
+    };
+    console.log("data proc fam ", this.dataFamProcScol)
+
+    this.indemniteServ.execProcFamScol(this.dataFamProcScol).subscribe((data => {
+      console.log("data RETURN ", data)
+
+
+      const valid = Number(data.valid);
+
+      // Handle response statuses
+      switch (valid) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+          Swal.fire({
+            icon: 'warning',
+            title: 'Message:',
+            text: data.p_status,
+            confirmButtonText: 'OK',
+          });
+          break;
+        case 0:
+          this.formSaiseIndScol.patchValue({
+            num_fam: item.num_fam,
+            nom_fam: item.nom_pren, // Ensure this is correct, previously it was `num_fam`
+
+            mnt_dem_don: this.max_mnt_don
+          });
+          break;
+
+        default:
+          console.error("Unhandled response.valid value:", data.valid);
+          break;
+      }
+
+
+
+    }))
+
+
+    if (!item || !item.num_fam) {
+      console.error("onSelectedValueFamille: item is undefined or missing properties", item);
+      return;
+    }
+
+
+    console.log("Form updated with:", item);
+    this.VerifTypDon()
+
+  }
+  VerifTypDon() {
+    const user = this.tokenStorage.getUser();
+    const datSaisie = this.getCurrentDate();
+
+    this.datProcTypDon = {
+      natDon: this.typDonVal,
+      codAffect: this.codAffect,
+      typDon: "I",
+      codSoc: user.codSoc,
+      matPers: this.matricule,
+      numFam: this.numFam,
+      datDemDon: datSaisie
+    };
+    console.log("execProcTypDon:", this.datProcTypDon);
+
+    // Call the service
+    this.indemniteServ.execProcTypDon(this.datProcTypDon).subscribe({
+      next: (response) => {
+        console.log("Response from execProcTypDon:", response);
+        const valid = Number(response.valid);
+
+        switch (valid) {
+          case 1:
+          case 2:
+          case 3:
+            Swal.fire({
+              icon: 'warning',
+              title: 'Message:',
+              text: response.p_status,
+              confirmButtonText: 'OK',
+            });
+            break;
+
+          case 4:
+            this.isFormValid = true; // Enable button when valid
+            this.benif = response.p_typ_benef
+            break;
+
+          default:
+            console.error("Unhandled response.valid value:", response.valid);
+            break;
+        }
+      },
+      error: (error) => {
+        console.error("Error during execProcTypDon:", error);
+      }
+    });
+  }
+
+  getFamille(mat: any) {
+    console.log("famille 1", mat)
+
+    this.indemniteServ.getFamilleEnfant(this.tokenStorage.getUser().codSoc, mat).subscribe(
+      (data: any) => {
+        this.listFamille = data;
+    console.log("famille 1", data)
+
+        console.log("famille", data)
+        this.columnFamille = [
+          { key: "num_fam", label: "Num fam" },
+          { key: "nom_pren", label: "Nom" },
+          { key: "dat_naiss", label: "Date naissance  " },
+        ];
+        // Set the lovList for the column in tableConfig
+
+      },
+      error => {
+        console.error('Error fetching data:', error);
+      }
+    );
+  }
+
+
+  // Validator personnalisé
+  montantValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value ? Number(control.value) : 0;
+
+    if (value <= 0) {
+      return { montantInvalide: 'Le montant doit être supérieur à zéro.' };
+    }
+
+    if (this.max_mnt_don > 0 && value > this.max_mnt_don) {
+      return { montantDepasse: `Le montant ne doit pas dépasser ${this.max_mnt_don}.` };
+    }
+
+    return null; // Valide
+  }
+  exceedsPlafondValidator(control: AbstractControl): ValidationErrors | null {
+    const plafond = this.formSaiseIndScol?.get('mnt_dem_don')?.value; // Récupération du plafond
+    const montantDemande = control.value;
+
+    console.log("montant", montantDemande, "plafond", plafond);
+
+    if (!montantDemande || montantDemande.toString().trim() === '') {
+      return { required: true }; // Vérification du champ vide
+    }
+
+    if (plafond && parseFloat(montantDemande) > parseFloat(plafond)) {
+      return { exceedsPlafond: true }; // Vérification si dépassement du plafond
+    }
+
+    return null; // Pas d'erreur
+  }
+  openModalTab(content: any) {
+    //this.edit = false;
+    if (this.typDonVal) {
+      this.modalService.open(content, { size: "lg", centered: true });
+      this.formSaiseIndScol.reset()
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Message:',
+        text: "Veuillez entrer le type de don",
+        confirmButtonText: 'OK',
+      });
+    }
+
+  }
+  openModalEdit(content: any) {
+    /******************************************************************* */
+    this.formSaiseIndScol.patchValue(this.selectedRows);
+    this.formSaiseIndScol.patchValue({
+      mat_pers: this.selectedRows[0].mat_pers || '',
+      num_fam: this.selectedRows[0].num_fam || '',
+      nom_fam: this.selectedRows[0].nom_fam || '',
+      mnt_dem_don: this.selectedRows[0].mnt_dem_don || '',
+      mnt_livre: this.selectedRows[0].mnt_livre || '',
+      mode_payement: this.selectedRows[0].mode_payement || '',
+    });
+    // Open the modal
+    this.modalService.open(content, { size: "lg", centered: true });
+
+
+  }
+
+
+  getValueModPay(arg0: any) {
+    this.modPay = arg0
+
+  }
+  addDemDon() {
+    const user = this.tokenStorage.getUser();
+    const datSaisie = this.getCurrentDate();
+
+    this.datProcTypDon = {
+      natDon: this.typDonVal,
+      codAffect: this.codAffect,
+      typDon: "I",
+      codSoc: user.codSoc,
+      matPers: this.matricule,
+      numFam: this.numFam,
+      datDemDon: datSaisie
+    };
+    console.log("this.datProcTypDon :", this.datProcTypDon);
+
+    this.indemniteServ.chekExisteDem(this.datProcTypDon).subscribe((data => {
+
+      console.log("data.p_status :", data.p_status);
+
+      if (data.p_status === 1) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Entrée en double',
+          text: "Veuillez vérifier si cet adhérent n'a pas encore bénéficié de cette indemnité pour le même prestataire.",
+          confirmButtonText: 'OK'
+        });
+      } else
+        if (data.p_status === 0) {
+          console.log("Valeurs du formulaire :", this.formSaiseIndScol.value);
+
+          // Vérifier que les données du formulaire et de l'utilisateur sont présentes
+          const user = this.tokenStorage.getUser();
+          if (!this.formSaiseIndScol?.valid || !user) {
+            console.error("Le formulaire est invalide ou les informations utilisateur sont manquantes.");
+            return;
+          }
+
+          const datSaisie = this.getCurrentDate();
+
+          // Déterminer le type de bénéficiaire
+          this.benif = (Number(this.numFam) !== 0) ? 'E' : 'A';
+          this.mntLivre= Number(this.formSaiseIndScol.value.mnt_livre) || 0
+
+         //this.formSaiseIndScol.get('mnt_livre')?.setValue(0);
+        
+
+          // Création de l'objet de demande
+          const newRowDem = {
+            typ_don: 'I',
+            cod_soc: user.codSoc,
+            mat_pers: this.matricule,
+            nom_pers: this.formSaiseIndScol.value.nom_pers,
+            num_fam: this.numFam,
+            mnt_dem_don: Number(this.formSaiseIndScol.value.mnt_dem_don),
+            mnt_livre: Number(this.formSaiseIndScol.value.mnt_livre),
+            mode_payement: this.formSaiseIndScol.value.mode_payement,
+            nat_don: this.typDonVal,
+            cod_lieu_geog: this.selectedCodeLieu,
+            cod_affect: this.codAffect,
+            mnt_acc_don: Number(this.formSaiseIndScol.value.mnt_dem_don) + this.mntLivre,
+            typ_benificiaire: this.benif,
+            cod_fond: '01',
+            corps: this.corps
+          };
+
+          // Vérifier si la ligne existe déjà dans la liste
+          const isDuplicate = this.listDem.some(row =>
+            row.mat_pers === newRowDem.mat_pers &&
+            row.num_fam === newRowDem.num_fam &&
+            row.nat_don === newRowDem.nat_don &&
+            row.mnt_dem_don === newRowDem.mnt_dem_don
+          );
+
+          if (isDuplicate) {
+            // Afficher un message d'erreur si la ligne est un doublon
+            Swal.fire({
+              icon: 'error',
+              title: 'Entrée en double',
+              text: 'Cette entrée existe déjà dans la liste.',
+              confirmButtonText: 'OK'
+            });
+            return; // Ne pas ajouter la ligne si elle est un doublon
+          }
+
+          // Ajouter la nouvelle ligne à la liste si elle n'est pas un doublon
+          this.listDem.push(newRowDem);
+
+          console.log('Liste mise à jour listDem:', this.listDem);
+
+        }
+
+    }))
+
+  }
+
+
+
+
+
+
+}
+
+interface DataRow {
+  _id: string;
+  mat_pers: string;
+  nom_pers: string;
+  dat_dem_don: string;
+  num_fam: string;
+  nat_don: string;
+  lib_nat_don: string;
+  mnt_acc_don: number;
+  etat_dem: string;
+  state: boolean; // This represents whether the checkbox is checked
+}
+
+export interface DemandeDon {
+  mnt_acc_don: number;
+  etat_dem: string;
+}
+
+export interface IdDonData {
+  typ_don: string;
+  cod_soc: string;
+  mat_pers: string;
+  num_fam: number;
+  dat_dem_don: string;
+  demandeDon: DemandeDon;
+}

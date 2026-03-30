@@ -1,0 +1,310 @@
+
+<div class="row" style="margin-top: 25px"> 
+  <app-breadcrumbs
+  title="société"
+  [breadcrumbItems]="breadCrumbItems"
+></app-breadcrumbs>
+
+     <br>
+<div class="row">
+ 
+
+    <div class="col-xl-10">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div class="col-md-12">
+          <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow mb-4">
+              <div class="card-header   text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Liste des sociétés</h5>
+                <button
+                  class="btn btn-light"
+                  data-bs-toggle="modal"
+                  data-bs-target="#showModal"
+                  (click)="openModalTab(content)"
+                >
+                  <i class="ri-add-fill me-1"></i> Ajouter société
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive table-card">
+                  <p-table [value]="listSociete" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                    <ng-template pTemplate="header">
+                      <tr class="table-primary">
+                        <th *ngFor="let column of ['cod_banq', 'lib_banq', 'lib_banq_a']">
+                          <div class="d-flex align-items-center">
+                            <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
+                            <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
+                            <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                          </div>
+                        </th>
+                        <th>Action</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                      <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="getAgence(rowData, rowIndex)">
+                        <td class="text-center">{{ rowData.cod_soc }}</td>
+                        <td class="text-center">{{ rowData.lib_soc }}</td>
+                        <td class="text-center">{{ rowData.adr_soc }}</td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                              <button class="btn btn-sm btn-outline-primary" (click)="editDataGet(rowIndex, rowData, content)"><i class="ri-pencil-fill"></i></button>
+                            </div>
+                          </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+   
+  
+      
+        <ng-template #content role="document" let-modal>
+          <div class="modal-header bg-info-subtle p-3">
+            <h5 class="modal-title" id="exampleModalLabel">Ajouter société</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="close-modal"
+              (click)="modal.dismiss('Cross click')"
+            ></button>
+          </div>
+          <form [formGroup]="formSociete" class="tablelist-form" autocomplete="off">
+             
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-lg-2">
+                      <div>
+                        <label for="industry_type-field" class="form-label"
+                          >Code société</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-warning"
+                           placeholder="Enter code poste"
+                          formControlName="cod_soc"
+                        />
+                      </div>
+                    </div>
+  
+                    <div class="col-lg-5">
+                      <div>
+                        <label for="industry_type-field" class="form-label"
+                          >Libelle société</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-warning"
+                           placeholder="Enter Libelle"
+                          formControlName="lib_soc"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-5">
+                      <div>
+                        <label for="industry_type-field" class="form-label"
+                          >Libelle en arabe</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control border-warning"
+                           placeholder="Enter Libelle en arabe"
+                          formControlName="lib_soc_a"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div>
+                          <label for="industry_type-field" class="form-label"
+                            >Adresse</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control border-warning"
+                             placeholder="Enter Adresse"
+                            formControlName="adr_soc"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div>
+                          <label for="industry_type-field" class="form-label"
+                            >Adresse en arabe</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control border-warning"
+                             placeholder="Enter Adresse en arabe"
+                            formControlName="adr_soc_a"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div>
+                          <label for="industry_type-field" class="form-label"
+                            >Télephone</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control border-warning"
+                             placeholder="Enter Télephone"
+                            formControlName="tel_soc"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                         
+                      </div>
+                      <div class="col-lg-4">
+                        <div>
+                          <label for="industry_type-field" class="form-label"
+                            >Fax</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control border-warning"
+                             placeholder="Enter Fax"
+                            formControlName="fax_soc"
+                          />
+                        </div>
+                      </div>
+                      <hr>  <h3>Details</h3>  <hr>
+                      <div class="col-2">
+                        <label for="country" class="form-label"
+                          >Régime</label
+                        >
+                        <select
+                          class="form-select border-success"
+                          data-plugin="choices"
+                          formControlName="cod_retr"
+                        >
+                          <option value=""></option>
+                          <option value="CNSS">CNSS</option>
+                          <option value="CNRPS">CNRPS</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-4">
+                        <div>
+                          <label for="industry_type-field" class="form-label"
+                            >Numéro Afféliation </label
+                          >
+                          <input
+                            type="text"
+                            class="form-control border-warning"
+                             placeholder="Enter Numéro Afféliation"
+                            formControlName="num_retr"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div>
+                          <label for="industry_type-field" class="form-label"
+                            >Num Police</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control border-warning"
+                             placeholder="Enter Num Police"
+                            formControlName="num_police"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-2">
+                        <div class="mb-3">
+                          <label for="state" class="form-label"
+                            >Rep web</label
+                          >
+                          <select
+                            class="form-select border-success"
+                            data-plugin="choices"
+                            formControlName="rep_web"
+                          >
+                            <option value=""> </option>
+                            <option value="O">Oui</option>
+                            <option value="N">Non</option>
+                          </select>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+            
+            <div class="modal-footer">
+              <div class="hstack gap-2 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  data-bs-dismiss="modal"
+                  (click)="AddSociete(); modal.close('Close click')"
+                >
+                  Valider
+                </button>
+              </div>
+              <br>
+              <div class="hstack gap-2 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  data-bs-dismiss="modal"
+                  (click)="modal.close('Close click')"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+ 
+      <!-- removeItemModal -->
+      <ng-template #deleteModel let-modal>
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="btn-close"
+              (click)="modal.dismiss('Cross click')"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mt-2 text-center">
+              <lord-icon
+                src="https://cdn.lordicon.com/gsqxdxog.json"
+                trigger="loop"
+                colors="primary:#f7b84b,secondary:#f06548"
+                style="width: 100px; height: 100px"
+              ></lord-icon>
+              <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                <h4>Are you sure ?</h4>
+                <p class="text-muted mx-4 mb-0">
+                  Are you sure you want to remove this address ?
+                </p>
+              </div>
+            </div>
+            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+              <button
+                type="button"
+                class="btn w-sm btn-light"
+                data-bs-dismiss="modal"
+                (click)="modal.close('Close click')"
+              >
+                Close
+              </button>
+              <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
+                Yes, Delete It!
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </ng-template>
+    </div>

@@ -1,0 +1,173 @@
+<div class="container-fluid">
+  <app-page-title title="Gestion des modules" [breadcrumbItems]="breadCrumbItems">
+  </app-page-title>
+  <div class="row">
+    <div class="col-md-6 col-lg-6 p-2">
+      <div class="card h-100">
+        <div class="card-body" [style.max-height.px]="getRows(table1).length > 5 ? 400 : 'auto'" style="overflow-y: auto">
+          <h5 class="card-title text-center">Gestion des modules</h5>
+          <div [formGroup]="table1">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="col-libelle">Libelle du module</th>
+                  <th class="col-route">Route</th>
+                  <th class="col-status">Status</th>
+                  <th class="col-rang">Rang</th>
+                  <th class="col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="rows">
+                <tr *ngFor="let row of getRows(table1).controls; let rowIndex = index" [formGroup]="row" (click)="onRowClick(row.get('sum_id')?.value)">
+                  <td><input type="text" class="form-control" style="width:  100%;" formControlName="sum_name"></td>
+                  <td><input type="text" class="form-control" formControlName="sum_rout"></td>
+                  <td>
+                    <select id="select" class="form-select" aria-label="Default select example" formControlName="sum_status">
+                      <option value="O" >Oui</option>
+                      <option value="N" >Non</option>
+                    </select>
+                  </td>
+                  <td><input type="text" class="form-control" formControlName="sum_rank"></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="saveRow(table1, rowIndex)"><i class="bx bx-save"></i></button>&nbsp;
+                    <button class="btn btn-sm btn-secondary" (click)="editRow(table1, rowIndex)"><i class="bx bxs-edit-alt"></i></button>&nbsp;
+                    <button class="btn btn-sm btn-danger" (click)="removeRow(table1, rowIndex)"><i class="bx bx-trash-alt"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <button class="btn btn-sm btn-success" (click)="addRow(table1, createTable1Row.bind(this))">Ajouter une ligne</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-6 p-2">
+      <div class="card h-100">
+        <div class="card-body" [style.max-height.px]="getRows(table2).length > 5 ? 400 : 'auto'" style="overflow-y: auto">
+          <h5 class="card-title text-center">Sous module : niveau 1</h5>
+          <div [formGroup]="table2">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 10%;">Evt id</th>
+                  <th style="width: 40%;">Libellé</th>
+                  <th style="width: 20%;">Action</th>
+                  <th style="width: 7%;">Rang</th>
+                  <th style="width: 7%;">Statut</th>
+                  <th style="width: 16%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="rows">
+                <tr *ngFor="let row of getRows(table2).controls; let rowIndex = index" [formGroup]="row" (click)="onRowClickNiv1(row.get('evt_id')?.value)">
+                  <td><input type="text" class="form-control" formControlName="evt_id"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_name"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_action"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_rank"></td>
+                  <td>
+                    <select id="select" class="form-select" aria-label="Default select example" formControlName="evt_maint">
+                      <option value="O" style="font-size: 11px;">Oui</option>
+                      <option value="N" style="font-size: 11px;">Non</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="saveRowNiv1(table2, rowIndex)"><i class="bx bx-save"></i></button>
+                    <button class="btn btn-sm btn-secondary" (click)="editRow(table2, rowIndex)"><i class="bx bxs-edit-alt"></i></button>
+                    <button class="btn btn-sm btn-danger" (click)="removeRowEvt(table2, rowIndex)"><i class="bx bx-trash-alt"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-sm btn-success" (click)="addRow(table2, createTable2Row.bind(this))">Ajouter une ligne</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="col-md-6 col-lg-6 p-2">
+      <div class="card h-100">
+        <div class="card-body" [style.max-height.px]="getRows(table3).length > 5 ? 400 : 'auto'" style="overflow-y: auto">
+          <h5 class="card-title text-center">Sous module : niveau 2</h5>
+          <div [formGroup]="table3">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 10%;">Evt id</th>
+                  <th style="width: 40%;">Libellé</th>
+                  <th style="width: 20%;">Action</th>
+                  <th style="width: 7%;">Rang</th>
+                  <th style="width: 7%;">Statut</th>
+                  <th style="width: 16%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="rows" >
+                <tr *ngFor="let row of getRows(table3).controls; let rowIndex = index" [formGroup]="row" (click)="onRowClickNiv2(row.get('evt_id')?.value)">
+                  <td><input type="text" class="form-control" formControlName="evt_id"></td>
+
+                  <td><input type="text" class="form-control" formControlName="evt_name"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_action"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_rank"></td>
+                 <td> <select  id="select" class="form-select" aria-label="Default select example"  formControlName="evt_maint"   >
+                    <option   value="O" style="font-size: 11px;"> Oui </option>
+                    <option   value="N" style="font-size: 11px;"> Non </option>
+   
+                  </select></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="saveRowNiv2(table3, rowIndex)"><i class="bx bx-save"></i></button>
+                    <button class="btn btn-sm btn-secondary" (click)="editRow(table3, rowIndex)"><i class="bx bxs-edit-alt"></i></button>
+                    <button class="btn btn-sm btn-danger" (click)="removeRowEvt(table3, rowIndex)"><i class="bx bx-trash-alt"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-sm btn-success" (click)="addRow(table3, createTable3Row.bind(this))">Ajouter une ligne</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-6 p-2">
+      <div class="card h-100">
+        <div class="card-body" [style.max-height.px]="getRows(table4).length > 5 ? 400 : 'auto'" style="overflow-y: auto">
+          <h5 class="card-title text-center">Sous module : niveau 3</h5>
+          <div [formGroup]="table4">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width: 10%;">Evt id</th>
+                  <th style="width: 40%;">Libellé</th>
+                  <th style="width: 20%;">Action</th>
+                  <th style="width: 7%;">Rang</th>
+                  <th style="width: 7%;">Statut</th>
+                  <th style="width: 16%;">Actions</th>
+
+                </tr>
+              </thead>
+              <tbody formArrayName="rows" >
+                <tr *ngFor="let row of getRows(table4).controls; let rowIndex = index" [formGroup]="row">
+                  <td><input type="text" class="form-control" formControlName="evt_id"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_name"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_action"></td>
+                  <td><input type="text" class="form-control" formControlName="evt_rank"></td>
+                <td>  <select  id="select" class="form-select" aria-label="Default select example"  formControlName="evt_maint"   >
+                    <option   value="O" > Oui </option>
+                    <option   value="N" > Non </option>
+   
+                  </select> </td>                
+                   <td>
+                    <button class="btn btn-sm btn-primary" (click)="saveRowNiv3(table4, rowIndex)"><i class="bx bx-save"></i></button>
+                    <button class="btn btn-sm btn-secondary" (click)="editRow(table4, rowIndex)"><i class="bx bxs-edit-alt"></i></button>
+                    <button class="btn btn-sm btn-danger" (click)="removeRowEvt(table4, rowIndex)"><i class="bx bx-trash-alt"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-sm btn-success" (click)="addRow(table4, createTable4Row.bind(this))">Ajouter une ligne</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

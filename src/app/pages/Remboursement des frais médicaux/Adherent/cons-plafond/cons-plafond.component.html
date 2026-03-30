@@ -1,0 +1,186 @@
+<div class="d-flex justify-content-center mt-4">
+    <div class="col-md-10">
+        <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none">
+                <!-- Search Form -->
+                <form action="javascript:void(0);" class="row g-3" [formGroup]="formPersonnel">
+                    <div class="row">
+                        <!-- First Column -->
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label class="form-label">Matricule</label>
+
+                                    <input type="text" class="form-control border-primary" formControlName="mat_pers"
+                                        readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Nom</label>
+                                    <input type="text" class="form-control border-primary" formControlName="nom_pers"
+                                        readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Prénom</label>
+                                    <input type="text" class="form-control border-primary" formControlName="pren_pers"
+                                        readonly />
+                                </div>
+
+                                <div class="col-md-1"></div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label">Etat</label>
+                                    <select class="form-select border-success" formControlName="etat_act">
+                                        <option value="A">ACTIF</option>
+                                        <option value="B">Bloqué(e)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Date emb</label>
+                                    <input type="text" class="form-control border-primary" formControlName="dat_emb"
+                                        readonly mask="00/00/0000" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="country" class="form-label">Situation sociale</label>
+                                    <select class="form-select border-success" data-plugin="choices"
+                                        formControlName="cod_sit">
+                                        <option value="">Select situation...</option>
+                                        <option value="C">Célibataire</option>
+                                        <option value="M">Marié(e)</option>
+                                        <option value="D">Divorcé(e)</option>
+                                        <option value="V">Voeuf(ve)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label">Nbre Enf</label>
+                                    <input type="text" class="form-control border-primary" formControlName="nbr_enf"
+                                        readonly />
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label">Assurance</label>
+                                    <input type="text" class="form-control border-primary" formControlName="cod_assur"
+                                        readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Libelle</label>
+                                    <input type="text" class="form-control border-primary" [value]="libAssur"
+                                        readonly />
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Num assurance</label>
+                                    <input type="text" class="form-control border-primary" formControlName="num_assur"
+                                        placeholder="Num assurance" readonly />
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label">Date assur</label>
+                                    <input type="text" class="form-control border-warning" placeholder="Date assur"
+                                        formControlName="dat_ass" readonly />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-center mt-4">
+
+<div class="col-xxl-10 ">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="" role="tablist" aria-orientation="vertical">
+                        <ul ngbNav #CustomVertical="ngbNav" [activeId]="1"
+                            class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+                            <li [ngbNavItem]="1">
+                                <a ngbNavLink>
+                                    <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                                    Plafond mutuelle
+                                </a>
+                                <ng-template ngbNavContent>
+                                    <p-table [value]="listPlafAssur" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th *ngFor="let column of ['annee_assur','cod_assur','libAssur','plafond','sold_plaf']" [pSortableColumn]="column">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="me-2" (click)="onSort(column)">{{ columnTitles2[column]|| column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData>
+                                            <tr>
+                                                <td class="text-center">{{ rowData.annee_assur }}</td>
+                                                <td class="text-center">{{ rowData.cod_assur }}</td>
+                                                <td class="text-center">{{ rowData.libAssur }}</td>
+                                                <td class="text-center">{{ rowData.plafond | number: '1.3-3' }}</td>
+                                                <td class="text-center">{{ rowData.sold_plaf | number: '1.3-3' }}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td colspan="5">
+                                                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </ng-template>
+                            </li>
+                            <li [ngbNavItem]="2">
+                                <a ngbNavLink>
+                                    <i class="ri-user-2-line d-block fs-20 mb-1"></i>
+                                    Plafond CNAM
+                                </a>
+                                <ng-template ngbNavContent>
+                                  
+                                      <p-table [value]="listPlafCnam" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th *ngFor="let column of ['annee_cnam','plafond','sold_plaf']" [pSortableColumn]="column">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="me-2" (click)="onSort2(column)">{{ columnTitles[column]|| column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData>
+                                            <tr>
+                                                <td class="text-center">{{ rowData.annee_cnam }}</td>
+                                                <td class="text-center">{{ rowData.plafond | number:'1.3-3' }}</td>
+                                                <td class="text-center">{{ rowData.sold_plaf | number:'1.3-3' }}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td colspan="3">
+                                                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                      </p-table>
+                                </ng-template>
+                            </li> 
+                        </ul>
+                    </div>
+                </div> <!-- end col-->
+                <div class="col-lg-9">
+                    <div class="tab-content text-muted mt-3 mt-lg-0">
+                        <div [ngbNavOutlet]="CustomVertical"></div>
+                    </div>
+                </div> <!-- end col-->
+            </div> <!-- end row-->
+        </div><!-- end card-body -->
+    </div><!--end card-->
+</div> 
+</div>
+
+<!-- Section Recherche -->
+<div *ngIf="isSearch" class="d-flex justify-content-center">
+    <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
+    </app-search-lov>
+</div>

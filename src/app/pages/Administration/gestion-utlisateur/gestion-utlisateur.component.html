@@ -1,0 +1,105 @@
+<!-- Start Breadcrumbs -->
+<!-- <app-breadcrumbs title="Create Invoice" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs> -->
+<!-- End Breadcrumbs -->
+
+  <!-- <app-parentlov></app-parentlov> -->
+<div class="row justify-content-center">
+    <div class="col-xxl-9">
+        <div class="card">
+            <form (ngSubmit)="AddUser()" [formGroup]="utilisateurForm">
+
+
+                <div class="card-body p-4 border-top border-top-dashed">
+                    <div class="row">
+                        
+                        <div class="col-lg-4 col-sm-6">
+
+
+                              <div class="mb-4">
+                                <app-lov 
+
+                                [listData]="listValues" 
+                                [columns]="columns" 
+                                codeField="mat_pers" 
+                                [selectedCode]="selectedCode" 
+                                (selectedValue)="onSelectedValue($event)">
+                                  </app-lov>
+                                </div>
+                           
+                            <!-- <div class="mb-3">
+                                <input type="text" class="form-control bg-light border-0" id="billingTaxno"
+                                    placeholder="Use Login" required formControlName="useLogin"
+                                    [ngClass]="{ 'is-invalid': submitted && form['useLogin'].errors }" />
+                                <div class="invalid-feedback">
+                                    Entrer le useLogin
+                                </div>
+                            </div> -->
+                            <div class="mb-2">
+                                <input type="text" class="form-control bg-light border-0" id="billingName"
+                                    placeholder="Nom" required formControlName="firstname"
+                                    [ngClass]="{ 'is-invalid': submitted && form['firstname'].errors }" />
+                                <div class="invalid-feedback">
+                                    Entrer le Nom
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                    <input type="text" class="form-control bg-light border-0" id="billingName"
+                                    placeholder="Prénom" required formControlName="lastname"
+                                    [ngClass]="{ 'is-invalid': submitted && form['lastname'].errors }" />
+                                <div class="invalid-feedback">
+                                    Entrer le prénom
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <input type="email" class="form-control bg-light border-0" data-plugin="cleave-phone"
+                                    id="billingPhoneno" placeholder="Email" required
+                                    formControlName="email"
+                                    [ngClass]="{ 'is-invalid': submitted && form['email'].errors }" />
+                                <div class="invalid-feedback">
+                                    Entrer l'email
+                                </div>
+                            </div>
+
+ 
+                        </div><!--end col-->
+                        <div class="col-sm-6 ms-auto">
+                            <div class="row">
+                                <div class="col-lg-8">
+
+                                    <div class="mb-2">
+                                        <input type="password" class="form-control bg-light border-0" id="shippingName"
+                                            placeholder="Password" required formControlName="password"
+                                            [ngClass]="{ 'is-invalid': submitted && form['password'].errors }" />
+                                        <div class="invalid-feedback">
+                                            password
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <input type="password" class="form-control bg-light border-0" id="shippingName"
+                                            placeholder="Confirme Password"    
+                                            [ngClass]="{ 'is-invalid': submitted && form['shippingName'].errors }" />
+                                        <div class="invalid-feedback">
+                                            Confirme password
+                                        </div>
+                                    </div>
+
+                                    <select class="form-select form-select-sm  mb-3" formControlName="roles" aria-label=".form-select-sm example">
+                                        <option selected></option>
+                                        <option *ngFor="let i of listRole" [value]="i.name">{{i.name}}</option> 
+                                        </select>
+                                        
+                                </div>
+                                <div class="hstack gap-2 justify-content-end d-print-none mt-4 flex-wrap">
+                                    <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i>
+                                        Save</button>
+                                    
+                                </div>
+                            </div>
+                        </div><!--end col-->
+                    </div><!--end row-->
+                </div>
+             </form>
+            
+        </div>
+    </div><!--end col-->
+</div><!--end row-->

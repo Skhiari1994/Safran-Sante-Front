@@ -1,0 +1,133 @@
+<div class="row" style="margin-top: 25px;"></div>
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="Imputation Anticipation Par Compte" [breadcrumbItems]="[]"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+
+<div class="d-flex justify-content-center mt-4">
+  <div class="col-md-10">
+    <div class="collapse show" id="imputationCollapse">
+      <div class="card p-4 border shadow-none">
+
+        <!-- Main Form -->
+        <form [formGroup]="FormImputAnticip">
+
+          <!-- Row 1: Matricule et Nom -->
+          <div class="row">
+            <div class="col-md-3">
+              <label class="form-label">Matricule <span class="text-danger">*</span></label>
+              <app-lov [listData]="listPersonnel" [columns]="columnPersonnels" codeField="mat_pers"
+                [selectedCode]="matPersVal" (selectedValue)="onSelectedValuePers($event)"
+                (modalOpened)="onOpenPersonnelLov()" [loading]="isLoadingPersonnel"></app-lov>
+            </div>
+
+            <div class="col-md-5">
+              <label class="form-label">Nom & Prénom</label>
+              <input type="text" class="form-control border-primary" [value]="nomPren" readonly />
+            </div>
+          </div>
+
+          <!-- Row 2: Numéro Virement -->
+          <div class="row mt-3">
+            <div class="col-md-3">
+              <label class="form-label">Numéro <span class="text-danger">*</span></label>
+              <app-lov [listData]="listVirAnticipInst" [columns]="columnsVirAnticip" codeField="num_vir"
+                [selectedCode]="numVirVal" (selectedValue)="onSelectedVirement($event)"></app-lov>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Date Anticip</label>
+              <input type="text" class="form-control border-primary" formControlName="dat_anticip" readonly />
+            </div>
+          </div>
+
+          <!-- Row 3: Montants -->
+          <div class="row mt-3">
+            <div class="col-md-3">
+              <label class="form-label">Mont Virement</label>
+              <input type="text" class="form-control border-primary montant-input" formControlName="mont_vir"
+                readonly />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Montant Anticipation</label>
+              <input type="text" class="form-control border-primary montant-input" formControlName="mont_antic"
+                readonly />
+            </div>
+          </div>
+
+          <!-- Row 4: Reste et Espèce -->
+          <div class="row mt-3">
+            <div class="col-md-3">
+              <label class="form-label">Reste Virement</label>
+              <input type="text" class="form-control border-primary montant-input" formControlName="rest_vir"
+                readonly />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">dans valeur Espèce</label>
+              <input type="text" class="form-control border-primary montant-input" formControlName="mnt_esp" readonly />
+            </div>
+          </div>
+
+          <!-- Row 5: Status Fields -->
+          <div class="row mt-3">
+            <div class="col-md-3">
+              <label class="form-label">Imput Cpt</label>
+              <select class="form-select border-success" formControlName="imput_cpt">
+                <option value="O">Imputé</option>
+                <option value="N">Non Imputé</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Etat Vir</label>
+              <select class="form-select border-success" formControlName="etat_vir">
+                <option value="N">En instance</option>
+                <option value="O">Validé</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 6: Référence Métier -->
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="form-label">Réf Métier <span class="text-danger">*</span></label>
+              <input type="text" class="form-control border-primary" formControlName="ref_metier"
+                placeholder="Saisir la référence métier" />
+            </div>
+          </div>
+
+          <!-- Row 7: Observation -->
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <label class="form-label">Réf Metier (Observation)</label>
+              <textarea class="form-control border-primary" formControlName="obs_metier" rows="3"
+                placeholder="Saisir une observation"></textarea>
+            </div>
+          </div>
+
+          <!-- Button -->
+          <div class="row mt-4">
+            <div class="col-md-12 text-center">
+              <button type="button" class="btn btn-primary btn-lg px-5" (click)="onSubmitImputation()"
+                [disabled]="isLoading || !isFormValid()">
+                <i class="mdi mdi-check-circle me-2"></i>
+                <span *ngIf="!isLoading">Imputation Anticipation Par Compte</span>
+                <span *ngIf="isLoading">
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Traitement en cours...
+                </span>
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listVirAnticipInst" [columns]="columnsVirAnticip" codeField="num_vir"
+    [selectedCode]="numVirVal" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>

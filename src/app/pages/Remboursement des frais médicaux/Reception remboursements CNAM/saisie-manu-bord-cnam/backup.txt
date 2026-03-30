@@ -1,0 +1,3061 @@
+<div class="row" style="margin-top: 25px"></div>
+
+<div class="row sticky-top" style="z-index: 1025; top: 121px">
+  <app-breadcrumbs
+    title="Saisie manulles du bordereau arrivés CNAM"
+    [breadcrumbItems]="breadCrumbItems"
+  ></app-breadcrumbs>
+
+  <div class="row">
+ 
+
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <form
+            [formGroup]="BordEnvoiForm"
+            class="tablelist-form"
+            autocomplete="off"
+          >
+          <div class="row mb-4">
+              <div class="col-sm-2 col-md-1">
+                <label for="codBord" class="form-label">Code bordereau</label>
+                <app-lov
+                  [listData]="AllBordEnvoi"
+                  [columns]="columnBordArriver"
+                  codeField="cod_bord"
+                  [selectedCode]="codBord"
+                  (selectedValue)="onSelectedValueBordArriver($event)"
+                  readonly
+                >
+                </app-lov>
+              </div>
+
+              <div class="col-sm-2 col-md-2">
+                <label for="dateBord" class="form-label">Date</label>
+                <input
+                  type="text"
+                  id="dateBord"
+                  class="form-control border-primary"
+                  placeholder="Date"
+                  [value]="dateBord"
+                  readonly
+                />
+              </div>
+
+                 <div class="col-md-1">
+                  <label class="form-label">Assurance</label>
+                  <app-lov
+                    [listData]="ListeAssurance"
+                    [columns]="columnAssuranc"
+                    codeField="cod_assur"
+                    [selectedCode]="codeAssur"
+                    (selectedValue)="onSelectedValueAssur($event)"
+                  >
+                  </app-lov>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Libelle</label>
+                  <input
+                    type="text"
+                    class="form-control border-primary"
+                    placeholder="Libelle"
+                    [value]="libAssur"
+                    readonly
+                  />
+                </div>
+ 
+              <div class="col-sm-4 col-md-2">
+                <label for="tot_remb" class="form-label">Tot. Remb.</label>
+                <input
+                  type="text"
+                  id="tot_remb"
+                  class="form-control border-primary text-end"
+                  placeholder="Tot. Remb."
+                  formControlName="tot_remb"
+                   
+                />
+              </div>
+
+              <div class="col-sm-4 col-md-1">
+                <label for="nbr_bult" class="form-label"
+                  >Nbre. de Bulletin</label
+                >
+                <input
+                  type="text"
+                  id="nbr_bult"
+                  class="form-control border-primary"
+                  placeholder="Nombre de Bulletin"
+                  formControlName="nbr_bult"
+                   
+                />
+              </div>
+
+              <div class="col-sm-4 col-md-1">
+                <label for="valid" class="form-label">Validité Bord</label>
+                <select
+                class="form-control border-warning"
+                formControlName="valid" >
+                <option  value="O"> Oui </option>
+                <option  value="N"> Non </option>
+              </select>
+              </div>
+              <div class="col-md-12 d-flex gap-2 mt-2">
+                <button type="button" class="btn btn-success" (click)="printBordArrivGlobal()">
+                  Imprimer bordereau CNAM Global
+                </button>
+                <button type="button" class="btn btn-info" (click)="printBordArrivDetail()">
+                  Imprimer bordereau CNAM Détaillé
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12" >
+      <div class="card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="mb-0">Bulletins</h5>
+          <button class="btn btn-info" type="button" (click)="addLigne()">
+            Ajouter une ligne
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <form [formGroup]="SaisieBulletinForm">
+              <div
+                class="table-responsive"
+                [ngStyle]="{
+                  'max-height': lignes.length > 3 ? '300px' : 'auto',
+                  'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'
+                }"
+              >
+                <table class="table table-striped table-bordered w-100">
+                  <thead class="bg-primary text-white">
+                    <tr>
+                      <th>#</th>
+                      <th style="width: 250px">Numéro Aff.</th>
+                      <th style="width: 250px">Matricule</th>
+                      <th style="width: 450px">Nom & Prénom</th>
+                      <th style="width: 100px">Fill</th>
+                      <th style="width: 150px">Prés.</th>
+                      <th style="width: 250px">Nom</th>
+                      <th style="width: 250px">Date soin</th>
+                      <th style="width: 250px">Regime Remb.</th>
+                      <th style="width: 250px">Tot. Net</th>
+
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="lignes">
+                    <tr *ngFor="let ligne of lignes.controls; let i = index" [formGroupName]="i"
+                    
+                    [ngClass]="{ 'table-active': selectedRow === i }"
+                    (click)="load(ligne.value, i)"
+                    >
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        <app-lov
+                          [listData]="ListePersonnel"
+                          [columns]="columnPersonnel"
+                          codeField="num_retr"
+                          [selectedCode]="numRetr[i]"
+                          (selectedValue)="onSelectedPersonnel($event, i)"  
+                        ></app-lov>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          id="matPers"
+                          class="form-control border-primary"
+                          placeholder="Matricule"
+                          formControlName="mat_pers"
+                          readonly
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          id="NomPrenom"
+                          class="form-control border-primary"
+                          placeholder="Nom & prénom"
+                          [value]="NomPrenom[i] || ''" 
+                          readonly
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          id="Fill"
+                          class="form-control border-primary"
+                          placeholder="Filiere"
+                          formControlName="cod_fil"
+                          readonly
+                        />
+                      </td>
+                      <td>
+                       
+   
+                        <app-lov
+  [listData]="ListeFamillePersonnelParLigne[i]"
+  [columns]="columneFamillePersonnel"
+  codeField="num_fam"
+  [selectedCode]="NumFam[i]"
+  (selectedValue)="onSelectedFamillePersonnel($event, i)">
+</app-lov>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          id="Nom"
+                          class="form-control border-primary"
+                          placeholder="Nom"
+                          [value]="Nom[i] || ''" 
+                          readonly
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          id="DatSoin"
+                          class="form-control border-primary"
+                          placeholder="Date de soin"
+                          formControlName="dat_soin"
+                        />
+                      </td>
+                      <td>
+                        <select
+                          class="form-control border-warning"
+                          formControlName="reg_remb"
+                        >
+                          <option *ngFor="let regimeRemb of ListeRegimeRemb" [value]="regimeRemb.reg_remb">
+                            {{ regimeRemb.lib_remb }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control border-primary text-end"
+                          placeholder="Tot. remb"
+                          formControlName="tot_remb"
+                        />
+                      </td>
+                      <!-- <td>
+                        <button
+                          class="btn btn-danger btn-sm"
+                          type="button"
+                          (click)="confirm(i, deleteModel, ligne.value)"
+                        >🗑️ </button>
+                      </td> -->
+                    </tr>
+                  </tbody>
+                  
+                  <tfoot>
+                    <tr class="bg-light fw-bold">
+                      <td colspan="9" class="text-end">Total :</td>
+
+                      <td>
+                       
+                        <input
+                          class="form-control montant-input text-end"
+                          type="text"
+                          [value]="totalHonoraireTot | number:'1.2-2'"
+                          readonly
+                        />
+                      </td>
+                      <td colspan="10"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xxl-12" >
+  <div class="card h-100"> <!-- Ajout de h-100 -->
+    <div class="card-body d-flex flex-column"> <!-- Ajout de flex-column -->
+      <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
+        <div class="col-lg-1">
+          <div class="" role="tablist" aria-orientation="vertical">
+            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+              <li [ngbNavItem]="1">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Les visites
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addLigneVisite()">➕ Ajouter Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+                  
+                      <div class="card-body">
+                        <form [formGroup]="ligVisiteForm" >
+                          <!-- Table avec défilement si plus de 5 lignes -->
+                          <div class="table-responsive" [ngStyle]="{'max-height': visite.length > 3 ? '300px' : 'auto', 'overflow-y': visite.length > 3 ? 'scroll' : 'hidden'}">
+                            <table class="table table-striped table-bordered w-100" >
+                              <thead class="bg-primary text-white">
+                                <tr>
+                                  <th>#</th>
+                                  <th style="width: 150px;">Date Acte</th>
+                                  <th style="width: 250px;">visite</th>
+                                  <th style="width: 450px;">Libelle</th>
+                                  <th style="width: 150px;">Mnt Hr App</th>
+                                  <th style="width: 150px;">Net</th>
+                                   <th style="width: 250px;">Type etablis</th>
+                                  <th style="width: 200px;">Code</th>
+                                  <th style="width: 250px;">Etablissement</th>
+                                   <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody formArrayName="visite">
+                                <tr *ngFor="let ligne of visite.controls; let i = index" [formGroupName]="i">
+                                  <td>{{ i + 1 }}</td>
+                                  <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                  <td>                  
+                                    <app-lov
+                                      [listData]="listVisite"
+                                      [columns]="columnVisite"
+                                      codeField="cod_Visit"
+                                      [selectedCode]="visiteCode[i]"
+                                      (selectedValue)="onSelectedVisite($event, i)"
+                                    ></app-lov> 
+                                  </td>
+                                  <td><textarea class="form-control" type="text" [value]="libVisite[i]" readonly></textarea></td>
+                                  <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_net_visite($event,i)" formControlName="mnt_honor"></td>
+                                  <td><input class="form-control montant-input" type="number" readonly appMontantMask formControlName="mnt_remb" [value]="mntNetArrayVisite[i]"></td>
+                                   
+                                  <td>
+                                       <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="prf_typ" (change)="OnselectRefTypVisite($event)"
+                                  >
+                                     <option value="1">Personne Physique</option>
+                                    <option value="2">Etablissement</option>
+                                   </select></td>
+                         
+
+                                  <td>
+                                     <app-lov
+                                    [listData]="listRefEtablisVisit"
+                                    [columns]="columnsRefEtablisVisit"
+                                    codeField="prf_cod"
+                                    [selectedCode]="refEtablisVisit[i]"
+                                    (selectedValue)="onSelectedEtablisVisite($event, i)"
+                                  ></app-lov>
+                                </td>
+                                  <td><input class="form-control" type="text" [value]="etab_rsoc_visite[i]" readonly></td>
+                                   <td>
+                                    <button class="btn btn-danger btn-sm" type="button" (click)="confirm(i,deleteModelVisit,ligne.value)"   >🗑️</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <!-- Pied de tableau pour afficher les totaux -->
+                              <tfoot>
+                                <tr class="bg-light fw-bold">
+                                  <td colspan="4" class="text-end">Total :</td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalHonorairesVisite | number:'1.2-2'" readonly></td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalNetVisite | number:'1.2-2'" readonly></td>
+                                  <td colspan="6"></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Les actes
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+    
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addActe()" >➕ Ajouter Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+                      <div class="card-body">
+                        <form [formGroup]="ligPretForm" >
+                          <!-- Table avec défilement si plus de 5 lignes -->
+                          <div class="table-responsive" [ngStyle]="{'max-height': acte.length > 3 ? '300px' : 'auto', 'overflow-y': acte.length > 3 ? 'scroll' : 'hidden'}">
+                            <table class="table table-striped table-bordered w-100" >
+                              <thead class="bg-primary text-white">
+                                <tr>
+                                  <th>#</th>
+                                  <th style="width: 150px;">Date Acte</th>
+                                  <th style="width: 250px;">Acte</th>
+                                  <th style="width: 450px;">Libelle</th>
+                                  <th style="width: 100px;">Unit</th>
+                                  <th style="width: 150px;">Honoraires</th>
+                                  <th style="width: 150px;">Net</th>
+                                  <th style="width: 100px;">Accord</th>
+                                  <th style="width: 100px;">Num Pec Act</th>
+                                  <th style="width: 250px;">Type etablis</th>
+                                  <th style="width: 200px;">Code</th>
+                                  <th style="width: 250px;">Etablissement</th>
+                                  <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody formArrayName="acte">
+                                <tr *ngFor="let act of acte.controls; let i = index" [formGroupName]="i">
+                           
+                                  <td>{{ i + 1 }}</td>
+                                  <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                  <td>                  
+                                    <app-lov
+                                      [listData]="listActe"
+                                      [columns]="columnActe"
+                                      codeField="cod_act"
+                                      [selectedCode]="actes[i]"
+                                      (selectedValue)="onSelectedActe($event, i)"
+                                    ></app-lov>
+                                  </td>
+                                  <td><textarea class="form-control" type="text" [value]="libAct[i]" readonly></textarea></td>
+                                  <td><input class="form-control" type="text"  formControlName="indice"></td>
+                                  <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_net($event,i)" formControlName="mnt_honor"></td>
+                                  <td><input class="form-control montant-input" type="number" readonly appMontantMask formControlName="mnt_remb" [value]="mntNetArray[i]"></td>
+                                  <td> <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="accord_act"  
+                                  >
+                                  <option value=""></option>
+                                  <option value="O">Oui</option>
+                                  <option value="N">Non</option>
+
+                                    
+                                   </select></td>
+                                  <td><input class="form-control" type="text"   formControlName="num_pec_act"></td>
+                                  <td>
+                                       <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="prf_typ" (change)="OnselectRefTyp($event)"
+                                  >
+                                     <option value="1">Personne Physique</option>
+                                    <option value="2">Etablissement</option>
+                                   </select></td>
+                                  <td> <app-lov
+                                    [listData]="listRefEtablis"
+                                    [columns]="columnsRefEtablis"
+                                    codeField="prf_cod"
+                                    [selectedCode]="refEtablis[i]"
+                                    (selectedValue)="onSelectedEtablis($event, i)"
+                                  ></app-lov></td>
+                                  <td><input class="form-control" type="text" [value]="etab_rsoc[i]" readonly></td>
+                                  <td>
+                                    <button class="btn btn-danger btn-sm" type="button" (click)="confirm(i,deleteModel,act.value)"  >🗑️</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <!-- Pied de tableau pour afficher les totaux -->
+                              <tfoot>
+                                <tr class="bg-light fw-bold">
+                                  <td colspan="5" class="text-end">Total :</td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalHonoraires | number:'1.2-2'" readonly></td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalNet | number:'1.2-2'" readonly></td>
+                                  <td colspan="7"></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="3">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Pharmacies
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addLignePhar(phar.length)">➕ Ajouter Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+                  
+                      <div class="card-body">
+                         <form [formGroup]="ligPharForm" >
+                           <div class="table-responsive" [ngStyle]="{'max-height': phar.length > 3 ? '300px' : 'auto', 'overflow-y': phar.length > 3 ? 'scroll' : 'hidden'}">
+                            <table class="table table-striped table-bordered w-100" >
+                              <thead class="bg-primary text-white">
+                                <tr>
+                                  <th>#</th>
+                                  <th style="width: 150px;">Date med</th>
+                                  <th style="width: 200px;">Med</th>
+                                  <th style="width: 250px;">Libelle</th>
+                                  <th style="width: 100px;">Unit</th>
+                                  <th style="width: 150px;">Honoraires</th>
+                                  <th style="width: 150px;">Net</th>
+                                  <th style="width: 100px;">Nbr j</th>
+                                  <th style="width: 100px;">Accord</th>
+                                  <th style="width: 100px;">Num Pec</th>
+                                  <th style="width: 250px;">Type etablis</th>
+                                  <th style="width: 200px;">Code</th>
+                                  <th style="width: 250px;">Etablissement</th>
+                                   <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody formArrayName="phar">
+                                <tr *ngFor="let ligne of phar.controls; let i = index" [formGroupName]="i">
+                                  <td>{{ i + 1 }}</td>
+                                  <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                  <td>                  
+                                    <app-lov
+                                      [listData]="listMed"
+                                      [columns]="columnsMed"
+                                      codeField="cod_med"
+                                      [selectedCode]="Med[i]"
+                                      (selectedValue)="onSelectedMed($event, i)"
+                                    ></app-lov>
+                                  </td>
+                                  <td><textarea class="form-control" type="text" [value]="libMed[i]" readonly></textarea></td>
+                                  <td><input class="form-control" type="text" (change)="verif_indice_phar($event,i)" formControlName="indice"></td>
+
+                                  <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_netPhar($event,i)" formControlName="mnt_honor"></td>
+                                  <td><input class="form-control montant-input" type="number" appMontantMask readonly formControlName="mnt_remb" [value]="mntNetArrayPhar[i]"></td>
+                                  <td><input class="form-control" type="number" (change)="verif_piece_pahr($event,i)" formControlName="nbr_j"></td>
+                                  <td> <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="accord_med"  
+                                  >
+                                  <option value=""></option>
+                                  <option value="O">Oui</option>
+                                  <option value="N">Non</option>
+
+                                    
+                                   </select></td>
+                                  <td><input class="form-control" type="number" (change)="verif_vign_pahr($event,i)" formControlName="num_pec_med"></td>
+                                  <td>
+                                       <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="prf_typ" (change)="OnselectRefTypMed($event)"
+                                  >
+                                     <option value="1">Personne Physique</option>
+                                    <option value="2">Etablissement</option>
+                                   </select></td>
+                                  <td> <app-lov
+                                    [listData]="listRefEtablisMed"
+                                    [columns]="columnsRefEtablisMed"
+                                    codeField="prf_cod"
+                                    [selectedCode]="refEtablisPhar[i]"
+                                    (selectedValue)="onSelectedEtablisPhar($event, i)"
+                                  ></app-lov></td>
+                                  <td><input class="form-control" type="text" [value]="etab_rsoc_phar[i]" readonly></td>
+                                   <td>
+                                    <button class="btn btn-danger btn-sm" type="button" (click)="confirm(i,deleteModelMed,ligne.value)" >🗑️</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                               <tfoot>
+                                <tr class="bg-light fw-bold">
+                                  <td colspan="5" class="text-end">Total :</td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalHonorairesPhar | number:'1.2-2'" readonly></td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalNetPhar | number:'1.2-2'" readonly></td>
+                                  <td colspan="7"></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </form>  
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="4">
+                <a ngbNavLink>
+                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
+                  Les appareils
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="container-fluid">
+                    <!-- Carte principale -->
+                    <div class="card h-100">
+                      <div class="card-header d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary" type="button" (click)="addLigneAppareil(appareil.length)">➕ Ajouter Ligne</button>
+                        <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
+                      </div>
+                  
+                      <div class="card-body">
+                        <form [formGroup]="ligAppareilForm" >
+                          <!-- Table avec défilement si plus de 5 lignes -->
+                          <div class="table-responsive" [ngStyle]="{'max-height': appareil.length > 3 ? '300px' : 'auto', 'overflow-y': appareil.length > 3 ? 'scroll' : 'hidden'}">
+                            <table class="table table-striped table-bordered w-100" >
+                              <thead class="bg-primary text-white">
+                                <tr>
+                                  <th>#</th>
+                                  <th style="width: 150px;">Date app</th>
+                                  <th style="width: 250px;">Appareil</th>
+                                  <th style="width: 450px;">Libelle</th>
+                                   <th style="width: 150px;">Mnt Hr App</th>
+                                  <th style="width: 150px;">Net</th>
+                                  <th style="width: 100px;">Accord</th>
+                                  <th style="width: 100px;">Num Pec</th>
+                                   <th style="width: 250px;">Type etablis</th>
+                                  <th style="width: 200px;">Code</th>
+                                  <th style="width: 250px;">Etablissement</th>
+                                   <th>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody formArrayName="appareil">
+                                <tr *ngFor="let ligne of appareil.controls; let i = index" [formGroupName]="i">
+                                  <td>{{ i + 1 }}</td>
+                                  <td><input placeholder="dd/mm/yyyy" mask="00/00/0000" class="form-control" type="text" formControlName="dat_act"></td>
+                                  <td>                  
+                                    <app-lov
+                                      [listData]="listAppareil"
+                                      [columns]="columnsAppareil"
+                                      codeField="cod_app"
+                                      [selectedCode]="appareilCode[i]"
+                                      (selectedValue)="onSelectedAppareil($event, i)"
+                                    ></app-lov>
+                                  </td>
+                                  <td><textarea class="form-control" type="text" [value]="libAppareil[i]" readonly></textarea></td>
+                                   <td><input class="form-control montant-input" type="number" appMontantMask (change)="calcul_mnt_net_app($event,i)" formControlName="mnt_honor"></td>
+                                  <td><input class="form-control montant-input" type="number" readonly appMontantMask formControlName="mnt_remb" [value]="mntNetArrayAppareil[i]"></td>
+                                  <td> <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="accord_app"  
+                                  >
+                                  <option value=""></option>
+                                  <option value="O">Oui</option>
+                                  <option value="N">Non</option>
+
+                                    
+                                   </select></td>
+                                  <td><input class="form-control" type="number"   formControlName="num_pec_app"></td>
+                                  <td>
+                                       <select
+                                    class="form-select border-success"
+                                    data-plugin="choices"
+                                    formControlName="prf_typ" (change)="OnselectRefTypApp($event)"
+                                  >
+                                     <option value="1">Personne Physique</option>
+                                    <option value="2">Etablissement</option>
+                                   </select></td>
+                                  <td> <app-lov
+                                    [listData]="listRefEtablisApp"
+                                    [columns]="columnsRefEtablisApp"
+                                    codeField="prf_cod"
+                                    [selectedCode]="refEtablisApp[i]"
+                                    (selectedValue)="onSelectedEtablisApp($event, i)"
+                                  ></app-lov></td>
+                                  <td><input class="form-control" type="text" [value]="etab_rsoc_appareil[i]" readonly></td>
+                                   <td>
+                                    <button class="btn btn-danger btn-sm" type="button" (click)="confirm(i,deleteModelApp,ligne.value)" >🗑️</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <!-- Pied de tableau pour afficher les totaux -->
+                              <tfoot>
+                                <tr class="bg-light fw-bold">
+                                  <td colspan="4" class="text-end">Total :</td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalHonorairesAppareil | number:'1.2-2'" readonly></td>
+                                  <td><input class="form-control montant-input" type="text" [value]="totalNetAppareil | number:'1.2-2'" readonly></td>
+                                  <td colspan="6"></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
+                </ng-template>
+              </li> 
+            </ul>
+          </div>
+        </div> 
+        <div class="col-lg-10">
+          <div class="tab-content text-muted mt-3 mt-lg-0">
+            <div [ngbNavOutlet]="CustomVertical"></div>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>
+
+  <ng-template #deleteModel let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          id="btn-close"
+          (click)="modal.dismiss('Cross click')"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon
+            src="https://cdn.lordicon.com/gsqxdxog.json"
+            trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548"
+            style="width: 100px; height: 100px"
+          ></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button
+            
+            class="btn w-sm btn-light"
+            data-bs-dismiss="modal"
+            (click)="modal.close('Close click')"
+          >
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+
+  <ng-template #deleteModelMed let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          id="btn-close"
+          (click)="modal.dismiss('Cross click')"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon
+            src="https://cdn.lordicon.com/gsqxdxog.json"
+            trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548"
+            style="width: 100px; height: 100px"
+          ></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button
+            
+            class="btn w-sm btn-light"
+            data-bs-dismiss="modal"
+            (click)="modal.close('Close click')"
+          >
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteMed(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+  <ng-template #deleteModelVisit let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          id="btn-close"
+          (click)="modal.dismiss('Cross click')"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon
+            src="https://cdn.lordicon.com/gsqxdxog.json"
+            trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548"
+            style="width: 100px; height: 100px"
+          ></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button
+            
+            class="btn w-sm btn-light"
+            data-bs-dismiss="modal"
+            (click)="modal.close('Close click')"
+          >
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteVisit(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+
+  <ng-template #deleteModelApp let-modal>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          id="btn-close"
+          (click)="modal.dismiss('Cross click')"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 text-center">
+          <lord-icon
+            src="https://cdn.lordicon.com/gsqxdxog.json"
+            trigger="loop"
+            colors="primary:#f7b84b,secondary:#f06548"
+            style="width: 100px; height: 100px"
+          ></lord-icon>
+          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+            <h4>Etes vous sûr ?</h4>
+            <p class="text-muted mx-4 mb-0">
+              Etes vous sûr de supprimer ce type ?
+            </p>
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+          <button
+            
+            class="btn w-sm btn-light"
+            data-bs-dismiss="modal"
+            (click)="modal.close('Close click')"
+          >
+            Fermer
+          </button>
+          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteApp(selectedIndex)" (click)="modal.close('Close click')">
+            Oui ,supprimer!
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </ng-template>
+</div>
+
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title" id="exampleModalLabel">
+      {{ edit == true ? "Ajouter" : "Modifier" }} Saisie manuelle de bordereau
+      CNAM
+    </h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      id="close-modal"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form
+    [formGroup]="SaisieBordEnvoiForm"
+    class="tablelist-form"
+    autocomplete="off"
+  >
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="row">
+          <div class="col-md-2">
+            <label class="form-label">Assurance</label>
+            <app-lov
+              [listData]="ListeAssurance"
+              [columns]="columnAssuranc"
+              codeField="cod_assur"
+              [selectedCode]="codeAssur"
+              (selectedValue)="onSelectedValueAssur($event)"
+            >
+            </app-lov>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Libelle</label>
+            <input
+              type="text"
+              class="form-control border-primary"
+              placeholder="Libelle"
+              [value]="libAssur"
+              readonly
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2">
+            <label class="col-form-label">Code bordereau</label>
+            <input
+              type="text"
+              class="form-control border-primary"
+              placeholder="Entrer Code bordereau"
+              formControlName="cod_bord"
+            />
+          </div>
+          <div class="col-md-2">
+            <label class="col-form-label">Date bordereau</label>
+            <input
+              type="text"
+              class="form-control border-primary"
+              placeholder="Entrer Date bordereau"
+              formControlName="dat_bord"
+              (input)="formatDate2($event)"
+              maxlength="10"
+            />
+          </div>
+          <div class="col-md-2">
+            <label class="col-form-label">Tot. Remb</label>
+            <input
+              type="text"
+              class="form-control border-primary text-end"
+              placeholder="Entrer Tot. Remb"
+              formControlName="tot_remb"
+            />
+          </div>
+          <div class="col-md-2">
+            <label class="col-form-label">Nbre. Bulletin</label>
+            <input
+              type="text"
+              class="form-control border-primary text-end"
+              placeholder="Entrer Nbre. Bulletin"
+              formControlName="nbr_bult"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-success"
+          data-bs-dismiss="modal"
+          (click)="AjouterBordereau(); modal.close('Close click')"
+        >
+          Valider
+        </button>
+      </div>
+      <div class="hstack gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-bs-dismiss="modal"
+          (click)="modal.close('Close click')"
+        >
+          Fermer
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<div *ngIf="isSearch">
+  <app-search-lov
+    [listData]="AllBordEnvoi"
+    [columns]="columnBordArriver"
+    (selectedValue)="search($event)"
+  >
+  </app-search-lov>
+  </div>
+import { ChangeDetectorRef, Component } from "@angular/core";
+import { ReceptionRemboursementService } from "../reception-remboursement.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { PaginationService } from "src/app/core/services/pagination.service";
+import { TokenStorage } from "src/app/account/token-storage.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import Swal from "sweetalert2";
+import { BulletinSoinService } from "../../Bulletin de soins/bulletin-soin.service";
+import { SaveService } from "src/app/shared/Service/save.service";
+import { map, forkJoin, tap } from "rxjs";
+
+export interface BordArriver {
+  dat_bord: string;
+  tot_remb: string;
+  valid: string;
+  nbr_bult: string;
+  cod_bord: string;
+  cod_assur: string;
+}
+
+@Component({
+  selector: "app-saisie-manu-bord-cnam",
+  templateUrl: "./saisie-manu-bord-cnam.component.html",
+  styleUrl: "./saisie-manu-bord-cnam.component.scss",
+})
+export class SaisieManuBordCnamComponent {
+  breadCrumbItems!: Array<{}>;
+  BordEnvoiForm!: FormGroup;
+  ligPretForm!: FormGroup
+  ligPharForm!: FormGroup
+  ligVisiteForm!: FormGroup
+  ligAppareilForm!: FormGroup
+  SaisieBordEnvoiForm!: FormGroup;
+  SaisieBulletinForm!: FormGroup;
+  AllBordEnvoi: any[] = [];
+  ListePersonnel: any[] = [];
+  selectedRow: any
+  ListeFamillePersonnel: any[] = [];
+  columnBordArriver: any[] = [];
+  bultArriver: any
+  error: string | null = null;
+  codBord: string = "";
+  dateBord: string = "";
+  cod_bord: string = "";
+  num_fam: string = ""
+  ListeAssurance: any[] = [];
+  ListeRegimeRemb: any[] = [];
+  columnAssuranc: any[] = [];
+  columnPersonnel: any[] = [];
+  listActe: any[] = []
+  listMed: any[] = []
+  listRegimeRemb: any[] = []
+  listPEC: any[] = []
+  listRefEtablis: any[] = []
+  listRefEtablisVisit: any[] = []
+  listRefEtablisMed: any[] = []
+  listRefEtablisApp: any[] = []
+  listVisite: any[] = []
+  listAppareil: any[] = []
+  ligBult: any[] = []
+
+  columnsMat: any[] = []
+  columnsAdherent: any[] = []
+  columnsBultSoin: any[] = []
+  columnActe: any[] = []
+  columnsMed: any[] = []
+  columnsPEC: any[] = []
+  columnsRefEtablis: any[] = []
+  columnsRefEtablisVisit: any[] = []
+  columnsRefEtablisMed: any[] = []
+  columnsRefEtablisApp: any[] = []
+  columnVisite: any[] = []
+  columnsAppareil: any[] = []
+  columneFamillePersonnel: any[] = [];
+
+  actes: string[] = []
+  visiteCode: string[] = []
+  appareilCode: string[] = []
+  Med: string[] = []
+  refEtablisVisit: string[] = []
+  refEtablis: string[] = []
+  refEtablisPhar: string[] = []
+  refEtablisApp: string[] = []
+  libAssur: string = "";
+  numRetr: string[] = []
+  NumFam: any[] = []
+  ListeFamillePersonnelParLigne: Record<number, any[]> = {};
+
+  DatSoin: string = "";
+  datNaiss: string = "";
+  codeAssur: string = "";
+  mntNet: number = 0
+  mntNetPhar: number = 0
+  isDisabled!: boolean;
+  isSearch: boolean = true;
+  constructor(
+    private serv: ReceptionRemboursementService,
+    private servRemb: BulletinSoinService,
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private token: TokenStorage,
+    private saveService: SaveService,
+    private cdRef: ChangeDetectorRef
+  ) {
+    this.SaisieBulletinForm = this.fb.group({
+      lignes: this.fb.array([]),
+    });
+  }
+
+  createLigne(): FormGroup {
+    return this.fb.group({
+      cod_soc: [this.token.getUser().codSoc],
+      mat_pers: [""],
+      num_fam: [""],
+      dat_soin: [""],
+      cod_bord: [""],
+      cod_assur: [""],
+      num_soin: [""],
+      ord_bult: [""],
+      tot_honor: [""],
+      tot_net: [""],
+      tot_remb: [0],
+      reg_remb: [""],
+      cod_malad: [""],
+      num_pec: [""],
+      cod_fil: [""],
+      num_assur: [""],
+      dat_prev_accouch: [""],
+      nat_bult: [""],
+      mat_pers_conj: [""],
+      num_ass_conj: [""],
+      dat_saisie: [""],
+      obs: [""],
+      obs_a: [""],
+      envoi: [""],
+      reclam: [""],
+      typ_bult: [""],
+      ann_plaf_imp: [""],
+      tot_remb_med: [""],
+      num_soin_cnam: [""],
+      decis_med: [""],
+      reg_adh: [""],
+      mod_pay: [""],
+      dat_vir: [""],
+    });
+  }
+
+  ngOnInit() {
+    this.Nom[0] = '';
+    this.libVisite[0] = '';
+    this.libAct[0]=''
+    this.libAppareil[0]=''
+    this.etab_rsoc_visite[0]=''
+    this.libMed[0]=''
+    this.etab_rsoc_phar[0]=''
+    this.etab_rsoc_appareil[0]=''
+   this.etab_rsoc[0]=''
+    this.etab_rsoc_phar[0]=''
+    this.etab_rsoc_visite[0]=''
+    this.getAllAssurance();
+    this.GetAllRegimeRemb();
+    this.saveService.registerSaveCallback(() => this.addBultSoin());
+    this.saveService.setDisabled(true);
+
+    this.SaisieBordEnvoiForm = this.fb.group({
+      cod_bord: [""],
+      cod_assur: [""],
+      dat_bord: [""],
+      dat_deb: [""],
+      dat_fin: [""],
+      nbr_bult: [""],
+      tot_honor: [""],
+      typ_bord: [""],
+      cod_soc: [""],
+      tot_net: [""],
+      valid_bord: [""],
+      reg_bord: [""],
+      tot_remb: [0],
+      valid: [""],
+      clot_bord: [""],
+      tot: [""],
+      num_retr: [""],
+      cod_bord_cnam: [""],
+      seq_bord: [""],
+
+    });
+
+    this.BordEnvoiForm = this.fb.group({
+      cod_bord: [""],
+      cod_assur: [""],
+      dat_bord: [""],
+      dat_deb: [""],
+      dat_fin: [""],
+      nbr_bult: [""],
+      tot_honor: [""],
+      typ_bord: [""],
+      cod_soc: [""],
+      tot_net: [""],
+      valid_bord: [""],
+      reg_bord: [""],
+      tot_remb: [0],
+      valid: [""],
+      clot_bord: [""],
+      tot: [""],
+      num_retr: [""],
+      cod_bord_cnam: [""],
+      seq_bord: [""],
+
+    });
+
+    this.breadCrumbItems = [
+      /* { label: "Réception remboursement CNAM" },
+      { label: "Saisie manuelle du bordereau arrivée CNAM", active: true }, */
+    ];
+    this.ligPretForm = this.fb.group({
+      acte: this.fb.array([]) // Tableau dynamique des détails
+    });
+    this.ligPharForm = this.fb.group({
+      phar: this.fb.array([]) // Tableau dynamique des détails
+    });
+    this.ligVisiteForm = this.fb.group({
+      visite: this.fb.array([]) // Tableau dynamique des détails
+    });
+    this.ligAppareilForm = this.fb.group({
+      appareil: this.fb.array([]) // Tableau dynamique des détails
+    });
+
+    // this.addActe(0);
+    // this.addLignePhar(0);
+    //this.addLigneVisite()
+    // this.addLigneAppareil(0)
+    this.getAllBordEnvoi();
+  }
+  ngOnDestroy() {
+    // Clear the callback to avoid memory leaks
+    this.saveService.clearSaveCallback();
+    //this.saveService.setCanSave(false)
+  }
+  getAllBordEnvoi(): void {
+
+    this.serv.getAllEnvoiBordEnvoi(this.token.getUser().codSoc).subscribe({
+      next: (data) => {
+        this.AllBordEnvoi = data;
+        console.log("liste des bordereaux :", this.AllBordEnvoi);
+
+        this.columnBordArriver = [
+          { key: "cod_bord", label: "Code de bordereau" },
+          { key: "dat_bord", label: "Date de bordereau" },
+        ];
+      },
+      error: (err) => {
+        this.error = "Erreur lors de la récupération des données";
+      },
+    });
+  }
+
+  onSelectedValueBordArriver(event: any): void {
+
+    if (event) {
+      this.cod_bord = event.cod_bord;
+      this.dateBord = event.dat_bord;
+      this.BordEnvoiForm.patchValue({
+        cod_bord: event.cod_bord,
+        tot_remb: event.tot_remb,
+        valid: event.valid,
+        nbr_bult: event.nbr_bult,
+        dat_bord: event.dat_bord,
+        cod_soc: this.token.getUser().codSoc
+      });
+
+      this.getListPersonnelBultSoin();
+    }
+  }
+
+  printBordArrivGlobal() {
+    if (!this.cod_bord) {
+      Swal.fire('Avertissement', 'Veuillez sélectionner un bordereau.', 'warning');
+      return;
+    }
+    Swal.fire({ title: 'Chargement en cours...', html: 'Veuillez patienter pendant la génération du rapport.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    this.serv.imprimerBordArrivGlobal(this.token.getUser().codSoc, this.cod_bord).subscribe({
+      next: (data: any) => {
+        const file = new Blob([data], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = fileURL;
+        const date = new Date();
+        const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+        a.download = `Bordereau_CNAM_Arriv_Global_${this.cod_bord}_${formattedDate}.pdf`;
+        a.click();
+        URL.revokeObjectURL(fileURL);
+        Swal.close();
+      },
+      error: () => {
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Échec de la génération du rapport global.' });
+      }
+    });
+  }
+
+  printBordArrivDetail() {
+    if (!this.cod_bord) {
+      Swal.fire('Avertissement', 'Veuillez sélectionner un bordereau.', 'warning');
+      return;
+    }
+    Swal.fire({ title: 'Chargement en cours...', html: 'Veuillez patienter pendant la génération du rapport.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    this.serv.imprimerBordArrivDetail(this.token.getUser().codSoc, this.cod_bord).subscribe({
+      next: (data: any) => {
+        const file = new Blob([data], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = fileURL;
+        const date = new Date();
+        const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+        a.download = `Bordereau_CNAM_Arriv_Detail_${this.cod_bord}_${formattedDate}.pdf`;
+        a.click();
+        URL.revokeObjectURL(fileURL);
+        Swal.close();
+      },
+      error: () => {
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Échec de la génération du rapport détaillé.' });
+      }
+    });
+  }
+  loadBultArriver(data: any[]) {
+    const observables = data.map((item: any) =>
+      this.serv.getListPersonnelBultSoin(
+        this.token.getUser().codSoc,
+        item.num_assur,
+        this.cod_bord
+      ).pipe(
+        map((refData: any) => ({ item, refData }))
+      )
+    );
+
+    forkJoin(observables).subscribe((results) => {
+      console.log('results:', results);
+
+      this.numRetr = results.map(({ item }) => item.num_retr);
+
+      const familleObservables = results.map(({ item }, index) =>
+        this.serv.getListFamillePersonnelBultSoin(
+          this.token.getUser().codSoc,
+          item.mat_pers,
+          this.cod_bord
+        ).pipe(
+          map((familleList: any[]) => ({ index, familleList }))
+        )
+      );
+
+      forkJoin(familleObservables).subscribe((familleResults) => {
+        this.ListeFamillePersonnelParLigne = {};
+        this.NumFam = [];
+
+        familleResults.forEach(({ index, familleList }) => {
+          this.ListeFamillePersonnelParLigne[index] = familleList || [];
+          this.NumFam[index] = familleList?.[0]?.num_fam || null;
+        });
+
+        // Construction du formulaire différée avec setTimeout pour éviter NG0100
+        setTimeout(() => {
+          const lignesFormArray = this.fb.array(
+            results.map(({ item }, i) =>
+              this.fb.group({
+                cod_soc: [item.cod_soc],
+                mat_pers: [item.mat_pers],
+                num_fam: [this.NumFam[i]],
+                dat_soin: [item.dat_soin],
+                cod_bord: [item.cod_bord],
+                cod_assur: [item.cod_assur],
+                num_soin: [item.num_soin],
+                ord_bult: [item.ord_bult],
+                tot_honor: [item.tot_honor],
+                tot_net: [item.tot_net],
+                tot_remb: [item.tot_remb],
+                reg_remb: [item.reg_remb],
+                cod_malad: [item.cod_malad],
+                num_pec: [item.num_pec],
+                cod_fil: [item.cod_fil],
+                num_assur: [item.num_assur],
+                dat_prev_accouch: [item.dat_prev_accouch],
+                nat_bult: [item.nat_bult],
+                mat_pers_conj: [item.mat_pers_conj],
+                num_ass_conj: [item.num_ass_conj],
+                dat_saisie: [item.dat_saisie],
+                obs: [item.obs],
+                obs_a: [item.obs_a],
+                envoi: [item.envoi],
+                reclam: [item.reclam],
+                typ_bult: [item.typ_bult],
+                ann_plaf_imp: [item.ann_plaf_imp],
+                tot_remb_med: [item.tot_remb_med],
+                num_soin_cnam: [item.num_soin_cnam],
+                decis_med: [item.decis_med],
+                reg_adh: [item.reg_adh],
+                mod_pay: [item.mod_pay],
+                dat_vir: [item.dat_vir]
+              })
+            )
+          );
+
+          this.SaisieBulletinForm.setControl('lignes', lignesFormArray);
+          this.calculateTotals();
+          this.calculateTotalsTot();
+
+        });
+
+      });
+    });
+  }
+
+
+
+  loadDataIntoTable(data: any[]) {
+    this.actes = [];
+
+    const observables = data.map((item: any) =>
+      this.servRemb.getRefPhysique(item.prf_typ).pipe(
+        map((refData: any) => ({ item, refData }))
+      )
+    );
+
+    forkJoin<{ item: any; refData: any; }[]>(observables).subscribe((results) => {
+      if (results.length > 0) {
+        this.listRefEtablis = results[0].refData || [];
+        this.columnsRefEtablis = [
+          { key: "prf_cod", label: "Code" },
+          { key: "etab_rsoc", label: "Nom & Prénom" },
+          { key: "met_etab", label: "Etablis" },
+        ];
+        this.refEtablis = results.map(({ item }) => item.prf_cod);
+        this.actes = results.map(({ item }) => item.cod_act);
+      }
+
+      this.ligPretForm.setControl(
+        'acte',
+        this.fb.array(
+          results.map(({ item }) => this.fb.group({
+            cod_soc: [item.cod_soc],
+            mat_pers: [item.mat_pers],
+            num_fam: [item.num_fam],
+            dat_soin: [item.dat_soin],
+            abrv_act: [item.abrv_act],
+            cod_act: [item.cod_act],
+            num_lig: [item.num_lig],
+            let_cod: [item.let_cod],
+            cot_act: [item.cot_act],
+            act_prix: [item.act_prix],
+            mnt_honor: [Number(item.mnt_honor).toFixed(3)],
+            mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+            accord_act: [item.accord_act],
+            //mnt_net: [item.mnt_net],
+            indice: [item.indice],
+            dat_act: [item.dat_act],
+            prf_typ: [item.prf_typ],
+            prf_cod: [item.prf_cod],
+            mut_mnt_net: [item.mut_mnt_net],
+            num_pec_act: [item.num_pec_act],
+            decis_act: [item.decis_act],
+
+          }))
+        )
+      );
+      this.calculateTotals()
+    });
+  }
+
+  loadDataIntoTableVisite(data: any) {
+    this.visiteCode = [];
+
+    const observables = data.map((item: any) =>
+      this.servRemb.getRefPhysique(item.prf_typ).pipe(
+        tap((response: any) => {
+          this.listRefEtablisVisit = response;
+          this.columnsRefEtablisVisit = [
+            { key: "prf_cod", label: "Code" },
+            { key: "etab_rsoc", label: "Nom & Prénom" },
+            { key: "met_etab", label: "Etablis" },
+          ];
+          console.log('item.cod_visit :', item)
+          this.visiteCode.push(item.cod_visit);
+          this.refEtablisVisit.push(item.prf_cod);
+        })
+      )
+    );
+
+    forkJoin(observables).subscribe(() => {
+      this.ligVisiteForm.setControl('visite', this.fb.array(data.map((item: any) => this.fb.group({
+        cod_soc: [item.cod_soc],
+        mat_pers: [item.mat_pers],
+        num_fam: [item.num_fam],
+        dat_soin: [item.dat_soin],
+        abrv_act: [item.abrv_act],
+        cod_visit: [item.cod_visit],
+        num_lig: [item.num_lig],
+        mnt_honor: [Number(item.mnt_honor).toFixed(3)],
+        mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+        //: [Number(item.mnt_net).toFixed(3)],
+        indice: [item.indice],
+        dat_act: [item.dat_act],
+        prf_typ: [item.prf_typ],
+        prf_cod: [item.prf_cod],
+        prix_visit: [item.prix_visit],
+        taux_remb: [item.taux_remb],
+        mut_mnt_net: [item.mut_mnt_net],
+        decis_med: [item.decis_med],
+
+
+      }))));
+
+      this.calculateTotalsVisite()
+    });
+  }
+
+  loadDataIntoTableMed(data: any) {
+    this.Med = [];
+
+    const observables = data.map((item: any) =>
+      this.servRemb.getRefPhysique(item.prf_typ).pipe(
+        tap((response: any) => {
+          this.listRefEtablisMed = response;
+          this.columnsRefEtablisMed = [
+            { key: "prf_cod", label: "Code" },
+            { key: "etab_rsoc", label: "Nom & Prénom" },
+            { key: "met_etab", label: "Etablis" },
+          ];
+          this.refEtablisPhar.push(item.prf_cod);
+          this.Med.push(item.cod_med);
+        })
+      )
+    );
+
+    forkJoin(observables).subscribe(() => {
+      this.ligPharForm.setControl('phar', this.fb.array(data.map((item: any) => this.fb.group({
+        cod_soc: [item.cod_soc],
+        mat_pers: [item.mat_pers],
+        num_fam: [item.num_fam],
+        dat_soin: [item.dat_soin],
+        abrv_act: [item.abrv_act],
+        cod_med: [item.cod_med],
+        num_lig: [item.num_lig],
+        mnt_honor: [Number(item.mnt_honor).toFixed(3)],
+        mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+        // mnt_net: [Number(item.mnt_net).toFixed(3)],
+        indice: [item.indice],
+        dat_act: [item.dat_act],
+        prf_typ: [item.prf_typ],
+        prf_cod: [item.prf_cod],
+        accord_med: [item.accord_med],
+        num_pec_med: [item.num_pec_med],
+        mdc_prix: [item.mdc_prix],
+        med_prix: [item.med_prix],
+        prix_remb: [item.prix_remb],
+        num_lig_med: [item.num_lig_med],
+        mut_mnt_net: [item.mut_mnt_net],
+        nbr_j: [item.nbr_j],
+        decis_med: [item.decis_med],
+
+      }))));
+      this.calculateTotalsPhar()
+      console.log("this.ligPharForm :", this.ligPharForm.value);
+    });
+  }
+
+  loadDataIntoTablApp(data: any) {
+    this.appareilCode = [];
+
+    const observables = data.map((item: any) =>
+      this.servRemb.getRefPhysique(item.prf_typ).pipe(
+        tap((response: any) => {
+          this.listRefEtablisApp = response;
+          this.columnsRefEtablisApp = [
+            { key: "prf_cod", label: "Code" },
+            { key: "etab_rsoc", label: "Nom & Prénom" },
+            { key: "met_etab", label: "Etablis" },
+          ];
+          this.refEtablisApp.push(item.prf_cod);
+          this.appareilCode.push(item.cod_app);
+        })
+      )
+    );
+
+    forkJoin(observables).subscribe(() => {
+      this.ligAppareilForm.setControl('appareil', this.fb.array(data.map((item: any) => this.fb.group({
+        cod_soc: [item.cod_soc],
+        mat_pers: [item.mat_pers],
+        num_fam: [item.num_fam],
+        dat_soin: [item.dat_soin],
+        abrv_act: [item.abrv_act],
+        cod_app: [item.cod_app],
+        num_lig: [item.num_lig],
+        mnt_honor: [Number(item.mnt_honor).toFixed(3)],
+        mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+        // mnt_net: [Number(item.mnt_net).toFixed(3)],
+        indice: [item.indice],
+        dat_act: [item.dat_act],
+        prf_typ: [item.prf_typ],
+        prf_cod: [item.prf_cod],
+        accord_app: [item.accord_med],
+        num_pec_app: [item.num_pec_app],
+        num_lig_app: [item.num_lig_app],
+        mut_mnt_net: [item.mut_mnt_net],
+      }))));
+      this.calculateTotalsAppareil()
+      console.log("this.ligAppareilForm :", this.ligAppareilForm.value);
+    });
+  }
+  openModalTab(content1: any) {
+    this.modalService.open(content1, { size: "xl", centered: true });
+  }
+  formatDate(dateString: any): string {
+    if (!dateString) {
+      return dateString;
+    }
+
+    // Vérifier si la date est au format ddmmyyyy (ex: 25072024)
+    if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
+      const day = dateString.substring(0, 2);
+      const month = dateString.substring(2, 4);
+      const year = dateString.substring(4, 8);
+      return `${day}/${month}/${year}`;
+    }
+
+    // Vérifier si la date est au format yyyy-mm-dd (ex: 2024-07-25)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      const [year, month, day] = dateString.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    // Retourner tel quel si aucun format reconnu
+    return dateString;
+  }
+  addBultSoin() {
+    // Vérifier si le formulaire principal est valide
+    if (!this.SaisieBordEnvoiForm.valid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulaire invalide',
+        text: 'Veuillez remplir correctement le formulaire principal avant de continuer.',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    const formArrays = [
+      this.ligVisiteForm.get('visite') as FormArray,
+      this.ligPharForm.get('phar') as FormArray,
+      this.ligPretForm.get('acte') as FormArray,
+      this.ligAppareilForm.get('appareil') as FormArray
+    ];
+
+    // Vérifier si au moins un FormArray contient AU MOINS UN champ valide
+    const hasValidData = formArrays.some(array =>
+      array.controls.length > 0 && array.controls.some(control => control.valid)
+    );
+
+
+
+    // Fonction pour formater les dates
+    const formatDates = (form: FormGroup, fields: string[]): void => {
+      fields.forEach(field => {
+        const value = this.formatDate(form.get(field)?.value);
+        form.get(field)?.setValue(value);
+      });
+    };
+    const BulletinFormArray = this.SaisieBulletinForm.get('lignes') as FormArray
+    const bulletin = BulletinFormArray.at(this.selectedRow).value;
+    console.log("bulletin : ", BulletinFormArray)
+    // Appliquer le formatage et mettre à jour les champs des FormArray
+    formArrays.forEach(array => {
+      array.controls.forEach((formGroup: AbstractControl) => {
+        if (formGroup instanceof FormGroup) {
+          formatDates(formGroup, ['dat_act']);
+          formGroup.patchValue({
+            mat_pers: bulletin.mat_pers,
+            num_fam: bulletin.num_fam,
+            dat_soin: bulletin.dat_soin
+          });
+        }
+      });
+    });
+
+    // Appel du service pour ajouter le bulletin de soin
+    this.servRemb.addBBordArriver(this.BordEnvoiForm.value).subscribe(
+      (data: any) => {
+
+
+        this.servRemb.addBultArriver(BulletinFormArray.value).subscribe((data: any) => {
+          const validArrays = formArrays.map(array =>
+            array.controls.filter(control => control.valid).map(control => control.value)
+          );
+          console.log("visite : ,act :,med : ,app : ", validArrays)
+
+          this.servRemb.addAllLigBultArriver(validArrays[0], validArrays[2], validArrays[1], validArrays[3]).subscribe(
+            response => {
+              const errors = [];
+              if (response.visit?.error) errors.push(`Visit: ${response.visit.message}`);
+              if (response.act?.error) errors.push(`Act: ${response.act.message}`);
+              if (response.med?.error) errors.push(`Med: ${response.med.message}`);
+              if (response.app?.error) errors.push(`App: ${response.app.message}`);
+
+              if (errors.length > 0) {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Erreur lors de l\'ajout',
+                  html: errors.join('<br>'),
+                  showCancelButton: false
+                });
+              } else {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Ajout réussi',
+                  text: 'Tous les services valides ont été ajoutés avec succès !',
+                  confirmButtonText: 'OK'
+                });
+              }
+            },
+            error => this.showServerError()
+          );
+        })
+
+      },
+      error => this.showServerError()
+    );
+  }
+  private showServerError() {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur serveur',
+      text: 'Une erreur inattendue est survenue lors de l\'ajout.',
+      confirmButtonText: 'OK'
+    });
+  }
+  getAllAssurance() {
+    this.serv.GetAllAssurance().subscribe((data: any) => {
+      this.ListeAssurance = data;
+      this.columnAssuranc = [
+        { key: "cod_assur", label: "Code Assurance" },
+        { key: "lib_assur", label: "Libellé" },
+      ];
+    });
+  }
+
+  GetAllRegimeRemb() {
+    this.serv.GetAllRegimeRemb().subscribe((data: any) => {
+      this.ListeRegimeRemb = data;
+      console.log("liste des regime remb", this.ListeRegimeRemb);
+    });
+  }
+  AjouterBordereau() {
+    const formValue = this.SaisieBordEnvoiForm.value;
+
+    this.SaisieBordEnvoiForm.patchValue({
+      cod_soc: this.token.getUser().codSoc,
+      cod_assur: this.token.getUser().codSoc,
+    });
+
+    this.serv
+      .AjouterBordereau(this.SaisieBordEnvoiForm.value)
+      .subscribe((data) => {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Ajouté avec succès !",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        this.getAllBordEnvoi();
+      });
+  }
+
+  formatDate2(event: any) {
+    let value = event.target.value.replace(/\D/g, "");
+
+    if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
+    if (value.length > 5) value = value.slice(0, 5) + "/" + value.slice(5, 9);
+
+    event.target.value = value;
+  }
+  onSelectedValueAssur(event: any) {
+    console.log(event)
+    this.libAssur = event.lib_assur;
+    this.BordEnvoiForm.patchValue({
+      cod_assur: event.cod_assur,
+    });
+    console.log(this.BordEnvoiForm.value)
+  }
+
+  getListPersonnelBultSoin(): void {
+    this.serv
+      .getPersonnelBultSoinSaisieCnam(
+        this.token.getUser().codSoc,
+        "01",
+        this.cod_bord
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.ListePersonnel = data;
+          console.log("Liste des personnels pour le cod_bord :", this.cod_bord, this.ListePersonnel);
+
+          this.columnPersonnel = [
+            { key: "num_retr", label: "Numéro assurance" },
+            { key: "mat_pers", label: "Matricule" },
+            { key: "nom", label: "Nom & prénom" },
+          ];
+        },
+        error: (err: HttpErrorResponse) => {
+          this.error = "Erreur lors de la récupération des données";
+          console.error(err);
+        },
+      });
+  }
+
+
+  getListFamillePersonnelBultSoin(codBord: string, matPers: string): void {
+    this.serv
+      .getListFamillePersonnelBultSoin(
+        this.token.getUser().codSoc,
+        matPers,
+        codBord
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.ListeFamillePersonnel = data;
+          console.log("liste des familles pour le cod_bord et mat_pers", this.ListeFamillePersonnel, codBord, matPers);
+
+          this.columneFamillePersonnel = [
+            { key: "num_fam", label: "Préstataire" },
+            { key: "nom", label: "Nom" },
+          ];
+        },
+        error: (err: HttpErrorResponse) => {
+          this.error = "Erreur lors de la récupération des données";
+          console.error(err);
+        },
+      });
+  }
+
+  get lignes(): FormArray {
+    return this.SaisieBulletinForm.get("lignes") as FormArray;
+  }
+
+
+  Nom: string[] = [];
+  onSelectedFamillePersonnel(selectedValue: any, index: number): void {
+    // 🔄 Utiliser la liste spécifique à la ligne
+    const selectedFamille = this.ListeFamillePersonnelParLigne[index]?.find(
+      (famille) => famille.num_fam === selectedValue.num_fam
+    );
+
+    // 🔄 Mise à jour du tableau des noms
+    this.num_fam = selectedValue.num_fam;
+    this.Nom[index] = selectedFamille?.nom || '';
+
+    // 🔄 Mise à jour du formulaire (patch du FormGroup de la ligne)
+    this.lignes.at(index).patchValue({
+      num_fam: selectedValue.num_fam,
+      dat_soin: selectedValue.dat_soin,
+    });
+
+    // ✅ Mise à jour de la ligne sélectionnée pour surligner
+    this.selectedRow = index;
+
+    // ✅ Appel différé pour garantir que tout est à jour
+    setTimeout(() => {
+      this.logRowData(this.lignes.at(index).value, index);
+    });
+  }
+
+  matPers: string[] = [];
+  NomPrenom: string[] = [];
+  Fill: string[] = [];
+  onSelectedPersonnel(selectedValue: any, index: number): void {
+    console.log("selectedValue", selectedValue, this.cod_bord);
+
+    const selectedPers = this.ListePersonnel.find(
+      (listPers) => listPers.num_retr === selectedValue.num_retr
+    );
+
+    if (selectedPers) {
+      this.NomPrenom[index] = selectedPers.nom || '';
+      const matPers = selectedPers.mat_pers;
+      this.matPers[index] = matPers;
+
+      // 🧹 Réinitialise la famille précédente de cette ligne
+      this.ListeFamillePersonnelParLigne[index] = [];
+      this.NumFam[index] = null;
+      this.Nom[index] = '';
+
+      // 📥 Appel du service pour récupérer la liste des familles spécifiques à cette personne
+      this.serv.getListFamillePersonnelBultSoin(
+        this.token.getUser().codSoc,
+        matPers,
+        this.cod_bord
+      ).subscribe((familleList: any[]) => {
+        this.ListeFamillePersonnelParLigne[index] = familleList || [];
+        console.log("data line", familleList)
+        this.columneFamillePersonnel = [
+          { key: "num_fam", label: "Préstataire" },
+          { key: "nom", label: "Nom" },
+        ];
+        // Pré-sélectionner le premier membre de la famille s’il existe
+        const defaultFamille = familleList?.[0];
+        if (defaultFamille) {
+          this.NumFam[index] = defaultFamille.num_fam;
+          this.Nom[index] = defaultFamille.nom;
+
+          this.lignes.at(index).patchValue({
+            num_fam: defaultFamille.num_fam,
+            dat_soin: defaultFamille.dat_soin
+          });
+
+          // Marquer la ligne comme sélectionnée visuellement
+          this.selectedRow = index;
+
+          // Log les données après patch
+          setTimeout(() => {
+            this.logRowData(this.lignes.at(index).value, index);
+          });
+        }
+      });
+
+      // 🔄 Met à jour les champs du personnel sélectionné
+      this.lignes.at(index).patchValue({
+        num_retr: selectedValue.num_retr,
+        cod_fil: selectedValue.cod_fil,
+        mat_pers: selectedValue.mat_pers
+      });
+    }
+  }
+
+
+
+  addLigne(): void {
+    this.lignes.push(this.createLigne());
+    const bultArriver = (this.SaisieBulletinForm.get("lignes") as FormArray);
+    bultArriver.controls.forEach((control) => {
+      control.get("cod_bord")?.patchValue(this.BordEnvoiForm.get('cod_bord')?.value);
+      control.get("cod_assur")?.patchValue(this.BordEnvoiForm.get('cod_assur')?.value);
+    });
+    // this.calculateTotals(); Met à jour les totaux
+    /*  this.serv
+      .getNumLigAct(
+        this.formBuletinSoin.get("cod_soc")?.value,
+        this.formBuletinSoin.get("mat_pers")?.value,
+        this.formBuletinSoin.get("num_fam")?.value,
+        this.formBuletinSoin.get("dat_soin")?.value
+      )
+      .subscribe((data: any) => {
+        this.lignes.at(index).patchValue({
+          num_lig: data,
+        });
+      }); */
+  }
+
+
+
+  get acte(): FormArray {
+    return this.ligPretForm.get('acte') as FormArray;
+  }
+
+  // Création d'une ligne avec les champs nécessaires
+  createActe(): FormGroup {
+    return this.fb.group({
+      cod_soc: [this.token.getUser().codSoc],
+      mat_pers: [''],
+      num_fam: [''],
+      dat_soin: [''],
+      abrv_act: ['', Validators.required],
+      cod_act: ['', Validators.required],
+      num_lig: [1],
+      let_cod: [''],
+      cot_act: [''],
+      act_prix: [''],
+      mnt_honor: [0],
+      mnt_remb: [0],
+      accord_act: [''],
+      // mnt_net: [''],
+      indice: [''],
+      dat_act: [''],
+      prf_typ: [''],
+      prf_cod: [''],
+      mut_mnt_net: [''],
+      num_pec_act: [''],
+      decis_act: [''],
+
+
+    });
+
+  }
+
+  addActe(): void {
+    this.acte.push(this.createActe());
+    this.calculateTotals(); // Met à jour les totaux
+    // this.serv.getNumLigAct(this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value, this.formBuletinSoin.get('num_fam')?.value,
+    //   this.formBuletinSoin.get('dat_soin')?.value).subscribe((data: any) => {
+    //     this.lignes.at(index).patchValue({
+    //       num_lig: data
+    //     })
+    //   })
+  }
+
+  // removeLigne(index: number): void {
+  //   this.lignes.removeAt(index);
+  //   this.calculateTotals(); // Met à jour les totaux
+
+  // }
+  selectedIndex: number | null = null;
+  confirm(index: any, content: any, id: any) {
+    this.selectedIndex = index
+    console.log("this.selectedIndex:", this.selectedIndex);
+    //this.deleteId = id;
+    this.modalService.open(content, { centered: true });
+  }
+  ConfirmDelete(index: number): void {
+    const ligne = this.acte.at(index).value;
+    console.log("ligne:", ligne);
+    const cle = {
+      cod_soc: ligne.cod_soc,
+      mat_pers: ligne.mat_pers,
+      num_fam: ligne.num_fam,
+      dat_soin: ligne.dat_soin,
+    };
+
+    console.log("Clé à vérifier :", cle);
+
+    this.serv.existeLigActArriver(cle).subscribe({
+      next: (exists: boolean) => {
+        console.log("Enregistrement existant :", exists);
+
+        if (exists) {
+          this.serv.deleteLigActArriver(
+            ligne.cod_soc,
+            ligne.mat_pers,
+            ligne.num_fam,
+            ligne.dat_soin,
+            ligne.abrv_act,
+            ligne.num_lig,
+            ligne.dat_act,
+            ligne.cod_act
+          ).subscribe({
+            next: () => {
+              this.lignes.removeAt(index); // Suppression de la ligne dans le formulaire
+              this.calculateTotals();
+            },
+            error: (error) => {
+              console.error("Erreur lors de la suppression :", error);
+            }
+          });
+        } else {
+          // Si l'enregistrement n'existe pas, on supprime directement du formulaire
+          this.acte.removeAt(index);
+          this.calculateTotals();
+        }
+      },
+      error: (error) => {
+        console.error("Erreur lors de la vérification d'existence :", error);
+        //alert("Une erreur est survenue lors de la vérification. Veuillez réessayer.");
+      }
+    });
+  }
+  totalHonoraires: number = 0;
+  totalNet: number = 0;
+
+
+
+  libAct: string[] = []
+  selectedAct: any
+  onSelectedActe(selectedValue: any, index: number): void {
+    this.selectedAct = selectedValue
+    const selectedActe = this.listActe.find(acte => acte.abrv_act === selectedValue.abrv_act);
+    this.libAct[index] = selectedActe.lib_act
+    this.acte.at(index).patchValue({
+      abrv_act: selectedValue.abrv_act,
+      cod_act: selectedValue.cod_act
+    });
+
+    console.log("ligne", this.lignes)
+
+  }
+  libVisite: string[] = []
+  selectedVisit: any
+  onSelectedVisite(selectedValue: any, index: number): void {
+    this.selectedVisit = selectedValue
+
+    const selectedActe = this.listVisite.find(acte => acte.cod_Visit === selectedValue.cod_Visit);
+    this.libVisite[index] = selectedActe.lib_Visit
+    this.visite.at(index).patchValue({
+      cod_visit: selectedValue.cod_Visit,
+      abrv_act: selectedValue.abrv_Act
+    });
+
+
+  }
+  libAppareil: string[] = []
+  onSelectedAppareil(selectedValue: any, index: number): void {
+    console.log('selectedValue', selectedValue);
+
+
+
+    const selectedActe = this.listAppareil.find(acte => acte.cod_app === selectedValue.cod_app);
+    this.libAppareil[index] = selectedActe.lib_app
+    this.appareil.at(index).patchValue({
+      cod_app: selectedValue.cod_app,
+      abrv_act: selectedValue.abrv_act
+    });
+
+
+    console.log('listVisite', this.appareil);
+
+  }
+  mntNetArray: number[] = []; // Declare an array to store the amounts for each line
+
+  calcul_mnt_net(event: any, index: number) {
+    const ligBult = this.ligPretForm.get('acte') as FormArray;
+    if (event.target.value == null) {
+      Swal.fire({
+        title: 'Message',
+        text: 'Mnt honor est obligatoire',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+      });
+    }
+    console.log("ligBult :", ligBult.value[index].abrv_act)
+    this.servRemb.calculer_montant_net_act(this.bultArriver.cod_soc, this.bultArriver.mat_pers, ligBult.value[index].cod_act, event.target.value,
+      this.bultArriver.dat_soin, this.selectedAct.act_prix, this.selectedAct.taux_act, 0, 0).subscribe((data: any) => {
+
+
+        this.mntNet = data.p_mnt_net ?? 0; // Assurez-vous que la valeur est 0 si null ou undefined
+
+        this.mntNetArray[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
+        this.lignes.at(index).patchValue({ mnt_remb: this.mntNetArray[index] });
+        this.calculateTotals();
+        console.log(this.mntNetArray)
+      })
+  }
+
+  OnselectRefTyp(event: any) {
+    this.servRemb.getRefPhysique(event.target.value).subscribe((data: any) => {
+      this.listRefEtablis = data
+
+      this.columnsRefEtablis = [
+        { key: "prf_cod", label: "Code" },
+        { key: "etab_rsoc", label: "Nom & Prénom" },
+        { key: "met_etab", label: "Etablis" },
+
+      ];
+    })
+  }
+  OnselectRefTypVisite(event: any) {
+    this.servRemb.getRefPhysique(event.target.value).subscribe((data: any) => {
+      this.listRefEtablisVisit = data
+
+      this.columnsRefEtablisVisit = [
+        { key: "prf_cod", label: "Code" },
+        { key: "etab_rsoc", label: "Nom & Prénom" },
+        { key: "met_etab", label: "Etablis" },
+
+      ];
+    })
+  }
+
+  OnselectRefTypMed(event: any) {
+    this.servRemb.getRefPhysique(event.target.value).subscribe((data: any) => {
+      this.listRefEtablisMed = data
+
+      this.columnsRefEtablisMed = [
+        { key: "prf_cod", label: "Code" },
+        { key: "etab_rsoc", label: "Nom & Prénom" },
+        { key: "met_etab", label: "Etablis" },
+
+      ];
+    })
+  }
+
+
+  OnselectRefTypApp(event: any) {
+    this.servRemb.getRefPhysique(event.target.value).subscribe((data: any) => {
+      this.listRefEtablisApp = data
+
+      this.columnsRefEtablisApp = [
+        { key: "prf_cod", label: "Code" },
+        { key: "etab_rsoc", label: "Nom & Prénom" },
+        { key: "met_etab", label: "Etablis" },
+
+      ];
+    })
+  }
+  etab_rsoc: string[] = []
+  onSelectedEtablis(selectedValue: any, index: number): void {
+    console.log('selectedValue', selectedValue);
+
+    const selectedActe = this.listRefEtablis.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
+    this.etab_rsoc[index] = selectedActe.etab_rsoc
+    this.lignes.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
+  }
+  calculateTotals() {
+
+    this.totalHonoraires = this.lignes.controls.reduce((sum, ligne) => {
+      console.log("ligne :", ligne.get('mnt_honor')?.value)
+      const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
+      return sum + honor;
+    }, 0);
+
+    this.totalNet = this.lignes.controls.reduce((sum, ligne) => {
+      const net = parseFloat((ligne.get('mnt_remb')?.value || '0')) || 0;
+      return sum + net;
+    }, 0);
+  }
+
+  //   /*   Traitement des medicaments*/
+
+  get phar(): FormArray {
+    return this.ligPharForm.get('phar') as FormArray;
+  }
+
+  createLignePhar(): FormGroup {
+    return this.fb.group({
+
+
+      cod_soc: [this.token.getUser().codSoc],
+      mat_pers: [''],
+      num_fam: [''],
+      dat_soin: ['', Validators.required],
+      abrv_act: ['', Validators.required],
+      cod_med: [''],
+      num_lig: [''],
+      indice: [''],
+      mnt_honor: [''],
+      //  mnt_net: [''],
+      mnt_remb: [''],
+      accord_med: [''],
+      dat_act: [''],
+      prf_typ: [''],
+      prf_cod: [''],
+      num_pec_med: [''],
+      mdc_prix: [''],
+      med_prix: [''],
+      prix_remb: [''],
+      num_lig_med: ['1'],
+      mut_mnt_net: [''],
+      nbr_j: [''],
+      decis_med: [''],
+
+    });
+
+  }
+  addLignePhar(index: any): void {
+    this.phar.push(this.createLignePhar());
+    this.calculateTotalsPhar()
+    const ligPhar = this.ligPharForm.get('phar') as FormArray;
+    this.serv.getNumLigMed(this.bultArriver.cod_soc, this.bultArriver.mat_pers, this.bultArriver.num_fam,
+      this.bultArriver.dat_soin, ligPhar.value[index].abrv_act).subscribe((data: any) => {
+        this.phar.at(index).patchValue({
+          num_lig_med: data
+        })
+      })
+
+  }
+
+  removeLignePhar(index: number): void {
+
+
+
+    const ligne = this.phar.at(index).value; // Récupérer les données de la ligne
+
+    const cle = {
+      cod_soc: ligne.cod_soc,
+      mat_pers: ligne.mat_pers,
+      num_fam: ligne.num_fam,
+      dat_soin: ligne.dat_soin,
+      abrv_act: ligne.abrv_act,
+    }
+
+    this.serv.existeLigActArriver(cle).subscribe((exists: any) => {
+      if (exists) {
+        this.serv.deleteLigMedArriver(ligne.cod_soc, ligne.mat_pers, ligne.num_fam, ligne.dat_soin, ligne.abrv_act, ligne.num_lig, ligne.cod_med).subscribe(() => {
+          this.phar.removeAt(index);
+          this.calculateTotalsPhar();
+        }, error => {
+          console.error("Erreur lors de la suppression :", error);
+        });
+      }
+    }, error => {
+
+      console.error("Erreur lors de la vérification d'existence :", error);
+
+      this.phar.removeAt(index);
+      this.calculateTotalsPhar();
+
+    });
+  }
+
+  selectedIndexMed: number | null = null;
+  confirmMed(index: any, content: any, id: any) {
+    this.selectedIndexMed = index
+    console.log("this.selectedIndex:", this.selectedIndex);
+    //this.deleteId = id;
+    this.modalService.open(content, { centered: true });
+  }
+  ConfirmDeleteMed(index: number): void {
+    const ligne = this.phar.at(index).value; // Récupérer les données de la ligne
+    console.log("ligne:", ligne);
+    const cle = {
+      cod_soc: ligne.cod_soc,
+      mat_pers: ligne.mat_pers,
+      num_fam: ligne.num_fam,
+      dat_soin: ligne.dat_soin,
+    };
+
+    console.log("Clé à vérifier med:", cle);
+
+    this.serv.existeLigMedArriver(cle).subscribe({
+      next: (exists: boolean) => {
+        console.log("Enregistrement existant med:", exists);
+
+        if (exists) {
+          debugger
+          // Si l'enregistrement existe, on appelle le service de suppression
+          this.serv.deleteLigMedArriver(
+            ligne.cod_soc,
+            ligne.mat_pers,
+            ligne.num_fam,
+            ligne.dat_soin,
+            ligne.abrv_act,
+            ligne.num_lig_med,
+            ligne.cod_med
+          ).subscribe({
+            next: () => {
+              this.phar.removeAt(index); // Suppression de la ligne dans le formulaire
+              this.calculateTotalsPhar();
+            },
+            error: (error) => {
+              console.error("Erreur lors de la suppression :", error);
+            }
+          });
+        } else {
+          // Si l'enregistrement n'existe pas, on supprime directement du formulaire
+          this.phar.removeAt(index);
+          this.calculateTotalsPhar();
+        }
+      },
+      error: (error) => {
+        console.error("Erreur lors de la vérification d'existence :", error);
+        //alert("Une erreur est survenue lors de la vérification. Veuillez réessayer.");
+      }
+    });
+  }
+  verif_indice_phar(item: any, index: any) {
+    const ligPhar = this.ligPharForm.get('phar') as FormArray;
+    this.servRemb.verif_indice(ligPhar.value[index].abrv_act, this.bultArriver.cod_fil, this.bultArriver.cod_assur, ligPhar.value[index].abrv_act.indice).
+      subscribe((data: any) => {
+        console.log("data", data)
+        if (data.reponse != null) {
+          Swal.fire({
+            title: 'Message',
+            text: data.reponse,
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+          });
+
+          item.target.value = '';
+        }
+      })
+  }
+
+  verif_vign_pahr(item: any, index: any) {
+
+    const ligPhar = this.ligPharForm.get('phar') as FormArray;
+
+    console.log("ligBult :", ligPhar)
+    this.servRemb.verif_vign(ligPhar.value[index].abrv_act, this.bultArriver.cod_fil, this.bultArriver.cod_assur, ligPhar.value[index].mnt_honor, ligPhar.value[index].abrv_act.nbr_vign).
+      subscribe((data: any) => {
+        console.log("data", data)
+        if (data.reponse != null) {
+          Swal.fire({
+            title: 'Message',
+            text: data.reponse,
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+          });
+
+          item.target.value = '';
+        }
+      })
+  }
+
+  verif_piece_pahr(item: any, index: any) {
+    const ligPhar = this.ligPharForm.get('phar') as FormArray;
+    console.log("ligBult :", ligPhar)
+    this.servRemb.verif_piece(ligPhar.value[index].abrv_act, this.bultArriver.cod_fil, this.bultArriver.cod_assur, ligPhar.value[index].abrv_act.mnt_honor, ligPhar.value[index].abrv_act.nbr_piece).
+      subscribe((data: any) => {
+        console.log("data", data)
+        if (data.reponse != null) {
+          Swal.fire({
+            title: 'Message',
+            text: data.reponse,
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+          });
+
+          item.target.value = '';
+        }
+      })
+  }
+  etab_rsoc_phar: string[] = []
+  onSelectedEtablisPhar(selectedValue: any, index: number): void {
+    console.log('selectedValue', selectedValue);
+
+    const selectedActe = this.listRefEtablisMed.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
+    this.etab_rsoc_phar[index] = selectedActe.etab_rsoc
+    this.phar.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
+  }
+
+  mntNetArrayPhar: number[] = [];
+  calcul_mnt_netPhar(event: any, index: number) {
+    const ligPhar = this.ligPharForm.get('phar') as FormArray;
+    console.log("ligBult :", ligPhar)
+    this.serv.calculer_montant_net_med(this.bultArriver.cod_soc, this.bultArriver.mat_pers, ligPhar.value[index].cod_med
+      , event.target.value, this.bultArriver.dat_soin, this.selectedMed.prix_remb,
+      ligPhar.value[index].indice, 0, 0).subscribe((data: any) => {
+        this.mntNetPhar = data.p_mnt_net
+
+        this.mntNetArrayPhar[index] = data.p_mnt_net;
+        this.phar.at(index).patchValue({ mnt_remb: this.mntNetArrayPhar[index] });
+        this.calculateTotalsPhar();
+        console.log(this.mntNetArray)
+      })
+  }
+  totalHonorairesPhar: number = 0;
+  totalNetPhar: number = 0;
+  calculateTotalsPhar() {
+    console.log("this.phar :", this.phar)
+    this.totalHonorairesPhar = this.phar.controls.reduce((sum, ligne) => {
+      const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
+      return sum + honor;
+    }, 0);
+
+    this.totalNetPhar = this.phar.controls.reduce((sum, ligne) => {
+      const net = parseFloat((ligne.get('mnt_remb')?.value || '0')) || 0;
+      return sum + net;
+    }, 0);
+  }
+
+  totalHonoraireTot: number = 0;
+  totalNetTot: number = 0;
+  calculateTotalsTot() {
+    console.log("this.tot :", this.lignes)
+    this.totalHonoraireTot = this.lignes.controls.reduce((sum, ligne) => {
+      const tot = parseFloat((ligne.get('tot_remb')?.value || '0')) || 0;
+      return sum + tot;
+    }, 0);
+
+
+  }
+
+  libMed: string[] = []
+  selectedMed: any
+  onSelectedMed(selectedValue: any, index: number): void {
+
+    console.log('selectedValue', selectedValue);
+    this.selectedMed = selectedValue
+    const selectedMed = this.listMed.find(acte => acte.cod_med === selectedValue.cod_med);
+    this.libMed[index] = selectedMed.lib_med
+    this.phar.at(index).patchValue({
+      cod_med: selectedValue.cod_med,
+      abrv_act: selectedValue.abrv_act,
+      mdc_prix: selectedValue.mdc_prix
+    });
+
+
+  }
+  /* Fin Traitement des medicaments*/
+
+
+  /* Traitement des Visites*/
+
+  get visite(): FormArray {
+    return this.ligVisiteForm.get('visite') as FormArray;
+  }
+
+  createLigneVisite(): FormGroup {
+    return this.fb.group({
+
+      cod_soc: [this.token.getUser().codSoc],
+      mat_pers: [''],
+      num_fam: [''],
+      dat_soin: ['', Validators.required],
+      abrv_act: [''],
+      cod_visit: ['', Validators.required],
+      num_lig: [''],
+      mnt_honor: [''],
+      mnt_remb: [''],
+      // mnt_net: [''],
+      indice: [''],
+      dat_act: [''],
+      prf_typ: [''],
+      prf_cod: [''],
+      prix_visit: [''],
+      taux_remb: [''],
+      mut_mnt_net: [''],
+      decis_med: [''],
+
+
+    });
+
+  }
+
+  addLigneVisite(): void {
+    this.visite.push(this.createLigneVisite());
+    this.calculateTotalsVisite()
+  }
+
+  removeLigneVisite(index: number): void {
+    this.visite.removeAt(index);
+    this.calculateTotalsVisite()
+  }
+
+  selectedIndexVisit: number | null = null;
+  confirmVisit(index: any, content: any, id: any) {
+    this.selectedIndexVisit = index
+    console.log("this.selectedIndex:", this.selectedIndexVisit);
+    //this.deleteId = id;
+    this.modalService.open(content, { centered: true });
+  }
+  ConfirmDeleteVisit(index: number): void {
+    const ligne = this.visite.at(index).value; // Récupérer les données de la ligne
+    console.log("ligne:", ligne);
+    const cle = {
+      cod_soc: ligne.cod_soc,
+      mat_pers: ligne.mat_pers,
+      num_fam: ligne.num_fam,
+      dat_soin: ligne.dat_soin,
+    };
+
+    console.log("Clé à vérifier :", cle);
+
+    this.serv.existeLigVisitArriver(cle).subscribe({
+      next: (exists: boolean) => {
+        console.log("Enregistrement existant :", exists);
+
+        if (exists) {
+          // Si l'enregistrement existe, on appelle le service de suppression
+          this.serv.deleteLigVisitArriver(
+            ligne.cod_soc,
+            ligne.mat_pers,
+            ligne.num_fam,
+            ligne.dat_soin,
+            ligne.abrv_act,
+            ligne.num_lig,
+            ligne.dat_act,
+            ligne.cod_visit
+          ).subscribe({
+            next: () => {
+              this.visite.removeAt(index); // Suppression de la ligne dans le formulaire
+              this.calculateTotalsVisite();
+            },
+            error: (error) => {
+              console.error("Erreur lors de la suppression :", error);
+            }
+          });
+        } else {
+          // Si l'enregistrement n'existe pas, on supprime directement du formulaire
+          this.visite.removeAt(index);
+          this.calculateTotalsVisite();
+        }
+      },
+      error: (error) => {
+        console.error("Erreur lors de la vérification d'existence :", error);
+        //alert("Une erreur est survenue lors de la vérification. Veuillez réessayer.");
+      }
+    });
+  }
+  etab_rsoc_visite: string[] = []
+
+  onSelectedEtablisVisite(selectedValue: any, index: number): void {
+    console.log('selectedValueVisit', selectedValue);
+
+    const selectedActe = this.listRefEtablisVisit.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
+    this.etab_rsoc_visite[index] = selectedActe.etab_rsoc
+    this.visite.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
+  }
+  mntNetArrayVisite: number[] = [];
+  calcul_mnt_net_visite(event: any, index: number) {
+    const ligBult = this.ligVisiteForm.get('visite') as FormArray;
+    if (event.target.value == null) {
+      Swal.fire({
+        title: 'Message',
+        text: 'Mnt honor est obligatoire',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+      });
+    }
+    console.log("ligBult :", ligBult.value[index].abrv_act)
+    this.servRemb.calculer_montant_net_visit(this.bultArriver.cod_soc, this.bultArriver.mat_pers, ligBult.value[index].cod_visit,
+      event.target.value, this.bultArriver.dat_soin, this.selectedVisit.prix_Visit, this.selectedVisit.taux_Remb, '0').subscribe((data: any) => {
+        this.mntNet = data.p_mnt_net
+
+        this.mntNetArrayVisite[index] = data.p_mnt_net;
+        this.visite.at(index).patchValue({ mnt_remb: this.mntNetArrayVisite[index] });
+        this.calculateTotalsVisite();
+        console.log(this.mntNetArrayVisite)
+      })
+  }
+
+  totalHonorairesVisite: number = 0;
+  totalNetVisite: number = 0;
+  calculateTotalsVisite() {
+    this.totalHonorairesVisite = this.visite.controls.reduce((sum, ligne) => {
+      const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
+      return sum + honor;
+    }, 0);
+
+    this.totalNetVisite = this.visite.controls.reduce((sum, ligne) => {
+      const net = parseFloat((ligne.get('mnt_remb')?.value || '0')) || 0;
+      return sum + net;
+    }, 0);
+  }
+
+  verif_indice_visite(item: any, index: any) {
+    const ligPhar = this.ligVisiteForm.get('visite') as FormArray;
+    this.servRemb.verif_indice(ligPhar.value[index].abrv_act, this.bultArriver.cod_fil, this.bultArriver.cod_assur, ligPhar.value[index].abrv_act.indice).
+      subscribe((data: any) => {
+        console.log("data", data)
+        if (data.reponse != null) {
+          Swal.fire({
+            title: 'Message',
+            text: data.reponse,
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+          });
+
+          item.target.value = '';
+        }
+      })
+  }
+
+
+  /* Fin Traitement des Visites*/
+
+
+  /*  Traitement des appareils*/
+
+  get appareil(): FormArray {
+    return this.ligAppareilForm.get('appareil') as FormArray;
+  }
+
+  createLigneAppareil(): FormGroup {
+    return this.fb.group({
+
+
+      cod_soc: [this.token.getUser().codSoc],
+      mat_pers: [''],
+      num_fam: [''],
+      dat_soin: ['', Validators.required],
+      abrv_act: [''],
+      cod_app: ['', Validators.required],
+      num_lig: [''],
+      mnt_honor: [''],
+      // mnt_net: [''],
+      mnt_remb: [''],
+      accord_app: [''],
+      indice: [''],
+      dat_act: [''],
+      prf_typ: [''],
+      prf_cod: [''],
+      num_pec_app: [''],
+      num_lig_app: ['1'],
+      mut_mnt_net: [''],
+
+
+    });
+
+  }
+  addLigneAppareil(index: number): void {
+    const ligBult = this.ligAppareilForm.get('appareil') as FormArray;
+    this.appareil.push(this.createLigneAppareil());
+    this.calculateTotalsVisite()
+    console.log("ligBult.value ", ligBult.value)
+    this.servRemb.getNumLigApp(this.bultArriver.cod_soc, this.bultArriver.mat_pers, this.bultArriver.num_fam,
+      this.bultArriver.dat_soin, ligBult.value[index].cod_app).subscribe((data: any) => {
+        this.appareil.at(index).patchValue({
+          num_lig_app: data
+        })
+      })
+
+
+  }
+
+
+
+  removeLigneAppareil(index: number): void {
+    this.appareil.removeAt(index);
+    this.calculateTotalsAppareil()
+  }
+
+  selectedIndexApp: number | null = null;
+  confirmApp(index: any, content: any, id: any) {
+    this.selectedIndexApp = index
+    console.log("this.selectedIndex:", this.selectedIndexApp);
+    //this.deleteId = id;
+    this.modalService.open(content, { centered: true });
+  }
+  ConfirmDeleteApp(index: number): void {
+    const ligne = this.appareil.at(index).value; // Récupérer les données de la ligne
+    console.log("ligne:", ligne);
+    const cle = {
+      cod_soc: ligne.cod_soc,
+      mat_pers: ligne.mat_pers,
+      num_fam: ligne.num_fam,
+      dat_soin: ligne.dat_soin,
+    };
+
+    console.log("Clé à vérifier :", cle);
+
+    this.serv.existeLigAppArriver(cle).subscribe({
+      next: (exists: boolean) => {
+        console.log("Enregistrement existant :", exists);
+
+        if (exists) {
+          // Si l'enregistrement existe, on appelle le service de suppression
+          this.serv.deleteLigAppArriver(
+            ligne.cod_soc,
+            ligne.mat_pers,
+            ligne.num_fam,
+            ligne.dat_soin,
+            ligne.abrv_act,
+            ligne.num_lig_app,
+            ligne.cod_app
+          ).subscribe({
+            next: () => {
+              this.appareil.removeAt(index); // Suppression de la ligne dans le formulaire
+              this.calculateTotalsAppareil();
+            },
+            error: (error) => {
+              console.error("Erreur lors de la suppression :", error);
+            }
+          });
+        } else {
+          // Si l'enregistrement n'existe pas, on supprime directement du formulaire
+          this.appareil.removeAt(index);
+          this.calculateTotalsAppareil();
+        }
+      },
+      error: (error) => {
+        console.error("Erreur lors de la vérification d'existence :", error);
+        //alert("Une erreur est survenue lors de la vérification. Veuillez réessayer.");
+      }
+    });
+  }
+  etab_rsoc_appareil: string[] = []
+  onSelectedEtablisApp(selectedValue: any, index: number): void {
+    console.log('selectedValue', selectedValue);
+
+    const selectedActe = this.listRefEtablisApp.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
+    this.etab_rsoc_appareil[index] = selectedActe.etab_rsoc
+    this.appareil.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
+  }
+  mntNetArrayAppareil: number[] = [];
+  calcul_mnt_net_app(event: any, index: number) {
+    const ligBult = this.ligAppareilForm.get('appareil') as FormArray;
+    if (event.target.value == null) {
+      Swal.fire({
+        title: 'Message',
+        text: 'Mnt honor est obligatoire',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+      });
+    }
+    console.log("ligBult :", ligBult.value[index].abrv_act)
+    this.servRemb.calculer_montant_net_app(this.bultArriver.cod_soc, this.bultArriver.mat_pers, this.bultArriver.num_fam,
+      this.bultArriver.dat_soin, event.target.value, ligBult.value[index].cod_app, 0).subscribe((data: any) => {
+        this.mntNet = data.p_mnt_net ?? 0
+
+        this.mntNetArrayAppareil[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
+        this.appareil.at(index).patchValue({ mnt_remb: this.mntNetArrayAppareil[index] });
+        this.calculateTotalsAppareil();
+        console.log(this.mntNetArrayVisite)
+      })
+  }
+
+  totalHonorairesAppareil: number = 0;
+  totalNetAppareil: number = 0;
+  calculateTotalsAppareil() {
+    this.totalHonorairesAppareil = this.appareil.controls.reduce((sum, ligne) => {
+      const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
+      return sum + honor;
+    }, 0);
+
+    this.totalNetAppareil = this.appareil.controls.reduce((sum, ligne) => {
+      const net = parseFloat((ligne.get('mnt_remb')?.value || '0')) || 0;
+      return sum + net;
+    }, 0);
+  }
+
+  verif_indice_app(item: any, index: any) {
+    const ligPhar = this.ligAppareilForm.get('appareil') as FormArray;
+    this.servRemb.verif_indice(ligPhar.value[index].abrv_act, this.bultArriver.cod_fil, this.bultArriver.cod_assur, ligPhar.value[index].abrv_act.indice).
+      subscribe((data: any) => {
+        console.log("data", data)
+        if (data.reponse != null) {
+          Swal.fire({
+            title: 'Message',
+            text: data.reponse,
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+          });
+
+          item.target.value = '';
+        }
+      })
+  }
+
+
+  /* Fin Traitement des appareils*/
+
+
+  totalHonorairesLigBult: number = 0;
+  totalNetLigBult: number = 0;
+
+
+
+  calculerTotaux() {
+    if (this.ligBult && this.ligBult.length) {
+      this.totalHonorairesLigBult = this.ligBult.reduce((sum, item) => sum + (item.mnt_honor || 0), 0);
+      this.totalNetLigBult = this.ligBult.reduce((sum, item) => sum + (item.mnt_remb || 0), 0);
+    }
+  }
+
+
+  logRowData(rowData: any, index: number): void {
+    this.selectedRow = index;
+    this.bultArriver = rowData
+    if (rowData.num_fam) {
+      this.selectedRow = index;
+      this.servRemb.getVisitManuel(rowData.cod_fil, rowData.cod_assur).subscribe((data: any) => {
+        this.listVisite = data
+        this.columnVisite = [
+          { key: "cod_Visit", label: "Abrv acte" },
+          { key: "lib_Visit", label: "Libelle" },
+
+        ];
+        //this.addLigneVisite()
+      })
+      this.servRemb.getActesManuel(rowData.cod_fil, rowData.cod_assur).subscribe((data: any) => {
+        this.listActe = data
+        this.columnActe = [
+          { key: "abrv_act", label: "Abrv acte" },
+          { key: "lib_act", label: "Libelle" },
+
+        ];
+        // this.addActe()
+      })
+      this.serv.getMeds(rowData.cod_fil, rowData.cod_assur).subscribe((data: any) => {
+
+        this.listMed = data
+        this.columnsMed = [
+          { key: "cod_med", label: "Code" },
+          { key: "lib_med", label: "Libelle" },
+          { key: "med_prix", label: "Mdc Prix" },
+
+        ];
+        //this.addLignePhar(index)
+      })
+      this.serv.getAppareil(rowData.cod_fil, rowData.cod_assur).subscribe((data: any) => {
+        this.listAppareil = data
+
+        this.columnsAppareil = [
+          { key: "cod_app", label: "Code" },
+          { key: "lib_app", label: "Libelle" },
+
+        ];
+        //this.addLigneAppareil(index)
+      })
+      console.log('Ligne sélectionnée :', rowData);
+    } else {
+      // Optionnel : alerte ou log
+      console.warn(`La ligne ${index + 1} ne peut pas être sélectionnée : num_fam vide`);
+    }
+  }
+
+  load(item: any, index: number) {
+    console.log("list :", item);
+
+    // 1. Actes
+    this.servRemb.getActesManuel(item.cod_fil, item.cod_assur).subscribe((acte: any) => {
+      this.listActe = acte || [];
+
+      this.serv.geLigActArriverById(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
+        if (Array.isArray(data) && data.length > 0) {
+          this.listActe = data;
+          console.log("data acte", data)
+
+          this.loadDataIntoTable(data);
+        } else {
+          // this.listActe = [];
+          this.clearTableData('acte'); // méthode que tu crées pour vider le formarray
+          this.loadDataIntoTable(data);
+        }
+      });
+    });
+
+    // 2. Visites
+    this.servRemb.getVisitManuel(item.cod_fil, item.cod_assur).subscribe((data: any) => {
+      this.listVisite = data || [];
+      console.log("data visit 123", data)
+
+      this.serv.LigVisitArriverById(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
+        if (Array.isArray(data) && data.length > 0) {
+          console.log("data visit", data)
+          this.loadDataIntoTableVisite(data);
+          this.calculateTotalsVisite();
+        } else {
+          this.clearTableData('visite');
+          this.calculateTotalsVisite();
+        }
+      });
+    });
+
+    // 3. Médicaments
+    this.serv.getMeds(item.cod_fil, item.cod_assur).subscribe((data: any) => {
+      this.listMed = data || [];
+
+      this.serv.LigMedArriverById(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
+        if (Array.isArray(data) && data.length > 0) {
+          this.loadDataIntoTableMed(data);
+          console.log("data med", data)
+          this.calculateTotalsPhar();
+        } else {
+          this.clearTableData('phar');
+          this.calculateTotalsPhar();
+        }
+      });
+    });
+
+    // 4. Appareils
+    this.serv.getAppareil(item.cod_fil, item.cod_assur).subscribe((data: any) => {
+      this.listAppareil = data || [];
+      this.serv.LigAppArriverById(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
+        if (Array.isArray(data) && data.length > 0) {
+          console.log("app", data)
+          this.loadDataIntoTablApp(data);
+          this.calculateTotalsAppareil();
+        } else {
+          this.clearTableData('appareil');
+          this.calculateTotalsAppareil();
+        }
+      });
+    });
+  }
+
+  clearTableData(type: 'acte' | 'visite' | 'phar' | 'appareil'): void {
+    switch (type) {
+      case 'acte':
+        (this.ligPretForm.get('acte') as FormArray).clear();
+        break;
+      case 'visite':
+        (this.ligVisiteForm.get('visite') as FormArray).clear();
+        break;
+      case 'phar':
+        (this.ligPharForm.get('phar') as FormArray).clear();
+        break;
+      case 'appareil':
+        (this.ligAppareilForm.get('appareil') as FormArray).clear();
+        break;
+    }
+  }
+
+  search(item: any) {
+
+    console.log(item)
+    this.codBord = item.cod_bord
+    this.codeAssur = item.cod_assur
+    this.BordEnvoiForm.patchValue({
+      cod_bord: item.cod_bord,
+      cod_assur: item.cod_assur,
+      dat_bord: item.dat_bord,
+      dat_deb: item.dat_deb,
+      dat_fin: item.dat_fin,
+      nbr_bult: item.nbr_bult,
+      tot_honor: item.tot_honor ?? 0,
+      typ_bord: item.typ_bord,
+      cod_soc: item.cod_soc,
+      tot_net: item.tot_net ?? 0,
+      valid_bord: item.valid_bord,
+      reg_bord: item.reg_bord,
+      tot_remb: item.tot_remb ?? 0,
+      valid: item.valid,
+      clot_bord: item.clot_bord,
+      tot: item.tot ?? 0,
+      num_retr: item.num_retr,
+      cod_bord_cnam: item.cod_bord_cnam,
+      seq_bord: item.seq_bord,
+    });
+    this.codeAssur=item.cod_assur
+    // this.formBuletinSoin.patchValue({
+    //   cod_soc: item.cod_soc,
+    //   mat_pers: item.mat_pers,
+    //   num_fam: item.num_fam,
+    //   dat_soin: item.dat_soin,
+    //   cod_bord: item.cod_bord,
+    //   cod_assur: item.cod_assur,
+    //   num_soin: item.num_soin,
+    //   ord_bult: item.ord_bult,
+    //   tot_honor: item.tot_honor,
+    //   tot_net: item.tot_net,
+    //   tot_remb: item.tot_remb,
+    //   reg_remb: item.reg_remb,
+    //   cod_malad: item.cod_malad,
+    //   num_pec: item.num_pec,
+    //   cod_fil: item.cod_fil,
+    //   num_assur: item.num_assur,
+    //   dat_prev_accouch: item.dat_prev_accouch,
+    //   nat_bult: item.nat_bult,
+    //   mat_pers_conj: item.mat_pers_conj,
+    //   num_ass_conj: item.num_ass_conj,
+    //   dat_saisie: item.dat_saisie,
+    //   obs: item.obs,
+    //   obs_a: item.obs_a,
+    //   envoi: item.envoi,
+    //   ann_plaf_imp: item.ann_plaf_imp,
+    //   reg_adh: item.reg_adh,
+    //   mod_pay: item.mod_pay,
+    //   dat_vir: item.dat_vir,
+
+    // })
+
+    this.serv.getBultArriverByCodBord(item.cod_bord).subscribe((data: any) => {
+      console.log("data bult test", data)
+      this.loadBultArriver(data)
+    })
+
+
+
+  }
+}
+    

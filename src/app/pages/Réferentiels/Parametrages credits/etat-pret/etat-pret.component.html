@@ -1,0 +1,214 @@
+
+<div class="row" style="margin-top: 25px"> 
+  <app-breadcrumbs
+  title="Paramétrage etat d'un prêt"
+  [breadcrumbItems]="breadCrumbItems"
+></app-breadcrumbs>
+
+     <br>
+<div class="row">
+ 
+    <div class="col-xl-10">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div class="col-md-12">
+          <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow mb-4">
+              <div class="card-header   text-white d-flex justify-content-between align-items-center">
+                <button
+                class="btn btn-light"
+                data-bs-toggle="modal"
+                data-bs-target="#showModal"
+                (click)="openModalTab(content)"
+              >
+                <i class="ri-add-fill me-1"></i> Code etat
+              </button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive table-card">
+                  <p-table [value]="listEtat" [paginator]="true" [rows]="12" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                    <ng-template pTemplate="header">
+                      <tr class="table-primary">
+                         <th class="text-center sort" (click)="onSort('cod_piece_pret')">Code</th>
+                        <th class="text-center sort" (click)="onSort('lib_piece_pret')">Libellé Piéce</th>
+                        <th class="text-center sort" (click)="onSort('lib_piece_pret_a')">Libellé 2eme langue</th>
+                        <th class="text-center sort" (click)="onSort('nat_etat_pret')">Type etat</th>
+                        <th class="text-center">Action</th>
+                       </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                      <tr>
+                         <td class="text-center">{{ rowData.cod_etat_pret }}</td>
+                        <td class="text-center">{{ rowData.lib_etat_pret }}</td>
+                        <td class="text-center">{{ rowData.lib_etat_pret_a }}</td>
+                        <td class="text-center">{{ rowData.typ_etat=='P'?'Prêt (P)':rowData.typ_etat=='D'?'Demande prêt (D)': rowData.typ_etat=='T'?'Tranche prêt (T)':rowData.typ_etat=='C'?'Cession (C)':'Divers (S)'}} </td>
+                        <td>
+                          <ul class="list-inline hstack gap-2 mb-0">
+                            <li class="list-inline-item">
+                              <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                            </li>
+                            <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
+                              <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
+                                <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  
+
+    
+       
+          <ng-template #content role="document" let-modal>
+            <div class="modal-header bg-info-subtle p-3">
+              <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} Etat</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close-modal"
+                (click)="modal.dismiss('Cross click')"
+              ></button>
+            </div>
+            <form [formGroup]="formEtatPret" class="tablelist-form" autocomplete="off">
+               
+                  <div class="modal-body">
+                    <div class="row g-12">
+ 
+                      <div class="col-2">
+                        <label for="billinginfo-lastName" class="form-label"
+                          >Code
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control border-primary"
+                          placeholder="Code"
+                          formControlName="cod_etat_pret"
+                           
+                        />
+                      </div>
+                      <div class="col-5">
+                        <label for="billinginfo-lastName" class="form-label"
+                          >Libelle
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control border-primary"
+                          placeholder="Libelle"
+                          formControlName="lib_etat_pret"
+                           
+                        />
+                      </div>
+                      <div class="col-5">
+                        <label for="billinginfo-lastName" class="form-label"
+                          >Libelle 2eme langue
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control border-primary"
+                          placeholder="Libelle 2eme langue"
+                          formControlName="lib_etat_pret_a"
+                           
+                        />
+                      </div>
+
+                      <div class="col-md-3">
+                        <label class="form-label">Type etat</label>
+                        <select class="form-select border-success" formControlName="typ_etat"  >
+                          <option value="P">Prêt (P)</option>
+                          <option value="D">Demande prêt (D)</option>
+                          <option value="T">Tranche prêt (T)</option>
+                          <option value="C">Cession (C)</option>
+                          <option value="S">Divers (S)</option>
+ 
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+              
+              <div class="modal-footer">
+                <div class="hstack gap-2 justify-content-end">
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    data-bs-dismiss="modal"
+                    (click)="saveEtatPret(); modal.close('Close click')"
+                  >
+                    Valider
+                  </button>
+                </div>
+                <br>
+                <div class="hstack gap-2 justify-content-end">
+                  <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal"
+                    (click)="modal.close('Close click')"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+      
+   
+
+      </div>
+
+        
+      <ng-template #deleteModel let-modal>
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="btn-close"
+              (click)="modal.dismiss('Cross click')"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mt-2 text-center">
+              <lord-icon
+                src="https://cdn.lordicon.com/gsqxdxog.json"
+                trigger="loop"
+                colors="primary:#f7b84b,secondary:#f06548"
+                style="width: 100px; height: 100px"
+              ></lord-icon>
+              <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                <h4>Etes vous sûr ?</h4>
+                <p class="text-muted mx-4 mb-0">
+                  Etes vous sûr de supprimer ce type ?
+                </p>
+              </div>
+            </div>
+            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+              <button
+                type="button"
+                class="btn w-sm btn-light"
+                data-bs-dismiss="modal"
+                (click)="modal.close('Close click')"
+              >
+                Fermer
+              </button>
+              <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
+                Oui ,supprimer!
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </ng-template>
