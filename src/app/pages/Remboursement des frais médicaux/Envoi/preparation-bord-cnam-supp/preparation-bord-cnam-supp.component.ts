@@ -76,7 +76,7 @@ throw new Error('Method not implemented.');
   codGouvVal?: string;
   codMatVal?: string;
   codActiviteVal?: string;
-codBord:string="";
+  codBord:string="";
   
 breadCrumbItems!: Array<{}>;
 

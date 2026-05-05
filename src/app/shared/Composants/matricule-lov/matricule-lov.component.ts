@@ -8,11 +8,14 @@ import {
   SimpleChanges,
   HostListener,
 } from '@angular/core';
+
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { TokenStorage } from 'src/app/account/token-storage.service';
+
 const API_URL = environment.urlServer;
 interface ListDataItem {
   [key: string]: any;
@@ -39,7 +42,9 @@ export class MatriculeLovComponent implements OnInit, OnChanges {
   searchSubject = new Subject<void>();
   errorMessage: string = '';
 
-  constructor(private modalService: NgbModal, private http: HttpClient) {}
+  constructor(private modalService: NgbModal, private http: HttpClient, private tokenStorage:TokenStorage) {
+    cod_soc:[this.tokenStorage.getUser().codSoc]
+  }
 
   ngOnInit(): void {
     this.initializeColumnSearchQueries();
@@ -78,21 +83,20 @@ export class MatriculeLovComponent implements OnInit, OnChanges {
     if (foundItem) {
       this.selectItem(foundItem);
     } else {
-      this.getPersonnelsByMat(searchString).subscribe(
+      this.getPersonnelsByMat(this.tokenStorage.getUser().codSoc, searchString).subscribe(
         (data) => {
           this.filteredData = data;
           this.patchValue(searchString);
         },
         () => {
           this.errorMessage = 'Valeur introuvable';
-         // this.resetSelection();
         }
       );
     }
   }
 
-  getPersonnelsByMat(mat: string): Observable<any[]> {
-    return this.http.get<any[]>(API_URL+`adherent/Personnel/getPersonnelles/${mat}`);
+  getPersonnelsByMat(soc: string, mat: string): Observable<any[]> {
+    return this.http.get<any[]>(API_URL+`adherent/Personnel/getPersonnelles/${soc}/${mat}`);
   }
 
   filterData(): void {

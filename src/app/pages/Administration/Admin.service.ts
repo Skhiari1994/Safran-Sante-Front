@@ -98,8 +98,8 @@ export class AdminService {
       .set('evt', evtId ? evtId.toString() : '');
     return this.http.delete(API_URL+"admin/Menu/Autorisation",{params});
 }
-getPersonllesdiffmymat = (mat :any): Observable<any[]> => {
-  return this.http.get<any[]>(API_URL+"adherent/Personnel/getPersonnelles/"+mat);
+getPersonllesdiffmymat = (soc: any, mat :any): Observable<any[]> => {
+  return this.http.get<any[]>(API_URL+"adherent/Personnel/getPersonnelles/"+ soc + "/" + mat);
 };
 
 getAllRapport(): Observable<any[]> {

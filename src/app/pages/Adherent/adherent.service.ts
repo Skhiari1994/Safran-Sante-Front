@@ -102,8 +102,8 @@ export class AdherentService {
     const params = new HttpParams().set('soc', soc).set('mat', mat)
     return this.http.get<any>(API_URL + "adherent/famille/getNbreEnf", { params });
   };
-  getPersonnelsByMat = (mat: any): Observable<any[]> => {
-    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnelles/" + mat);
+  getPersonnelsByMat = (soc: any, mat: any): Observable<any[]> => {
+    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnelles/" + soc + "/" + mat);
   };
   getPersonnels = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnelles");
