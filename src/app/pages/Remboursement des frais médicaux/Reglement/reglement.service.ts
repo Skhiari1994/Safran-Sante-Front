@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+
 const API_URL = environment.urlServer;
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ const API_URL = environment.urlServer;
 export class ReglementService {
   private rapportCodeCache = new Map<string, string>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+  }
 
   getAllBordArriver = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "Remb/Reglement/BordEnvoi");

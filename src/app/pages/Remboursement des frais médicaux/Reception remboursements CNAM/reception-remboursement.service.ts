@@ -3,13 +3,22 @@ import { Injectable } from "@angular/core";
 import { catchError, forkJoin, map, Observable, of, switchMap } from "rxjs";
 import { LovNumFilCnamLibre, PageResponse } from "./sais-man-dcpt-libr-cnam/sais-man-dcpt-libr-cnam.component";
 import { environment } from "src/environments/environment";
+import { TokenStorage } from "src/app/account/token-storage.service";
 
 export const API_URL = environment.urlServer || environment.urlServer;
 @Injectable({
   providedIn: "root",
 })
+
 export class ReceptionRemboursementService {
-  constructor(private http: HttpClient) { }
+
+  ///// variable globales 
+  cod_soc: string | null = null;
+
+  // constructor do not ovverride this method
+  constructor(private http: HttpClient, private tokenStorage : TokenStorage) {
+    this.cod_soc = this.tokenStorage.getUser().codSoc
+  }
 
   getAllBordArriver = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "Remb/Remboursement/BordArriver");
@@ -107,7 +116,10 @@ export class ReceptionRemboursementService {
 
   getBultArriverByCodBord(cod_bord: string): Observable<any> {
     const params = new HttpParams()
+      .set('cod_soc', this.cod_soc ?? '')
       .set('cod_bord', cod_bord);
+
+    console.log('params', params);
 
     return this.http.get<any>(API_URL + "Remb/Remboursement/BultArriverByCodBord", { params });
   }

@@ -3,15 +3,22 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { TokenStorage } from "src/app/account/token-storage.service";
+
 const API_URL = environment.urlServer;
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdherentService {
+
   private rapportCodeCache = new Map<string, string>();
 
-  constructor(private http: HttpClient) { }
+  ///// variable globales 
+  cod_soc: string | null = null;
+  constructor(private http: HttpClient, private tokenStorage: TokenStorage) {
+    this.cod_soc = this.tokenStorage.getUser().codSoc
+   }
 
 
   calPlafondMutuelle(cod_soc: string, annee: string, matDeb: number, matFin: string): Observable<any> {
@@ -74,7 +81,9 @@ export class AdherentService {
   }
 
   getDossierMld(mat: any): Observable<any[]> {
-    const params = new HttpParams().set('mat', mat)
+    const params = new HttpParams()
+      .set('cod_soc', this.cod_soc ?? '')
+      .set('mat', mat)
     return this.http.get<any[]>(API_URL + "Remb/Personnel/getDossierMll", { params });
   }
   getNumDoss(soc: any, mat: any): Observable<any[]> {

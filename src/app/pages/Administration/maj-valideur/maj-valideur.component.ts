@@ -212,7 +212,7 @@ export class MajValideurComponent {
   getmatriculeetnom() {
 
 
-    this.adminServ.getPersonllesdiffmymat(this.tokenService.getUser().matpers).subscribe(
+    this.adminServ.getPersonllesdiffmymat(this.tokenService.getUser().codSoc, this.tokenService.getUser().matpers).subscribe(
       (data: any) => {
         this.listinfopers = data;
 
