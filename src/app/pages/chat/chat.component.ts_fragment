@@ -1,0 +1,132 @@
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('📂 Uploading file:', file.name);
+      this.chatWebSocketService.uploadFile(file).subscribe({
+        next: (fileUrl) => {
+          console.log('✅ File uploaded, url:', fileUrl);
+          const cleanUrl = fileUrl.replace(/"/g, '');
+
+          const isImage = cleanUrl.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/);
+          const message: WSChatMessage = {
+            senderId: this.currentUserId,
+            senderName: this.currentUserName,
+            receiverId: this.selectedUser?.id,
+            content: cleanUrl,
+            roomId: this.currentRoomId,
+            messageType: isImage ? 'IMAGE' : 'FILE',
+            timestamp: new Date()
+          };
+
+          this.chatWebSocketService.sendMessage(message);
+
+          this.chatMessagesData.push({
+            name: this.currentUserName,
+            message: cleanUrl,
+            time: 'Just now',
+            align: 'right',
+            isRead: false
+          });
+
+          if (this.selectedUser) {
+            const existingIndex = this.chatData.findIndex(u => u.id === this.selectedUser?.id);
+            const newSidebarItem: ChatUser = {
+              id: this.selectedUser.id,
+              name: this.selectedUser.name,
+              message: 'Vous avez reçu un fichier',
+              time: 'Just now',
+              color: 'success',
+              unreadCount: 0
+            };
+
+            if (existingIndex > -1) {
+              this.chatData.splice(existingIndex, 1);
+              this.chatData.unshift(newSidebarItem);
+            } else {
+              this.chatData.unshift(newSidebarItem);
+            }
+          }
+          this._loadRecentConversations();
+        },
+        error: (err) => console.error('❌ Upload failed', err)
+      });
+    }
+  }
+
+  // Emoji Picker
+  showEmojiPicker = false;
+  sets: any = [
+    'native',
+    'google',
+    'twitter',
+    'facebook',
+    'emojione',
+    'apple',
+    'messenger'
+  ]
+  set: any = 'twitter';
+  toggleEmojiPicker() {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event: any) {
+    const { emoji } = this;
+    let text;
+    if (this.formData.get('message').value) {
+      text = `${this.formData.get('message').value}${event.emoji.native}`;
+    } else {
+      text = event.emoji.native;
+    }
+    this.formData.patchValue({ message: text });
+    this.showEmojiPicker = false;
+  }
+
+  onFocus() {
+    this.showEmojiPicker = false;
+  }
+
+  onBlur() {
+  }
+
+  closeReplay() {
+    document.querySelector('.replyCard')?.classList.remove('show');
+  }
+
+  // Contact Search
+  ContactSearch() {
+    var input: any, filter: any, ul: any, li: any, a: any | undefined, i: any, txtValue: any;
+    input = document.getElementById("searchContact") as HTMLAreaElement;
+    filter = input.value.toUpperCase();
+    ul = document.querySelectorAll(".chat-list");
+    ul.forEach((item: any) => {
+      li = item.getElementsByTagName("li");
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("h5")[0];
+        txtValue = a?.innerText;
+        if (txtValue?.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    })
+  }
+
+  toggleSearchInput() {
+    this.showSearchInput = !this.showSearchInput;
+    if (!this.showSearchInput) {
+      this.searchMessageQuery = '';
+    }
+  }
+
+  get filteredMessages() {
+    if (!this.searchMessageQuery) {
+      return this.chatMessagesData;
+    }
+    const query = this.searchMessageQuery.toLowerCase();
+    return this.chatMessagesData.filter(msg =>
+      msg.message.toLowerCase().includes(query) ||
+      msg.name.toLowerCase().includes(query)
+    );
+  }
+}

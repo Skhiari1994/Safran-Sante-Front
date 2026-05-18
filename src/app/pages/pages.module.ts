@@ -31,13 +31,13 @@ import { DashboardsModule } from "./dashboards/dashboards.module";
 import { AppsModule } from "./apps/apps.module";
 import { EcommerceModule } from "./ecommerce/ecommerce.module";
 import { SaisDemConvComponent } from './Convention/sais-dem-conv/sais-dem-conv.component';
- 
+
 
 @NgModule({
   declarations: [
     DashboardComponent,
     ToastsContainer
-    
+
   ],
   imports: [
     CommonModule,
@@ -59,7 +59,7 @@ import { SaisDemConvComponent } from './Convention/sais-dem-conv/sais-dem-conv.c
     EcommerceModule
   ],
 })
-export class PagesModule { 
+export class PagesModule {
   constructor() {
     defineElement(lottie.loadAnimation);
   }

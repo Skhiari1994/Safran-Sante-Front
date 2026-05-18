@@ -14,6 +14,7 @@ export const environment = {
   },
  
   urlServer: 'http://172.16.30.206:8222/',
-  
- 
+  gatewayUrl: 'http://172.16.30.206:8222',
+  chatApiUrl: '/communication-service',
+
 };

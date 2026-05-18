@@ -6,7 +6,6 @@ import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
 import { SidebarService } from './sidebar.service';
-import { co } from '@fullcalendar/core/internal-common';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 
 @Component({

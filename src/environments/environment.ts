@@ -17,7 +17,10 @@ export const environment = {
 
   },
   urlServer: 'http://localhost:8222/',
-  
+  /** Base origin for chat gateway (no trailing slash); SockJS uses `/communication-service/ws`. */
+  gatewayUrl: 'http://localhost:8222',
+  /** REST prefix for chat APIs; combined with gatewayUrl → e.g. `.../communication-service/users`. */
+  chatApiUrl: '/communication-service',
 
 };
 

@@ -2817,7 +2817,7 @@
     "@material/theme" "15.0.0-canary.a246a4439.0"
     tslib "^2.1.0"
 
-"@ng-bootstrap/ng-bootstrap@16.0.0":
+"@ng-bootstrap/ng-bootstrap@^16.0.0":
   version "16.0.0"
   resolved "https://registry.npmjs.org/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-16.0.0.tgz"
   integrity sha512-+FJ3e6cX9DW2t7021Ji3oz433rk3+4jLfqzU+Jyx6/vJz1dIOaML3EAY6lYuW4TLiXgMPOMvs6KzPFALGh4Lag==
@@ -2831,10 +2831,10 @@
   dependencies:
     tslib "^2.3.1"
 
-"@ngrx/effects@^17.0.1":
-  version "17.0.1"
-  resolved "https://registry.npmjs.org/@ngrx/effects/-/effects-17.0.1.tgz"
-  integrity sha512-U7ewZpUoJlLrWyZVyzAMU6Qfxmte7Noi9n/pJb5BR3pWmdHnU+VPs08xnSIQUa0US7K6dJJRTGtcEpEvv/IT4A==
+"@ngrx/effects@^17.1.1":
+  version "17.2.0"
+  resolved "https://registry.npmjs.org/@ngrx/effects/-/effects-17.2.0.tgz"
+  integrity sha512-tXDJNsuBtbvI/7+vYnkDKKpUvLbopw1U5G6LoPnKNrbTPsPcUGmCqF5Su/ZoRN3BhXjt2j+eoeVdpBkxdxMRgg==
   dependencies:
     "@ngrx/operators" "17.0.0-beta.0"
     tslib "^2.0.0"
@@ -2846,17 +2846,17 @@
   dependencies:
     tslib "^2.3.0"
 
-"@ngrx/store-devtools@^17.0.1":
-  version "17.0.1"
-  resolved "https://registry.npmjs.org/@ngrx/store-devtools/-/store-devtools-17.0.1.tgz"
-  integrity sha512-1/BrHmd1KnjEvZtUkmMeOAhftzTLCBxpk0KoVSnl7BFr0LGQZrYUTXHI3b6tzJ2igGuj0d9hk/JRMOXmYn/5WA==
+"@ngrx/store-devtools@^17.1.1":
+  version "17.2.0"
+  resolved "https://registry.npmjs.org/@ngrx/store-devtools/-/store-devtools-17.2.0.tgz"
+  integrity sha512-ig0qr6hMexZGnrlxfHvZmu5CanRjH7hhx60XUbB5BdBvWJIIRaWKPLcsniiDUhljAD87gvzrrilbCTiML38+CA==
   dependencies:
     tslib "^2.0.0"
 
-"@ngrx/store@^17.0.1":
-  version "17.0.1"
-  resolved "https://registry.npmjs.org/@ngrx/store/-/store-17.0.1.tgz"
-  integrity sha512-BmVzN+fqyz0ZrVEmJ+jrNwePMKcpNL49vb8sbQ3yDDftxgZz2HqRKFMexqlXpz5ixwK5LqTOblHNQOgi9irsTw==
+"@ngrx/store@^17.1.1":
+  version "17.2.0"
+  resolved "https://registry.npmjs.org/@ngrx/store/-/store-17.2.0.tgz"
+  integrity sha512-7wKgZ59B/6yQSvvsU0DQXipDqpkAXv7LwcXLD5Ww7nvqN0fQoRPThMh4+Wv55DCJhE0bQc1NEMciLA47uRt7Wg==
   dependencies:
     tslib "^2.0.0"
 
@@ -3951,7 +3951,7 @@ boolbase@^1.0.0:
   resolved "https://registry.npmjs.org/boolbase/-/boolbase-1.0.0.tgz"
   integrity sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==
 
-bootstrap@5.3.0:
+bootstrap@^5.3.0:
   version "5.3.0"
   resolved "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.0.tgz"
   integrity sha512-UnBV3E3v4STVNQdms6jSGO2CvOkjUMdDAVR2V5N4uCMdaIkaQjbcEAMqRimDHIs4uqBYzDAKCQwCB+97tJgHQw==
