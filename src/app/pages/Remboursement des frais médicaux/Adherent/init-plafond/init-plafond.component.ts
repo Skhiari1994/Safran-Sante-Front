@@ -8,6 +8,8 @@ import { EditionService } from '../../Editions/edition.service';
 import { AdherentService } from '../adherent.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+
+
 @Component({
   selector: 'app-init-plafond',
   templateUrl: './init-plafond.component.html',
@@ -168,14 +170,4 @@ export class InitPlafondComponent {
     });
   }
 
-
-
-
 }
-
-
-
-
-
-
-
