@@ -1,0 +1,35 @@
+<ng-container *ngIf="!onChatPage && (allowed$ | async) === true">
+  <!-- Mini-fenêtre (déplaçable par la barre de titre) -->
+  <div #popup class="cw-popup" role="dialog" aria-label="Messagerie"
+    [class.open]="opened" [class.minimized]="minimized" [class.enlarged]="enlarged" [class.dragging]="dragging"
+    [style.left.px]="pos?.left" [style.top.px]="pos?.top"
+    [style.right]="pos ? 'auto' : null" [style.bottom]="pos ? 'auto' : null">
+    <div class="cw-head" (pointerdown)="startDrag($event)" (pointermove)="onDrag($event)"
+      (pointerup)="endDrag()" (pointercancel)="endDrag()" (dblclick)="setMinimized(!minimized)">
+      <i class="bx bxs-message-rounded-dots"></i>
+      <span class="cw-title">Messagerie</span>
+      <span class="cw-count" *ngIf="minimized && (unread$ | async) as n">{{ n }}</span>
+      <button type="button" [title]="minimized ? 'Restaurer' : 'Réduire'"
+        [attr.aria-label]="minimized ? 'Restaurer' : 'Réduire'" (click)="setMinimized(!minimized)">
+        <i class="bx" [ngClass]="minimized ? 'bx-chevron-up' : 'bx-minus'"></i>
+      </button>
+      <button type="button" *ngIf="!minimized" [title]="enlarged ? 'Rétrécir' : 'Agrandir'"
+        [attr.aria-label]="enlarged ? 'Rétrécir' : 'Agrandir'" (click)="toggleSize()">
+        <i class="bx" [ngClass]="enlarged ? 'bx-collapse-alt' : 'bx-expand-alt'"></i>
+      </button>
+      <button type="button" *ngIf="!minimized" title="Ouvrir la page complète" aria-label="Ouvrir la page complète"
+        (click)="expand()"><i class="bx bx-link-external"></i></button>
+      <button type="button" title="Fermer" aria-label="Fermer" (click)="close()"><i class="bx bx-x"></i></button>
+    </div>
+    <div class="cw-body">
+      <app-chat-messenger *ngIf="created" [widget]="true" [active]="opened && !minimized"></app-chat-messenger>
+    </div>
+  </div>
+
+  <!-- Bulle -->
+  <button type="button" class="cw-bubble" [class.active]="opened && !minimized" (click)="toggle()"
+    [title]="opened && !minimized ? 'Fermer la messagerie' : 'Ouvrir la messagerie'" aria-label="Messagerie">
+    <i class="bx" [ngClass]="opened && !minimized ? 'bx-x' : 'bxs-message-rounded-dots'"></i>
+    <span class="cw-badge" *ngIf="(!opened || minimized) && (unread$ | async) as n">{{ n > 99 ? '99+' : n }}</span>
+  </button>
+</ng-container>

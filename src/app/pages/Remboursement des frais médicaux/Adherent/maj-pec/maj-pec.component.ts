@@ -321,6 +321,36 @@ export class MajPecComponent {
     this.etab_rsoc[index] = selectedActe.etab_rsoc
     this.charge.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
   }
+  // Tri et filtres par colonne du tableau des prises en charge
+  private sortAsc = true;
+  private sortField = '';
+  showFilters: { [key: string]: boolean } = {};
+  searchz: { [key: string]: string } = {};
+  private rowValue(row: any, col: string): any {
+    if (col === 'typ_etablis') return row.prf_typ == 1 ? 'Personne phy' : 'Etablissement';
+    if (col === 'etat_pec') return row.etat_pec == 'I' ? 'En Instance' : row.etat_pec == 'V' ? 'Validée' : 'Refusée';
+    return row[col];
+  }
+  onSort2(column: string) {
+    this.sortAsc = this.sortField === column ? !this.sortAsc : true;
+    this.sortField = column;
+    const dir = this.sortAsc ? 1 : -1;
+    this.listPriseCharge = [...(this.listPriseCharge || [])].sort((a: any, b: any) =>
+      String(this.rowValue(a, column) ?? '').localeCompare(String(this.rowValue(b, column) ?? ''), 'fr', { numeric: true }) * dir
+    );
+  }
+  toggleFilter(key: string) {
+    this.showFilters[key] = !this.showFilters[key];
+    if (!this.showFilters[key]) this.searchz[key] = '';
+  }
+  filterRows(list: any[]): any[] {
+    const keys = Object.keys(this.searchz).filter(k => this.searchz[k]);
+    if (!keys.length) return list || [];
+    return (list || []).filter(row =>
+      keys.every(k => String(this.rowValue(row, k) ?? '').toLowerCase().includes(this.searchz[k].toLowerCase()))
+    );
+  }
+
   openModalTab(content: any) {
     this.edit = true;
     this.editCarteIndex = null

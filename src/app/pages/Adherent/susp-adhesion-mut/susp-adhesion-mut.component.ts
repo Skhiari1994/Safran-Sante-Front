@@ -68,11 +68,11 @@ export class SuspAdhesionMutComponent {
       mat_pers: [""],
       dat_ass: [""],
       num_assur: [""],
-      typ_aff: ["S"],
+      typ_aff: [""],
       dat_dem: [""],
       obs_aff: [""],
       coef_cot: [""],
-      etat_aff: ["I"],
+      etat_aff: [""],
       corps: [""],
       cod_typ_depart: [""],
       cod_affect: [""],
@@ -175,12 +175,8 @@ ngOnDestroy(){
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formAffilMutuelle.reset()
-    this.formAffilMutuelle.
-    patchValue({
-      typ_aff:'S',
-      etat_aff:'I'
-    })
+    // les listes repartent sur « Sélectionner » (valeur '') et non sur un choix vide (null)
+    this.formAffilMutuelle.reset({ typ_aff: '', etat_aff: '', corps: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

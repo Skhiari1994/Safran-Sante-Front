@@ -20,3 +20,20 @@
     font-size: 0.875rem;
   }
 }
+
+:host ::ng-deep .modern-table .p-datatable-thead > tr > th {
+  text-align: center !important;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle;
+}
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td app-lov {
+  display: block;
+  margin: 0 auto;
+}
+:host ::ng-deep .bulletins-table .p-datatable-table { table-layout: fixed; width: 100%; min-width: 1370px; }
+:host ::ng-deep .bulletins-table .p-datatable-tbody > tr > td input.form-control,
+:host ::ng-deep .bulletins-table .p-datatable-tbody > tr > td select.form-select { height: 38px; font-size: .875rem; text-align: center; }

@@ -123,7 +123,8 @@ export class ParamActeMedicauxComponent {
     this.getTypeActe();
     this.edit = true;
   
-    this.formActe.reset();  
+    // les listes repartent sur « Sélectionner » (valeur '') et non sur un choix vide (null)
+    this.formActe.reset({ parente: '', ctr_duree: '', sexe: '', imput_plaf: '' });
     this.typActe = ''; 
     this.libTypeActe = '';
   

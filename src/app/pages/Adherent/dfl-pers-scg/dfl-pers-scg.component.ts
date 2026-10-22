@@ -38,6 +38,12 @@ export class DFlPersScgComponent {
 
 
   columnTitles: { [key: string]: string } = {
+    mat: "Matricule",
+    nom: "Nom & Prénom",
+    cin: "CIN",
+    retr: "Id CNRPS",
+    tel: "Téléphone",
+    typ: "Type",
     mat_pers: "Matriucle",
     nom_complet_pers: "Nom & Prénom",
     cod_fil: "Filière",
@@ -162,6 +168,8 @@ export class DFlPersScgComponent {
   openModalTab(content: any) {
     //this.edit = true;
     //this.formCertif.reset()
+    // la liste « Type création » repart sur « Sélectionner »
+    this.trsFormPers.patchValue({ typ: '' });
     this.modalService.open(content, { size: "xl", centered: true });
   }
   listPersonnel: any[] = [];

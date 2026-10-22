@@ -104,7 +104,7 @@ p: number = 1; // Pagination pour le premier tableau
  
   openModalTab(content: any) {
     this.edit = true;
-    this.formTypDepart.reset()
+    this.formTypDepart.reset({ etat_act: '' })
     //this.formCertif.reset()
     this.modalService.open(content, { size: "xl", centered: true });
   }

@@ -386,7 +386,7 @@ export class MajAdherentTestComponent {
       cod_banq: [""],
       cod_agc: [""],
       dat_dece: [""],
-      etat_act: ["I"],
+      etat_act: [""],
       dat_motif: [""],
       cod_lieu_geog: [""],
       bas_plafond: [""],
@@ -542,11 +542,12 @@ export class MajAdherentTestComponent {
     this.setupBirthHireAlert();
     this.saveService.add$.subscribe((reset) => {
       if (reset) {
-        this.formAdherent.reset(); // Reset the form
-        this.formAdrPers.reset();
-        this.formConjoint.reset();
-        this.formMere.reset();
-        this.formPere.reset();
+        // les listes repartent sur « Sélectionner » (valeur '') et non sur un choix vide (null)
+        this.formAdherent.reset({ cod_retr: '', sexe: '', cod_sit: '', corps: '', etat_act: '', typ_aff: '', cod_pay: '', pers_carte: '' }); // Reset the form
+        this.formAdrPers.reset({ adr_courant: '' });
+        this.formConjoint.reset({ pec: '', pec_mut: '' });
+        this.formMere.reset({ pec: '', pec_mut: '' });
+        this.formPere.reset({ pec: '', pec_mut: '' });
         this.formCarteSoin.reset();
         this.formEnfant.reset();
         this.listFamille = []

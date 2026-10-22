@@ -397,7 +397,7 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-outline-primary btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Go Back">
+                    <button type="button" (click)="resetForm()" class="btn btn-outline-primary btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Retour">
                         <i class="ri-arrow-go-back-line"></i>
                     </button>
                 </li>
@@ -424,7 +424,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
       <h5 class="modal-title">Select a Value</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')">&times;</button>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')"><span aria-hidden="true">&times;</span></button>
     </div>
     <div class="modal-body">
       <div class="d-flex justify-content-between mb-2">

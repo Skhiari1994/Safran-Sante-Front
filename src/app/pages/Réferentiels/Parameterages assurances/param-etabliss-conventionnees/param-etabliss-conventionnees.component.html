@@ -39,9 +39,8 @@ title="Référentielle des établissements conventionnées"
                 />
               </div>
 
-              <div class="row g-3">
-                <div class="col-md-2">
-                  <label class="form-label">Activite</label>
+              <div class="col-md-2">
+                  <label class="form-label">Activité</label>
                   <app-lov
                     [listData]="ListeActiviteEtabliss"
                     [columns]="columnActiviteEtabliss"
@@ -52,16 +51,15 @@ title="Référentielle des établissements conventionnées"
                   </app-lov>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label">Libelle</label>
+                  <label class="form-label">Libellé activité</label>
                   <input
                     type="text"
                     class="form-control border-primary"
-                    placeholder="Libelle"
+                    placeholder="Libellé"
                     [value]="libActiv"
                     readonly
                   />
                 </div>
-              </div>
              <!--  <div class="col-md-2">
                 <label class="form-label">Code activité</label>
                 <input
@@ -108,6 +106,7 @@ title="Référentielle des établissements conventionnées"
                   data-plugin="choices"
                   formControlName="etat_act_cnam"
                 >
+                  <option value="">Sélectionner</option>
                   <option value="A">ACTIF</option>
                   <option value="B">BLOQUE</option>
                 </select>
@@ -131,7 +130,7 @@ title="Référentielle des établissements conventionnées"
                 />
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-3">
                 <label class="form-label">Email etablis</label>
                 <input
                   type="text"
@@ -140,7 +139,7 @@ title="Référentielle des établissements conventionnées"
                   formControlName="email_etablis"
                 />
               </div>
-              <div class="col-md-2">
+              <div class="col-md-3">
                 <label class="form-label">Rib etablis</label>
                 <input
                   type="text"
@@ -149,7 +148,7 @@ title="Référentielle des établissements conventionnées"
                   formControlName="rib_etab"
                 />
               </div>
-              <div class="col-md-3">
+              <div class="col-md-6">
                 <label class="form-label">Met etablis</label>
                 <input
                   type="text"
@@ -158,7 +157,7 @@ title="Référentielle des établissements conventionnées"
                   formControlName="met_etab"
                 />
               </div>
-              <div class="col-md-3">
+              <div class="col-md-6">
                 <label class="form-label">Compte etablis</label>
                 <input
                   type="text"
@@ -184,7 +183,7 @@ title="Référentielle des établissements conventionnées"
                 <div class="col-md-12">
                   <div class="row g-3">
                     <div class="col-md-6">
-                      <div class="row align-items-center">
+                      <div class="row g-3 mb-3">
                        
                         <div class="col-md-4">
                             <label class="form-label">Gouvernorat</label>
@@ -210,7 +209,7 @@ title="Référentielle des établissements conventionnées"
                           </div> 
                     </div>
               
-                      <div class="row align-items-center mt-2">
+                      <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label">Poste</label>
                             <app-lov

@@ -27,6 +27,7 @@ export class GestionUtlisateurComponent {
   listRole!: RoleModel
 
   userForm: FormGroup;
+  showPassword = false;
 
 
   constructor(private formBuilder: FormBuilder, private adminServ: AdminService, private authService: AuthenticationService) {
@@ -46,9 +47,10 @@ export class GestionUtlisateurComponent {
       email: ['', [Validators.required, Validators.email]],
       useLogin: ['', [Validators.required]],
       roles: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
+      confirmPassword: ['', [Validators.required]]
 
-    });
+    }, { validators: this.passwordMatchValidator });
 
   }
 
@@ -98,11 +100,24 @@ export class GestionUtlisateurComponent {
 
     })
   }
-  passwordMatchValidator(form: FormGroup) {
+  passwordMatchValidator(form: AbstractControl) {
     return form.get('password')?.value === form.get('confirmPassword')?.value ? null : { mismatch: true };
   }
+
+  resetForm() {
+    this.submitted = false;
+    this.selectedCode = '';
+    this.selectedLabel = '';
+    this.utilisateurForm.reset({ firstname: '', lastname: '', email: '', useLogin: '', roles: '', password: '', confirmPassword: '' });
+  }
+
   AddUser() {
-    console.log(this.utilisateurForm.value);
+    this.submitted = true;
+    if (this.utilisateurForm.invalid) {
+      return;
+    }
+    // le champ de confirmation n'est pas envoyé au serveur
+    const { confirmPassword, ...payload } = this.utilisateurForm.value;
 
     Swal.fire({
       title: 'Veuillez patienter...',
@@ -113,10 +128,10 @@ export class GestionUtlisateurComponent {
       }
     });
 
-    this.authService.register(this.utilisateurForm.value).subscribe({
+    this.authService.register(payload).subscribe({
       next: (data) => {
         Swal.fire('Succès', 'Utilisateur enregistré avec succès', 'success');
-        this.utilisateurForm.reset();
+        this.resetForm();
       },
       error: (error) => {
         console.error(error);

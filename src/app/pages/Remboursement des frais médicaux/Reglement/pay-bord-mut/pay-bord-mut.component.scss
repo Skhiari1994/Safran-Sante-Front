@@ -1,0 +1,13 @@
+/* Titres et valeurs centrés, comme les autres tableaux */
+:host ::ng-deep .modern-table .p-datatable-thead > tr > th {
+  text-align: center !important;
+  vertical-align: middle;
+}
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle;
+}
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td select.form-select {
+  min-width: 90px;
+  height: 38px;
+}

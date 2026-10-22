@@ -142,3 +142,5 @@
 :host ::ng-deep .table-card {
   overflow-x: auto;
 }
+:host ::ng-deep .modern-table .p-datatable-thead > tr > th,
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td { text-align: center !important; }

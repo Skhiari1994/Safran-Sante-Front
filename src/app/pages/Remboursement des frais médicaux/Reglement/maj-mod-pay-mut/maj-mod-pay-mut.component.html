@@ -8,74 +8,65 @@
       <div class="card">
         <div class="card-body">
           <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
-            <div class="row mb-4">
-
-              <div class="col-sm-4 col-md-2">
+            <div class="row g-3">
+              <div class="col-md-2">
                 <label for="codBord" class="form-label">Code bordereau</label>
                 <app-lov [listData]="AllBordEnvoi" [columns]="columnBordEnvoi" codeField="cod_bord"
                   [selectedCode]="codBord" (selectedValue)="onSelectedValueBordEnvoi($event)">
                 </app-lov>
               </div>
-
-
-              <div class="col-sm-4 col-md-1">
+              <div class="col-md-2">
                 <label for="dateBord" class="form-label">Date</label>
-                <input type="text" id="dateBord" class="form-control border-primary" placeholder="Date"
+                <input type="text" id="dateBord" class="form-control border-primary" placeholder="jj/mm/aaaa"
                   [value]="dateBord" readonly />
               </div>
-              <div class="col-sm-4 col-md-1">
-                <label for="dateBord" class="form-label">Code ass</label>
-                <input type="text" id="dateBord" class="form-control border-primary" placeholder="Code ass"
+              <div class="col-md-2">
+                <label for="codAss" class="form-label">Assurance</label>
+                <input type="text" id="codAss" class="form-control border-primary" placeholder="Code"
                   formControlName="cod_assur" readonly />
               </div>
-              <div class="col-sm-4 col-md-3">
-                <label for="lib_assurance" class="form-label">Assurance</label>
-                <input type="text" id="lib_assurance" class="form-control border-primary" placeholder="Assurance"
+              <div class="col-md-6">
+                <label for="lib_assurance" class="form-label">Libellé assurance</label>
+                <input type="text" id="lib_assurance" class="form-control border-primary" placeholder="Libellé"
                   formControlName="lib_assurance" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Remb.</label>
-                <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Remb."
+              <div class="col-md-2">
+                <label for="tot_net" class="form-label">Total remboursé</label>
+                <input type="text" id="tot_net" class="form-control border-primary text-end" placeholder="0.000"
                   formControlName="tot_net" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Hono.</label>
-                <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Hono.."
+              <div class="col-md-2">
+                <label for="tot_honor" class="form-label">Total honoraires</label>
+                <input type="text" id="tot_honor" class="form-control border-primary text-end" placeholder="0.000"
                   formControlName="tot_honor" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="nbr_bult" class="form-label">Nbre. Bulletin</label>
+              <div class="col-md-2">
+                <label for="nbr_bult" class="form-label">Nombre de bulletins</label>
                 <input type="text" id="nbr_bult" class="form-control border-primary text-end"
-                  placeholder="Nombre de Bulletin" formControlName="nbr_bult" />
+                  placeholder="Nombre de bulletins" formControlName="nbr_bult" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Date début</label>
-                <input type="text" id="tot_remb" class="form-control border-primary" placeholder="Date début"
+              <div class="col-md-2">
+                <label for="dat_deb" class="form-label">Date début</label>
+                <input type="text" id="dat_deb" class="form-control border-primary" placeholder="jj/mm/aaaa"
                   formControlName="dat_deb" />
               </div>
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Date fin</label>
-                <input type="text" id="tot_remb" class="form-control border-primary " placeholder="Date fin"
+              <div class="col-md-2">
+                <label for="dat_fin" class="form-label">Date fin</label>
+                <input type="text" id="dat_fin" class="form-control border-primary" placeholder="jj/mm/aaaa"
                   formControlName="dat_fin" />
               </div>
-
-
             </div>
 
             <!-- Print Buttons -->
-            <div class="d-flex justify-content-center gap-2 mt-3">
+            <div class="d-flex justify-content-end gap-2 flex-wrap mt-3">
               <button type="button" class="btn btn-primary" (click)="printEtatEmarg()">
-                <i class="ri-printer-line me-1"></i>Imprimer Etat d'émargement
+                <i class="ri-printer-line me-1 align-bottom"></i> Imprimer état d'émargement
               </button>
               <button type="button" class="btn btn-success" (click)="printEtatCheque()">
-                <i class="ri-printer-line me-1"></i>Imprimer Etat Cheque
+                <i class="ri-printer-line me-1 align-bottom"></i> Imprimer état chèque
               </button>
               <button type="button" class="btn btn-info" (click)="printOrdreVirement()">
-                <i class="ri-printer-line me-1"></i>Imprimer Ordre de virement
+                <i class="ri-printer-line me-1 align-bottom"></i> Imprimer ordre de virement
               </button>
             </div>
           </form>
@@ -84,52 +75,55 @@
 
       <div class="card">
         <div class="card-body">
+          <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+            <div class="page-card-title">
+              <h5>Mode de paiement des adhérents</h5>
+              <small>{{ bordArriver?.length || 0 }} bulletin(s)</small>
+            </div>
+          </div>
           <div class="table-responsive table-card">
             <p-table [value]="bordArriver" [paginator]="true" [rows]="9"
               styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
               <ng-template pTemplate="header">
                 <tr>
                   <th
-                    *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','dat_soin','solde','tot_honor','tot_net','Mod paie','Date vir']"
-                    [pSortableColumn]="column">
-                    <div class="d-flex align-items-center">
-                      <span class="me-2" (click)="onSort(column)">
-                        {{ columnTitles[column] || column }}
-                        <i class="ri-arrow-up-down-line ms-1"></i>
-                      </span>
-                      <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2"
-                        style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','dat_soin','solde','tot_honor','tot_net','Mod paie','Date vir']">
+                    <div class="th-head">
+                      <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                      <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                      <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
                     </div>
+                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2"
+                      style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" (click)="$event.stopPropagation()" placeholder="..." />
                   </th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-rowData>
                 <tr>
-                  <td>{{ rowData.mat_pers }}</td>
-                  <td>{{ rowData.nom_complet_pers }}</td>
-                  <td>{{ rowData.cod_fil }}</td>
-                  <td>{{ rowData.num_fam }}</td>
-                  <td>{{ rowData.dat_soin }}</td>
-                  <td>{{ rowData.solde | number: '1.3-3' }}</td>
-                  <td>{{ rowData.tot_honor | number: '1.3-3' }}</td>
-                  <td>{{ rowData.tot_net | number: '1.3-3' }}</td>
+                  <td class="text-center">{{ rowData.mat_pers }}</td>
+                  <td class="text-center">{{ rowData.nom_complet_pers }}</td>
+                  <td class="text-center">{{ rowData.cod_fil }}</td>
+                  <td class="text-center">{{ rowData.num_fam }}</td>
+                  <td class="text-center">{{ rowData.dat_soin }}</td>
+                  <td class="text-center">{{ rowData.solde | number: '1.3-3' }}</td>
+                  <td class="text-center">{{ rowData.tot_honor | number: '1.3-3' }}</td>
+                  <td class="text-center">{{ rowData.tot_net | number: '1.3-3' }}</td>
                   <td>
                     <select [(ngModel)]="rowData.mod_pay" (change)="onValidChange(rowData, rowData.mod_pay)"
-                      class="form-select">
+                      class="form-select border-primary text-center">
                       <option value="E">Espéce</option>
                       <option value="C">Chéque</option>
                       <option value="V">Virement</option>
                     </select>
                   </td>
-                  <td>{{ rowData.dat_vir }}</td>
+                  <td class="text-center">{{ rowData.dat_vir }}</td>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td>
+                  <td colspan="12" class="text-center">
                     <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                   </td>
                 </tr>
@@ -160,3 +154,4 @@
       </div>
     </div>
   </div>
+</div>

@@ -44,3 +44,62 @@
 .second-navbar button {
     margin: 0;
 }
+
+
+/* Barre d'outils (rechercher, supprimer, annuler, enregistrer, nouveau, imprimer) : boutons plus grands */
+.second-navbar {
+  .navbar {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+  }
+
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-width: 1.5px;
+    border-radius: 8px;
+
+    i {
+      font-size: 1.25rem;
+      width: auto !important;
+      line-height: 1;
+    }
+  }
+}
+
+
+/* Barre d'outils : une seule rangée alignée à droite, espacement régulier */
+.second-navbar {
+  border-bottom: 1px solid #e9ebec;
+
+  .navbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.35rem 1.5rem;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    width: auto;
+    margin: 0 0 0 auto;
+    padding: 0;
+  }
+
+  .nav-item {
+    margin: 0;
+    display: flex;
+  }
+
+  .nav-item .btn {
+    margin: 0 !important;
+  }
+}

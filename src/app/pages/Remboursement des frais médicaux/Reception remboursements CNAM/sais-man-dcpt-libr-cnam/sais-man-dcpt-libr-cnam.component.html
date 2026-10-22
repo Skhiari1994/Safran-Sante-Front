@@ -221,16 +221,14 @@
                     <div class="col-xxl-12">
                         <h5 class="mb-3">Détails</h5>
                         <div class="card">
-                            <div class="border">
+                            <div class="p-3 pb-0">
                                 <ul ngbNav #CustomHover="ngbNav" [activeId]="1"
-                                    class="nav nav-pills custom-hover-nav-tabs">
+                                    class="nav nav-pills nav-pills-tab flex-row flex-wrap gap-2 bulletin-tabs">
                                     <li [ngbNavItem]="1">
                                         <a ngbNavLink>
-                                            <i class="ri-home-3-line nav-icon nav-tab-position"></i>
-                                            <h5 class="nav-titl nav-tab-position m-0">
-                                                Les visites
-                                            </h5>
-                                        </a>
+                        <i class="ri-home-3-line fs-18 me-2 align-middle"></i>
+                        Les visites
+                      </a>
                                         <ng-template ngbNavContent>
                                             <div class="table-responsive table-card">
                                                 <table class="table align-middle table-hover">
@@ -282,9 +280,9 @@
                                     </li>
                                     <li [ngbNavItem]="2">
                                         <a ngbNavLink>
-                                            <i class="ri-contrast-drop-line nav-icon nav-tab-position"></i>
-                                            <h5 class="nav-titl nav-tab-position m-0">Les actes</h5>
-                                        </a>
+                        <i class="ri-contrast-drop-line fs-18 me-2 align-middle"></i>
+                        Les actes
+                      </a>
                                         <ng-template ngbNavContent>
                                             <div class="table-responsive table-card">
                                                 <table class="table align-middle table-hover">
@@ -342,11 +340,9 @@
                                     </li>
                                     <li [ngbNavItem]="3">
                                         <a ngbNavLink>
-                                            <i class="ri-shopping-cart-2-line nav-icon nav-tab-position"></i>
-                                            <h5 class="nav-titl nav-tab-position m-0">
-                                                Les médicaments
-                                            </h5>
-                                        </a>
+                        <i class="ri-shopping-cart-2-line fs-18 me-2 align-middle"></i>
+                        Les médicaments
+                      </a>
                                         <ng-template ngbNavContent>
                                             <div class="table-responsive table-card">
                                                 <table class="table align-middle table-hover">
@@ -404,11 +400,9 @@
                                     </li>
                                     <li [ngbNavItem]="4">
                                         <a ngbNavLink>
-                                            <i class="ri-hand-heart-line nav-icon nav-tab-position"></i>
-                                            <h5 class="nav-titl nav-tab-position m-0">
-                                                Les appareils
-                                            </h5>
-                                        </a>
+                        <i class="ri-hand-heart-line fs-18 me-2 align-middle"></i>
+                        Les appareils
+                      </a>
                                         <ng-template ngbNavContent>
                                             <div class="table-responsive table-card">
                                                 <table class="table align-middle table-hover">
@@ -616,10 +610,10 @@
                                              
                                             <td>
                                                  <select
-                                              class="form-select border-success"
-                                              data-plugin="choices"
+                                              class="form-select border-primary"
                                               formControlName="prf_typ" (change)="OnselectRefTypVisite($event)"
                                             >
+                                               <option value="">Sélectionner</option>
                                                <option value="1">Personne Physique</option>
                                               <option value="2">Etablissement</option>
                                              </select></td>
@@ -725,10 +719,10 @@
                                             <td><input class="form-control" type="text"   formControlName="num_pec_act"></td>
                                             <td>
                                                  <select
-                                              class="form-select border-success"
-                                              data-plugin="choices"
+                                              class="form-select border-primary"
                                               formControlName="prf_typ" (change)="OnselectRefTyp($event)"
                                             >
+                                               <option value="">Sélectionner</option>
                                                <option value="1">Personne Physique</option>
                                               <option value="2">Etablissement</option>
                                              </select></td>
@@ -833,10 +827,10 @@
                                             <td><input class="form-control" type="number" (change)="verif_vign_pahr($event,i)" formControlName="num_pec_med"></td>
                                             <td>
                                                  <select
-                                              class="form-select border-success"
-                                              data-plugin="choices"
+                                              class="form-select border-primary"
                                               formControlName="prf_typ" (change)="OnselectRefTypMed($event)"
                                             >
+                                               <option value="">Sélectionner</option>
                                                <option value="1">Personne Physique</option>
                                               <option value="2">Etablissement</option>
                                              </select></td>
@@ -936,10 +930,10 @@
                                             <td><input class="form-control" type="number"   formControlName="num_pec_app"></td>
                                             <td>
                                                  <select
-                                              class="form-select border-success"
-                                              data-plugin="choices"
+                                              class="form-select border-primary"
                                               formControlName="prf_typ" (change)="OnselectRefTypApp($event)"
                                             >
+                                               <option value="">Sélectionner</option>
                                                <option value="1">Personne Physique</option>
                                               <option value="2">Etablissement</option>
                                              </select></td>

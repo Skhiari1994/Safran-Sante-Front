@@ -9,7 +9,7 @@
         <div class="row">
           <!-- Première colonne -->
           <div class="col-md-6">
-            <div class="row">
+            <div class="row g-3">
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Matricule</label>
                 <input type="text" class="form-control border-primary" placeholder="Matricule" [value]="matricule"
@@ -34,7 +34,7 @@
                 <input type="text" class="form-control border-primary" placeholder="Code assurance"
                   formControlName="cod_assur" readonly />
               </div>
-              <div class="col-md-6">
+              <div class="col-md-7">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
                 <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_assur"
                   readonly />
@@ -49,15 +49,14 @@
               </div>
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Fillière</label>
-                <input type="text" class="form-control border-primary" placeholder="Code assurance"
+                <input type="text" class="form-control border-primary" placeholder="Fillière"
                   formControlName="cod_fil" readonly />
               </div>
-              <div class="col-md-8">
+              <div class="col-md-10">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
                 <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill"
                   readonly />
               </div>
-              <div class="col-md-2"></div>
 
 
               <div class="col-md-2">
@@ -65,7 +64,7 @@
                 <input type="text" class="form-control border-primary" placeholder="Préstataire" [value]="numFam"
                   readonly />
               </div>
-              <div class="col-md-5">
+              <div class="col-md-4">
                 <label for="billinginfo-firstName" class="form-label">Nom adhérent</label>
                 <input type="text" class="form-control border-primary" placeholder="Nom adhérent" [value]="nomAdherent"
                   readonly />
@@ -90,7 +89,7 @@
 
           <!-- Deuxième colonne -->
           <div class="col-md-5">
-            <div class="row">
+            <div class="row g-3">
               <div class="col-md-4">
                 <label for="billinginfo-firstName" class="form-label">Date soin</label>
                 <input type="text" class="form-control border-primary" placeholder="Date soin"
@@ -105,9 +104,9 @@
                 <label for="billinginfo-firstName" class="form-label">Mois</label>
                 <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" readonly />
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="billinginfo-firstName" class="form-label">Num soin</label>
-                <input type="text" class="form-control border-primary" placeholder="Mois" formControlName="num_soin"
+                <input type="text" class="form-control border-primary" placeholder="Num soin" formControlName="num_soin"
                   (change)="controleNumSoin($event)" readonly />
               </div>
 
@@ -115,14 +114,14 @@
                 <label for="billinginfo-firstName" class="form-label">Num Pec</label>
                 <input type="text" class="form-control border-primary" placeholder="Num Pec" [value]="PEC" readonly />
               </div>
-              <div class="col-md-6">
+              <div class="col-md-7">
                 <label for="billinginfo-firstName" class="form-label">Etablissement</label>
                 <input type="text" class="form-control border-primary" placeholder="Etablissement" [value]="etabliss"
                   readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Date pec</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement" [value]="datPec"
+                <input type="text" class="form-control border-primary" placeholder="Date pec" [value]="datPec"
                   readonly />
               </div>
 
@@ -132,14 +131,14 @@
                 <input type="text" class="form-control border-primary" placeholder="Mat. conjoint" [value]="matConj"
                   readonly />
               </div>
-              <div class="col-md-6">
+              <div class="col-md-7">
                 <label for="billinginfo-firstName" class="form-label">Nom conj</label>
                 <input type="text" class="form-control border-primary" placeholder="Nom conj" [value]="nomPersCons"
                   readonly />
               </div>
               <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date pec</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement"
+                <label for="billinginfo-firstName" class="form-label">Num ass. conj</label>
+                <input type="text" class="form-control border-primary" placeholder="Num ass. conj"
                   formControlName="num_ass_conj" readonly />
               </div>
               <div class="col-md-12">
@@ -156,44 +155,37 @@
 </div>
 
 <div class="col-md-12">
-  <div class="collapse show" id="paymentmethodCollapse">
-    <div class="card p-4 border shadow-none mb-0 mt-4">
-      <form action="javascript:void(0);" class="row g-3" [formGroup]="formBuletinSoin">
-        <div class="row">
-          <!-- Première colonne -->
-          <div class="col-md-6">
-            <div class="row">
-              <div class="col-md-2"></div>
-              <div class="col-md-5 d-flex align-items-center">
-                <label for="billinginfo-firstName" class="form-label me-4">Solde Mutuelle</label>
-                <input type="text" class="form-control border-warning montant-input" placeholder="Solde Mutuelle"
-                  [value]="soldPlafond" readonly />
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Ligne de séparation -->
-          <div class="col-md-1 d-flex align-items-stretch">
-            <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
-          </div>
-
-          <!-- Deuxième colonne -->
-          <div class="col-md-5">
-            <div class="row">
-              <div class="col-md-2"></div>
-              <div class="col-md-6 d-flex align-items-center">
-                <label for="billinginfo-firstName" class="form-label me-4">Solde Mutuelle estimatif</label>
-                <input type="text" class="form-control border-warning montant-input"
-                  placeholder="Solde Mutuelle estimatif" [value]="soldPlafondEstim" readonly />
-              </div>
-
-
-            </div>
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <form action="javascript:void(0);" class="row g-3">
+      <div class="row">
+      <!-- Première colonne -->
+      <div class="col-md-6">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Solde mutuelle</label>
+            <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
+              placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
           </div>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <!-- Ligne de séparation -->
+      <div class="col-md-1 d-flex align-items-stretch">
+        <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
+      </div>
+
+      <!-- Deuxième colonne -->
+      <div class="col-md-5">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Solde estimatif</label>
+            <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
+              placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+          </div>
+        </div>
+      </div>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -201,15 +193,14 @@
   <div class="card h-100"> <!-- Ajout de h-100 -->
     <div class="card-body d-flex flex-column"> <!-- Ajout de flex-column -->
       <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
-        <div class="col-lg-1">
-          <div class="" role="tablist" aria-orientation="vertical">
+        <div class="col-12 mb-3">
+          <div class="border mb-3" role="tablist" aria-orientation="horizontal">
             <ul ngbNav #CustomVertical="ngbNav" [activeId]="1"
-              class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+              class="nav nav-pills bult-tabs">
               <li [ngbNavItem]="1">
                 <a ngbNavLink>
-                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
-                  Les actes
-                </a>
+                        <h5 class="nav-titl m-0">Les actes</h5>
+                      </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
@@ -285,9 +276,8 @@
               </li>
               <li [ngbNavItem]="2">
                 <a ngbNavLink>
-                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
-                  Pharmacies
-                </a>
+                        <h5 class="nav-titl m-0">Pharmacies</h5>
+                      </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
@@ -367,7 +357,7 @@
             </ul>
           </div>
         </div>
-        <div class="col-lg-10">
+        <div class="col-12">
           <div class="tab-content text-muted mt-3 mt-lg-0">
             <div [ngbNavOutlet]="CustomVertical"></div>
           </div>

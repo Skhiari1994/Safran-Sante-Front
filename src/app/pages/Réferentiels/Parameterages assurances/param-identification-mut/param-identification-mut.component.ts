@@ -119,14 +119,14 @@ export class ParamIdentificationMutComponent {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.FormFiliere.reset()
+    this.FormFiliere.reset({ cod_fil: '', prorat_pec: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 
   openModalFamille(content1: any) {
     this.edit2 = true;
 
-    this.FormAssurActive.reset()
+    this.FormAssurActive.reset({ cod_activite: '' })
     this.modalService.open(content1, { size: "xl", centered: true });
   }
   ngOnInit() {

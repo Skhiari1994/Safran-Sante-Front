@@ -1,3 +1,4 @@
+import { ChatWidgetComponent } from '../pages/chat/chat-widget.component';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -48,7 +49,8 @@ import lottie from 'lottie-web';
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbCollapseModule
+    NgbCollapseModule,
+    ChatWidgetComponent
   ],
   providers: [LanguageService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -103,7 +103,7 @@ export class ParamMaladieComponent {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formMaladie.reset()
+    this.formMaladie.reset({ apci: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

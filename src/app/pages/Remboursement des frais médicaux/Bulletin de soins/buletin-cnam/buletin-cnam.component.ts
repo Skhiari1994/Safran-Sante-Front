@@ -1,4 +1,6 @@
-import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
+import { LovComponent } from 'src/app/shared/Composants/lov/lov.component';
+
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { BulletinSoinService } from '../bulletin-soin.service';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,6 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'ngx-pagination';
 import Swal from 'sweetalert2';
 import { forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { Table } from 'primeng/table';
 
 @Component({
@@ -15,6 +18,7 @@ import { Table } from 'primeng/table';
   styleUrl: './buletin-cnam.component.scss'
 })
 export class BuletinCNAMComponent {
+  @ViewChildren(LovComponent) lovs!: QueryList<LovComponent>;
   @ViewChild('dtActes') tableActes!: Table;
   @ViewChild('dtPhar') tablePhar!: Table;
   @ViewChild('dtVisite') tableVisite!: Table;
@@ -175,11 +179,27 @@ export class BuletinCNAMComponent {
     this.calculerTotaux();
 
     this.saveService.registerSaveCallback(() => this.addBultSoin());
-    this.getPersonnel()
-    this.getRegimeRemb()
-    this.getBultSoin()
-    this.calculerTotaux()
-    //this.getBultSoin()
+
+    // Contrôle de la date de soin (plafond, âge, durée de vie du bulletin) déclenché dès que la date est complète,
+    // quelle que soit la façon de la saisir (clavier ou calendrier) : ne dépend plus de l'événement « change » du champ.
+    const datSoinCtrl = this.formBuletinSoin.get('dat_soin');
+    datSoinCtrl?.valueChanges
+      .pipe(debounceTime(300), takeUntil(this.destroy$))
+      .subscribe((v: any) => {
+        const digits = String(v ?? '').replace(/\D/g, '');
+        if (digits.length !== 8 || digits === this.lastDatSoinControle) {
+          if (digits.length !== 8) this.lastDatSoinControle = '';
+          return;
+        }
+        this.lastDatSoinControle = digits;
+        const target = {
+          // toujours au format jj/mm/aaaa, attendu par le serveur
+          get value() { return `${digits.substring(0, 2)}/${digits.substring(2, 4)}/${digits.substring(4, 8)}`; },
+          // date refusée par un contrôle : on vide le champ
+          set value(x: any) { datSoinCtrl.setValue(x, { emitEvent: false }); },
+        };
+        this.controleDatSoin({ target });
+      });
     this.saveService.isSearch$
       .pipe(takeUntil(this.destroy$))
       .subscribe((canSearch) => {
@@ -301,10 +321,16 @@ export class BuletinCNAMComponent {
         const apps = formArrays[3].controls.filter(c => c.valid).map(c => clean(c.value));
 
         this.serv.addAllLigBult(visites, acts, meds, apps).subscribe({
-          next: () => {
+          next: (res: any) => {
+            const echecs = Object.values(res || {}).filter((r: any) => r?.error).map((r: any) => r.message);
+            if (echecs.length) {
+              Swal.fire('Enregistrement incomplet', 'Échec de l\'enregistrement : ' + echecs.join(', '), 'error');
+              this.getBultSoin();
+              return;
+            }
             Swal.fire('Succès', 'Bulletin enregistré avec succès', 'success');
+            // le formulaire reste rempli : il ne se vide que par « Retour » ou « Nouveau » de la barre d'outils
             this.getBultSoin();
-            this.resetForm();
           },
           error: () => this.showServerError()
         });
@@ -315,9 +341,11 @@ export class BuletinCNAMComponent {
   }
 
   resetForm() {
+    // vide aussi les champs code des sélecteurs (Matricule, Prestataire, établissements…)
+    this.lovs?.forEach(l => l.clear());
     this.ligPretForm.reset();
     this.ligPharForm.reset();
-    this.formBuletinSoin.reset();
+    this.formBuletinSoin.reset({ reg_remb: '' });
     this.ligAppareilForm.reset();
     this.ligVisiteForm.reset();
 
@@ -815,6 +843,7 @@ export class BuletinCNAMComponent {
           { key: "dat_nais", label: "Date naissance" },
           { key: "nom", label: "Nom & Prénom" },
           { key: "num_retr", label: "Id CNRPS" },
+          { key: "lib_fill", label: "Filière" },
         ];
       },
       error => {
@@ -978,7 +1007,13 @@ export class BuletinCNAMComponent {
   }
 
 
+  private lastDatSoinControle = '';
+
   controleDatSoin(item: any) {
+    // date vide : rien à contrôler (évite le message « Plafond non encore initialisé » à la sélection du matricule)
+    if (!item?.target?.value) {
+      return;
+    }
     this.saveService.setDisabled(true)
     const formatDates = (form: any, fields: string[]): string[] =>
       fields.reduce<string[]>((formatted, field) => {

@@ -1,61 +1,63 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
   <app-breadcrumbs
-    title="Paramétrage des actes médicaux"
+    title="Actes médicaux"
     [breadcrumbItems]="breadCrumbItems"
   ></app-breadcrumbs>
 
-  <div class="row">
-    <!-- Header with Add Button -->
-    <div class="card-header">
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-        <div class="d-flex flex-wrap gap-2">
-          <div 
-            *ngFor="let filiere of listTypeActe" 
-            class="badge bg-primary text-white px-3 py-2"
-          >
-            {{ filiere.type_acte }} - {{ filiere.lib_type_acte }}
-          </div>
-        </div>
-        <div class="flex-shrink-0">
-          <button
-            class="btn btn-info add-btn"
-            data-bs-toggle="modal"
-            data-bs-target="#showModal"
-            (click)="openModalTab(content1)"
-          >
-            <i class="ri-add-fill me-1 align-bottom"></i> Ajouter
-          </button>
-        </div>
-      </div>
-      <br>
-    </div>
+</div>
 
-    <div class="card">
-      <div class="card-body">
-        <p-table [value]="listeActe" [paginator]="true" [rows]="12" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-          <ng-template pTemplate="header">
-            <tr class="table-primary">
-              <th *ngFor="let column of ['type_act','abrv_act','lib_act','dat_acte','parente','ctr_duree','sexe','imput_plaf']">
-                <div class="d-flex align-items-center">
-                  <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
-                  <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                  <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow mb-4">
+            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+              <div class="page-card-title">
+                <h5>Liste des actes médicaux</h5>
+                <small>{{ listeActe?.length || 0 }} acte(s)</small>
+              </div>
+              <button
+                class="btn btn-info add-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#showModal"
+                (click)="openModalTab(content1)"
+              >
+                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter acte
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <div *ngFor="let filiere of listTypeActe" class="badge bg-primary text-white px-3 py-2">
+                  {{ filiere.type_acte }} - {{ filiere.lib_type_acte }}
                 </div>
-              </th>
-              <th>Action</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-            <tr [ngClass]="{ 'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0 }">
-              <td>{{ rowData.type_act }}</td>
-              <td>{{ rowData.abrv_act }}</td>
-              <td>{{ rowData.lib_act }}</td>
-              <td>{{ rowData.dat_acte }}</td>
-              <td>{{ rowData.parente == 'E' ? 'Enfant' : rowData.parente == 'C' ? 'Conjoint' : rowData.parente == 'P' ? 'Père' : rowData.parente == 'M' ? 'Mère' : rowData.parente == 'A' ? 'Adhérent' : '' }}</td>
-              <td>{{ rowData.ctr_duree == 'O' ? 'Oui' : rowData.ctr_duree == 'N' ? 'Non' : '' }}</td>
-              <td>{{ rowData.sexe == 'M' ? 'Masculin' : rowData.sexe == 'F' ? 'Féminin' : '' }}</td>
-              <td>{{ rowData.imput_plaf == 'O' ? 'Oui' : rowData.imput_plaf == 'N' ? 'Non' : '' }}</td>
+              </div>
+              <div class="table-responsive">
+              <p-table [value]="listeActe" [paginator]="true" [rows]="12" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="table-primary">
+                    <th *ngFor="let column of ['type_act','abrv_act','lib_act','dat_acte','parente','ctr_duree','sexe','imput_plaf']">
+                      <div class="th-head">
+                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+                      </div>
+                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    </th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td class="text-center">{{ rowData.type_act }}</td>
+              <td class="text-center">{{ rowData.abrv_act }}</td>
+              <td class="text-center">{{ rowData.lib_act }}</td>
+              <td class="text-center">{{ rowData.dat_acte }}</td>
+              <td class="text-center">{{ rowData.parente == 'E' ? 'Enfant' : rowData.parente == 'C' ? 'Conjoint' : rowData.parente == 'P' ? 'Père' : rowData.parente == 'M' ? 'Mère' : rowData.parente == 'A' ? 'Adhérent' : '' }}</td>
+              <td class="text-center">{{ rowData.ctr_duree == 'O' ? 'Oui' : rowData.ctr_duree == 'N' ? 'Non' : '' }}</td>
+              <td class="text-center">{{ rowData.sexe == 'M' ? 'Masculin' : rowData.sexe == 'F' ? 'Féminin' : '' }}</td>
+              <td class="text-center">{{ rowData.imput_plaf == 'O' ? 'Oui' : rowData.imput_plaf == 'N' ? 'Non' : '' }}</td>
               <td>
                 <ul class="list-inline hstack gap-2 mb-0">
                   <li class="list-inline-item">
@@ -72,7 +74,11 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+              </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -111,7 +117,7 @@
 
         <div class="col-md-4">
           <label for="billinginfo-firstName" class="form-label"
-            >Libelle</label
+            >Libellé type acte</label
           >
           <input
             type="text"
@@ -128,21 +134,21 @@
           <input
             type="text"
             class="form-control border-primary"
-            placeholder="Entrer Code visite"
+            placeholder="Entrer le code acte"
             formControlName="abrv_act"
           />
         </div>
         <div class="col-md-4">
-          <label for="billinginfo-firstName" class="form-label">Libelle</label>
+          <label for="billinginfo-firstName" class="form-label">Libellé acte</label>
           <input
             type="text"
             class="form-control border-primary"
-            placeholder="Entrer libélle"
+            placeholder="Entrer le libellé"
             formControlName="lib_act"
           />
         </div>
         <div class="col-md-3">
-          <label for="billinginfo-lastName" class="col-form-label"
+          <label for="billinginfo-lastName" class="form-label"
             >Date acte
           </label>
           <input
@@ -155,16 +161,16 @@
 
           />
         </div>
-        <div class="col-md-2">
-          <label for="type_plafond" class="col-form-label"
-            >Parente</label
+        <div class="col-md-3">
+          <label for="parente" class="form-label"
+            >Parenté</label
           >
           <select
             id="parente"
-            class="form-control"
+            class="form-select border-primary"
             formControlName="parente"
           >
-            <option value=""></option>
+            <option value="">Sélectionner</option>
             <option value="E">Enfant</option>
             <option value="C">Conjoint</option>
             <option value="P">Père</option>
@@ -173,15 +179,15 @@
           </select>
         </div>
         <div class="col-md-2">
-          <label for="ctr_duree" class="col-form-label"
+          <label for="ctr_duree" class="form-label"
             >Contrôle durée</label
           >
           <select
-            id="parente"
-            class="form-control"
+            id="ctr_duree"
+            class="form-select border-primary"
             formControlName="ctr_duree"
           >
-            <option value=""></option>
+            <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
  
@@ -189,30 +195,30 @@
         </div>
 
         <div class="col-md-2">
-          <label for="sexe" class="col-form-label"
+          <label for="sexe" class="form-label"
             >Sexe</label
           >
           <select
             id="sexe"
-            class="form-control"
+            class="form-select border-primary"
             formControlName="sexe"
           >
-            <option value=""></option>
+            <option value="">Sélectionner</option>
             <option value="M">Masculin</option>
             <option value="F">Féminin</option>
  
           </select>
         </div>
         <div class="col-md-2">
-          <label for="imput_plaf" class="col-form-label"
+          <label for="imput_plaf" class="form-label"
             >Imputation plafond</label
           >
           <select
             id="imput_plaf"
-            class="form-control"
+            class="form-select border-primary"
             formControlName="imput_plaf"
           >
-            <option value=""></option>
+            <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
  

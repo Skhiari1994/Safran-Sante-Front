@@ -203,7 +203,7 @@ export class PriseChargeBaremRembComponent {
     this.edit = true;
   
     // Réinitialiser le formulaire avec des valeurs par défaut
-    this.formBareme.reset();
+    this.formBareme.reset({ nat_act: '', plafonne: '' });
     this.formBareme.setValue({
       cod_fil: '',
       abrv_act: '',
@@ -258,7 +258,7 @@ export class PriseChargeBaremRembComponent {
   editDataGet(data: any, content: any) {
     this.edit = false;
     this.modalService.open(content, { size: "xl", centered: true });
-    this.formBareme.reset();
+    this.formBareme.reset({ nat_act: '', plafonne: '' });
   
     // Initialiser les valeurs du formulaire
     this.codeFiliere = data.cod_fil;

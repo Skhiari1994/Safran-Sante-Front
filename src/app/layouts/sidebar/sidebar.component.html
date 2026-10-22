@@ -40,8 +40,9 @@
                 <a href="javascript:void(0);" class="is-parent nav-link menu-link" data-bs-toggle="collapse" [attr.aria-expanded]="!item.collapsed" (click)="toggleItem(item)">
                   <i class="{{ item.icon }} icon nav-icon"></i>
                   <span>{{ item.label | translate }}</span>
+
                 </a>
-      
+
                 <!-- Collapsible sub-menu -->
                 <div class="collapse menu-dropdown" #collapse="ngbCollapse" [(ngbCollapse)]="item.collapsed">
                   <ul class="nav nav-sm flex-column" aria-expanded="false">
@@ -51,7 +52,7 @@
                           <a class="nav-link" href="javascript:void(0);" [attr.data-parent]="subitem.parentId" data-bs-toggle="collapse" [attr.aria-expanded]="!subitem.collapsed" (click)="toggleItem(subitem)">
                             {{ subitem.label | translate }}
                           </a>
-      
+
                           <!-- Collapsible sub-sub-menu -->
                           <div class="collapse menu-dropdown sub-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subitem.collapsed">
                             <ul class="nav nav-sm flex-column" aria-expanded="false">
@@ -61,7 +62,7 @@
                                     <a class="nav-link" href="javascript:void(0);" [attr.data-parent]="subSubitem.parentId" data-bs-toggle="collapse" [attr.aria-expanded]="!subSubitem.collapsed" (click)="toggleItem(subSubitem)">
                                       {{ subSubitem.label | translate }}
                                     </a>
-      
+
                                     <!-- Collapsible sub-sub-sub-menu -->
                                     <div class="collapse menu-dropdown extra-sub-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subSubitem.collapsed">
                                       <ul class="nav nav-sm flex-column" aria-expanded="false">
@@ -71,7 +72,7 @@
                                               <a class="nav-link" href="javascript:void(0);" [attr.data-parent]="subSubitem1.parentId" data-bs-toggle="collapse" [attr.aria-expanded]="!subSubitem1.collapsed" (click)="toggleItem(subSubitem1)">
                                                 {{ subSubitem1.label | translate }}
                                               </a>
-      
+
                                               <!-- Collapsible 4th level menu -->
                                               <div class="collapse menu-dropdown fourth-level-menu" #collapse="ngbCollapse" [(ngbCollapse)]="subSubitem1.collapsed">
                                                 <ul class="nav nav-sm flex-column" aria-expanded="false">
@@ -121,7 +122,7 @@
           }
         </ul>
       </ngx-simplebar>
-      
+
     </div>
     <!-- Sidebar -->
   </div>

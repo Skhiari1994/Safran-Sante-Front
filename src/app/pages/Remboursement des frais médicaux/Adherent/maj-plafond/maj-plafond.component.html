@@ -2,84 +2,69 @@
     <div class="col-md-10">
         <div class="collapse show" id="paymentmethodCollapse">
             <div class="card p-4 border shadow-none">
+                <div class="card-header page-card-header">
+                    <div class="page-card-title">
+                        <h5>Adhérent</h5>
+                        <small>Identité, situation et assurance</small>
+                    </div>
+                </div>
                 <!-- Search Form -->
-                <form action="javascript:void(0);" class="row g-3" [formGroup]="formPersonnel">
-                    <div class="row">
-                        <!-- First Column -->
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label class="form-label">Matricule</label>
-
-                                    <input type="text" class="form-control border-primary" formControlName="mat_pers"
-                                        readonly />
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Nom</label>
-                                    <input type="text" class="form-control border-primary" formControlName="nom_pers"
-                                        readonly />
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Prénom</label>
-                                    <input type="text" class="form-control border-primary" formControlName="pren_pers"
-                                        readonly />
-                                </div>
-
-                                <div class="col-md-1"></div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Etat</label>
-                                    <select class="form-select border-success" formControlName="etat_act">
-                                        <option value="A">ACTIF</option>
-                                        <option value="B">Bloqué(e)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Date emb</label>
-                                    <input type="text" class="form-control border-primary" formControlName="dat_emb"
-                                        readonly mask="00/00/0000" />
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="country" class="form-label">Situation sociale</label>
-                                    <select class="form-select border-success" data-plugin="choices"
-                                        formControlName="cod_sit">
-                                        <option value="">Select situation...</option>
-                                        <option value="C">Célibataire</option>
-                                        <option value="M">Marié(e)</option>
-                                        <option value="D">Divorcé(e)</option>
-                                        <option value="V">Voeuf(ve)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <label class="form-label">Nbre Enf</label>
-                                    <input type="text" class="form-control border-primary" formControlName="nbr_enf"
-                                        readonly />
-                                </div>
-                                <div class="col-md-1">
-                                    <label class="form-label">Assurance</label>
-                                    <input type="text" class="form-control border-primary" formControlName="cod_assur"
-                                        readonly />
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Libelle</label>
-                                    <input type="text" class="form-control border-primary" [value]="libAssur"
-                                        readonly />
-                                </div>
-                                <div class="col-md-2"></div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Num assurance</label>
-                                    <input type="text" class="form-control border-primary" formControlName="num_assur"
-                                        placeholder="Num assurance" readonly />
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Date assur</label>
-                                    <input type="text" class="form-control border-warning" placeholder="Date assur"
-                                        formControlName="dat_ass" readonly />
-                                </div>
-
-                            </div>
-                        </div>
+                <form action="javascript:void(0);" [formGroup]="formPersonnel">
+                    <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Matricule</label>
+                        <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" readonly />
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">Prénom</label>
+                        <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pren_pers" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Etat</label>
+                        <select class="form-select border-primary" formControlName="etat_act">
+                            <option value="">Sélectionner</option>
+                            <option value="A">ACTIF</option>
+                            <option value="B">Bloqué(e)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date d'embauche</label>
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Situation sociale</label>
+                        <select class="form-select border-primary" formControlName="cod_sit">
+                            <option value="">Sélectionner</option>
+                            <option value="C">Célibataire</option>
+                            <option value="M">Marié(e)</option>
+                            <option value="D">Divorcé(e)</option>
+                            <option value="V">Voeuf(ve)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre d'enfants</label>
+                        <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants" formControlName="nbr_enf" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Code assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_assur" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Libellé assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Numéro assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="Numéro assurance" formControlName="num_assur" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_ass" readonly />
+                    </div>
                     </div>
                 </form>
             </div>
@@ -87,111 +72,155 @@
     </div>
 </div>
 <div class="d-flex justify-content-center mt-4">
-
-    <div class="col-xxl-10 ">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-2">
-                        <div class="" role="tablist" aria-orientation="vertical">
-                            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1"
-                                class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
-                                <li [ngbNavItem]="1">
-                                    <a ngbNavLink>
-                                       <i class="ri-user-2-line d-block fs-20 mb-1"></i>
-                                        Plafond mutuelle
-                                    </a>
-                                    <ng-template ngbNavContent>
-                                        <p-table [value]="listPlafAssur" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th *ngFor="let column of ['annee_assur','cod_assur','libAssur','plafond','sold_plaf']" [pSortableColumn]="column">
-                                                        <div class="d-flex align-items-center">
-                                                            <span class="me-2" (click)="onSort(column)">{{ columnTitles2[column]|| column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
-                                                        </div>
-                                                    </th>
-                                                    <th class="text-center">Action</th>
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                                <tr>
-                                                    <td class="text-center align-middle">{{ rowData.annee_assur }}</td>
-                                                    <td class="text-center align-middle">{{ rowData.cod_assur }}</td>
-                                                    <td class="text-center align-middle">{{ rowData.libAssur }}</td>
-                                                    <td class="text-center align-middle">{{ rowData.plafond | number: '1.3-3' }}</td>
-                                                    <td class="text-center align-middle">{{ rowData.sold_plaf | number: '1.3-3' }}</td>
-                                                    <td>
-                                                        <ul class="list-inline hstack gap-2 mb-0">
-                                                            <li class="list-inline-item">
-                                                                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, rowData, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="emptymessage">
-                                                <tr>
-                                                    <td colspan="6">
-                                                        <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
-                                                    </td>
-                                                </tr>
-                                            </ng-template>
-                                        </p-table>
-                                    </ng-template>
-                                </li>
-                                <li [ngbNavItem]="2">
-                                    <a ngbNavLink>
-                                        <i class="ri-user-2-line d-block fs-20 mb-1"></i>
-                                        Plafond CNAM
-                                    </a>
-                                    <ng-template ngbNavContent>
-
-                                        <p-table [value]="listPlafCnam" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                                            <ng-template pTemplate="header">
-                                                <tr>
-                                                    <th *ngFor="let column of ['annee_cnam','plafond','sold_plaf']" [pSortableColumn]="column">
-                                                        <div class="d-flex align-items-center">
-                                                            <span class="me-2" (click)="onSort2(column)">{{ columnTitles[column]|| column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
-                                                        </div>
-                                                    </th>
-                                                    <th class="text-center">Action</th>
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                                <tr>
-                                                    <td class="text-center align-middle">{{ rowData.annee_cnam }}</td>
-                                                    <td class="text-center align-middle">{{ rowData.plafond | number:'1.3-3' }}</td>
-                                                    <td class="text-center align-middle">{{ rowData.sold_plaf | number:'1.3-3' }}</td>
-                                                    <td>
-                                                        <ul class="list-inline hstack gap-2 mb-0">
-                                                            <li class="list-inline-item">
-                                                                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGetCnam(rowIndex, rowData, content2)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </ng-template>
-                                            <ng-template pTemplate="emptymessage">
-                                                <tr>
-                                                    <td colspan="4">
-                                                        <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
-                                                    </td>
-                                                </tr>
-                                            </ng-template>
-                                        </p-table>
-                                    </ng-template>
-                                </li>
-                            </ul>
-                        </div>
-                    </div> <!-- end col-->
-                    <div class="col-lg-9">
-                        <div class="tab-content text-muted mt-3 mt-lg-0">
-                            <div [ngbNavOutlet]="CustomVertical"></div>
-                        </div>
-                    </div> <!-- end col-->
-                </div> <!-- end row-->
-            </div><!-- end card-body -->
-        </div><!--end card-->
+    <div class="col-md-10">
+        <div class="card p-4 border shadow-none">
+            <div class="card-header page-card-header">
+                <div class="page-card-title">
+                    <h5>Plafonds</h5>
+                    <small>Modification du plafond mutuelle et du plafond CNAM par année</small>
+                </div>
+            </div>
+            <div class="border mb-3" role="tablist" aria-orientation="horizontal">
+                <ul ngbNav #CustomVertical="ngbNav" [activeId]="1"
+                    class="nav nav-pills bult-tabs">
+                    <li [ngbNavItem]="1">
+                        <a ngbNavLink>
+                        <h5 class="nav-titl m-0">Plafond mutuelle</h5>
+                      </a>
+                        <ng-template ngbNavContent>
+                    <p-table [value]="filterRows(listPlafAssur, 'a_')" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                        <ng-template pTemplate="header">
+                            <tr class="table-primary">
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort('annee_assur')"></i>
+                                        <span class="th-title" (click)="onSort('annee_assur')">Année</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('a_annee_assur')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['a_annee_assur']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['a_annee_assur']" placeholder="..." />
+                                </th>
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort('cod_assur')"></i>
+                                        <span class="th-title" (click)="onSort('cod_assur')">Assurance</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('a_cod_assur')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['a_cod_assur']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['a_cod_assur']" placeholder="..." />
+                                </th>
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort('libAssur')"></i>
+                                        <span class="th-title" (click)="onSort('libAssur')">Libellé</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('a_libAssur')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['a_libAssur']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['a_libAssur']" placeholder="..." />
+                                </th>
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort('plafond')"></i>
+                                        <span class="th-title" (click)="onSort('plafond')">Plafond</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('a_plafond')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['a_plafond']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['a_plafond']" placeholder="..." />
+                                </th>
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort('sold_plaf')"></i>
+                                        <span class="th-title" (click)="onSort('sold_plaf')">Consommé</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('a_sold_plaf')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['a_sold_plaf']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['a_sold_plaf']" placeholder="..." />
+                                </th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                            <tr>
+                                <td class="text-center">{{ rowData.annee_assur }}</td>
+                                <td class="text-center">{{ rowData.cod_assur }}</td>
+                                <td class="text-center">{{ rowData.libAssur }}</td>
+                                <td class="text-center">{{ rowData.plafond | number: '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.sold_plaf | number: '1.3-3' }}</td>
+                                <td>
+                                    <ul class="list-inline hstack gap-2 mb-0">
+                                        <li class="list-inline-item">
+                                            <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, rowData, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="6" class="text-center">Aucun plafond</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                        </ng-template>
+                    </li>
+                    <li [ngbNavItem]="2">
+                        <a ngbNavLink>
+                        <h5 class="nav-titl m-0">Plafond CNAM</h5>
+                      </a>
+                        <ng-template ngbNavContent>
+                    <p-table [value]="filterRows(listPlafCnam, 'c_')" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                        <ng-template pTemplate="header">
+                            <tr class="table-primary">
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('annee_cnam')"></i>
+                                        <span class="th-title" (click)="onSort2('annee_cnam')">Année</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('c_annee_cnam')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['c_annee_cnam']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['c_annee_cnam']" placeholder="..." />
+                                </th>
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('plafond')"></i>
+                                        <span class="th-title" (click)="onSort2('plafond')">Plafond</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('c_plafond')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['c_plafond']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['c_plafond']" placeholder="..." />
+                                </th>
+                                <th>
+                                    <div class="th-head">
+                                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('sold_plaf')"></i>
+                                        <span class="th-title" (click)="onSort2('sold_plaf')">Consommé</span>
+                                        <i class="ri-search-line th-search" (click)="toggleFilter('c_sold_plaf')"></i>
+                                    </div>
+                                    <input *ngIf="showFilters['c_sold_plaf']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['c_sold_plaf']" placeholder="..." />
+                                </th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                            <tr>
+                                <td class="text-center">{{ rowData.annee_cnam }}</td>
+                                <td class="text-center">{{ rowData.plafond | number: '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.sold_plaf | number: '1.3-3' }}</td>
+                                <td>
+                                    <ul class="list-inline hstack gap-2 mb-0">
+                                        <li class="list-inline-item">
+                                            <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGetCnam(rowIndex, rowData, content2)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="4" class="text-center">Aucun plafond</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                        </ng-template>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content text-muted">
+                <div [ngbNavOutlet]="CustomVertical"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -203,7 +232,7 @@
 
 <ng-template #content1 role="document" let-modal>
     <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">Modifier Plafond</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Modifier le plafond mutuelle</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
             (click)="modal.dismiss('Cross click')"></button>
     </div>
@@ -212,28 +241,28 @@
             <div class="row g-3"> 
                 <div class="col-md-2">
                     <label class="form-label">Année</label>
-                    <input type="text" class="form-control border-warning" formControlName="annee_assur" readonly
+                    <input type="text" class="form-control border-primary" formControlName="annee_assur" readonly
                         placeholder="Année" />
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">Code </label>
-                    <input type="text" class="form-control border-info" formControlName="cod_assur" readonly
+                    <label class="form-label">Code assurance</label>
+                    <input type="text" class="form-control border-primary" formControlName="cod_assur" readonly
                         placeholder="Code" />
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Libelle</label>
-                    <input type="text" class="form-control border-info" [value]="libAssur" placeholder="Libelle" readonly />
+                    <label class="form-label">Libellé assurance</label>
+                    <input type="text" class="form-control border-primary" [value]="libAssur" placeholder="Libellé" readonly />
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Plafond</label>
-                    <input type="text" class="form-control border-warning montant-input" appMontantMask formControlName="plafond"
-                        placeholder="Année" />
+                    <input type="text" class="form-control border-primary montant-input" appMontantMask formControlName="plafond"
+                        placeholder="0.000" />
                 </div>
 
                 <div class="col-md-2">
-                    <label class="form-label">Solde Plaf</label>
-                    <input type="text" class="form-control border-warning montant-input"  formControlName="sold_plaf" readonly
-                        placeholder="Solde Plaf" />
+                    <label class="form-label">Solde plafond</label>
+                    <input type="text" class="form-control border-primary montant-input"  formControlName="sold_plaf" readonly
+                        placeholder="0.000" />
                 </div>
 
             </div>
@@ -254,7 +283,7 @@
 
 <ng-template #content2 role="document" let-modal>
     <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">Modifier Plafond Cnam</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Modifier le plafond CNAM</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
             (click)="modal.dismiss('Cross click')"></button>
     </div>
@@ -263,20 +292,20 @@
             <div class="row g-3"> 
                 <div class="col-md-2">
                     <label class="form-label">Année</label>
-                    <input type="text" class="form-control border-warning" formControlName="annee_cnam" readonly
+                    <input type="text" class="form-control border-primary" formControlName="annee_cnam" readonly
                         placeholder="Année" />
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label">Plafond</label>
-                    <input type="text" class="form-control border-warning montant-input" appMontantMask formControlName="plafond"
-                        placeholder="Année" />
+                    <input type="text" class="form-control border-primary montant-input" appMontantMask formControlName="plafond"
+                        placeholder="0.000" />
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Solde Plaf</label>
-                    <input type="text" class="form-control border-warning montant-input"  formControlName="sold_plaf" readonly
-                        placeholder="Solde Plaf" />
+                    <label class="form-label">Solde plafond</label>
+                    <input type="text" class="form-control border-primary montant-input"  formControlName="sold_plaf" readonly
+                        placeholder="0.000" />
                 </div>
 
             </div>

@@ -117,7 +117,7 @@ table {
 }
 
 // Bouton supprimer
-button[type="button"] {
+button[type="button"]:not(.btn):not(.btn-close) {
   background: $danger-color;
   color: white;
   padding: 5px 10px;
@@ -146,4 +146,74 @@ button[type="button"] {
 th, td {
   white-space: nowrap; /* Empêche le texte de se couper */
   text-align: center;
+}
+
+/* ===== Onglets horizontaux au-dessus du tableau ===== */
+.bulletin-tabs {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.75rem;
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background-color: #f1f5f9;
+    color: #405189;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+
+    &:hover {
+      background-color: #e2e8f0;
+    }
+
+    &.active {
+      background-color: #3577f1;
+      color: #fff;
+    }
+  }
+}
+
+
+/* ===== Onglets : nom toujours affiché, onglet actif en bleu ===== */
+.bult-tabs {
+  flex-wrap: wrap;
+
+  .nav-item {
+    margin: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    padding: 0 1.5rem;
+    border-radius: 0;
+    background: transparent;
+    color: #212529;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+
+    &:hover:not(.active) {
+      background-color: #f1f5f9;
+      color: #405189;
+    }
+
+    &.active {
+      background-color: #3577f1;
+      color: #fff;
+    }
+
+    .nav-titl {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      color: inherit;
+    }
+  }
 }

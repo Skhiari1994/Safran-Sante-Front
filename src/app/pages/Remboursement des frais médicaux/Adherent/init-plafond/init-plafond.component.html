@@ -1,52 +1,51 @@
 <div class="col-md-12 d-flex justify-content-center">
-
-  <div style="width: 70%;"> <!-- Largeur du conteneur -->
+  <div class="col-xl-8 col-lg-10 col-12">
     <div class="collapse show" id="paymentmethodCollapse">
       <div class="card p-4 border shadow-none mb-0 mt-4">
-        <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-          <div class="row">
-            <div class="col-md-12">
-              <!-- Bloc 1 -->
-              <div class="row">
+        <div class="card-header page-card-header">
+          <div class="page-card-title">
+            <h5>Initialisation des plafonds</h5>
+            <small>Calcul des plafonds pour une année et une plage de matricules</small>
+          </div>
+        </div>
 
-                <div class="col-md-3">
-                  <label class="form-label">Année</label>
-                  <input type="text" class="form-control" formControlName="annee" mask="0000" />
-                </div>
-                <div class="row mt-3">
-                  <div class="col-md-2">
-                    <label class="form-label">Matricule début</label>
-                    <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
-                      [selectedCode]="formAdherent.get('mat_pers')?.value"
-                      (selectedValue)="onSelectedVMat($event)"></app-lov>
-                  </div>
+        <form action="javascript:void(0);" [formGroup]="formAdherent">
+          <div class="row g-3">
+            <!-- Année -->
+            <div class="col-md-3">
+              <label class="form-label">Année</label>
+              <input type="text" class="form-control border-primary" placeholder="aaaa" formControlName="annee" mask="0000" />
+            </div>
+            <div class="col-12"><hr class="my-1" /></div>
 
-                  <div class="col-md-5">
-                    <label class="form-label">Nom</label>
-                    <input type="text" class="form-control" formControlName="nom_deb" readonly />
-                  </div>
+            <!-- Matricule début -->
+            <div class="col-md-3">
+              <label class="form-label">Matricule début</label>
+              <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
+                [selectedCode]="formAdherent.get('mat_pers_deb')?.value"
+                (selectedValue)="onSelectedVMat($event)"></app-lov>
+            </div>
+            <div class="col-md-9">
+              <label class="form-label">Nom matricule début</label>
+              <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_deb" readonly />
+            </div>
 
-                </div>
+            <!-- Matricule fin -->
+            <div class="col-md-3">
+              <label class="form-label">Matricule fin</label>
+              <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
+                [selectedCode]="formAdherent.get('mat_pers_fin')?.value"
+                (selectedValue)="onSelectedVMatFin($event)"></app-lov>
+            </div>
+            <div class="col-md-9">
+              <label class="form-label">Nom matricule fin</label>
+              <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_fin" readonly />
+            </div>
 
-                <div class="col-md-2">
-                  <label class="form-label">Matricule fin</label>
-                  <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
-                    [selectedCode]="formAdherent.get('mat_pers')?.value"
-                    (selectedValue)="onSelectedVMatFin($event)"></app-lov>
-                </div>
-
-                <div class="col-md-5">
-                  <label class="form-label">Nom</label>
-                  <input type="text" class="form-control" formControlName="nom_fin" readonly />
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-center">
-                  <button class="btn btn-success btn-lg" (click)="calculePlafond()" [disabled]="formAdherent.invalid">
-                    <i class="fa fa-calculator"></i> Calculer
-                  </button>
-                </div>
-              </div>
+            <div class="col-12 d-flex justify-content-end mt-3">
+              <button class="btn btn-success" (click)="calculePlafond()" [disabled]="formAdherent.invalid">
+                <i class="ri-calculator-line me-1 align-bottom"></i> Calculer
+              </button>
             </div>
           </div>
         </form>

@@ -1,79 +1,125 @@
 <div class="row" style="margin-top: 25px"></div>
 
 <div class="container-fluid">
-    <app-page-title title="Gestion d'autorisations" [breadcrumbItems]="breadCrumbItems">
-    </app-page-title>
-    <div class="row">
-  <div class="col-md-12" style="display: flex;">
-    <div class="col-md-10">
-      <div  style="display: flex;"  class="col-md-4">
-        <label for="roles" class="col-md-4" style="margin-top: auto;">Selectionner un role :</label>
-        <select id="select"  class="form-select" aria-label="Default select example" (change)="onRoleChange($event)">
-          <option></option>
-          <option *ngFor="let i of roles" [value]="i.id" style="font-size: 11px;">
-            {{ i.name }}
-          </option>
-        </select>
-      </div>
-      <br>
-      <div class="card ">
+  <app-page-title title="Gestion d'autorisations" [breadcrumbItems]="breadCrumbItems">
+  </app-page-title>
+
+  <div class="row justify-content-center">
+    <div class="col-xxl-10">
+      <div class="card">
         <div class="card-body">
-          <div class="table-wrapper"  >
-            <table class="table table-bordered">
+          <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
+            <div class="page-card-title">
+              <h5>Autorisations par profil</h5>
+              <small>{{ menuData?.length || 0 }} module(s)</small>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label for="roles" class="form-label">Profil</label>
+              <select id="roles" class="form-select border-primary" (change)="onRoleChange($event)">
+                <option value="">Sélectionner</option>
+                <option *ngFor="let i of roles" [value]="i.id">{{ i.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Actions groupées sur la sélection -->
+          <div class="selection-bar" *ngIf="selected.size > 0">
+            <span class="selection-count"><i class="ri-checkbox-multiple-line me-1"></i>{{ selected.size }} sous-module(s) sélectionné(s)</span>
+            <div class="selection-actions">
+              <button type="button" class="btn btn-sm btn-success" [disabled]="busy" (click)="applySelection(true)">
+                <i class="ri-eye-line me-1"></i> Afficher la sélection
+              </button>
+              <button type="button" class="btn btn-sm btn-danger" [disabled]="busy" (click)="applySelection(false)">
+                <i class="ri-eye-off-line me-1"></i> Masquer la sélection
+              </button>
+              <button type="button" class="btn btn-sm btn-light" [disabled]="busy" (click)="clearSelection()">
+                Annuler la sélection
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrapper table-responsive table-card">
+            <table class="table table-bordered align-middle mb-0 autor-table">
               <thead>
-                <tr>
-                  <th style="font-size: 15px;">Pages</th>
-                  <th style="font-size: 15px;">Affiché</th>  
+                <tr class="table-primary">
+                  <th style="width: 90px" class="text-center">
+                    <input type="checkbox" class="form-check-input check-select" title="Tout sélectionner"
+                      [checked]="totalSubItems > 0 && selected.size === totalSubItems"
+                      [indeterminate]="selected.size > 0 && selected.size < totalSubItems"
+                      [disabled]="totalSubItems === 0" (change)="toggleSelectAll($event)">
+                    <div class="th-sub">Sélection</div>
+                  </th>
+                  <th>Pages</th>
+                  <th style="width: 140px" class="text-center">Affiché</th>
                 </tr>
               </thead>
               <tbody>
                 <ng-container *ngFor="let item of menuData">
-                  <tr style="border-width: 3px;">
+                  <tr class="module-row">
+                    <td class="text-center">
+                      <input *ngIf="item.subItems && item.subItems.length" type="checkbox"
+                        class="form-check-input check-select" title="Sélectionner tous les sous-modules"
+                        [checked]="isModuleFullySelected(item)" [indeterminate]="isModulePartlySelected(item)"
+                        (change)="toggleSelectModule(item, $event)">
+                    </td>
                     <td>
                       <span *ngIf="item.subItems && item.subItems.length" class="tree-indicator" (click)="toggleChildren(item)">
-                        <span [innerHTML]="item.expanded ? '&#9660;' : '&#9654;'"></span>
+                        <i [class]="item.expanded ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
                       </span>
-                      {{ item.label | translate }}
+                      <span class="fw-semibold">{{ item.label | translate }}</span>
                     </td>
-                    <td>
-                      <input type="checkbox" [checked]="item.checked" (change)="handleCheckboxChangeSub($event, item.id)">
+                    <td class="text-center">
+                      <input type="checkbox" class="form-check-input check-green" [checked]="item.checked" [disabled]="busy"
+                        (change)="handleCheckboxChangeSub($event, item.id)">
                     </td>
                   </tr>
-      
+
                   <ng-container *ngIf="item.subItems && item.subItems.length && item.expanded">
-                    <ng-container *ngTemplateOutlet="recursiveTemplate; context: { $implicit: item.subItems, level: 1, parentId: item.id }"></ng-container>
+                    <ng-container
+                      *ngTemplateOutlet="recursiveTemplate; context: { $implicit: item.subItems, level: 1, parentId: item.id }">
+                    </ng-container>
                   </ng-container>
                 </ng-container>
+                <tr *ngIf="!menuData || !menuData.length">
+                  <td colspan="3" class="text-center">
+                    <span class="badge bg-danger-subtle text-danger badge-border">Sélectionner un profil pour afficher ses autorisations</span>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-     
-    </div>&nbsp;&nbsp;<br>
-    <div class="col-md-2">
-     </div>
+    </div>
   </div>
-  
+
   <ng-template #recursiveTemplate let-subItems let-level="level" let-parentId="parentId">
     <ng-container *ngFor="let subItem of subItems">
-      <tr>
+      <tr [ngClass]="{'row-selected': isSelected(parentId, subItem.id)}">
+        <td class="text-center">
+          <input type="checkbox" class="form-check-input check-select" title="Sélectionner"
+            [checked]="isSelected(parentId, subItem.id)" (change)="toggleSelect(parentId, subItem.id, $event)">
+        </td>
         <td [style.padding-left.px]="getIndentationLevel(level)">
           <span *ngIf="subItem.subItems && subItem.subItems.length" class="tree-indicator" (click)="toggleChildren(subItem)">
-            <span [innerHTML]="subItem.expanded ? '&#9660;' : '&#9654;'"></span>
+            <i [class]="subItem.expanded ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
           </span>
           {{ subItem.label | translate }}
         </td>
-        <td>
-          <!-- Pass the parentId (which is item.id from the first parent) -->
-          <input type="checkbox" [checked]="subItem.checked" (change)="handleCheckboxChange($event, parentId, subItem.id)" >
+        <td class="text-center">
+          <input type="checkbox" class="form-check-input check-green" [checked]="subItem.checked" [disabled]="busy"
+            (change)="handleCheckboxChange($event, parentId, subItem.id)">
         </td>
       </tr>
-  
+
       <ng-container *ngIf="subItem.subItems && subItem.subItems.length && subItem.expanded">
-        <ng-container *ngTemplateOutlet="recursiveTemplate; context: { $implicit: subItem.subItems, level: level + 1, parentId: parentId }"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="recursiveTemplate; context: { $implicit: subItem.subItems, level: level + 1, parentId: parentId }">
+        </ng-container>
       </ng-container>
     </ng-container>
   </ng-template>
-  </div>
-  </div>
+</div>

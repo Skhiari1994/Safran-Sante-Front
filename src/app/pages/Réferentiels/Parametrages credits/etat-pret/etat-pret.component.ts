@@ -158,7 +158,7 @@ p: number = 1; // Pagination pour le premier tableau
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formEtatPret.reset() 
+    this.formEtatPret.reset({ typ_etat: '' }) 
     this.modalService.open(content, { size: "xl", centered: true });
   }
 
