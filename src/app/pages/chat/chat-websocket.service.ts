@@ -13,12 +13,15 @@ export interface ChatMessage {
     receiverId?: string;
     roomId?: string;
     content: string;
-    messageType: 'CHAT' | 'JOIN' | 'LEAVE' | 'READ_RECEIPT' | 'FILE' | 'IMAGE' | 'ONLINE' | 'OFFLINE' | 'TYPING' | 'VOICE';
+    messageType: 'CHAT' | 'JOIN' | 'LEAVE' | 'READ_RECEIPT' | 'FILE' | 'IMAGE' | 'ONLINE' | 'OFFLINE' | 'TYPING' | 'VOICE' | 'DELETE' | 'REACTION';
     timestamp?: Date;
     isRead?: boolean;
     unreadCount?: number;
     isOnline?: boolean;
     lastSeen?: any;
+    readAt?: any;
+    replyToId?: number;
+    reactions?: { userId: string; emoji: string }[];
 }
 
 export interface ChatRoom {
@@ -47,6 +50,8 @@ export class ChatWebSocketService {
     private messageSubject = new Subject<ChatMessage>();
     private userStatusSubject = new Subject<ChatMessage>();
     private connectionStatus = new BehaviorSubject<boolean>(false);
+    private connecting = false;
+    private manualClose = false;
 
  private readonly SOCKET_URL =  environment.gatewayUrl + '/communication-service/ws';
     private readonly API_URL = environment.gatewayUrl + environment.chatApiUrl;
@@ -61,10 +66,12 @@ export class ChatWebSocketService {
     constructor(private http: HttpClient, private ngZone: NgZone) { }
 
     connect(userId: string, userName: string): void {
-        if (this.stompClient && this.stompClient.connected) {
-            console.log('Already connected');
+        // déjà connecté, ou connexion en cours (layout et page du chat peuvent l'appeler en même temps)
+        if (this.connecting || (this.stompClient && this.stompClient.connected)) {
             return;
         }
+        this.connecting = true;
+        this.manualClose = false;
 
         const socket = new SockJS(this.SOCKET_URL);
         this.stompClient = Stomp.over(socket);
@@ -73,6 +80,7 @@ export class ChatWebSocketService {
         this.stompClient.connect({},
             (frame : any) => {
                 console.log('✅ STOMP Connected: ' + frame);
+                this.connecting = false;
                 this.connectionStatus.next(true);
 
                 // Subscribe to private messages
@@ -110,15 +118,19 @@ export class ChatWebSocketService {
             },
             (error :any) => {
                 console.error('Connection error:', error);
+                this.connecting = false;
                 this.connectionStatus.next(false);
-                // Reconnect after 5 seconds
-                setTimeout(() => this.connect(userId, userName), 5000);
+                // Reconnect after 5 seconds (sauf fermeture volontaire)
+                if (!this.manualClose) {
+                    setTimeout(() => this.connect(userId, userName), 5000);
+                }
             }
         );
     }
 
     disconnect(userId: string, userName: string): void {
         if (this.stompClient) {
+            this.manualClose = true;
             this.sendLeaveNotification(userId, userName);
             this.stompClient.disconnect(() => {
                 console.log('Disconnected');
@@ -158,6 +170,20 @@ export class ChatWebSocketService {
     }
 
     // REST API methods
+    /** Envoi par REST : le serveur enregistre le message, renvoie son id et le distribue au destinataire. */
+    sendMessageRest(message: ChatMessage): Observable<ChatMessage> {
+        return this.http.post<ChatMessage>(`${this.API_URL}/messages`, message);
+    }
+
+    /** Pose / remplace / retire (même émoji) la réaction de l'utilisateur sur un message. */
+    reactToMessage(messageId: number, userId: string, emoji: string): Observable<void> {
+        return this.http.put<void>(`${this.API_URL}/message/${messageId}/reaction`, null, { params: { userId, emoji } });
+    }
+
+    deleteMessage(messageId: number, userId: string): Observable<void> {
+        return this.http.delete<void>(`${this.API_URL}/message/${messageId}`, { params: { userId } });
+    }
+
     getUserChatRooms(userId: string): Observable<ChatRoom[]> {
         return this.http.get<ChatRoom[]>(`${this.API_URL}/rooms/${userId}`);
     }
@@ -187,7 +213,7 @@ export class ChatWebSocketService {
     }
 
     getAllUsers(): Observable<UserInfo[]> {
-        return this.http.get<UserInfo[]>(`${this.API_URL}/users`);
+        return this.http.get<UserInfo[]>(`${this.API_URL}/contacts`);
     }
 
     getRecentConversations(userId: string): Observable<ChatMessage[]> {

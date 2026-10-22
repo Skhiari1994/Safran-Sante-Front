@@ -165,7 +165,7 @@ export class OrgPretComponent {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formOrgPret.reset()
+    this.formOrgPret.reset({ typ_org: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

@@ -474,3 +474,312 @@ body {
 //   background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
 //   z-index: -1; /* Ensure it stays behind content */
 // }
+
+/* ===== Icônes d'action des tableaux (modifier / supprimer) ===== */
+.edit-item-btn,
+.remove-item-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+
+  i {
+    font-size: 1.1rem;
+    transition: color .15s ease;
+  }
+}
+
+/* Modifier : s'allume en jaune */
+.edit-item-btn:hover,
+.edit-item-btn:focus,
+.edit-item-btn:active {
+  background-color: rgba(247, 184, 75, 0.15);
+
+  i {
+    color: #f7b84b !important;
+  }
+}
+
+/* Supprimer : s'allume en rouge */
+.remove-item-btn:hover,
+.remove-item-btn:focus,
+.remove-item-btn:active {
+  background-color: rgba(240, 101, 72, 0.15);
+
+  i {
+    color: #f06548 !important;
+  }
+}
+
+
+/* ===== En-têtes de tableaux triables : flèches à gauche, titre au centre, loupe à droite ===== */
+.th-head {
+  display: grid;
+  grid-template-columns: 20px 1fr 20px;
+  align-items: center;
+  column-gap: 0.5rem;
+
+  .th-sort,
+  .th-search {
+    font-size: 1rem;
+    line-height: 1;
+    color: #878a99;
+    cursor: pointer;
+    justify-self: center;
+    transition: color .15s ease;
+
+    &:hover {
+      color: #3577f1;
+    }
+  }
+
+  .th-title {
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+  }
+}
+
+
+/* ===== Titre de carte avec barre d'accent + compteur ===== */
+.page-card-header {
+  background: transparent;
+  padding: 0 0 1rem;
+  border-bottom: 1px solid #e9ebec;
+  margin-bottom: 1rem;
+}
+
+.page-card-title {
+  border-left: 4px solid #3577f1;
+  padding-left: 0.75rem;
+
+  h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #212529;
+  }
+
+  small {
+    display: block;
+    margin-top: 0.15rem;
+    color: #878a99;
+    font-size: 0.8rem;
+  }
+}
+
+
+/* ===== Onglets horizontaux en pastilles (ngbNav) ===== */
+.bulletin-tabs {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.75rem;
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background-color: #f1f5f9;
+    color: #405189;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+
+    &:hover {
+      background-color: #e2e8f0;
+    }
+
+    &.active {
+      background-color: #3577f1;
+      color: #fff;
+    }
+  }
+}
+
+
+/* Annuler (fermer la ligne en cours d'édition) : s'allume en orange */
+.cancel-item-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+
+  i {
+    font-size: 1.1rem;
+    transition: color .15s ease;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: rgba(247, 184, 75, 0.15);
+
+    i {
+      color: #f7b84b !important;
+    }
+  }
+}
+
+
+/* ===== Onglets : nom toujours affiché, onglet actif en bleu (ngbNav) ===== */
+.bult-tabs {
+  flex-wrap: wrap;
+
+  .nav-item {
+    margin: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    padding: 0 1.5rem;
+    border-radius: 0;
+    background: transparent;
+    color: #212529;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+
+    &:hover:not(.active) {
+      background-color: #f1f5f9;
+      color: #405189;
+    }
+
+    &.active {
+      background-color: #3577f1;
+      color: #fff;
+    }
+
+    .nav-titl {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      color: inherit;
+    }
+  }
+}
+
+
+/* ===== Champs de date : icône calendrier (le calendrier s'ouvre au clic, voir shared/global-datepicker.ts) ===== */
+input[mask="00/00/0000"]:not([readonly]):not(:disabled),
+input[mask="00/0000"]:not([readonly]):not(:disabled),
+input[appdateformatter]:not([readonly]):not(:disabled),
+input[placeholder*="jj/mm" i]:not([readonly]):not(:disabled),
+input[placeholder*="dd/mm" i]:not([readonly]):not(:disabled) {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f7b84b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='18' rx='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/><line x1='3' y1='10' x2='21' y2='10'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 16px 16px;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.flatpickr-calendar {
+  z-index: 200000 !important;
+  font-family: inherit;
+}
+
+
+/* ===== Icône de sélection (flèche des listes déroulantes) en vert ===== */
+.form-select,
+select.form-control {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230ab39c' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230ab39c' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+}
+
+.p-dropdown .p-dropdown-trigger .p-dropdown-trigger-icon,
+.p-multiselect .p-multiselect-trigger .p-multiselect-trigger-icon {
+  color: #0ab39c;
+}
+
+
+/* ===== Contour des listes (vert) et des champs de date (jaune) ===== */
+select.form-select,
+select.form-control,
+.p-dropdown {
+  border: 1px solid #0ab39c !important;
+  border-radius: 0.25rem;
+
+  &:focus,
+  &:focus-within {
+    border-color: #0ab39c !important;
+    box-shadow: 0 0 0 0.15rem rgba(10, 179, 156, 0.2) !important;
+  }
+}
+
+input[mask="00/00/0000"]:not([readonly]):not(:disabled),
+input[mask="00/0000"]:not([readonly]):not(:disabled),
+input[appdateformatter]:not([readonly]):not(:disabled),
+input[placeholder*="jj/mm" i]:not([readonly]):not(:disabled),
+input[placeholder*="dd/mm" i]:not([readonly]):not(:disabled) {
+  border: 1px solid #f7b84b !important;
+
+  &:focus {
+    border-color: #f7b84b !important;
+    box-shadow: 0 0 0 0.15rem rgba(247, 184, 75, 0.25) !important;
+  }
+}
+
+
+/* Enregistrer la ligne : s'allume en vert */
+.save-item-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+
+  i {
+    font-size: 1.1rem;
+    transition: color .15s ease;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: rgba(10, 179, 156, 0.15);
+
+    i {
+      color: #0ab39c !important;
+    }
+  }
+}
+
+
+/* ===== Listes déroulantes PrimeNG : options toujours lisibles (y compris l'option « Sélectionner » sélectionnée) ===== */
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  color: #405189;
+  background: transparent;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: #0ab39c !important;
+  background: rgba(10, 179, 156, 0.12) !important;
+  font-weight: 600;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):hover,
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight).p-focus {
+  background: #f3f6f9 !important;
+  color: #405189 !important;
+}

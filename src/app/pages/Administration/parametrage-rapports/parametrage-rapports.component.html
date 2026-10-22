@@ -1,307 +1,180 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
-  <app-breadcrumbs
-    title="Paramétrages des rapports"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
+  <app-breadcrumbs title="Paramétrages des rapports" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
- 
-
+  <!-- Liste des rapports -->
   <div class="card">
     <div class="card-body">
-      <h3>Liste des rapports</h3>
-      <div class="d-flex justify-content-end mb-3">
-        <button
-          class="btn btn-info"
-          data-bs-toggle="modal"
-          data-bs-target="#showModal"
-          (click)="openModalTab(content1)"
-        >
-          <i class="ri-add-fill me-1 align-bottom"></i> Ajouter un rapport
+      <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
+        <div class="page-card-title">
+          <h5>Liste des rapports</h5>
+          <small>{{ rapports.length }} rapport(s)</small>
+        </div>
+        <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
+          (click)="openModalTab(content1)">
+          <i class="ri-add-fill me-1 align-bottom"></i> Ajouter rapport
         </button>
       </div>
-      <br>
+
       <div class="table-responsive table-card">
-        <table class="table align-middle table-hover">
+        <table class="table table-bordered align-middle text-center mb-0 rap-table">
           <thead>
             <tr class="table-primary">
-              <th
-                *ngFor="
-                  let column of [
-                    'cod_rap',
-                    'lib_rap_jsp',
-                    'path_report',
-                    'Actions'
-                  ]
-                "
-              >
-                <div class="d-flex align-items-center">
-                  <span class="me-2" (click)="onSort(column)">
-                    {{ columnTitles[column] || column }}
-                    <i class="ri-arrow-up-down-line ms-1"></i>
-                  </span>
-                  <i
-                    class="ri-search-line text-muted ms-2"
-                    (click)="toggleFilter(column)"
-                  ></i>
-                  <input
-                    *ngIf="showFilters[column]"
-                    type="text"
-                    class="form-control form-control-sm ms-2"
-                    style="width: 100px"
-                    [(ngModel)]="searchz[column]"
-                    (input)="applyFilter()"
-                    placeholder="..."
-                  />
+              <th>
+                <div class="th-head">
+                  <i class="ri-arrow-up-down-line th-sort" (click)="onSort('cod_rap')"></i>
+                  <span class="th-title" (click)="onSort('cod_rap')">{{ columnTitles['cod_rap'] || 'Code' }}</span>
+                  <i class="ri-search-line th-search" (click)="toggleFilter('cod_rap')"></i>
                 </div>
+                <input *ngIf="showFilters['cod_rap']" type="text" class="form-control form-control-sm mt-2" style="width: 100%"
+                  [(ngModel)]="searchz['cod_rap']" (input)="applyFilter()" placeholder="..." />
               </th>
+              <th>
+                <div class="th-head">
+                  <i class="ri-arrow-up-down-line th-sort" (click)="onSort('lib_rap_jsp')"></i>
+                  <span class="th-title" (click)="onSort('lib_rap_jsp')">{{ columnTitles['lib_rap_jsp'] || 'Libellé du rapport' }}</span>
+                  <i class="ri-search-line th-search" (click)="toggleFilter('lib_rap_jsp')"></i>
+                </div>
+                <input *ngIf="showFilters['lib_rap_jsp']" type="text" class="form-control form-control-sm mt-2" style="width: 100%"
+                  [(ngModel)]="searchz['lib_rap_jsp']" (input)="applyFilter()" placeholder="..." />
+              </th>
+              <th>
+                <div class="th-head">
+                  <i class="ri-arrow-up-down-line th-sort" (click)="onSort('path_report')"></i>
+                  <span class="th-title" (click)="onSort('path_report')">{{ columnTitles['path_report'] || 'Chemin du rapport' }}</span>
+                  <i class="ri-search-line th-search" (click)="toggleFilter('path_report')"></i>
+                </div>
+                <input *ngIf="showFilters['path_report']" type="text" class="form-control form-control-sm mt-2" style="width: 100%"
+                  [(ngModel)]="searchz['path_report']" (input)="applyFilter()" placeholder="..." />
+              </th>
+              <th>Action</th>
             </tr>
           </thead>
-
           <tbody>
             <tr *ngIf="rapports.length === 0">
-              <td>
-                <span
-                  class="badge bg-danger-subtle text-danger badge-border"
-                  >Aucune donnée disponible !
-                </span>
+              <td colspan="4">
+                <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
               </td>
             </tr>
-            <tr
-              *ngFor=" let data of rapports| paginate : { itemsPerPage: 6, currentPage: pSusp };let i = index"
-             
-               
-            >
+            <tr *ngFor="let data of rapports | paginate : { itemsPerPage: 6, currentPage: pSusp }; let i = index">
               <td>{{ data.cod_rap }}</td>
               <td>{{ data.lib_rap_jsp }}</td>
               <td>{{ data.path_report }}</td>
               <td>
-                <button
-                  class="btn btn-info btn-sm"
-                  (click)="getParametreByIdRapport(data.cod_rap)"
-                  >
-                  <i class="bx bx-edit"></i></button
-                >&nbsp;
-                <button
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteRapport(data.cod_rap)"
-                >
-                  <i class="bx bx-trash-alt"></i>
-                </button>
+                <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
+                  <li class="list-inline-item">
+                    <a class="edit-item-btn" title="Paramètres du rapport" (click)="getParametreByIdRapport(data.cod_rap)">
+                      <i class="ri-pencil-fill align-bottom text-muted"></i>
+                    </a>
+                  </li>
+                  <li class="list-inline-item me-0">
+                    <a class="remove-item-btn" title="Supprimer" (click)="deleteRapport(data.cod_rap)">
+                      <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                    </a>
+                  </li>
+                </ul>
               </td>
-           
             </tr>
           </tbody>
         </table>
       </div>
-      <div *ngIf="rapports.length > 0" class="d-flex justify-content-between mt-3">
+      <div *ngIf="rapports.length > 0" class="d-flex justify-content-between align-items-center mt-3">
         <span>{{ rapports.length }} ligne(s) trouvée(s) sur {{ getTotalPages() }} page(s)</span>
-      
-         
-      <div class="d-flex justify-content-end mt-3">
         <pagination-controls (pageChange)="pSusp = $event"></pagination-controls>
       </div>
     </div>
-     
-    </div>
   </div>
 
-
- <!--  <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-         
-        <div class="d-flex justify-content-end mb-3">
-          <button
-            class="btn btn-info"
-            data-bs-toggle="modal"
-            data-bs-target="#showModal"
-            (click)="openModalTab(content1)"
-          >
-            <i class="ri-add-fill me-1 align-bottom"></i> Ajouter
-          </button>
-        </div>
-        <h2>Liste des Rapports</h2>
-        <table class="table table-striped table-hover">
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col">Code</th>
-              <th scope="col">Libellé</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of rapports">
-              <td>{{ r.cod_rap }}</td>
-              <td>{{ r.lib_rap }}</td>
-              <td>
-                <button
-                  class="btn btn-info btn-sm"
-                  (click)="getParametreByIdRapport(r.cod_rap)"
-                >
-                  <i class="bx bx-edit"></i></button
-                >&nbsp;
-                <button
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteRapport(r.cod_rap)"
-                >
-                  <i class="bx bx-trash-alt"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div> -->
+  <!-- Paramètres du rapport sélectionné -->
   <div *ngIf="selectedCodRap" class="col-md-12">
     <div class="card">
-      
       <div class="card-body">
-        
-        <h3>Paramètres du rapport</h3>
-        <form
-          (ngSubmit)="ajouterParametre(formAjoutParam.value)"
-          #formAjoutParam="ngForm"
-          class="mt-4"
-        >
-          <div class="d-flex justify-content-end mb-3">
-            <button
-              type="submit"
-              class="btn btn-info"
-              data-bs-toggle="modal"
-              data-bs-target="#showModal"
-              [disabled]="!formAjoutParam.valid"
-            >
-              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter le paramètre
-            </button>
+        <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
+          <div class="page-card-title">
+            <h5>Paramètres du rapport</h5>
+            <small>Rapport {{ selectedCodRap }} · {{ parametres?.length || 0 }} paramètre(s)</small>
           </div>
-          <div class="row">
-            
-          
-            <div class="col-md-4 mb-3">
-              <div class="row align-items-center">
-                <label for="cod_param" class="col-4 col-form-label">Code du paramètre</label>
-                <div class="col-8">
-                  <input
-                    type="text"
-                    id="cod_param"
-                    name="cod_param"
-                    ngModel
-                    class="form-control"
-                    placeholder="Entrez le code"
-                    required
-                  />
-                </div>
-              </div>
+        </div>
+
+        <form (ngSubmit)="ajouterParametre(formAjoutParam.value)" #formAjoutParam="ngForm" autocomplete="off">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+              <label for="cod_param" class="form-label">Code du paramètre</label>
+              <input type="text" id="cod_param" name="cod_param" ngModel class="form-control border-primary"
+                placeholder="Code" required />
             </div>
-            <div class="col-md-4 mb-3">
-              <div class="row align-items-center">
-                <label for="lib_param" class="col-4 col-form-label">Libellé du paramètre</label>
-                <div class="col-8">
-                  <input
-                    type="text"
-                    id="lib_param"
-                    name="lib_param"
-                    ngModel
-                    class="form-control"
-                    placeholder="Entrez le libellé"
-                    required
-                  />
-                </div>
-              </div>
+            <div class="col-md-5">
+              <label for="lib_param" class="form-label">Libellé du paramètre</label>
+              <input type="text" id="lib_param" name="lib_param" ngModel class="form-control border-primary"
+                placeholder="Libellé" required />
+            </div>
+            <div class="col-md-3 d-flex justify-content-md-end">
+              <button type="submit" class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
+                [disabled]="!formAjoutParam.valid">
+                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter paramètre
+              </button>
             </div>
           </div>
-          
-          
-          
-          
         </form>
-        <table
-          *ngIf="parametres && parametres.length > 0"
-          class="table table-bordered table-hover"
-        >
-          <thead class="thead-light">
-            <tr>
-              <th scope="col">Code Paramètre</th>
-              <th scope="col">Libellé Paramètre</th>
-                <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of parametres">
-              <td>{{ p.cod_param }}</td>
-              <td>{{ p.lib_param }}</td>
-               <td>
-                <button
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteParametreById(p.id_rap)"
-                >
-                  <i class="bx bx-trash-alt"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+
+        <div class="table-responsive table-card mt-4" *ngIf="parametres && parametres.length > 0">
+          <table class="table table-bordered align-middle text-center mb-0 rap-table">
+            <thead>
+              <tr class="table-primary">
+                <th>Code paramètre</th>
+                <th>Libellé paramètre</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of parametres">
+                <td>{{ p.cod_param }}</td>
+                <td>{{ p.lib_param }}</td>
+                <td>
+                  <a class="remove-item-btn" title="Supprimer" (click)="deleteParametreById(p.id_rap)">
+                    <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #content1 role="document" let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">Créer un Rapport</h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="modal"
-      aria-label="Close"
-      id="close-modal"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
+  <div class="modal-header bg-info-subtle p-3">
+    <h5 class="modal-title">Ajouter un rapport</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+      (click)="modal.dismiss('Cross click')"></button>
   </div>
-  <div class="modal-body">
-    <form (ngSubmit)="ajouterRapport()">
-      
-      <div class="mb-3">
-        <label for="lib_rap_jsp" class="form-label">Libellé du rapport</label>
-        <input
-          type="text"
-          [(ngModel)]="nouveauRapport.lib_rap_jsp"
-          name="lib_rap_jsp"
-          id="lib_rap_jsp"
-          class="form-control"
-          placeholder="Entrez le nom de rapport"
-          required
-        />
+  <form (ngSubmit)="ajouterRapport()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-12">
+          <label for="lib_rap_jsp" class="form-label">Libellé du rapport</label>
+          <input type="text" [(ngModel)]="nouveauRapport.lib_rap_jsp" name="lib_rap_jsp" id="lib_rap_jsp"
+            class="form-control border-primary" placeholder="Libellé du rapport" required />
+        </div>
+        <div class="col-md-12">
+          <label for="path_report" class="form-label">Chemin du rapport</label>
+          <input type="text" [(ngModel)]="nouveauRapport.path_report" name="path_report" id="path_report"
+            class="form-control border-primary" placeholder="Chemin du rapport" required />
+        </div>
+        <div class="col-md-12">
+          <label for="titre" class="form-label">Titre du rapport</label>
+          <input type="text" [(ngModel)]="nouveauRapport.titre" name="titre" id="titre"
+            class="form-control border-primary" placeholder="Titre du rapport" required />
+        </div>
       </div>
-      <div class="mb-3">
-        <label for="path_report" class="form-label">Path du rapport</label>
-        <input
-          type="text"
-          [(ngModel)]="nouveauRapport.path_report"
-          name="path_report"
-          id="path_report"
-          class="form-control"
-          placeholder="Entrez le path du rapport"
-          required
-        />
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button type="button" class="btn btn-light" (click)="modal.dismiss('Close click')">Fermer</button>
+        <button type="submit" class="btn btn-success">Ajouter</button>
       </div>
-      <div class="mb-3">
-        <label for="titre" class="form-label">Titre du rapport</label>
-        <input
-          type="text"
-          [(ngModel)]="nouveauRapport.titre"
-          name="titre"
-          id="titre"
-          class="form-control"
-          placeholder="Entrez le titre du rapport"
-          required
-        />
-      </div>
-      <div class="text-center">
-        <button type="submit" class="btn btn-info w-20 py-2">Créer</button>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </ng-template>

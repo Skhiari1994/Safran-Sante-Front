@@ -113,7 +113,7 @@ export class ParamRegimeRembComponent {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formRegimeRemb.reset()
+    this.formRegimeRemb.reset({ dat_accouch: '', apci: '', pec: '', parente: '', sexe: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

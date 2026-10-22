@@ -7,6 +7,7 @@ import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
 import { SidebarService } from './sidebar.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
+import { ChatNotificationService } from 'src/app/pages/chat/chat-notification.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -21,15 +22,27 @@ export class SidebarComponent implements OnInit {
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(private router: Router, public translate: TranslateService,private sideBar:SidebarService,private token:TokenStorage) {
+  constructor(private router: Router, public translate: TranslateService,private sideBar:SidebarService,private token:TokenStorage, public chatNotifications: ChatNotificationService) {
     translate.setDefaultLang('en');
+  }
+
+  private containsChat(items: any[] | null | undefined): boolean {
+    return (items || []).some(i => this.isChatItem(i) || this.containsChat(i?.subItems));
+  }
+
+  /** Entrée du menu qui ouvre la messagerie (pour y afficher le compteur de messages non lus). */
+  isChatItem(item: any): boolean {
+    return (item?.label || '').toLowerCase() === 'chat' || (item?.link || '').toLowerCase() === '/chat';
   }
 
   ngOnInit(): void {
     // Menu Items
     console.log("this.token.getUser().roles[0].name",this.token.getUser())
     this.sideBar.getMenu(this.token.getUser().roles[0].id).subscribe(data=>{
-      this.menuItems = data;
+      // la bulle de chat dépend de l'autorisation « Chat » du profil (page Autorisations par profil)
+      this.chatNotifications.setAllowed(this.containsChat(data));
+      // le chat s'ouvre par la bulle flottante : pas d'entrée dans le menu latéral
+      this.menuItems = data.filter((item: any) => !this.isChatItem(item));
       this.menuItems.forEach((menuItem: any) => {
         console.log("menuItem",menuItem)
 
@@ -37,7 +50,7 @@ export class SidebarComponent implements OnInit {
       console.log("data",this.menuItems)
 
     })
-    
+
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {
@@ -140,18 +153,18 @@ export class SidebarComponent implements OnInit {
     if (environment.production) {
       pathName = pathName.replace('/velzon/angular/creative', '');
     }
-  
+
     const active = this.findMenuItem(pathName, this.menuItems);
-  
+
     // Only expand, don't toggle (avoid collapsing open menus)
     this.expandItem(active);
-  
+
     const ul = document.getElementById("navbar-nav");
     if (ul) {
       const items = Array.from(ul.querySelectorAll("a.nav-link"));
       const activeItems = items.filter((x: any) => x.classList.contains("active"));
       this.removeActivation(activeItems);
-  
+
       const matchingMenuItem = items.find((x: any) => {
         let path = x.pathname;
         if (environment.production) {
@@ -159,13 +172,13 @@ export class SidebarComponent implements OnInit {
         }
         return path === pathName;
       });
-  
+
       if (matchingMenuItem) {
         this.activateParentDropdown(matchingMenuItem);
       }
     }
   }
-  
+
   expandItem(item: any): void {
     if (!item) return;
     item.collapsed = false;
@@ -173,7 +186,7 @@ export class SidebarComponent implements OnInit {
       this.expandItem(item.parent);
     }
   }
-  
+
 
   private findMenuItem(pathname: string, menuItems: any[]): any {
     for (const menuItem of menuItems) {

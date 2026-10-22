@@ -6,51 +6,49 @@
 </div>
 <br>
 <div class="row">
-  <!-- Header with Add Button -->
-  <div class="card-header">
-    <div class="d-flex align-items-center flex-wrap gap-3">
-      <div class="flex-grow-1"></div>
-      <div class="flex-shrink-0">
-        <div class="hstack text-nowrap gap-2">
-          <button
-            class="btn btn-info add-btn mb-3"
-            data-bs-toggle="modal"
-            data-bs-target="#showModal"
-            (click)="openModalTab(content1)"
-          >
-            <i class="ri-add-fill me-1 align-bottom"></i> Rénouveler
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card Wrapper -->
-  <div class="card">
-    <div class="card-body">
-      <p-table [value]="listAffilMutuelle" [paginator]="true" [rows]="10" styleClass="modern-table">
-        <ng-template pTemplate="header">
-          <tr class="table-primary">
-            <th *ngFor="let column of ['dat_dem', 'num_assur', 'typ_aff', 'dat_ass', 'coef_cot','obs_aff']" [pSortableColumn]="column">
-              <div class="d-flex align-items-center">
-                <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }} </span>
-                <p-sortIcon [field]="column"></p-sortIcon>
-                <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+  <div class="col-xl-10">
+    <div class="container d-flex justify-content-center align-items-center">
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow mb-4">
+            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+              <div class="page-card-title">
+                <h5>Liste des renouvellements d'adhésion</h5>
+                <small>{{ listAffilMutuelle?.length || 0 }} affiliation(s)</small>
               </div>
-            </th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
+              <button
+                class="btn btn-info add-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#showModal"
+                (click)="openModalTab(content1)"
+              >
+                <i class="ri-add-fill me-1 align-bottom"></i> Renouveler adhésion
+              </button>
+            </div>
+            <div class="card-body">
+              <p-table [value]="listAffilMutuelle" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="table-primary">
+                    <th *ngFor="let column of ['dat_dem', 'num_assur', 'typ_aff', 'dat_ass', 'coef_cot', 'obs_aff']">
+                      <div class="th-head">
+                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+                      </div>
+                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    </th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </ng-template>
 
-        <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
           <tr>
-            <td>{{ data.dat_dem }}</td>
-            <td>{{ data.num_assur }}</td>
-            <td>{{ data.typ_aff === 'A' ? 'Adhérent' : 'Suspension' }}</td>
-            <td>{{ data.dat_ass }}</td>
-            <td>{{ data.coef_cot | number: '1.2-2'}} </td>
-            <td>{{ data.obs_aff }}</td>
+            <td class="text-center">{{ data.dat_dem }}</td>
+            <td class="text-center">{{ data.num_assur }}</td>
+            <td class="text-center">{{ data.typ_aff === 'A' ? 'Adhérent' : 'Suspension' }}</td>
+            <td class="text-center">{{ data.dat_ass }}</td>
+            <td class="text-center">{{ data.coef_cot | number: '1.2-2' }}</td>
+            <td class="text-center">{{ data.obs_aff }}</td>
             <td>
               <ul class="list-inline hstack gap-2 mb-0">
                 <li class="list-inline-item">
@@ -75,17 +73,18 @@
             </td>
           </tr>
         </ng-template>
-      </p-table>
+              </p-table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-
-
-
 <ng-template #content1 role="document" let-modal>
   <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="exampleModalLabel">Ajouter affiliation</h5>
+    <h5 class="modal-title" id="exampleModalLabel">Renouvellement d'adhésion</h5>
     <button
       type="button"
       class="btn-close"
@@ -101,11 +100,10 @@
     autocomplete="off"
   >
     <div class="modal-body">
+      <!-- Adhérent -->
       <div class="row g-3">
         <div class="col-md-3">
-          <label for="billinginfo-firstName" class="form-label"
-            >Matricule</label
-          >
+          <label class="form-label">Matricule</label>
           <app-lov
             [listData]="listPersonnel"
             [columns]="columnsSearch"
@@ -116,33 +114,18 @@
           </app-lov>
         </div>
         <div class="col-md-4">
-          <label for="billinginfo-firstName" class="form-label">Nom</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer Nom"
-            [value]="nomPers"
-            readonly
-          />
-        </div>
-        <div class="col-md-4">
-          <label for="billinginfo-lastName" class="form-label">Prénom</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer prénom"
-            [value]="prenPers"
-            readonly
-          />
+          <label class="form-label">Nom</label>
+          <input type="text" class="form-control border-primary" placeholder="Nom" [value]="nomPers" readonly />
         </div>
         <div class="col-md-5">
-          <label for="country" class="form-label">Corps</label>
-          <select
-            class="form-select border-success"
-            data-plugin="choices"
-            formControlName="corps"
-          >
-            <option value="">Select corps...</option>
+          <label class="form-label">Prénom</label>
+          <input type="text" class="form-control border-primary" placeholder="Prénom" [value]="prenPers" readonly />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Corps</label>
+          <select class="form-select border-primary" formControlName="corps">
+            <option value="">Sélectionner</option>
             <option value="C">Cadre commun</option>
             <option value="S">Sécurité</option>
             <option value="M">Mediateur administratif</option>
@@ -152,20 +135,18 @@
             <option value="D">Divers</option>
           </select>
         </div>
-        <div class="col-md-6">
-          <label for="billinginfo-phone" class="form-label">Cin</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer CIN"
-            [value]="cin"
-            mask="00000000"
-            readonly
-          />
+        <div class="col-md-4">
+          <label class="form-label">Cin</label>
+          <input type="text" class="form-control border-primary" placeholder="CIN" [value]="cin" mask="00000000" readonly />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Date d'embauche</label>
+          <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            [value]="datEmb" appDateFormatter readonly />
         </div>
 
-        <div class="col-md-2">
-          <label for="billinginfo-phone" class="form-label">Code </label>
+        <div class="col-md-3">
+          <label class="form-label">Code position</label>
           <app-lov
             [listData]="listAffectation"
             [columns]="columnAffect"
@@ -175,35 +156,13 @@
           >
           </app-lov>
         </div>
-        <div class="col-6">
-          <label for="billinginfo-lastName" class="form-label"
-            >Libelle position administratif
-          </label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Lib Affectation"
-            [value]="libAffect"
-            readonly
-          />
-        </div>
-        <div class="col-md-3">
-          <label for="billinginfo-phone" class="form-label"
-            >Date d'embauche</label
-          >
-          <input
-            type="text"
-            class="form-control border-warning"
-            mask="00/00/0000"
-            placeholder="Entrer la date d'embauche"
-            [value]="datEmb"
-            appDateFormatter
-            readonly
-          />
+        <div class="col-md-9">
+          <label class="form-label">Libellé position administrative</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé position" [value]="libAffect" readonly />
         </div>
 
-        <div class="col-md-2">
-          <label for="billinginfo-phone" class="form-label">Code</label>
+        <div class="col-md-3">
+          <label class="form-label">Code motif de départ</label>
           <app-lov
             [listData]="listTypeDepart"
             [columns]="columnsTypDepart"
@@ -213,133 +172,73 @@
           >
           </app-lov>
         </div>
-        <div class="col-md-6">
-          <label for="billinginfo-phone" class="form-label"
-            >Libellé de motif de départ</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Type départ"
-            [value]="libTypDepart"
-            readonly
-          />
+        <div class="col-md-9">
+          <label class="form-label">Libellé de motif de départ</label>
+          <input type="text" class="form-control border-primary" placeholder="Motif de départ" [value]="libTypDepart" readonly />
         </div>
-        <div class="col-md-3">
-          <label for="billinginfo-lastName" class="form-label">Etat</label>
-          <select
-            class="form-select border-success"
-            data-plugin="choices"
-            [value]="etatAct"
-          >
-            <option value="">Select état...</option>
+
+        <div class="col-md-4">
+          <label class="form-label">Etat</label>
+          <select class="form-select border-primary" [value]="etatAct" disabled>
+            <option value="">Sélectionner</option>
             <option value="A">Actif</option>
             <option value="B">Bloqué</option>
             <option value="I">En Instance</option>
           </select>
         </div>
-
         <div class="col-md-4">
-          <label for="country" class="form-label">Situation sociale</label>
-          <select
-            class="form-select border-success"
-            data-plugin="choices"
-            [value]="codSit"
-          >
-            <option value="">Select situation...</option>
+          <label class="form-label">Situation sociale</label>
+          <select class="form-select border-primary" [value]="codSit" disabled>
+            <option value="">Sélectionner</option>
             <option value="C">Célibataire</option>
             <option value="M">Marié(e)</option>
             <option value="D">Divorcé(e)</option>
             <option value="V">Voeuf(ve)</option>
           </select>
         </div>
-
-        <div class="col-md-3">
-          <label for="billinginfo-phone" class="form-label"
-            >Nombre Enfants</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Type départ"
-            [value]="nbrEnf"
-            readonly
-          />
+        <div class="col-md-4">
+          <label class="form-label">Nombre d'enfants</label>
+          <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants" [value]="nbrEnf" readonly />
         </div>
       </div>
-      <hr />
+
+      <hr class="my-4" />
+
+      <!-- Affiliation -->
       <div class="row g-3">
-        <div class="col-md-3">
-          <label for="billinginfo-phone" class="form-label">Date demande</label>
-          <input
-            type="text"
-            class="form-control border-warning"
-            mask="00/00/0000"
-            placeholder="Entrer la date d'embauche"
-            formControlName="dat_dem"
-            appDateFormatter
-          />
+        <div class="col-md-4">
+          <label class="form-label">Date demande</label>
+          <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            formControlName="dat_dem" appDateFormatter />
         </div>
-
-        <div class="col-md-3">
-          <label for="billinginfo-phone" class="form-label">Date d'effet</label>
-          <input
-
-            type="text"
-            class="form-control border-warning"
-            mask="00/00/0000"
-            placeholder="Entrer la date d'embauche"
-            formControlName="dat_ass"
-            appDateFormatter
-          />
+        <div class="col-md-4">
+          <label class="form-label">Date d'effet</label>
+          <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            formControlName="dat_ass" appDateFormatter />
         </div>
-        <div class="col-4">
-          <label for="billinginfo-phone" class="form-label"
-            >Numéro assurance</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Num affil mutuelle"
-            formControlName="num_assur"
-          />
+        <div class="col-md-4">
+          <label class="form-label">Numéro assurance</label>
+          <input type="text" class="form-control border-primary" placeholder="Num affiliation mutuelle" formControlName="num_assur" />
         </div>
-        <div class="col-4">
-          <label for="country" class="form-label">Type adhésion</label>
-          <select
-            class="form-select border-success"
-            data-plugin="choices"
-            formControlName="typ_aff"
-          >
-            <option value="">Select état...</option>
+        <div class="col-md-6">
+          <label class="form-label">Type adhésion</label>
+          <select class="form-select border-primary" formControlName="typ_aff">
+            <option value="">Sélectionner</option>
             <option value="A">Adhéré</option>
-            <option selected value="S">Suspension</option>
+            <option value="S">Suspension</option>
           </select>
         </div>
-        <div class="col-4">
-          <label for="country" class="form-label">Etat </label>
-          <select
-            class="form-select border-success"
-            data-plugin="choices"
-            formControlName="etat_aff"
-          >
-            <option value="">Select état...</option>
+        <div class="col-md-6">
+          <label class="form-label">Etat affiliation</label>
+          <select class="form-select border-primary" formControlName="etat_aff">
+            <option value="">Sélectionner</option>
             <option value="I">En instance</option>
             <option value="V">Validée</option>
           </select>
         </div>
-        <div class="col-lg-12">
-          <div>
-            <label for="industry_type-field" class="form-label"
-              >Observation</label
-            >
-            <textarea
-              type="text"
-              class="form-control border-warning"
-              placeholder="Enter obs"
-              formControlName="obs_aff"
-            ></textarea>
-          </div>
+        <div class="col-md-12">
+          <label class="form-label">Observation</label>
+          <textarea class="form-control border-primary" rows="2" placeholder="Observation" formControlName="obs_aff"></textarea>
         </div>
       </div>
     </div>
@@ -362,7 +261,7 @@
           data-bs-dismiss="modal"
           (click)="modal.close('Close click')"
         >
-          Close
+          Fermer
         </button>
       </div>
     </div>

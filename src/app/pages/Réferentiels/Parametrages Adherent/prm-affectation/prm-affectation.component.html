@@ -1,6 +1,6 @@
 <div class="row" style="margin-top: 25px"> 
   <app-breadcrumbs
-  title="Affectation"
+  title="Affectations"
   [breadcrumbItems]="breadCrumbItems"
 ></app-breadcrumbs>
 
@@ -14,15 +14,18 @@
         <div class="col-md-12">
           <div class="collapse show" id="paymentmethodCollapse">
             <div class="card p-4 border shadow mb-4">
-              <div class="card-header   text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Liste des affectations</h5>
+              <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+                <div class="page-card-title">
+                  <h5>Liste des affectations</h5>
+                  <small>{{ listAffectation?.length || 0 }} affectation(s)</small>
+                </div>
                 <button
-                  class="btn btn-light"
+                  class="btn btn-info add-btn"
                   data-bs-toggle="modal"
                   data-bs-target="#showModal"
                   (click)="openModalTab(content)"
                 >
-                  <i class="ri-add-fill me-1"></i> Ajouter affectation
+                  <i class="ri-add-fill me-1 align-bottom"></i> Ajouter affectation
                 </button>
               </div>
               <div class="card-body">

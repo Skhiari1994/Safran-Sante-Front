@@ -25,3 +25,51 @@
     background-color:#f3f3f9;
     z-index: 1;
   }
+
+.tree-indicator {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-right: 4px;
+  color: #405189;
+  font-size: 1.2rem;
+}
+
+:host ::ng-deep .autor-table thead th { vertical-align: middle; }
+:host ::ng-deep .autor-table td { vertical-align: middle; }
+:host ::ng-deep .autor-table .module-row td { background-color: #f8f9fb; }
+:host ::ng-deep .autor-table .check-green {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  cursor: pointer;
+  background-color: #fff;
+  border: 2px solid #878a99;
+  border-radius: 6px;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+:host ::ng-deep .autor-table .check-green:hover { border-color: #0ab39c; box-shadow: 0 0 0 .2rem rgba(10, 179, 156, .2); }
+:host ::ng-deep .autor-table .check-green:checked { background-color: #0ab39c; border-color: #0ab39c; }
+
+/* ---------- sélection multiple ---------- */
+:host ::ng-deep .autor-table .check-select { width: 1.1rem; height: 1.1rem; cursor: pointer; border-color: #405189; }
+:host ::ng-deep .autor-table .check-select:checked,
+:host ::ng-deep .autor-table .check-select:indeterminate { background-color: #405189; border-color: #405189; }
+:host ::ng-deep .autor-table .th-sub { font-size: 11px; font-weight: 500; color: #6c757d; margin-top: 2px; }
+:host ::ng-deep .autor-table tr.row-selected td { background-color: rgba(64, 81, 137, .08); }
+
+.selection-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(64, 81, 137, .35);
+  border-radius: 6px;
+  background: rgba(64, 81, 137, .07);
+
+  .selection-count { font-weight: 600; color: #405189; }
+  .selection-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+}

@@ -269,6 +269,21 @@ export class MajPlafondComponent {
   }
 
 
+  // Filtres par colonne : clés préfixées « a_ » (plafond mutuelle) et « c_ » (plafond CNAM)
+  showFilters: { [key: string]: boolean } = {};
+  searchz: { [key: string]: string } = {};
+  toggleFilter(key: string) {
+    this.showFilters[key] = !this.showFilters[key];
+    if (!this.showFilters[key]) this.searchz[key] = '';
+  }
+  filterRows(list: any[], prefix: string): any[] {
+    const keys = Object.keys(this.searchz).filter(k => k.startsWith(prefix) && this.searchz[k]);
+    if (!keys.length) return list || [];
+    return (list || []).filter(row =>
+      keys.every(k => String(row[k.substring(prefix.length)] ?? '').toLowerCase().includes(this.searchz[k].toLowerCase()))
+    );
+  }
+
   onSort(column: any) {
     this.listPlafAssur = this.service.onSort(column, this.listPlafAssur);
   }

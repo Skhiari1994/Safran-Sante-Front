@@ -18,3 +18,7 @@
     width: 20%;
   }
   
+:host ::ng-deep .menu-table thead th { text-align: center; vertical-align: middle; white-space: nowrap; }
+:host ::ng-deep .menu-table td { vertical-align: middle; }
+:host ::ng-deep .menu-table input.form-control,
+:host ::ng-deep .menu-table select.form-select { height: 38px; font-size: .875rem; }

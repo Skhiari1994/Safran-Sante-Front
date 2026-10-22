@@ -219,7 +219,7 @@ applyFilter1() {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formTypePret.reset()
+    this.formTypePret.reset({ typ_plafond: '', typ_int: '', commission: '', renouv: '' })
     this.formTypePret.patchValue({
       cod_soc:this.tokenStorage.getUser().codSoc
     })

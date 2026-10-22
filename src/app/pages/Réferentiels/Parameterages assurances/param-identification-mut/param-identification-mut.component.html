@@ -9,8 +9,11 @@
 <div class="col-md-12">
   <!-- Card Wrapper -->
   <div class="card">
-    <div class="card-header">
-      <h4>Identification mutuelle</h4>
+    <div class="card-header page-card-header px-4 pt-4">
+      <div class="page-card-title">
+        <h5>Identification mutuelle</h5>
+        <small>Informations générales de la mutuelle</small>
+      </div>
     </div>
     <div class="card-body">
       <form [formGroup]="formAssurance">
@@ -181,47 +184,48 @@
 <div class="col-md-12">
   <div class="row">
     <!-- Left Column: Valeurs des remboursements -->
-    <div class="col-md-6">
+    <div class="col-md-12 mt-3">
       <div class="card h-100">
         <div class="card-body">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Valeurs des remboursements</h4>
+          <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+            <div class="page-card-title">
+              <h5>Valeurs des remboursements</h5>
+              <small>{{ ListeFiliere?.length || 0 }} filière(s)</small>
+            </div>
             <button
-              class="btn btn-info"
+              class="btn btn-info add-btn"
               data-bs-toggle="modal"
               data-bs-target="#showModal"
               (click)="openModalTab(content)"
               *ngIf="formAssurance.get('cod_assur')?.value"
             >
-              <i class="ri-add-fill me-1"></i> Ajouter Filiere
+              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Filiere
             </button>
           </div>
-          <br>            
           <p-table [value]="ListeFiliere" [paginator]="true" [rows]="3" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
             <ng-template pTemplate="header">
               <tr class="table-primary">
                 <th *ngFor="let column of ['cod_fil','libelle','mnt_adher','mnt_enf','mnt_conj','mnt_pere','mnt_mere','prorat_pec']">
-                  <div class="d-flex align-items-center">
-                    <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }}
-                      <i class="ri-arrow-up-down-line ms-1"></i>
-                    </span>
-                    <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                  </div>
+                  <div class="th-head">
+<i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+<span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+<i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+</div>
+<input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
                 </th>
-                <th>Action</th>
+                <th class="text-center">Action</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
               <tr [ngClass]="{'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0}">
-                <td>{{ rowData.cod_fil }}</td>
-                <td>{{ rowData.libelle }}</td>
-                <td>{{ rowData.mnt_adher | number : '1.3-3' }}</td>
-                <td>{{ rowData.mnt_enf | number : '1.3-3' }}</td>
-                <td>{{ rowData.mnt_conj | number : '1.3-3' }}</td>
-                <td>{{ rowData.mnt_pere | number : '1.3-3' }}</td>
-                <td>{{ rowData.mnt_mere | number : '1.3-3' }}</td>
-                <td>{{ rowData.prorat_pec == 'O' ? 'Oui' : rowData.prorat_pec == 'N' ? 'Non' : '' }}</td>
+                <td class="text-center">{{ rowData.cod_fil }}</td>
+                <td class="text-center">{{ rowData.libelle }}</td>
+                <td class="text-center">{{ rowData.mnt_adher | number : '1.3-3' }}</td>
+                <td class="text-center">{{ rowData.mnt_enf | number : '1.3-3' }}</td>
+                <td class="text-center">{{ rowData.mnt_conj | number : '1.3-3' }}</td>
+                <td class="text-center">{{ rowData.mnt_pere | number : '1.3-3' }}</td>
+                <td class="text-center">{{ rowData.mnt_mere | number : '1.3-3' }}</td>
+                <td class="text-center">{{ rowData.prorat_pec == 'O' ? 'Oui' : rowData.prorat_pec == 'N' ? 'Non' : '' }}</td>
                 <td>
                   <ul class="list-inline hstack gap-2 mb-0">
                     <li class="list-inline-item">
@@ -244,43 +248,44 @@
     </div>
 
     <!-- Right Column: Activité Famille -->
-    <div class="col-md-6">
+    <div class="col-md-12 mt-3">
       <div class="card h-100">
         <div class="card-body">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Activité Famille</h4>
+          <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+            <div class="page-card-title">
+              <h5>Activité famille</h5>
+              <small>{{ ListAcivMutuelle?.length || 0 }} activité(s)</small>
+            </div>
             <button
-              class="btn btn-info"
+              class="btn btn-info add-btn"
               data-bs-toggle="modal"
               data-bs-target="#showModal"
               (click)="openModalFamille(content1)"
               *ngIf="formAssurance.get('cod_assur')?.value"
             >
-              <i class="ri-add-fill me-1"></i> Ajouter Activité Famille
+              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Activité Famille
             </button>
           </div>
-          <br> 
           <p-table [value]="ListAcivMutuelle" [paginator]="true" [rows]="3" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
             <ng-template pTemplate="header">
               <tr class="table-primary">
                 <th *ngFor="let column of ['cod_activite', 'libelle', 'age_max','age_alert']">
-                  <div class="d-flex align-items-center">
-                    <span class="me-2" (click)="onSort1(column)"> {{ columnTitlesFamille[column] || column }} 
-                      <i class="ri-arrow-up-down-line ms-1"></i>
-                    </span>
-                    <i class="ri-search-line text-muted ms-2" (click)="toggleFilter1(column)"></i>
-                    <input *ngIf="showFilters1[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz1[column]" (input)="applyFilter1()" placeholder="..." />
-                  </div>
+                  <div class="th-head">
+<i class="ri-arrow-up-down-line th-sort" (click)="onSort1(column)"></i>
+<span class="th-title" (click)="onSort1(column)">{{ columnTitlesFamille[column] || column }}</span>
+<i class="ri-search-line th-search" (click)="toggleFilter1(column)"></i>
+</div>
+<input *ngIf="showFilters1[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz1[column]" (input)="applyFilter1()" placeholder="..." />
                 </th>
-                <th>Action</th>
+                <th class="text-center">Action</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
               <tr [ngClass]="{'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0}">
-                <td>{{ rowData.cod_activite }}</td>
-                <td>{{ rowData.libelle }}</td>
-                <td>{{ rowData.age_max }}</td>
-                <td>{{ rowData.age_alert }}</td>
+                <td class="text-center">{{ rowData.cod_activite }}</td>
+                <td class="text-center">{{ rowData.libelle }}</td>
+                <td class="text-center">{{ rowData.age_max }}</td>
+                <td class="text-center">{{ rowData.age_alert }}</td>
                 <td>
                   <ul class="list-inline hstack gap-2 mb-0">
                     <li class="list-inline-item">
@@ -335,6 +340,7 @@
               class="form-control border-warning"
               formControlName="cod_fil"
             >
+<option value="">Sélectionner</option>
               <option
                 *ngFor="let filiere of ListeAllFiliere"
                 [value]="filiere.cod_fil"
@@ -425,6 +431,7 @@
               class="form-control border-warning"
               formControlName="prorat_pec"
             >
+<option value="">Sélectionner</option>
               <option [value]="'O'">Oui</option>
               <option [value]="'N'">Non</option>
             </select>
@@ -482,6 +489,7 @@
               class="form-control border-warning"
               formControlName="cod_activite"
             >
+<option value="">Sélectionner</option>
               <option
                 *ngFor="let filiere of ListActiviteFamille"
                 [value]="filiere.cod_activite"

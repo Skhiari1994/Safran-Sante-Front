@@ -9,74 +9,62 @@
       <div class="card">
         <div class="card-body">
           <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
-            <div class="row mb-4">
-
-              <div class="col-sm-4 col-md-2">
+            <div class="row g-3">
+              <div class="col-md-2">
                 <label for="codBord" class="form-label">Code bordereau</label>
                 <app-lov [listData]="AllBordEnvoi" [columns]="columnBordEnvoi" codeField="cod_bord"
                   [selectedCode]="codBord" (selectedValue)="onSelectedValueBordEnvoi($event)">
                 </app-lov>
               </div>
-
-
-              <div class="col-sm-4 col-md-1">
+              <div class="col-md-2">
                 <label for="dateBord" class="form-label">Date</label>
-                <input type="text" id="dateBord" class="form-control border-primary" placeholder="Date"
+                <input type="text" id="dateBord" class="form-control border-primary" placeholder="jj/mm/aaaa"
                   [value]="dateBord" readonly />
               </div>
-              <div class="col-sm-4 col-md-1">
-                <label for="dateBord" class="form-label">Code ass</label>
-                <input type="text" id="dateBord" class="form-control border-primary" placeholder="Code ass"
+              <div class="col-md-2">
+                <label for="codAss" class="form-label">Assurance</label>
+                <input type="text" id="codAss" class="form-control border-primary" placeholder="Code"
                   formControlName="cod_assur" readonly />
               </div>
-              <div class="col-sm-4 col-md-3">
-                <label for="lib_assurance" class="form-label">Assurance</label>
-                <input type="text" id="lib_assurance" class="form-control border-primary" placeholder="Assurance"
+              <div class="col-md-6">
+                <label for="lib_assurance" class="form-label">Libellé assurance</label>
+                <input type="text" id="lib_assurance" class="form-control border-primary" placeholder="Libellé"
                   formControlName="lib_assurance" />
               </div>
 
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Remb.</label>
-                <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Remb."
+              <div class="col-md-2">
+                <label for="tot_net" class="form-label">Total remboursé</label>
+                <input type="text" id="tot_net" class="form-control border-primary text-end" placeholder="0.000"
                   formControlName="tot_net" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Hono.</label>
-                <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Hono.."
+              <div class="col-md-2">
+                <label for="tot_honor" class="form-label">Total honoraires</label>
+                <input type="text" id="tot_honor" class="form-control border-primary text-end" placeholder="0.000"
                   formControlName="tot_honor" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="nbr_bult" class="form-label">Nbre. Bulletin</label>
+              <div class="col-md-2">
+                <label for="nbr_bult" class="form-label">Nombre de bulletins</label>
                 <input type="text" id="nbr_bult" class="form-control border-primary text-end"
-                  placeholder="Nombre de Bulletin" formControlName="nbr_bult" />
+                  placeholder="Nombre de bulletins" formControlName="nbr_bult" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Date début</label>
-                <input type="text" id="tot_remb" class="form-control border-primary" placeholder="Date début"
+              <div class="col-md-2">
+                <label for="dat_deb" class="form-label">Date début</label>
+                <input type="text" id="dat_deb" class="form-control border-primary" placeholder="jj/mm/aaaa"
                   formControlName="dat_deb" />
               </div>
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Date fin</label>
-                <input type="text" id="tot_remb" class="form-control border-primary " placeholder="Date fin"
+              <div class="col-md-2">
+                <label for="dat_fin" class="form-label">Date fin</label>
+                <input type="text" id="dat_fin" class="form-control border-primary" placeholder="jj/mm/aaaa"
                   formControlName="dat_fin" />
               </div>
-
-              <div class="row mb-4">
-                <div class="col-sm-4 ">
-                  <button class="btn btn-success" (click)="reglerBord()" [disabled]="reg === 'O'">
-                    <i class="ri-add-fill me-1"></i> Régler Bordereau
-                  </button>
-                </div>
-                <div class="col-sm-4 ">
-                  <button class="btn btn-success" (click)="clotureBord()">
-                    <i class="ri-add-fill me-1"></i> Cloture Bordereau
-                  </button>
-                </div>
+              <div class="col-md-2 d-flex align-items-end justify-content-md-end gap-2 flex-wrap">
+                <button class="btn btn-success" type="button" (click)="reglerBord()" [disabled]="reg === 'O'">
+                  <i class="ri-check-double-line me-1 align-bottom"></i> Régler bordereau
+                </button>
+                <button class="btn btn-info" type="button" (click)="clotureBord()">
+                  <i class="ri-lock-line me-1 align-bottom"></i> Clôturer bordereau
+                </button>
               </div>
-
             </div>
           </form>
         </div>
@@ -84,6 +72,12 @@
 
       <div class="card">
         <div class="card-body">
+          <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+            <div class="page-card-title">
+              <h5>Bulletins du bordereau</h5>
+              <small>{{ bordArriver?.length || 0 }} bulletin(s)</small>
+            </div>
+          </div>
           <div class="table-responsive table-card">
             <p-table [value]="bordArriver" [paginator]="true" [rows]="9"
               styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
@@ -91,45 +85,43 @@
                 <tr>
                   <th
                     *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','nom_pers','dat_saisie','dat_soin','solde','tot_honor','tot_net']"
-                    [pSortableColumn]="column">
-                    <div class="d-flex align-items-center">
-                      <span class="me-2" (click)="onSort(column)">
-                        {{ columnTitles[column] || column }}
-                        <i class="ri-arrow-up-down-line ms-1"></i>
-                      </span>
-                      <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2"
-                        style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    >
+                    <div class="th-head">
+                      <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                      <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                      <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
                     </div>
+                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2"
+                      style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" (click)="$event.stopPropagation()" placeholder="..." />
                   </th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
                 <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="logRowData(rowData, rowIndex)">
-                  <td>{{ rowData.mat_pers }}</td>
-                  <td>{{ rowData.nom_complet_pers }}</td>
-                  <td>{{ rowData.cod_fil }}</td>
-                  <td>{{ rowData.num_fam }}</td>
-                  <td>{{ rowData.nom_pers }}</td>
-                  <td>{{ rowData.dat_saisie }}</td>
-                  <td>{{ rowData.dat_soin }}</td>
-                  <td><span style="display:block;text-align:right">{{ rowData.solde | number: '1.3-3' }}</span></td>
-                  <td><span style="display:block;text-align:right">{{ rowData.tot_honor | number: '1.3-3' }}</span></td>
-                  <td><span style="display:block;text-align:right">{{ rowData.tot_net | number: '1.3-3' }}</span></td>
+                  <td class="text-center">{{ rowData.mat_pers }}</td>
+                  <td class="text-center">{{ rowData.nom_complet_pers }}</td>
+                  <td class="text-center">{{ rowData.cod_fil }}</td>
+                  <td class="text-center">{{ rowData.num_fam }}</td>
+                  <td class="text-center">{{ rowData.nom_pers }}</td>
+                  <td class="text-center">{{ rowData.dat_saisie }}</td>
+                  <td class="text-center">{{ rowData.dat_soin }}</td>
+                  <td><span style="display:block;text-align:center">{{ rowData.solde | number: '1.3-3' }}</span></td>
+                  <td><span style="display:block;text-align:center">{{ rowData.tot_honor | number: '1.3-3' }}</span></td>
+                  <td><span style="display:block;text-align:center">{{ rowData.tot_net | number: '1.3-3' }}</span></td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr class="table-secondary fw-bold">
                   <td colspan="8" class="text-end">Total :</td>
-                  <td><span style="display:block;text-align:right">{{ getTotalHonor() | number: '1.3-3' }}</span></td>
-                  <td><span style="display:block;text-align:right">{{ getTotalTot() | number: '1.3-3' }}</span></td>
+                  <td><span style="display:block;text-align:center">{{ getTotalHonor() | number: '1.3-3' }}</span></td>
+                  <td><span style="display:block;text-align:center">{{ getTotalTot() | number: '1.3-3' }}</span></td>
                   <td></td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td>
+                  <td colspan="10" class="text-center">
                     <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                   </td>
                 </tr>
@@ -151,3 +143,4 @@
       </div>
     </div>
   </div>
+</div>

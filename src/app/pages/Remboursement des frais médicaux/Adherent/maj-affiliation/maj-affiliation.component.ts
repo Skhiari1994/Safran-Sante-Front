@@ -302,6 +302,25 @@ export class MajAffiliationComponent {
     });
   }
 
+  // Filtres par colonne (loupe de chaque en-tête)
+  showFilters: { [key: string]: boolean } = {};
+  searchz: { [key: string]: string } = {};
+  toggleFilter(key: string) {
+    this.showFilters[key] = !this.showFilters[key];
+    if (!this.showFilters[key]) this.searchz[key] = '';
+  }
+  filterRows(list: any[]): any[] {
+    const keys = Object.keys(this.searchz).filter(k => this.searchz[k]);
+    if (!keys.length) return list || [];
+    return (list || []).filter(row =>
+      keys.every(k => {
+        let v = row[k];
+        if (k === 'courant') v = v === 'O' ? 'Oui' : 'Non';
+        return String(v ?? '').toLowerCase().includes(this.searchz[k].toLowerCase());
+      })
+    );
+  }
+
   openModalTab(content: any) {
     this.edit = true;
     this.editCarteIndex = null

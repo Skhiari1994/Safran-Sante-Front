@@ -2,149 +2,158 @@
     <div class="col-md-10">
         <div class="collapse show" id="paymentmethodCollapse">
             <div class="card p-4 border shadow-none">
+                <div class="card-header page-card-header">
+                    <div class="page-card-title">
+                        <h5>Adhérent</h5>
+                        <small>Identité, situation et assurance</small>
+                    </div>
+                </div>
                 <!-- Search Form -->
-                <form action="javascript:void(0);" class="row g-3" [formGroup]="formPersonnel">
-                    <div class="row">
-                        <!-- First Column -->
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label class="form-label">Matricule</label>
-
-                                    <input type="text" class="form-control border-primary" formControlName="mat_pers"
-                                        readonly />
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Nom</label>
-                                    <input type="text" class="form-control border-primary" formControlName="nom_pers"
-                                        readonly />
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Prénom</label>
-                                    <input type="text" class="form-control border-primary" formControlName="pren_pers"
-                                        readonly />
-                                </div>
-
-                                <div class="col-md-1"></div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Etat</label>
-                                    <select class="form-select border-success" formControlName="etat_act">
-                                        <option value="A">ACTIF</option>
-                                        <option value="B">Bloqué(e)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Date emb</label>
-                                    <input type="text" class="form-control border-primary" formControlName="dat_emb"
-                                        readonly mask="00/00/0000" />
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="country" class="form-label">Situation sociale</label>
-                                    <select class="form-select border-success" data-plugin="choices"
-                                        formControlName="cod_sit">
-                                        <option value="">Select situation...</option>
-                                        <option value="C">Célibataire</option>
-                                        <option value="M">Marié(e)</option>
-                                        <option value="D">Divorcé(e)</option>
-                                        <option value="V">Voeuf(ve)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <label class="form-label">Taux</label>
-                                    <input type="text" class="form-control border-primary" formControlName="cod_assur"
-                                        readonly />
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Libelle</label>
-                                    <input type="text" class="form-control border-primary" formControlName="cod_assur"
-                                        readonly />
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Num assurance</label>
-                                    <input type="text" class="form-control border-primary" formControlName="num_assur"
-                                        placeholder="Num assurance" readonly />
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Date assur</label>
-                                    <input type="text" class="form-control border-warning" placeholder="Date assur"
-                                        formControlName="dat_ass" readonly />
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Date affil cnam</label>
-                                    <input type="text" class="form-control border-warning" placeholder="Date affil cnam"
-                                        formControlName="dat_aff_cnam" readonly />
-                                </div>
-                            </div>
-                        </div>
+                <form action="javascript:void(0);" [formGroup]="formPersonnel">
+                    <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Matricule</label>
+                        <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" readonly />
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">Prénom</label>
+                        <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pren_pers" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Etat</label>
+                        <select class="form-select border-primary" formControlName="etat_act">
+                            <option value="">Sélectionner</option>
+                            <option value="A">ACTIF</option>
+                            <option value="B">Bloqué(e)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date d'embauche</label>
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Situation sociale</label>
+                        <select class="form-select border-primary" formControlName="cod_sit">
+                            <option value="">Sélectionner</option>
+                            <option value="C">Célibataire</option>
+                            <option value="M">Marié(e)</option>
+                            <option value="D">Divorcé(e)</option>
+                            <option value="V">Voeuf(ve)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Numéro assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="Numéro assurance" formControlName="num_assur" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Code assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="Code assurance" formControlName="cod_assur" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date assurance</label>
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_ass" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date affiliation CNAM</label>
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_aff_cnam" readonly />
+                    </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<div class="col-xl-10">
-    <div class="container d-flex justify-content-center align-items-center">
-        <div class="col-md-12">
-            <div class="collapse show" id="paymentmethodCollapse">
-                <div class="card p-4 border shadow mb-4">
-                    <div class="card-header   text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Liste des Beneficiaires</h5>
-                        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#showModal"
-                            (click)="openModalTab(content1)">
-                            <i class="ri-add-fill me-1"></i> Ajouter Beneficiaires
-                        </button>
+<div class="d-flex justify-content-center">
+    <div class="col-md-10">
+        <div class="collapse show" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none mt-4 mb-4">
+                <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+                    <div class="page-card-title">
+                        <h5>Liste des bénéficiaires</h5>
+                        <small>{{ listPersAffil?.length || 0 }} affiliation(s)</small>
                     </div>
-                    <div class="card-body">
-                        <div class="table-card mb-2">
-                            <p-table
-                              [value]="listPersAffil"
-                              [rows]="10"
-                              [paginator]="true"
-                              [rowHover]="true"
-                              [showCurrentPageReport]="true"
-                              [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} bénéficiaires'"
-                              [rowsPerPageOptions]="[10,25,50]"
-                              [responsiveLayout]="'scroll'"
-                              dataKey="mat_pers"
-                              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table"
-                            >
-                              <ng-template pTemplate="header">
-                                <tr>
-                                  <th [pSortableColumn]="'cod_fil'" style="text-align:left">Filière <p-sortIcon field="cod_fil"></p-sortIcon></th>
-                                  <th [pSortableColumn]="'lib_Fil'" style="text-align:left">Libellé <p-sortIcon field="lib_Fil"></p-sortIcon></th>
-                                  <th [pSortableColumn]="'annee_aff'" style="text-align:left">Année <p-sortIcon field="annee_aff"></p-sortIcon></th>
-                                  <th [pSortableColumn]="'courant'" style="text-align:left">Courante <p-sortIcon field="courant"></p-sortIcon></th>
-                                  <th style="text-align:left">Actions</th>
-                                </tr>
-                              </ng-template>
+                    <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
+                        (click)="openModalTab(content1)">
+                        <i class="ri-add-fill me-1 align-bottom"></i> Ajouter bénéficiaire
+                    </button>
+                </div>
+                <div class="table-responsive table-card mb-2">
+                    <p-table
+                      [value]="filterRows(listPersAffil)"
+                      [rows]="10"
+                      [paginator]="true"
+                      [rowHover]="true"
+                      [showCurrentPageReport]="true"
+                      [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} bénéficiaires'"
+                      [rowsPerPageOptions]="[10,25,50]"
+                      [responsiveLayout]="'scroll'"
+                      dataKey="mat_pers"
+                      styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table"
+                    >
+                      <ng-template pTemplate="header">
+                        <tr class="table-primary">
+                          <th [pSortableColumn]="'cod_fil'">
+                            <div class="th-head">
+                              <p-sortIcon field="cod_fil"></p-sortIcon>
+                              <span class="th-title">Filière</span>
+                              <i class="ri-search-line th-search" (click)="toggleFilter('cod_fil'); $event.stopPropagation()"></i>
+                            </div>
+                            <input *ngIf="showFilters['cod_fil']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['cod_fil']" (click)="$event.stopPropagation()" placeholder="..." />
+                          </th>
+                          <th [pSortableColumn]="'lib_Fil'">
+                            <div class="th-head">
+                              <p-sortIcon field="lib_Fil"></p-sortIcon>
+                              <span class="th-title">Libellé</span>
+                              <i class="ri-search-line th-search" (click)="toggleFilter('lib_Fil'); $event.stopPropagation()"></i>
+                            </div>
+                            <input *ngIf="showFilters['lib_Fil']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['lib_Fil']" (click)="$event.stopPropagation()" placeholder="..." />
+                          </th>
+                          <th [pSortableColumn]="'annee_aff'">
+                            <div class="th-head">
+                              <p-sortIcon field="annee_aff"></p-sortIcon>
+                              <span class="th-title">Année</span>
+                              <i class="ri-search-line th-search" (click)="toggleFilter('annee_aff'); $event.stopPropagation()"></i>
+                            </div>
+                            <input *ngIf="showFilters['annee_aff']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['annee_aff']" (click)="$event.stopPropagation()" placeholder="..." />
+                          </th>
+                          <th [pSortableColumn]="'courant'">
+                            <div class="th-head">
+                              <p-sortIcon field="courant"></p-sortIcon>
+                              <span class="th-title">Courante</span>
+                              <i class="ri-search-line th-search" (click)="toggleFilter('courant'); $event.stopPropagation()"></i>
+                            </div>
+                            <input *ngIf="showFilters['courant']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['courant']" (click)="$event.stopPropagation()" placeholder="..." />
+                          </th>
+                          <th class="text-center">Action</th>
+                        </tr>
+                      </ng-template>
 
-                              <ng-template pTemplate="body" let-row let-ri="rowIndex">
-                                <tr>
-                                  <td style="text-align:center">{{ row.cod_fil }}</td>
-                                  <td style="text-align:center">{{ row.lib_Fil }}</td>
-                                  <td style="text-align:center">{{ row.annee_aff }}</td>
-                                  <td style="text-align:center">{{ row.courant === 'O' ? 'Oui' : 'Non' }}</td>
-                                  <td>
-                                    <ul class="list-inline hstack gap-2 mb-0">
-                                      <li class="list-inline-item">
-                                        <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(ri, row, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                                      </li>
-                                    </ul>
-                                  </td>
-                                </tr>
-                              </ng-template>
+                      <ng-template pTemplate="body" let-row let-ri="rowIndex">
+                        <tr>
+                          <td class="text-center">{{ row.cod_fil }}</td>
+                          <td class="text-center">{{ row.lib_Fil }}</td>
+                          <td class="text-center">{{ row.annee_aff }}</td>
+                          <td class="text-center">{{ row.courant === 'O' ? 'Oui' : 'Non' }}</td>
+                          <td>
+                            <ul class="list-inline hstack gap-2 mb-0">
+                              <li class="list-inline-item">
+                                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(ri, row, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </ng-template>
 
-                              <ng-template pTemplate="emptymessage">
-                                <tr>
-                                  <td colspan="5" class="text-center">Aucun bénéficiaire</td>
-                                </tr>
-                              </ng-template>
-                            </p-table>
-                        </div>
-                    </div>
+                      <ng-template pTemplate="emptymessage">
+                        <tr>
+                          <td colspan="5" class="text-center">Aucun bénéficiaire</td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
                 </div>
             </div>
         </div>
@@ -160,7 +169,7 @@
 
 <ng-template #content1 role="document" let-modal>
     <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">Ajouter beneficiaire</h5>
+        <h5 class="modal-title" id="exampleModalLabel">{{ edit ? 'Ajouter' : 'Modifier' }} bénéficiaire</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
             (click)="modal.dismiss('Cross click')"></button>
     </div>
@@ -169,8 +178,8 @@
     <div *ngFor="let certif of affil.controls; let i = index" [formGroupName]="i" class="row g-3">
       <div class="modal-body">
         <div class="row g-3">
-          <div class="col-md-2">
-            <label class="form-label">Code</label>
+          <div class="col-md-3">
+            <label class="form-label">Filière</label>
             <app-lov
               [listData]="listFil"
               [columns]="columnFil"
@@ -180,19 +189,20 @@
             </app-lov>
           </div>
 
-          <div class="col-lg-5">
-            <label class="form-label">Libelle</label>
-            <input type="text" class="form-control border-warning" placeholder="Enter Libellé" [value]="libFill" readonly />
+          <div class="col-md-5">
+            <label class="form-label">Libellé filière</label>
+            <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libFill" readonly />
           </div>
 
           <div class="col-md-2">
             <label class="form-label">Année</label>
-            <input type="text" class="form-control border-warning" formControlName="annee_aff" placeholder="Année" />
+            <input type="text" class="form-control border-primary" formControlName="annee_aff" placeholder="Année" />
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label class="form-label">Courante</label>
-            <select class="form-select border-success" formControlName="courant">
+            <select class="form-select border-primary" formControlName="courant">
+              <option value="">Sélectionner</option>
               <option value="O">Oui</option>
               <option value="N">Non</option>
             </select>
@@ -200,7 +210,7 @@
 
           <!-- Si le cod_fil est 2, afficher les champs supplémentaires -->
           <ng-container *ngIf="certif.get('cod_fil')?.value == 2">
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label class="form-label">Code établissement</label>
               <app-lov
                 [listData]="listRefEtablis"
@@ -211,9 +221,9 @@
               </app-lov>
             </div>
 
-            <div class="col-lg-5">
+            <div class="col-md-9">
               <label class="form-label">Libellé établissement</label>
-              <input type="text" class="form-control border-warning" placeholder="Libelle" [value]="certif.get('lib_ref')?.value" readonly />
+              <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="certif.get('lib_ref')?.value" readonly />
             </div>
           </ng-container>
         </div>

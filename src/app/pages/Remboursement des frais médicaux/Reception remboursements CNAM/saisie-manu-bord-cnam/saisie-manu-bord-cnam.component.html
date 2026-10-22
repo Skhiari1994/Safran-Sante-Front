@@ -12,59 +12,52 @@
     <div class="card">
       <div class="card-body">
         <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
-          <div class="row mb-4">
-            <div class="col-sm-2 col-md-1">
+          <div class="row g-3">
+            <div class="col-md-2">
               <label for="codBord" class="form-label">Code bordereau arrivé</label>
               <app-lov [listData]="AllBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
                 [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriverPage($event)">
               </app-lov>
             </div>
-
-            <div class="col-sm-2 col-md-2">
+            <div class="col-md-2">
               <label for="dateBord" class="form-label">Date</label>
-              <input type="text" id="dateBord" class="form-control border-primary" placeholder="Date" [value]="dateBord"
-                readonly style="filter: blur(0.3px); opacity: 0.85;" />
+              <input type="text" id="dateBord" class="form-control border-primary" placeholder="jj/mm/aaaa" [value]="dateBord" readonly />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Assurance</label>
+              <input type="text" class="form-control border-primary" placeholder="Code" [value]="codeAssur" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Libellé assurance</label>
+              <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
             </div>
 
-            <div class="col-md-1">
-              <label class="form-label">Assurance</label>
-              <input type="text" class="form-control border-primary" placeholder="Assurance" [value]="codeAssur"
-                readonly style="filter: blur(0.3px); opacity: 0.85;" />
+            <div class="col-md-3">
+              <label for="tot_remb" class="form-label">Total remboursé</label>
+              <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="0.000"
+                formControlName="tot_remb" readonly />
             </div>
             <div class="col-md-3">
-              <label class="form-label">Libelle</label>
-              <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="libAssur" readonly
-                style="filter: blur(0.3px); opacity: 0.85;" />
+              <label for="nbr_bult" class="form-label">Nombre de bulletins</label>
+              <input type="text" id="nbr_bult" class="form-control border-primary" placeholder="Nombre de bulletins"
+                formControlName="nbr_bult" readonly />
             </div>
-
-            <div class="col-sm-4 col-md-2">
-              <label for="tot_remb" class="form-label">Tot. Remb.</label>
-              <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Remb."
-                formControlName="tot_remb" readonly style="filter: blur(0.3px); opacity: 0.85;" />
-            </div>
-
-            <div class="col-sm-4 col-md-1">
-              <label for="nbr_bult" class="form-label">Nbre. de Bulletin</label>
-              <input type="text" id="nbr_bult" class="form-control border-primary" placeholder="Nombre de Bulletin"
-                formControlName="nbr_bult" readonly style="filter: blur(0.3px); opacity: 0.85;" />
-            </div>
-
-            <div class="col-sm-4 col-md-1">
-              <label for="valid" class="form-label">Validité Bord</label>
-              <select class="form-control border-warning" formControlName="valid"
-                style="filter: blur(0.3px); opacity: 0.85;">
-                <option value="O"> Oui </option>
-                <option value="N"> Non </option>
+            <div class="col-md-3">
+              <label for="valid" class="form-label">Validité bordereau</label>
+              <select id="valid" class="form-select border-primary" formControlName="valid">
+                <option value="">Sélectionner</option>
+                <option value="O">Oui</option>
+                <option value="N">Non</option>
               </select>
             </div>
-            <div class="col-md-12 d-flex justify-content-center align-items-center gap-3 mt-3">
+            <div class="col-md-3 d-flex align-items-end justify-content-md-end gap-2 flex-wrap">
               <button type="button" class="btn btn-success" [disabled]="isPrintButtonsDisabled"
                 (click)="printBordArrivGlobal()">
-                Imprimer bordereau CNAM Global
+                <i class="ri-printer-line me-1 align-bottom"></i> Bordereau global
               </button>
               <button type="button" class="btn btn-info" [disabled]="isPrintButtonsDisabled"
                 (click)="printBordArrivDetail()">
-                Imprimer bordereau CNAM Détaillé
+                <i class="ri-printer-line me-1 align-bottom"></i> Bordereau détaillé
               </button>
             </div>
           </div>
@@ -75,10 +68,13 @@
 
   <div class="col-md-12">
     <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Bulletins</h5>
-        <button class="btn btn-info" type="button" (click)="addLigne()">
-          Ajouter une ligne
+      <div class="card-header page-card-header d-flex justify-content-between align-items-center mx-4 mt-4">
+        <div class="page-card-title">
+          <h5>Bulletins</h5>
+          <small>{{ lignes.length }} bulletin(s)</small>
+        </div>
+        <button class="btn btn-info add-btn" type="button" (click)="addLigne()">
+          <i class="ri-add-fill me-1 align-bottom"></i> Ajouter bulletin
         </button>
       </div>
       <div class="card-body">
@@ -87,21 +83,21 @@
             <div class="table-responsive">
               <div formArrayName="lignes">
                 <p-table [value]="lignes.controls" dataKey="num_retr"
-                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table bulletins-table">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th style="width: 50px">Statut</th>
-                      <th>#</th>
-                      <th style="width: 250px">Numéro Aff.</th>
-                      <th style="width: 250px">Matricule</th>
-                      <th style="width: 450px">Nom & Prénom</th>
-                      <th style="width: 100px">Fill</th>
-                      <th style="width: 250px">Prés.</th>
-                      <th style="width: 250px">Nom</th>
-                      <th style="width: 250px">Date soin</th>
-                      <th style="width: 250px">Regime Remb.</th>
-                      <th style="width: 250px">Tot. Net</th>
-                      <th style="width: 100px">Actions</th>
+                      <th style="width: 80px">Statut</th>
+                      <th style="width: 80px">#</th>
+                      <th style="width: 220px">Numéro Aff.</th>
+                      <th style="width: 130px; white-space: nowrap">Matricule</th>
+                      <th style="width: 220px">Nom & Prénom</th>
+                      <th style="width: 70px">Fill</th>
+                      <th style="width: 190px">Prés.</th>
+                      <th style="width: 130px">Nom</th>
+                      <th style="width: 150px">Date soin</th>
+                      <th style="width: 190px">Regime Remb.</th>
+                      <th style="width: 130px">Tot. Net</th>
+                      <th style="width: 90px">Action</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -135,15 +131,16 @@
                       </td>
                       <td>{{ Nom[ri] }}</td>
                       <td>
-                        <input type="text" class="form-control border-primary" placeholder="Date de soin"
+                        <input type="text" class="form-control border-primary text-center" placeholder="jj/mm/aaaa"
                           formControlName="dat_soin" [readonly]="selectedRow !== ri"
                           [style.opacity]="selectedRow !== ri ? '0.6' : '1'" />
                       </td>
                       <td>
-                        <select class="form-control border-warning" formControlName="reg_remb"
+                        <select class="form-select border-primary" formControlName="reg_remb"
                           [style.opacity]="selectedRow !== ri ? '0.6' : '1'"
                           [attr.disabled]="selectedRow !== ri ? '' : null">
-                          <option *ngFor="let regimeRemb of ListeRegimeRemb" [value]="regimeRemb.reg_remb">
+<option [ngValue]="''">Sélectionner</option>
+                          <option *ngFor="let regimeRemb of ListeRegimeRemb" [ngValue]="regimeRemb.reg_remb">
                             {{ regimeRemb.lib_remb }}</option>
                         </select>
                       </td>
@@ -153,10 +150,7 @@
                           [style.opacity]="selectedRow !== ri ? '0.6' : '1'" appMontantMask />
                       </td>
                       <td class="text-center">
-                        <button type="button" class="btn btn-outline-danger btn-sm"
-                          (click)="ConfirmDeleteBulletin(ri); $event.stopPropagation()" title="Supprimer">
-                          <i class="ri-delete-bin-line"></i>
-                        </button>
+                        <a class="remove-item-btn" title="Supprimer" (click)="ConfirmDeleteBulletin(ri); $event.stopPropagation()"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
                       </td>
                     </tr>
                   </ng-template>
@@ -188,23 +182,21 @@
   <div class="card h-100"> <!-- Ajout de h-100 -->
     <div class="card-body d-flex flex-column"> <!-- Ajout de flex-column -->
       <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
-        <div class="col-lg-1">
-          <div class="" role="tablist" aria-orientation="vertical">
+        <div class="col-12 mb-3">
+          <div class="border" role="tablist" aria-orientation="horizontal">
             <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" (navChange)="onNavChange($event)"
-              class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center">
+              class="nav nav-pills bult-tabs">
               <li [ngbNavItem]="1">
                 <a ngbNavLink>
-                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
-                  Les visites
+                  <h5 class="nav-titl m-0">Les visites</h5>
                 </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
                     <div class="card h-100">
                       <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-primary" type="button" (click)="addLigneVisite()"
-                          *ngIf="currentSearchMode !== 'arriver'">➕ Ajouter
-                          Ligne</button>
+                        <button class="btn btn-info add-btn" type="button" (click)="addLigneVisite()"
+                          *ngIf="currentSearchMode !== 'arriver'"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
 
@@ -223,7 +215,7 @@
                                     <th style="width: 550px;">Libelle</th>
                                     <th style="width: 200px;">Mnt Hr App</th>
                                     <th style="width: 200px;">Net</th>
-                                    <th *ngIf="currentSearchMode !== 'arriver'">Actions</th>
+                                    <th *ngIf="currentSearchMode !== 'arriver'" class="text-center">Action</th>
                                   </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -264,8 +256,7 @@
                                         }}</span>
                                     </td>
                                     <td *ngIf="currentSearchMode !== 'arriver'">
-                                      <button class="btn btn-danger btn-sm" type="button"
-                                        (click)="confirmVisit(ri,deleteModelVisit,row.value)">🗑️</button>
+                                      <a class="remove-item-btn" title="Supprimer" (click)="confirmVisit(ri,deleteModelVisit,row.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
                                     </td>
                                   </tr>
                                 </ng-template>
@@ -299,8 +290,7 @@
               </li>
               <li [ngbNavItem]="2">
                 <a ngbNavLink>
-                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
-                  Les actes
+                  <h5 class="nav-titl m-0">Les actes</h5>
                 </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
@@ -308,8 +298,8 @@
                     <div class="card h-100">
 
                       <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-primary" type="button" (click)="addActe()"
-                          *ngIf="currentSearchMode !== 'arriver'">➕ Ajouter Ligne</button>
+                        <button class="btn btn-info add-btn" type="button" (click)="addActe()"
+                          *ngIf="currentSearchMode !== 'arriver'"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
                       <div class="card-body">
@@ -330,7 +320,7 @@
                                     <th style="width: 150px;">Net</th>
                                     <th style="width: 100px;">Accord</th>
                                     <th style="width: 100px;">Num Pec Act</th>
-                                    <th *ngIf="currentSearchMode !== 'arriver'">Actions</th>
+                                    <th *ngIf="currentSearchMode !== 'arriver'" class="text-center">Action</th>
                                   </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -376,9 +366,8 @@
                                         }}</span>
                                     </td>
                                     <td>
-                                      <select *ngIf="currentSearchMode !== 'arriver'" class="form-select border-success"
-                                        data-plugin="choices" formControlName="accord_act">
-                                        <option value=""></option>
+                                      <select *ngIf="currentSearchMode !== 'arriver'" class="form-select border-primary" formControlName="accord_act">
+                                        <option value="">Sélectionner</option>
                                         <option value="O">Oui</option>
                                         <option value="N">Non</option>
                                       </select>
@@ -391,8 +380,7 @@
                                       <span *ngIf="currentSearchMode === 'arriver'">{{ row.value.num_pec_act }}</span>
                                     </td>
                                     <td *ngIf="currentSearchMode !== 'arriver'">
-                                      <button class="btn btn-danger btn-sm" type="button"
-                                        (click)="confirm(ri,deleteModel,row.value)">🗑️</button>
+                                      <a class="remove-item-btn" title="Supprimer" (click)="confirm(ri,deleteModel,row.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
                                     </td>
                                   </tr>
                                 </ng-template>
@@ -426,17 +414,15 @@
               </li>
               <li [ngbNavItem]="3">
                 <a ngbNavLink>
-                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
-                  Pharmacies
+                  <h5 class="nav-titl m-0">Pharmacies</h5>
                 </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
                     <div class="card h-100">
                       <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-primary" type="button" (click)="addLignePhar(phar.length)"
-                          *ngIf="currentSearchMode !== 'arriver'">➕ Ajouter
-                          Ligne</button>
+                        <button class="btn btn-info add-btn" type="button" (click)="addLignePhar(phar.length)"
+                          *ngIf="currentSearchMode !== 'arriver'"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
 
@@ -458,7 +444,7 @@
                                     <th style="width: 100px;">Nbr j</th>
                                     <th style="width: 100px;">Accord</th>
                                     <th style="width: 100px;">Num Pec</th>
-                                    <th *ngIf="currentSearchMode !== 'arriver'">Actions</th>
+                                    <th *ngIf="currentSearchMode !== 'arriver'" class="text-center">Action</th>
                                   </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -509,9 +495,8 @@
                                       <span *ngIf="currentSearchMode === 'arriver'">{{ row.value.nbr_j }}</span>
                                     </td>
                                     <td>
-                                      <select *ngIf="currentSearchMode !== 'arriver'" class="form-select border-success"
-                                        data-plugin="choices" formControlName="accord_med">
-                                        <option value=""></option>
+                                      <select *ngIf="currentSearchMode !== 'arriver'" class="form-select border-primary" formControlName="accord_med">
+                                        <option value="">Sélectionner</option>
                                         <option value="O">Oui</option>
                                         <option value="N">Non</option>
                                       </select>
@@ -524,8 +509,7 @@
                                       <span *ngIf="currentSearchMode === 'arriver'">{{ row.value.num_pec_med }}</span>
                                     </td>
                                     <td *ngIf="currentSearchMode !== 'arriver'">
-                                      <button class="btn btn-danger btn-sm" type="button"
-                                        (click)="confirmMed(ri,deleteModelMed,row.value)">🗑️</button>
+                                      <a class="remove-item-btn" title="Supprimer" (click)="confirmMed(ri,deleteModelMed,row.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
                                     </td>
                                   </tr>
                                 </ng-template>
@@ -559,17 +543,15 @@
               </li>
               <li [ngbNavItem]="4">
                 <a ngbNavLink>
-                  <i class="ri-home-4-line d-block fs-20 mb-1"></i>
-                  Les appareils
+                  <h5 class="nav-titl m-0">Les appareils</h5>
                 </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
                     <div class="card h-100">
                       <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-primary" type="button" (click)="addLigneAppareil(appareil.length)"
-                          *ngIf="currentSearchMode !== 'arriver'">➕
-                          Ajouter Ligne</button>
+                        <button class="btn btn-info add-btn" type="button" (click)="addLigneAppareil(appareil.length)"
+                          *ngIf="currentSearchMode !== 'arriver'"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
 
@@ -590,7 +572,7 @@
                                     <th style="width: 150px;">Net</th>
                                     <th style="width: 100px;">Accord</th>
                                     <th style="width: 100px;">Num Pec</th>
-                                    <th *ngIf="currentSearchMode !== 'arriver'">Actions</th>
+                                    <th *ngIf="currentSearchMode !== 'arriver'" class="text-center">Action</th>
                                   </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-row let-ri="rowIndex">
@@ -632,9 +614,8 @@
                                         }}</span>
                                     </td>
                                     <td>
-                                      <select *ngIf="currentSearchMode !== 'arriver'" class="form-select border-success"
-                                        data-plugin="choices" formControlName="accord_app">
-                                        <option value=""></option>
+                                      <select *ngIf="currentSearchMode !== 'arriver'" class="form-select border-primary" formControlName="accord_app">
+                                        <option value="">Sélectionner</option>
                                         <option value="O">Oui</option>
                                         <option value="N">Non</option>
                                       </select>
@@ -647,8 +628,7 @@
                                       <span *ngIf="currentSearchMode === 'arriver'">{{ row.value.num_pec_app }}</span>
                                     </td>
                                     <td *ngIf="currentSearchMode !== 'arriver'">
-                                      <button class="btn btn-danger btn-sm" type="button"
-                                        (click)="confirmApp(ri,deleteModelApp,row.value)">🗑️</button>
+                                      <a class="remove-item-btn" title="Supprimer" (click)="confirmApp(ri,deleteModelApp,row.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
                                     </td>
                                   </tr>
                                 </ng-template>
@@ -683,8 +663,8 @@
             </ul>
           </div>
         </div>
-        <div class="col-lg-10">
-          <div class="tab-content text-muted mt-3 mt-lg-0">
+        <div class="col-12">
+          <div class="tab-content text-muted">
             <div [ngbNavOutlet]="CustomVertical"></div>
           </div>
         </div>

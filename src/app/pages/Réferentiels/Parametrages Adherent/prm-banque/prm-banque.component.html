@@ -1,6 +1,6 @@
 <div class="row" style="margin-top: 25px"> 
   <app-breadcrumbs
-  title="Agence"
+  title="Banques et agences"
   [breadcrumbItems]="breadCrumbItems"
 ></app-breadcrumbs>
 
@@ -14,15 +14,18 @@
         <div class="col-md-12">
           <div class="collapse show" id="paymentmethodCollapse">
             <div class="card p-4 border shadow mb-4">
-              <div class="card-header   text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Liste des banques</h5>
+              <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+                <div class="page-card-title">
+                  <h5>Liste des banques</h5>
+                  <small>{{ listBanque?.length || 0 }} banque(s)</small>
+                </div>
                 <button
-                  class="btn btn-light"
+                  class="btn btn-info add-btn"
                   data-bs-toggle="modal"
                   data-bs-target="#showModal"
                   (click)="openModalTab(content)"
                 >
-                  <i class="ri-add-fill me-1"></i> Ajouter banque
+                  <i class="ri-add-fill me-1 align-bottom"></i> Ajouter banque
                 </button>
               </div>
               <div class="card-body">
@@ -30,13 +33,12 @@
                   <ng-template pTemplate="header">
                     <tr class="table-primary">
                       <th *ngFor="let column of ['cod_banq', 'lib_banq','lib_banq_a']">
-                        <div class="d-flex align-items-center">
-                          <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }}
-                            <i class="ri-arrow-up-down-line ms-1"></i>
-                          </span>
-                          <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                          <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                        </div>
+                        <div class="th-head">
+<i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+<span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+<i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+</div>
+<input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
                       </th>
                     </tr>
                   </ng-template>
@@ -60,15 +62,18 @@
         <div class="col-md-12">
           <div class="collapse show" id="paymentmethodCollapse">
             <div class="card p-4 border shadow mb-4">
-              <div class="card-header   text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Liste des Agence</h5>
+              <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+                <div class="page-card-title">
+                  <h5>Liste des agences</h5>
+                  <small>{{ listAgence?.length || 0 }} agence(s)</small>
+                </div>
                 <button
-                  class="btn btn-light"
+                  class="btn btn-info add-btn"
                   data-bs-toggle="modal"
                   data-bs-target="#showModal"
                   (click)="openModalTab(content1)"
                 >
-                  <i class="ri-add-fill me-1"></i> Ajouter Agence
+                  <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Agence
                 </button>
               </div>
               <div class="card-body">
@@ -76,13 +81,12 @@
                   <ng-template pTemplate="header">
                     <tr class="table-primary">
                       <th *ngFor="let column of ['cod_agc', 'lib_agc','lib_agc_a']">
-                        <div class="d-flex align-items-center">
-                          <span class="me-2" (click)="onSort2(column)"> {{ columnTitles2[column] || column }}
-                            <i class="ri-arrow-up-down-line ms-1"></i>
-                          </span>
-                          <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                          <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz2[column]" (input)="applyFilter2()" placeholder="..." />
-                        </div>
+                        <div class="th-head">
+<i class="ri-arrow-up-down-line th-sort" (click)="onSort2(column)"></i>
+<span class="th-title" (click)="onSort2(column)">{{ columnTitles2[column] || column }}</span>
+<i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+</div>
+<input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz2[column]" (input)="applyFilter2()" placeholder="..." />
                       </th>
                       <th>Actions</th>
                     </tr>

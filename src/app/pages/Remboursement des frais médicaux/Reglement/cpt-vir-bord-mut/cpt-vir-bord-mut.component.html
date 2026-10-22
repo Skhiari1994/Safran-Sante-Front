@@ -15,116 +15,58 @@
             class="tablelist-form"
             autocomplete="off"
           >
-            <div class="row mb-4">
-                
-              <div class="col-sm-4 col-md-2">
+            <div class="row g-3">
+              <div class="col-md-2">
                 <label for="codBord" class="form-label">Code bordereau</label>
-                <app-lov
-                  [listData]="AllBordEnvoi"
-                  [columns]="columnBordEnvoi"
-                  codeField="cod_bord"
-                  [selectedCode]="codBord"
-                  (selectedValue)="onSelectedValueBordEnvoi($event)"
-                >
+                <app-lov [listData]="AllBordEnvoi" [columns]="columnBordEnvoi" codeField="cod_bord"
+                  [selectedCode]="codBord" (selectedValue)="onSelectedValueBordEnvoi($event)">
                 </app-lov>
               </div>
-
-             
-              <div class="col-sm-4 col-md-1">
+              <div class="col-md-2">
                 <label for="dateBord" class="form-label">Date</label>
-                <input
-                  type="text"
-                  id="dateBord"
-                  class="form-control border-primary"
-                  placeholder="Date"
-                  [value]="dateBord"
-                  readonly
-                />
+                <input type="text" id="dateBord" class="form-control border-primary" placeholder="jj/mm/aaaa"
+                  [value]="dateBord" readonly />
               </div>
-              <div class="col-sm-4 col-md-1">
-                <label for="dateBord" class="form-label">Code ass</label>
-                <input
-                  type="text"
-                  id="dateBord"
-                  class="form-control border-primary"
-                  placeholder="Code ass"
-                  formControlName="cod_assur"
-                  readonly
-                />
+              <div class="col-md-2">
+                <label for="codAss" class="form-label">Assurance</label>
+                <input type="text" id="codAss" class="form-control border-primary" placeholder="Code"
+                  formControlName="cod_assur" readonly />
               </div>
-              <div class="col-sm-4 col-md-3">
-                <label for="lib_assurance" class="form-label">Assurance</label>
-                <input
-                  type="text"
-                  id="lib_assurance"
-                  class="form-control border-primary"
-                  placeholder="Assurance"
-                  formControlName="lib_assurance"
-                />
+              <div class="col-md-6">
+                <label for="lib_assurance" class="form-label">Libellé assurance</label>
+                <input type="text" id="lib_assurance" class="form-control border-primary" placeholder="Libellé"
+                  formControlName="lib_assurance" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Remb.</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary text-end"
-                  placeholder="Tot. Remb."
-                  formControlName="tot_net"
-                />
+              <div class="col-md-2">
+                <label for="tot_net" class="form-label">Total remboursé</label>
+                <input type="text" id="tot_net" class="form-control border-primary text-end" placeholder="0.000"
+                  formControlName="tot_net" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Hono.</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary text-end"
-                  placeholder="Tot. Hono.."
-                  formControlName="tot_honor"
-                />
+              <div class="col-md-2">
+                <label for="tot_honor" class="form-label">Total honoraires</label>
+                <input type="text" id="tot_honor" class="form-control border-primary text-end" placeholder="0.000"
+                  formControlName="tot_honor" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="nbr_bult" class="form-label"
-                  >Nbre. Bulletin</label
-                >
-                <input
-                  type="text"
-                  id="nbr_bult"
-                  class="form-control border-primary text-end"
-                  placeholder="Nombre de Bulletin"
-                  formControlName="nbr_bult"
-                />
+              <div class="col-md-2">
+                <label for="nbr_bult" class="form-label">Nombre de bulletins</label>
+                <input type="text" id="nbr_bult" class="form-control border-primary text-end"
+                  placeholder="Nombre de bulletins" formControlName="nbr_bult" />
               </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Date début</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary"
-                  placeholder="Date début"
-                  formControlName="dat_deb"
-                />
+              <div class="col-md-2">
+                <label for="dat_deb" class="form-label">Date début</label>
+                <input type="text" id="dat_deb" class="form-control border-primary" placeholder="jj/mm/aaaa"
+                  formControlName="dat_deb" />
               </div>
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Date fin</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary "
-                  placeholder="Date fin"
-                  formControlName="dat_fin"
-                />
+              <div class="col-md-2">
+                <label for="dat_fin" class="form-label">Date fin</label>
+                <input type="text" id="dat_fin" class="form-control border-primary" placeholder="jj/mm/aaaa"
+                  formControlName="dat_fin" />
               </div>
- 
- 
             </div>
           </form>
           <hr>
           <div class="row">
-              <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+              <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3">
               
 
                   <button class="btn btn-primary mt-3 mt-sm-0" (click)="majRegAdh()">
@@ -139,35 +81,43 @@
 
       <div class="card">
         <div class="card-body">
+          <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+            <div class="page-card-title">
+              <h5>Comptabilisation par virement</h5>
+              <small>{{ bordArriver?.length || 0 }} bulletin(s)</small>
+            </div>
+          </div>
           <div class="table-responsive table-card">
             <p-table [value]="bordArriver" [paginator]="true" [rows]="9" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','dat_soin','solde','tot_honor','tot_net','Mod paie','Date vir','Reg adh']" [pSortableColumn]="column">
-                    <div class="d-flex align-items-center">
-                      <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
-                      <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                  <th *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','dat_soin','solde','tot_honor','tot_net','Mod paie','Date vir','Reg adh']">
+                    <div class="th-head">
+                      <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                      <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                      <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
                     </div>
+                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2"
+                      style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" (click)="$event.stopPropagation()" placeholder="..." />
                   </th>
                 </tr>
               </ng-template>
             <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
   <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="logRowData(rowData, rowIndex)">
   
-  <td>{{ rowData.mat_pers }}</td>
-  <td>{{ rowData.nom_complet_pers }}</td>
-  <td>{{ rowData.cod_fil }}</td>
-  <td>{{ rowData.num_fam }}</td>
-  <td>{{ rowData.dat_soin }}</td>
-  <td>{{ rowData.solde | number: '1.3-3' }}</td>
-  <td>{{ rowData.tot_honor | number: '1.3-3' }}</td>
-  <td>{{ rowData.tot_net | number: '1.3-3' }}</td>
+  <td class="text-center">{{ rowData.mat_pers }}</td>
+  <td class="text-center">{{ rowData.nom_complet_pers }}</td>
+  <td class="text-center">{{ rowData.cod_fil }}</td>
+  <td class="text-center">{{ rowData.num_fam }}</td>
+  <td class="text-center">{{ rowData.dat_soin }}</td>
+  <td class="text-center">{{ rowData.solde | number: '1.3-3' }}</td>
+  <td class="text-center">{{ rowData.tot_honor | number: '1.3-3' }}</td>
+  <td class="text-center">{{ rowData.tot_net | number: '1.3-3' }}</td>
 
   <!-- Mode de paiement -->
   <td>
     <select
-      class="form-select"
+      class="form-select border-primary text-center"
       [(ngModel)]="rowData.mod_pay"
       name="modPay{{ rowIndex }}"
       (change)="onModPayChange(rowData)"
@@ -195,7 +145,7 @@
       [(ngModel)]="rowData.reg_adh"
       name="regAdh{{ rowIndex }}"
       (change)="onValidChange(rowData, rowData.reg_adh)"
-      class="form-select"
+      class="form-select border-primary text-center"
     >
       <option value="N">Non</option>
       <option value="O">Oui</option>
@@ -208,7 +158,7 @@
 
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td>
+                  <td colspan="12" class="text-center">
                     <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                   </td>
                 </tr>
@@ -229,4 +179,4 @@
     </div>
   </div>
 </div>
-
+</div>

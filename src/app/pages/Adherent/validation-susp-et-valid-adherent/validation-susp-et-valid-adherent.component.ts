@@ -54,7 +54,7 @@ export class ValidationSuspEtValidAdherentComponent {
       dat_dem: [""],
       obs_aff: [""],
       coef_cot: [""],
-      etat_aff: ["I"],
+      etat_aff: [""],
       corps: [""],
       cod_typ_depart: [""],
       cod_affect: [""],
@@ -223,7 +223,7 @@ export class ValidationSuspEtValidAdherentComponent {
     this.edit = true;
     console.log("data :", data);
     this.edit = false;
-    this.modalService.open(content, { size: "lg", centered: true });
+    this.modalService.open(content, { size: "xl", centered: true });
 
     this.formAffilMutuelle.get("mat_pers")?.patchValue(data.mat_pers);
     this.formAffilMutuelle.get("dat_dem")?.patchValue(data.dat_dem);

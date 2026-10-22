@@ -15,9 +15,15 @@ export class CreateProfileComponent {
   ListRole: any
   term!: string
   p: any
+  isEdit = false;
+  showFilters: { [key: string]: boolean } = {};
+  searchz: { [key: string]: string } = {};
+  private sortAsc = true;
+  private sortField = '';
   constructor(private adminServ: AdminService, private modalService: NgbModal, private formBuilder: FormBuilder) {  
     this.RoleForm = this.formBuilder.group({
     roleId: [''],
+    id: [null],
     name: [''],
     created_date: [''],
     last_modified_date: [(new Date()).toLocaleDateString()],
@@ -75,13 +81,35 @@ export class CreateProfileComponent {
     });
   }
 
+  toggleFilter(key: string) {
+    this.showFilters[key] = !this.showFilters[key];
+    if (!this.showFilters[key]) { this.searchz[key] = ''; this.p = 1; }
+  }
+
+  onSort(column: string) {
+    this.sortAsc = this.sortField === column ? !this.sortAsc : true;
+    this.sortField = column;
+    const dir = this.sortAsc ? 1 : -1;
+    this.ListRole = [...(this.ListRole || [])].sort((a: any, b: any) =>
+      String(a[column] ?? '').localeCompare(String(b[column] ?? ''), 'fr', { numeric: true }) * dir
+    );
+  }
+
+  filteredRoles(): any[] {
+    const keys = Object.keys(this.searchz).filter(k => this.searchz[k]);
+    const list: any[] = this.ListRole || [];
+    if (!keys.length) return list;
+    return list.filter(r => keys.every(k => String(r[k] ?? '').toLowerCase().includes(this.searchz[k].toLowerCase())));
+  }
+
   openModalRole(targetModal:any) {
+    this.isEdit = false;
 
     this.modalService.open(targetModal, {
       windowClass: "my-class-personnel",
       centered: true,
     });
-    this.RoleForm.reset()
+    this.RoleForm.reset({ roleId: '', id: null, name: '', created_date: null, last_modified_date: null })
   }
 
   GetRole() {
@@ -108,15 +136,15 @@ export class CreateProfileComponent {
     this.modalService.open(targetModal, {
       centered: true,
       backdrop: 'static',
-      size: 'lg'
     });
 
-    // this.RoleForm.patchValue({
-    //   roleId: pers.roleId,
-    //   roleName: pers.roleName,
-    //   comnt: pers.comnt,
-    // });
-    console.log("this.RoleForm.value", this.RoleForm.value)
+    this.isEdit = true;
+    this.RoleForm.patchValue({
+      id: pers.id,
+      name: pers.name,
+      created_date: pers.created_date,
+      last_modified_date: null,
+    });
 
   }
 }

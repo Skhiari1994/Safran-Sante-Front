@@ -172,7 +172,7 @@ export class ParamTypeIndemniteComponent {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formParamTypDon.reset()
+    this.formParamTypDon.reset({ concerne: '', typ_don: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

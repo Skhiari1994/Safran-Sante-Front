@@ -379,7 +379,7 @@ export class SaisieLibreCnamComponent {
             tot_honor: [item.tot_honor],
             tot_net: [item.tot_net],
             tot_remb: [item.tot_remb],
-            reg_remb: [item.reg_remb],
+            reg_remb: [item.reg_remb ?? ""],
             cod_malad: [item.cod_malad],
             num_pec: [item.num_pec],
             cod_fil: [item.cod_fil],

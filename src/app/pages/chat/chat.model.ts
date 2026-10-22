@@ -12,6 +12,12 @@ export interface ChatUser {
 }
 
 export interface ChatMessage {
+    id?: number;
+    replyToId?: number;
+    readTime?: string;
+    reactions?: { userId: string; emoji: string }[];
+    failed?: boolean;
+    payload?: any;
     align?: string;
     name?: string;
     message: string;

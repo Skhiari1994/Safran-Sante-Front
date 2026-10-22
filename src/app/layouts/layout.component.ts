@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Store
 import { RootReducerState } from '../store';
 import { Store } from '@ngrx/store';
+import { ChatNotificationService } from '../pages/chat/chat-notification.service';
 
 @Component({
   selector: 'app-layout',
@@ -13,11 +14,11 @@ import { Store } from '@ngrx/store';
 /**
  * Layout Component
  */
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, OnDestroy {
 
   layoutType!: string;
 
-  constructor(private store: Store<RootReducerState>) { }
+  constructor(private store: Store<RootReducerState>, private chatNotifications: ChatNotificationService) { }
 
   ngOnInit(): void {
     this.store.select('layout').subscribe((data) => {
@@ -37,6 +38,10 @@ export class LayoutComponent implements OnInit {
 
   }
 
+
+  ngOnDestroy(): void {
+    this.chatNotifications.reset();
+  }
 
   /**
   * Check if the vertical layout is requested

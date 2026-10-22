@@ -232,6 +232,26 @@ export class ConsultCompMutComponent {
     });
   }
 
+  // Tri et filtres des tableaux de détails
+  dsearch: { [key: string]: string } = {};
+  private detailSortState: { [key: string]: { field: string; asc: boolean } } = {};
+  detailSort(listName: string, column: string) {
+    const st = this.detailSortState[listName];
+    const asc = st && st.field === column ? !st.asc : true;
+    this.detailSortState[listName] = { field: column, asc };
+    const dir = asc ? 1 : -1;
+    (this as any)[listName] = [...((this as any)[listName] || [])].sort((a: any, b: any) =>
+      String(a[column] ?? '').localeCompare(String(b[column] ?? ''), 'fr', { numeric: true }) * dir
+    );
+  }
+  detailRows(list: any[], prefix: string): any[] {
+    const keys = Object.keys(this.dsearch).filter(k => k.startsWith(prefix) && this.dsearch[k]);
+    if (!keys.length) return list || [];
+    return (list || []).filter(row =>
+      keys.every(k => String(row[k.substring(prefix.length)] ?? '').toLowerCase().includes(this.dsearch[k].toLowerCase()))
+    );
+  }
+
   showFilters: { [key: string]: boolean } = {};
 
   toggleFilter(column: string): void {
