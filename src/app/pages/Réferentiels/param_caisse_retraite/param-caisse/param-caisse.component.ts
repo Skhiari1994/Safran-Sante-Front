@@ -6,7 +6,6 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { ParamAdherentService } from '../../Parametrages Adherent/param-adherent.service';
-import { CaisseRetrModule } from 'src/app/pages/CaisseRetraite/CaisseRetr.module';
 import { CaisseRetrService } from '../caisse-retr.service';
 
 @Component({

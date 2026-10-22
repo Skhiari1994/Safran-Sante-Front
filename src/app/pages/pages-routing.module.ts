@@ -87,18 +87,8 @@ const routes: Routes = [
   {
     path: 'Parametrage', loadChildren: () => import('./Réferentiels/Referentiel.module').then(m => m.ReferentielModule)
   },
-
-  {
-    path: 'Credits', loadChildren: () => import('./Credits/Credits.module').then(m => m.CreditsModule)
-  },
   {
     path: 'RembFraixMedicaux', loadChildren: () => import('./Remboursement des frais médicaux/RembFraisMedicaux.module').then(m => m.RembFraisMedicauxModule)
-  },
-  {
-    path: 'Convention', loadChildren: () => import('./Convention/Convention.module').then(m => m.ConventionModule)
-  },
-  {
-    path: 'CaisseRetr', loadChildren: () => import('./CaisseRetraite/CaisseRetr.module').then(m => m.CaisseRetrModule)
   },
 
 ];

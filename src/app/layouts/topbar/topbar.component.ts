@@ -20,7 +20,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import { debounceTime, Subject } from 'rxjs';
 import { MajAdherentComponent } from 'src/app/pages/Adherent/maj-adherent/maj-adherent.component';
-import { DebCreditService } from 'src/app/pages/Credits/Débloquage des crédit/deb-credit.service';
 
 @Component({
   selector: 'app-topbar',
@@ -69,12 +68,9 @@ export class TopbarComponent implements OnInit {
   isDisabledSearch: boolean = true;
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
     public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
-    private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService,private servCredit :DebCreditService) { }
+    private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService) { }
   ngOnInit(): void {
     this.userData = this.TokenStorageService.getUser();
-    this.servCredit.getPersonnelsCredit().subscribe((data:any)=>{
-
-    })
     this.element = document.documentElement;
 
     // Cookies wise Language set

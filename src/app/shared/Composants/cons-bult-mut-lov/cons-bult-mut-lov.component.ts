@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Subscription, debounceTime } from 'rxjs';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { DebCreditService } from 'src/app/pages/Credits/Débloquage des crédit/deb-credit.service';
 import { SaveService } from '../../Service/save.service';
 import { BulletinSoinService } from 'src/app/pages/Remboursement des frais médicaux/Bulletin de soins/bulletin-soin.service';
 
