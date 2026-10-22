@@ -30,7 +30,6 @@ import { ToastsContainer } from './dashboards/dashboard/toasts-container.compone
 import { DashboardsModule } from "./dashboards/dashboards.module";
 import { AppsModule } from "./apps/apps.module";
 import { EcommerceModule } from "./ecommerce/ecommerce.module";
-import { SaisDemConvComponent } from './Convention/sais-dem-conv/sais-dem-conv.component';
 
 
 @NgModule({

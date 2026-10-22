@@ -76,14 +76,17 @@ export class BulletinSoinService {
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultSoinCons", { params });
   };
 
-  getBultCnamCons = (mat?: string, num_fam?: string, dat_soin?: string): Observable<any> => {
+  getBultCnamCons = (soc: any,mat?: string, num_fam?: string, dat_soin?: string): Observable<any> => {
     let params: any = {};
 
+    if (soc) params['soc'] = soc;
     if (mat) params['mat'] = mat;
     if (num_fam) params['num_fam'] = num_fam;
     if (dat_soin) params['dat_soin'] = dat_soin;
+    
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultCnamCons", { params });
   };
+
   getLigBult = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBult", { params });

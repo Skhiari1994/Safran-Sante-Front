@@ -72,7 +72,6 @@ export class ParamActeMedicauxComponent {
   ngOnInit() {
     this.getAllActe();
     this.getTypeActe();
-   
   }
 
 

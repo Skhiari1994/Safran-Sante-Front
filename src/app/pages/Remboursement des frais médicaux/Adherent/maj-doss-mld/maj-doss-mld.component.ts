@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { AdherentService } from '../adherent.service';
@@ -53,7 +52,7 @@ export class MajDossMldComponent {
     dat_doss_mld: "Date dossier",
     etat: "Etat"
   };
-  constructor(private serv: CaisseRetrService, private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
+  constructor(private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
     private modalService: NgbModal, private saveService: SaveService) {
     this.formPersonnel = this.fb.group({
       cod_soc: [''],
@@ -129,8 +128,6 @@ export class MajDossMldComponent {
 
     })
     this.getPersonnels()
-    this.getRemb()
-    this.getPrimeRetr()
 
     //this.getAllVirAnticip()
   }
@@ -142,17 +139,6 @@ export class MajDossMldComponent {
   }
 
 
-  getPrimeRetr() {
-    this.serv.getPrimeRetr().subscribe((data) => {
-      this.listPrimeRetr = data
-      console.log("this.listPrimeRetr", this.listPrimeRetr)
-      this.columnsPrimeRetr = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "nom", label: "Nom & Prénom" },
-        { key: "num_retr", label: "Num Retr" },
-      ];
-    })
-  }
 
   getPersonnels() {
     this.adherentServ.getPersActif().subscribe(data => {
@@ -168,16 +154,7 @@ export class MajDossMldComponent {
     })
   }
 
-  getRemb() {
-    this.serv.getMotifRembour().subscribe(data => {
-      this.listRemb = data
 
-      this.columnRemb = [
-        { key: "cod_remb", label: "Code" },
-        { key: "lib_remb", label: "Libelle" },
-      ];
-    })
-  }
   formatDate(dateString: any): string {
     // Ensure the string is in the format 'ddmmyyyy'
     if (dateString && dateString.length === 8) {

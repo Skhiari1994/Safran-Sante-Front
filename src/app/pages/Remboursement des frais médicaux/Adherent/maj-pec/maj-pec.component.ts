@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { AdherentService } from '../adherent.service';
 import { BulletinSoinService } from '../../Bulletin de soins/bulletin-soin.service';
+//import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 
 @Component({
   selector: 'app-maj-pec',
@@ -57,7 +57,7 @@ export class MajPecComponent {
     dat_eff: 'Date eff',
     etat_pec: 'Etat pec',
   };
-  constructor(private serv: CaisseRetrService, private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
+  constructor(/*private serv: CaisseRetrService, */private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
     private modalService: NgbModal, private saveService: SaveService, private servBult: BulletinSoinService) {
     this.formPersonnel = this.fb.group({
       cod_soc: [''],
@@ -135,8 +135,8 @@ export class MajPecComponent {
 
     })
     this.getPersonnels()
-    this.getRemb()
-    this.getPrimeRetr()
+    //this.getRemb()
+    //this.getPrimeRetr()
 
     //this.getAllVirAnticip()
   }
@@ -148,17 +148,7 @@ export class MajPecComponent {
   }
 
 
-  getPrimeRetr() {
-    this.serv.getPrimeRetr().subscribe((data) => {
-      this.listPrimeRetr = data
-      console.log("this.listPrimeRetr", this.listPrimeRetr)
-      this.columnsPrimeRetr = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "nom", label: "Nom & Prénom" },
-        { key: "num_retr", label: "Num Retr" },
-      ];
-    })
-  }
+  
 
   getPersonnels() {
     this.adherentServ.getPersActif().subscribe(data => {
@@ -174,6 +164,18 @@ export class MajPecComponent {
     })
   }
 
+  /*getPrimeRetr() {
+    this.serv.getPrimeRetr().subscribe((data) => {
+      this.listPrimeRetr = data
+      console.log("this.listPrimeRetr", this.listPrimeRetr)
+      this.columnsPrimeRetr = [
+        { key: "mat_pers", label: "Matricule" },
+        { key: "nom", label: "Nom & Prénom" },
+        { key: "num_retr", label: "Num Retr" },
+      ];
+    })
+  }
+
   getRemb() {
     this.serv.getMotifRembour().subscribe(data => {
       this.listRemb = data
@@ -183,7 +185,8 @@ export class MajPecComponent {
         { key: "lib_remb", label: "Libelle" },
       ];
     })
-  }
+  }*/
+ 
   formatDate(dateString: any): string {
     // Ensure the string is in the format 'ddmmyyyy'
     if (dateString && dateString.length === 8) {
