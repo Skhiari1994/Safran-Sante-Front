@@ -1,56 +1,57 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
 <app-breadcrumbs
-title="Référentielle des actes médicaux"
+title="Référentiel des actes"
 [breadcrumbItems]="breadCrumbItems"
 ></app-breadcrumbs>
-<br><div class="row">
-  <!-- Header with Add Button -->
-  <div class="card-header">
-    <div class="d-flex align-items-center flex-wrap gap-3">
-      <div class="flex-grow-1"></div>
-      <div class="flex-shrink-0">
-        <div class="hstack text-nowrap gap-2">
-          <button
-            class="btn btn-info add-btn mb-3"
-            data-bs-toggle="modal"
-            data-bs-target="#showModal"
-            (click)="openModalTab(content1)"
-          >
-            <i class="ri-add-fill me-1 align-bottom"></i> Ajouter
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <div class="card">
-    <div class="card-body">
-      <p-table [value]="listRefAct" [paginator]="true" [rows]="9" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-        <ng-template pTemplate="header">
-          <tr class="table-primary">
-            <th *ngFor="let column of ['cod_act','lib_act','let_cod','cot_act','act_prix','taux_act','nat_act','abrv_act']">
-              <div class="d-flex align-items-center">
-                <span class="me-2" (click)="onSort(column)">  {{ columnTitles[column] || column }}
-                  <i class="ri-arrow-up-down-line ms-1"></i>
-                </span>
-                <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow mb-4">
+            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+              <div class="page-card-title">
+                <h5>Liste des actes</h5>
+                <small>{{ listRefAct?.length || 0 }} acte(s)</small>
               </div>
-            </th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-          <tr [ngClass]="{'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0}">
-            <td>{{ rowData.cod_act }}</td>
-            <td>{{ rowData.lib_act }}</td>
-            <td>{{ rowData.let_cod }}</td>
-            <td>{{ rowData.cot_act}} </td>
-            <td>{{ rowData.act_prix | number: '1.2-3'}} </td>
-            <td>{{ rowData.taux_act | number: '1.2-3'}}</td>
-            <td>{{ rowData.nat_act }}</td>
-            <td>{{ rowData.abrv_act }}</td>
+              <button
+                class="btn btn-info add-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#showModal"
+                (click)="openModalTab(content1)"
+              >
+                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter acte
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+              <p-table [value]="listRefAct" [paginator]="true" [rows]="9" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="table-primary">
+                    <th *ngFor="let column of ['cod_act','lib_act','let_cod','cot_act','act_prix','taux_act','nat_act','abrv_act']">
+                      <div class="th-head">
+                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+                      </div>
+                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    </th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+          <tr>
+            <td class="text-center">{{ rowData.cod_act }}</td>
+            <td class="text-center">{{ rowData.lib_act }}</td>
+            <td class="text-center">{{ rowData.let_cod }}</td>
+            <td class="text-center">{{ rowData.cot_act}} </td>
+            <td class="text-center">{{ rowData.act_prix | number: '1.2-3'}} </td>
+            <td class="text-center">{{ rowData.taux_act | number: '1.2-3'}}</td>
+            <td class="text-center">{{ rowData.nat_act }}</td>
+            <td class="text-center">{{ rowData.abrv_act }}</td>
             <td>
               <ul class="list-inline hstack gap-2 mb-0">
                 <li class="list-inline-item">
@@ -67,18 +68,19 @@ title="Référentielle des actes médicaux"
             </td>
           </tr>
         </ng-template>
-      </p-table>
+              </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-
-
 </div>
- 
 
 <ng-template #content1 role="document" let-modal>
   <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} ref visite</h5>
+    <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} acte</h5>
     <button
       type="button"
       class="btn-close"
@@ -108,10 +110,10 @@ title="Référentielle des actes médicaux"
           />      
         </div>
         <div class="col-md-6">
-          <label for="billinginfo-firstName" class="form-label">Libelle</label>
+          <label for="billinginfo-firstName" class="form-label">Libellé</label>
           <textarea
              class="form-control border-primary"
-            placeholder="Entrer Libelle"
+            placeholder="Entrer le libellé"
             formControlName="lib_act"></textarea>
         </div>
         <div class="col-md-2">
@@ -119,7 +121,7 @@ title="Référentielle des actes médicaux"
           <input
             type="text"
             class="form-control border-primary montant-input"
-            placeholder="Entrer Let"
+            placeholder="Entrer let"
             formControlName="let_cod"
              
           />
@@ -136,46 +138,46 @@ title="Référentielle des actes médicaux"
         </div>
 
     
-        <div class="col-3">
+        <div class="col-md-3">
           <label for="billinginfo-lastName" class="form-label"
             >Prix act
           </label>
           <input
             type="text"
             class="form-control border-primary montant-input"
-            placeholder="Entrer Remb"
+            placeholder="0.000"
             formControlName="act_prix"
             appMontantMask
              
           />
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <label for="billinginfo-phone" class="form-label"
             >Nat act</label
           >
           <input
             type="text"
-            class="form-control border-primary montant-input" 
-             placeholder="Nat act"
+            class="form-control border-primary" 
+             placeholder="Entrer la nature"
             formControlName="nat_act"
             
            />
         </div>
-        <div class="col-md-1">
+        <div class="col-md-3">
             <label for="billinginfo-phone" class="form-label"
               >Taux</label
             >
             <input
               type="text"
-              class="form-control border-warning"
-               placeholder="Entrer Taux"
+              class="form-control border-primary"
+               placeholder="Entrer le taux"
               formControlName="taux_act"
                
              />
           </div>
           
-        <div class="col-md-2">
-          <label for="billinginfo-phone" class="form-label">Code</label>
+        <div class="col-md-3">
+          <label for="billinginfo-phone" class="form-label">Acte</label>
           <app-lov
             [listData]="listActe"
             [columns]="columnActe"
@@ -205,7 +207,7 @@ title="Référentielle des actes médicaux"
                 data-bs-dismiss="modal"
                 (click)="modal.close('Close click')"
               >
-                Close
+                Fermer
               </button>
             </div>
           </div>

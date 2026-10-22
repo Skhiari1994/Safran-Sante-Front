@@ -72,11 +72,11 @@ export class RenouvellementAdhesionComponent {
       mat_pers: [""],
       dat_ass: [""],
       num_assur: [""],
-      typ_aff: ["S"],
+      typ_aff: [""],
       dat_dem: [""],
       obs_aff: [""],
       coef_cot: [""],
-      etat_aff: ["I"],
+      etat_aff: [""],
       corps: [""],
       cod_typ_depart: [""],
       cod_affect: [""],
@@ -170,11 +170,12 @@ applyFilter() {
   }
   openModalTab(content: any) {
 
-    this.formAffilMutuelle.reset({})
+    // les listes repartent sur « Sélectionner » (valeur '') et non sur un choix vide (null)
+    this.formAffilMutuelle.reset({ typ_aff: '', etat_aff: '', corps: '' })
     this.edit = true;
 
     //this.formCertif.reset()
-    this.modalService.open(content, { size: "lg", centered: true });
+    this.modalService.open(content, { size: "xl", centered: true });
   }
 
   formatDate(dateString: any): string {

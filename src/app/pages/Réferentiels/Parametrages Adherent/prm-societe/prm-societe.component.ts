@@ -115,7 +115,7 @@ export class PrmSocieteComponent {
  
   openModalTab(content: any) {
     this.edit = true;
-    this.formSociete.reset()
+    this.formSociete.reset({ cod_retr: '', rep_web: '' })
     //this.formCertif.reset()
     this.modalService.open(content, { size: "xl", centered: true });
   }

@@ -1,4 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
+import { LovComponent } from 'src/app/shared/Composants/lov/lov.component';
+
 import { BulletinSoinService } from '../bulletin-soin.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,6 +18,7 @@ import { MessageService } from 'primeng/api';
   styleUrl: './buletin-mutuelle.component.scss'
 })
 export class BuletinMutuelleComponent implements OnInit, OnDestroy {
+  @ViewChildren(LovComponent) lovs!: QueryList<LovComponent>;
   @ViewChild('dtActes') tableActes!: Table;
   @ViewChild('dtPhar') tablePhar!: Table;
   formBuletinSoin!: FormGroup
@@ -157,6 +160,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     });
     this.saveService.add$.subscribe((reset) => {
       if (reset) {
+        this.lovs?.forEach(l => l.clear());
         this.ligPretForm.reset();
         this.ligPharForm.reset();
         this.formBuletinSoin.reset();
@@ -370,6 +374,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
         { key: "dat_nais", label: "Date naissance" },
         { key: "nom", label: "Nom & Prénom" },
         { key: "num_retr", label: "Id CNRPS" },
+        { key: "lib_fill", label: "Filière" },
       ];
     })
   }
@@ -439,8 +444,9 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     if (event?.originalEvent && typeof event.originalEvent.stopPropagation === 'function') {
       event.originalEvent.stopPropagation();
     }
-    const selectedValue = event?.value;
+    const selectedValue = event?.value !== undefined ? event.value : event?.target?.value;
     console.log('Selected type:', selectedValue);
+    if (!selectedValue) { this.listRefEtablis = []; return; }
 
     this.serv.getRefPhysique(selectedValue).subscribe((data: any) => {
       this.listRefEtablis = data

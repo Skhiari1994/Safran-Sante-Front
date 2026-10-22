@@ -105,7 +105,7 @@ export class PrmDepartementComponent {
  
   openModalTab(content: any) {
     this.edit = true;
-    this.formDepartement.reset()
+    this.formDepartement.reset({ type_lieu: '' })
     //this.formCertif.reset()
     this.modalService.open(content, { size: "xl", centered: true });
   }

@@ -129,3 +129,44 @@
   background-color: inherit !important;
   /* Ensure cells inherit the row brightness */
 }
+
+/* ===== Tableaux de saisie : titres alignés sur leur colonne ===== */
+:host ::ng-deep .modern-table .p-datatable-thead > tr > th {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td app-lov {
+  display: block;
+  margin: 0 auto;
+}
+
+
+/* ===== Tableau des bulletins : colonnes à largeur fixe, dates et montants lisibles ===== */
+:host ::ng-deep .bulletins-table .p-datatable-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 1500px;
+}
+
+:host ::ng-deep .bulletins-table .p-datatable-thead > tr > th {
+  white-space: nowrap;
+  word-break: normal;
+}
+:host ::ng-deep .bulletins-table .p-datatable-tbody > tr > td {
+  padding: 0.4rem 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .bulletins-table .p-datatable-tbody > tr > td input.form-control,
+:host ::ng-deep .bulletins-table .p-datatable-tbody > tr > td select.form-select {
+  height: 38px;
+  font-size: 0.875rem;
+  text-align: center;
+}

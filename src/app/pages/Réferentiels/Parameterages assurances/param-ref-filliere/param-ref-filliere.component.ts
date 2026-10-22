@@ -187,7 +187,7 @@ console.log(this.formRefFilliere.value)
   openModalTab(content: any) {
     this.codActe=''
     this.libAct=''
-    this.formRefFilAct.reset({});
+    this.formRefFilAct.reset({ val_prix: '' });
     this.edit = true;
 
      this.modalService.open(content, { size: "xl", centered: true });

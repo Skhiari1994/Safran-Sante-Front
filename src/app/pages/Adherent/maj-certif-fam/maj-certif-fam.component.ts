@@ -138,8 +138,25 @@ export class MajCertifFamComponent {
     });
   }
   onSort(column: any) {
-    console.log("this.dataRows :", this.listEnfants);
     this.listEnfants = this.service.onSort(column, this.listEnfants);
+  }
+  onSortCertif(column: any) {
+    this.listCertifFam = this.service.onSort(column, this.listCertifFam);
+  }
+
+  // Filtres par colonne (loupe de chaque en-tête) : clés préfixées « e_ » (enfants) et « c_ » (certificats)
+  showFilters: { [key: string]: boolean } = {};
+  searchz: { [key: string]: string } = {};
+  toggleFilter(key: string) {
+    this.showFilters[key] = !this.showFilters[key];
+    if (!this.showFilters[key]) this.searchz[key] = '';
+  }
+  filterList(list: any[], prefix: string): any[] {
+    const keys = Object.keys(this.searchz).filter(k => k.startsWith(prefix) && this.searchz[k]);
+    if (!keys.length) return list || [];
+    return (list || []).filter(row =>
+      keys.every(k => String(row[k.substring(prefix.length)] ?? '').toLowerCase().includes(this.searchz[k].toLowerCase()))
+    );
   }
 
   get CertifFam(): FormArray {

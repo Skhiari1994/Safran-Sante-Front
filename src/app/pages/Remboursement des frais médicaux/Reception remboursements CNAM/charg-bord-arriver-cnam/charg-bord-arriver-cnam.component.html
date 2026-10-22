@@ -28,8 +28,8 @@
                   formControlName="lib_assurance" />
               </div>
 
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Remb.</label>
+              <div class="col-sm-4 col-md-2">
+                <label for="tot_remb" class="form-label">Total remboursé</label>
                 <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="Tot. Remb."
                   formControlName="tot_remb" />
               </div>
@@ -40,17 +40,17 @@
                   formControlName="nbr_bult" />
               </div>
 
-              <div class="col-sm-4 col-md-1">
-                <label for="valid" class="form-label">Validité Bord</label>
-                <select id="valid" class="form-control" formControlName="valid">
-                  <option value=""></option>
+              <div class="col-sm-4 col-md-2">
+                <label for="valid" class="form-label">Validité bordereau</label>
+                <select id="valid" class="form-select border-primary" formControlName="valid">
+                  <option value="">Sélectionner</option>
                   <option value="O">Oui</option>
                   <option value="N">Non</option>
                 </select>
               </div>
 
               <div class="col-sm-4 col-md-2">
-                <label for="formFileSm" class="form-label">Charger Fichier</label>
+                <label for="formFileSm" class="form-label">Charger un fichier</label>
                 <input class="form-control" id="formFileSm" type="file" (change)="onFileSelected($event)" />
               </div>
 
@@ -65,35 +65,33 @@
             <p-table [value]="bordArriver" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
               <ng-template pTemplate="header">
                 <tr>
-                  <th *ngFor="let column of ['mat_pers','nom_prenom','cod_fil','num_fam','nom','dat_soin','lib_remb','tot_remb']" [pSortableColumn]="column">
-                    <div class="d-flex align-items-center">
-                      <span class="me-2" (click)="onSort(column)">
-                        {{ columnTitles[column] || column }}
-                        <i class="ri-arrow-up-down-line ms-1"></i>
-                      </span>
-                      <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                  <th *ngFor="let column of ['mat_pers','nom_prenom','cod_fil','num_fam','nom','dat_soin','lib_remb','tot_remb']">
+                    <div class="th-head">
+                      <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                      <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                      <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
                     </div>
+                    <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
                   </th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
                 <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="logRowData(rowData, rowIndex)">
-                  <td>{{ rowData.mat_pers }}</td>
-                  <td>{{ rowData.nom_prenom }}</td>
-                  <td>{{ rowData.cod_fil }}</td>
-                  <td>{{ rowData.num_fam }}</td>
-                  <td>{{ rowData.nom }}</td>
-                  <td>{{ rowData.dat_soin }}</td>
-                  <td>{{ rowData.lib_remb }}</td>
-                  <td>{{ rowData.tot_remb | number : '1.3-3' }}</td>
+                  <td class="text-center">{{ rowData.mat_pers }}</td>
+                  <td class="text-center">{{ rowData.nom_prenom }}</td>
+                  <td class="text-center">{{ rowData.cod_fil }}</td>
+                  <td class="text-center">{{ rowData.num_fam }}</td>
+                  <td class="text-center">{{ rowData.nom }}</td>
+                  <td class="text-center">{{ rowData.dat_soin }}</td>
+                  <td class="text-center">{{ rowData.lib_remb }}</td>
+                  <td class="text-center">{{ rowData.tot_remb | number : '1.3-3' }}</td>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td>
+                  <td colspan="12" class="text-center">
                     <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                   </td>
                 </tr>
@@ -118,41 +116,43 @@
               <h5 class="mb-3">Détails</h5>
               <div class="card">
                 <div class="border">
-                  <ul ngbNav #CustomHover="ngbNav" [activeId]="1" class="nav nav-pills custom-hover-nav-tabs">
+                  <ul ngbNav #CustomHover="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs">
                     <li [ngbNavItem]="1">
                       <a ngbNavLink>
-                        <i class="ri-home-3-line nav-icon nav-tab-position"></i>
-                        <h5 class="nav-titl nav-tab-position m-0">
+                        <h5 class="nav-titl m-0">
                           Les visites
                         </h5>
                       </a>
                       <ng-template ngbNavContent>
                         <div class="table-responsive table-card">
-                          <p-table [value]="visitArriver" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                          <p-table [value]="detailRows(visitArriver, 'v_')" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
                             <ng-template pTemplate="header">
                               <tr>
-                                <th *ngFor="let column of ['dat_act','abrv_act','lib_act','mnt_honor','mnt_net','prf_type','lib_org','prf_cod']" [pSortableColumn]="column">
-                                  <div class="d-flex align-items-center">
-                                    <span class="me-2">{{ columnTitlesVisite[column] || column }}</span>
+                                <th *ngFor="let column of ['dat_act','abrv_act','lib_act','mnt_honor','mnt_net','prf_type','lib_org','prf_cod']">
+                                  <div class="th-head">
+                                    <i class="ri-arrow-up-down-line th-sort" (click)="detailSort('visitArriver', column)"></i>
+                                    <span class="th-title" (click)="detailSort('visitArriver', column)">{{ columnTitlesVisite[column] || column }}</span>
+                                    <i class="ri-search-line th-search" (click)="toggleFilter('v_' + column)"></i>
                                   </div>
+                                  <input *ngIf="showFilters['v_' + column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="dsearch['v_' + column]" placeholder="..." />
                                 </th>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData>
                               <tr>
-                                <td>{{ rowData.dat_act }}</td>
-                                <td>{{ rowData.abrv_act }}</td>
-                                <td>{{ rowData.lib_act }}</td>
-                                <td>{{ rowData.mnt_honor | number : '1.3-3' }}</td>
-                                <td>{{ rowData.mnt_net | number : '1.3-3' }}</td>
-                                <td>{{ rowData.prf_type }}</td>
-                                <td>{{ rowData.lib_org }}</td>
-                                <td>{{ rowData.prf_cod }}</td>
+                                <td class="text-center">{{ rowData.dat_act }}</td>
+                                <td class="text-center">{{ rowData.abrv_act }}</td>
+                                <td class="text-center">{{ rowData.lib_act }}</td>
+                                <td class="text-center">{{ rowData.mnt_honor | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.mnt_net | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.prf_type }}</td>
+                                <td class="text-center">{{ rowData.lib_org }}</td>
+                                <td class="text-center">{{ rowData.prf_cod }}</td>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                               <tr>
-                                <td>
+                                <td colspan="12" class="text-center">
                                   <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                                 </td>
                               </tr>
@@ -163,38 +163,40 @@
                     </li>
                     <li [ngbNavItem]="2">
                       <a ngbNavLink>
-                        <i class="ri-contrast-drop-line nav-icon nav-tab-position"></i>
-                        <h5 class="nav-titl nav-tab-position m-0">Les actes</h5>
+                        <h5 class="nav-titl m-0">Les actes</h5>
                       </a>
                       <ng-template ngbNavContent>
                         <div class="table-responsive table-card">
-                          <p-table [value]="actArriver" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                          <p-table [value]="detailRows(actArriver, 'a_')" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
                             <ng-template pTemplate="header">
                               <tr>
-                                <th *ngFor="let column of ['dat_act','cod_act','lib_act','mnt_honor','indice','mnt_remb','mut_mnt_net','prf_type','lib_org','prf_cod']" [pSortableColumn]="column">
-                                  <div class="d-flex align-items-center">
-                                    <span class="me-2">{{ columnTitlesActes[column] || column }}</span>
+                                <th *ngFor="let column of ['dat_act','cod_act','lib_act','mnt_honor','indice','mnt_remb','mut_mnt_net','prf_type','lib_org','prf_cod']">
+                                  <div class="th-head">
+                                    <i class="ri-arrow-up-down-line th-sort" (click)="detailSort('actArriver', column)"></i>
+                                    <span class="th-title" (click)="detailSort('actArriver', column)">{{ columnTitlesActes[column] || column }}</span>
+                                    <i class="ri-search-line th-search" (click)="toggleFilter('a_' + column)"></i>
                                   </div>
+                                  <input *ngIf="showFilters['a_' + column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="dsearch['a_' + column]" placeholder="..." />
                                 </th>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData>
                               <tr>
-                                <td>{{ rowData.dat_act }}</td>
-                                <td>{{ rowData.cod_act }}</td>
-                                <td>{{ rowData.lib_act }}</td>
-                                <td>{{ rowData.mnt_honor | number : '1.3-3' }}</td>
-                                <td>{{ rowData.indice }}</td>
-                                <td>{{ rowData.mnt_remb | number : '1.3-3' }}</td>
-                                <td>{{ rowData.mut_mnt_net | number : '1.3-3' }}</td>
-                                <td>{{ rowData.prf_type }}</td>
-                                <td>{{ rowData.lib_org }}</td>
-                                <td>{{ rowData.prf_cod }}</td>
+                                <td class="text-center">{{ rowData.dat_act }}</td>
+                                <td class="text-center">{{ rowData.cod_act }}</td>
+                                <td class="text-center">{{ rowData.lib_act }}</td>
+                                <td class="text-center">{{ rowData.mnt_honor | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.indice }}</td>
+                                <td class="text-center">{{ rowData.mnt_remb | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.mut_mnt_net | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.prf_type }}</td>
+                                <td class="text-center">{{ rowData.lib_org }}</td>
+                                <td class="text-center">{{ rowData.prf_cod }}</td>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                               <tr>
-                                <td>
+                                <td colspan="12" class="text-center">
                                   <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                                 </td>
                               </tr>
@@ -205,41 +207,43 @@
                     </li>
                     <li [ngbNavItem]="3">
                       <a ngbNavLink>
-                        <i class="ri-shopping-cart-2-line nav-icon nav-tab-position"></i>
-                        <h5 class="nav-titl nav-tab-position m-0">
+                        <h5 class="nav-titl m-0">
                           Les médicaments
                         </h5>
                       </a>
                       <ng-template ngbNavContent>
                         <div class="table-responsive table-card">
-                          <p-table [value]="medArriver" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                          <p-table [value]="detailRows(medArriver, 'm_')" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
                             <ng-template pTemplate="header">
                               <tr>
-                                <th *ngFor="let column of ['dat_act','cod_med','lib_med','indice','mnt_honor','mnt_remb','accord_med','num_pec_med','prf_type','prf_cod','lib_org']" [pSortableColumn]="column">
-                                  <div class="d-flex align-items-center">
-                                    <span class="me-2">{{ columnTitlesMed[column] || column }}</span>
+                                <th *ngFor="let column of ['dat_act','cod_med','lib_med','indice','mnt_honor','mnt_remb','accord_med','num_pec_med','prf_type','prf_cod','lib_org']">
+                                  <div class="th-head">
+                                    <i class="ri-arrow-up-down-line th-sort" (click)="detailSort('medArriver', column)"></i>
+                                    <span class="th-title" (click)="detailSort('medArriver', column)">{{ columnTitlesMed[column] || column }}</span>
+                                    <i class="ri-search-line th-search" (click)="toggleFilter('m_' + column)"></i>
                                   </div>
+                                  <input *ngIf="showFilters['m_' + column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="dsearch['m_' + column]" placeholder="..." />
                                 </th>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData>
                               <tr>
-                                <td>{{ rowData.dat_act }}</td>
-                                <td>{{ rowData.cod_med }}</td>
-                                <td>{{ rowData.lib_med }}</td>
-                                <td>{{ rowData.indice }}</td>
-                                <td>{{ rowData.mnt_honor | number : '1.3-3' }}</td>
-                                <td>{{ rowData.mnt_remb | number : '1.3-3' }}</td>
-                                <td>{{ rowData.accord_med }}</td>
-                                <td>{{ rowData.num_pec_med }}</td>
-                                <td>{{ rowData.prf_type }}</td>
-                                <td>{{ rowData.prf_cod }}</td>
-                                <td>{{ rowData.lib_org }}</td>
+                                <td class="text-center">{{ rowData.dat_act }}</td>
+                                <td class="text-center">{{ rowData.cod_med }}</td>
+                                <td class="text-center">{{ rowData.lib_med }}</td>
+                                <td class="text-center">{{ rowData.indice }}</td>
+                                <td class="text-center">{{ rowData.mnt_honor | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.mnt_remb | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.accord_med }}</td>
+                                <td class="text-center">{{ rowData.num_pec_med }}</td>
+                                <td class="text-center">{{ rowData.prf_type }}</td>
+                                <td class="text-center">{{ rowData.prf_cod }}</td>
+                                <td class="text-center">{{ rowData.lib_org }}</td>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                               <tr>
-                                <td>
+                                <td colspan="12" class="text-center">
                                   <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                                 </td>
                               </tr>
@@ -250,36 +254,38 @@
                     </li>
                     <li [ngbNavItem]="4">
                       <a ngbNavLink>
-                        <i class="ri-hand-heart-line nav-icon nav-tab-position"></i>
-                        <h5 class="nav-titl nav-tab-position m-0">
+                        <h5 class="nav-titl m-0">
                           Les appareils
                         </h5>
                       </a>
                       <ng-template ngbNavContent>
                         <div class="table-responsive table-card">
-                          <p-table [value]="appArriver" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                          <p-table [value]="detailRows(appArriver, 'p_')" [paginator]="true" [rows]="6" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
                             <ng-template pTemplate="header">
                               <tr>
-                                <th *ngFor="let column of ['dat_act','cod_app','lib_app','mnt_honor','mnt_remb','accord_app']" [pSortableColumn]="column">
-                                  <div class="d-flex align-items-center">
-                                    <span class="me-2">{{ columnTitlesApp[column] || column }}</span>
+                                <th *ngFor="let column of ['dat_act','cod_app','lib_app','mnt_honor','mnt_remb','accord_app']">
+                                  <div class="th-head">
+                                    <i class="ri-arrow-up-down-line th-sort" (click)="detailSort('appArriver', column)"></i>
+                                    <span class="th-title" (click)="detailSort('appArriver', column)">{{ columnTitlesApp[column] || column }}</span>
+                                    <i class="ri-search-line th-search" (click)="toggleFilter('p_' + column)"></i>
                                   </div>
+                                  <input *ngIf="showFilters['p_' + column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="dsearch['p_' + column]" placeholder="..." />
                                 </th>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData>
                               <tr>
-                                <td>{{ rowData.dat_act }}</td>
-                                <td>{{ rowData.cod_app }}</td>
-                                <td>{{ rowData.lib_app }}</td>
-                                <td>{{ rowData.mnt_honor | number : '1.3-3' }}</td>
-                                <td>{{ rowData.mnt_remb | number : '1.3-3' }}</td>
-                                <td>{{ rowData.accord_app }}</td>
+                                <td class="text-center">{{ rowData.dat_act }}</td>
+                                <td class="text-center">{{ rowData.cod_app }}</td>
+                                <td class="text-center">{{ rowData.lib_app }}</td>
+                                <td class="text-center">{{ rowData.mnt_honor | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.mnt_remb | number : '1.3-3' }}</td>
+                                <td class="text-center">{{ rowData.accord_app }}</td>
                               </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                               <tr>
-                                <td>
+                                <td colspan="12" class="text-center">
                                   <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
                                 </td>
                               </tr>

@@ -1,239 +1,181 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
 <app-breadcrumbs
-title="Référentielle des filiere"
+title="Filières"
 [breadcrumbItems]="breadCrumbItems"
 ></app-breadcrumbs>
-<br>
-
-
-<div class="container d-flex justify-content-center align-items-stretch">
-    <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-            <div class="card p-4 border shadow-none mb-0 mt-4">
-                <form [formGroup]="formRefFilliere">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label class="form-label">Code</label>
-                                    <input type="text" class="form-control border-primary" placeholder="Code"
-                                        formControlName="cod_fil" />
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Libelle</label>
-                                    <input type="text" class="form-control border-primary" placeholder="Libelle"
-                                        formControlName="lib_fill" />
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Libelle 2eme langue</label>
-                                    <input type="text" class="form-control border-primary"
-                                        placeholder="Libelle 2eme langue" formControlName="lib_fill_a" />
-                                </div>
-
-                                <div class="col-md-3">
-                                    <label class="form-label">Bult Cnam</label>
-                                    <select class="form-select border-success" data-plugin="choices"
-                                        formControlName="bult_cnam">
-                                        <option value="O">Oui</option>
-                                        <option value="N">Non</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Bult Mutuelle</label>
-                                    <select class="form-select border-success" data-plugin="choices"
-                                        formControlName="bult_mut">
-                                        <option value="O">Oui</option>
-                                        <option value="N">Non</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Medecin traitant</label>
-                                    <select class="form-select border-success" data-plugin="choices"
-                                        formControlName="med_fam">
-                                        <option value="O">Oui</option>
-                                        <option value="N">Non</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="billinginfo-phone" class="form-label">Code</label>
-                                    <app-lov [listData]="listActivEtablis" [columns]="columnEtablis"
-                                        codeField="cod_activ" [selectedCode]="codActiv"
-                                        (selectedValue)="onSelectedValueActiviteEtablis($event)">
-                                    </app-lov>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Libelle</label>
-                                    <input type="text" class="form-control border-primary" placeholder="Libelle"
-                                        readonly [value]="libEtablis" />
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-
-
 <div class="col-md-12">
-    <div class="collapse show" id="paymentmethodCollapse">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-            <form action="javascript:void(0);" class="row g-3" [formGroup]="formRefFilliere">
-                <h4>Détails</h4>
-                <div class="row">
-                    <!-- Première colonne -->
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label for="billinginfo-firstName" class="form-label">Mnt père</label>
-                                <input type="text" class="form-control border-primary montant-input"
-                                    placeholder="Code gouv" formControlName="mnt_pere" appMontantMask />
-                            </div>
-
-
-                            <div class="col-md-3">
-                                <label for="billinginfo-firstName" class="form-label">Mnt mère</label>
-                                <input type="text" class="form-control border-primary montant-input"
-                                    placeholder="Libelle" formControlName="mnt_mere" appMontantMask />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="billinginfo-firstName" class="form-label">Mnt adhérent</label>
-                                <input type="text" class="form-control border-primary montant-input"
-                                    placeholder="Code poste" formControlName="mnt_adher" appMontantMask />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="billinginfo-firstName" class="form-label">Mnt conjoint</label>
-                                <input type="text" class="form-control border-primary montant-input"
-                                    placeholder="Libelle" formControlName="mnt_conj" appMontantMask />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="billinginfo-firstName" class="form-label">Mnt enfant</label>
-                                <input type="text" class="form-control border-primary montant-input"
-                                    placeholder="Adresse etablis" formControlName="mnt_enf" appMontantMask />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="billinginfo-firstName" class="form-label">Nbre membres</label>
-                                <input type="text" class="form-control border-primary  " placeholder="Adresse etablis"
-                                    formControlName="nbr_membre" />
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Prorata Pec</label>
-                                <select class="form-select border-success" data-plugin="choices"
-                                    formControlName="prorat_pec">
-                                    <option value="O">Oui</option>
-                                    <option value="N">Non</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Plafonnement</label>
-                                <select class="form-select border-success" data-plugin="choices"
-                                    formControlName="typ_plafond">
-                                    <option value="P">Positif</option>
-                                    <option value="N">Négatif</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="billinginfo-firstName" class="form-label">Libelle parametre</label>
-                                <input type="text" class="form-control border-primary " placeholder="Libelle parametre"
-                                    formControlName="lib_param" />
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="billinginfo-firstName" class="form-label">Libelle 2eme langue</label>
-                                <input type="text" class="form-control border-primary  "
-                                    placeholder="Libelle 2eme langue" formControlName="lib_param_a" />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="billinginfo-firstName" class="form-label">Taux paramétre</label>
-                                <input type="text" class="form-control border-primary  " placeholder="Taux paramétre"
-                                    formControlName="taux_param" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ligne de séparation -->
-                    <div class="col-md-1 d-flex align-items-stretch">
-                        <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;">
-                        </div>
-                    </div>
-
-                    <!-- Deuxième colonne -->
-                    <div class="col-md-5">
-                     
-                        <div class="row">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center flex-wrap gap-3">
-                                    <div class="flex-grow-1">   <h4>Acte pharmacie</h4></div>
-                                    <div class="flex-shrink-0">
-                                        <div class="hstack text-nowrap gap-2">
-                                            <button class="btn btn-info add-btn mb-3" data-bs-toggle="modal" data-bs-target="#showModal"
-                                                (click)="openModalTab(content1)">
-                                                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <p-table [value]="listRefFillAct" [paginator]="true" [rows]="4" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                                      <ng-template pTemplate="header">
-                                        <tr class="table-primary">
-                                          <th *ngFor="let column of ['abrv_act', 'libActe', 'val_prix']">
-                                            <div class="d-flex align-items-center">
-                                              <span class="me-2" (click)="onSort(column)"> {{ columnTitles[column] || column }}
-                                                <i class="ri-arrow-up-down-line ms-1"></i>
-                                              </span>
-                                              <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                                              <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                                            </div>
-                                          </th>
-                                          <th>Action</th>
-                                        </tr>
-                                      </ng-template>
-                                      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                        <tr [ngClass]="{'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0}">
-                                          <td>{{ rowData.abrv_act }}</td>
-                                          <td>{{ rowData.libActe }}</td>
-                                          <td>{{ rowData.val_prix=='P'?'Prix Public':rowData.val_prix=='G'?'Prix Générique':rowData.val_prix=='C'?'Remb. Cnam':'' }}</td>
-                                          <td>
-                                            <ul class="list-inline hstack gap-2 mb-0">
-                                              <li class="list-inline-item">
-                                                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content1)">
-                                                  <i class="ri-pencil-fill align-bottom text-muted"></i>
-                                                </a>
-                                              </li>
-                                              <li class="list-inline-item">
-                                                <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
-                                                  <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                                                </a>
-                                              </li>
-                                            </ul>
-                                          </td>
-                                        </tr>
-                                      </ng-template>
-                                    </p-table>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <div class="card-header page-card-header">
+      <div class="page-card-title">
+        <h5>Identification de la filière</h5>
+        <small>Code, libellés et options de la filière</small>
+      </div>
     </div>
-</div>
+    <form [formGroup]="formRefFilliere">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label">Code</label>
+          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_fil" />
+        </div>
+        <div class="col-md-5">
+          <label class="form-label">Libellé</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé" formControlName="lib_fill" />
+        </div>
+        <div class="col-md-5">
+          <label class="form-label">Libellé en arabe</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé en arabe" formControlName="lib_fill_a" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Bulletin CNAM</label>
+          <select class="form-select border-primary" formControlName="bult_cnam">
+            <option value="">Sélectionner</option>
+            <option value="O">Oui</option>
+            <option value="N">Non</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Bulletin mutuelle</label>
+          <select class="form-select border-primary" formControlName="bult_mut">
+            <option value="">Sélectionner</option>
+            <option value="O">Oui</option>
+            <option value="N">Non</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Médecin traitant</label>
+          <select class="form-select border-primary" formControlName="med_fam">
+            <option value="">Sélectionner</option>
+            <option value="O">Oui</option>
+            <option value="N">Non</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Code activité</label>
+          <app-lov [listData]="listActivEtablis" [columns]="columnEtablis"
+            codeField="cod_activ" [selectedCode]="codActiv"
+            (selectedValue)="onSelectedValueActiviteEtablis($event)">
+          </app-lov>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Libellé activité</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé" readonly [value]="libEtablis" />
+        </div>
+      </div>
+    </form>
+  </div>
 
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <div class="card-header page-card-header">
+      <div class="page-card-title">
+        <h5>Détails</h5>
+        <small>Montants, plafonnement et paramètres</small>
+      </div>
+    </div>
+    <form [formGroup]="formRefFilliere">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Montant adhérent</label>
+          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_adher" appMontantMask />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Montant conjoint</label>
+          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_conj" appMontantMask />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Montant enfant</label>
+          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_enf" appMontantMask />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Montant père</label>
+          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_pere" appMontantMask />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Montant mère</label>
+          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_mere" appMontantMask />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Nombre de membres</label>
+          <input type="text" class="form-control border-primary" placeholder="Nombre de membres" formControlName="nbr_membre" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Prorata PEC</label>
+          <select class="form-select border-primary" formControlName="prorat_pec">
+            <option value="">Sélectionner</option>
+            <option value="O">Oui</option>
+            <option value="N">Non</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Plafonnement</label>
+          <select class="form-select border-primary" formControlName="typ_plafond">
+            <option value="">Sélectionner</option>
+            <option value="P">Positif</option>
+            <option value="N">Négatif</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Libellé paramètre</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé paramètre" formControlName="lib_param" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Libellé paramètre (arabe)</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé en arabe" formControlName="lib_param_a" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Taux paramètre</label>
+          <input type="text" class="form-control border-primary" placeholder="Taux paramètre" formControlName="taux_param" />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="card p-4 border shadow-none mb-0 mt-4">
+    <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+      <div class="page-card-title">
+        <h5>Acte pharmacie</h5>
+        <small>{{ listRefFillAct?.length || 0 }} acte(s)</small>
+      </div>
+      <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
+        (click)="openModalTab(content1)">
+        <i class="ri-add-fill me-1 align-bottom"></i> Ajouter acte
+      </button>
+    </div>
+    <p-table [value]="listRefFillAct" [paginator]="true" [rows]="4" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+      <ng-template pTemplate="header">
+        <tr class="table-primary">
+          <th *ngFor="let column of ['abrv_act', 'libActe', 'val_prix']">
+            <div class="th-head">
+              <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+              <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+              <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+            </div>
+            <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+          </th>
+          <th class="text-center">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+        <tr>
+          <td class="text-center">{{ rowData.abrv_act }}</td>
+          <td class="text-center">{{ rowData.libActe }}</td>
+          <td class="text-center">{{ rowData.val_prix=='P'?'Prix Public':rowData.val_prix=='G'?'Prix Générique':rowData.val_prix=='C'?'Remb. Cnam':'' }}</td>
+          <td>
+            <ul class="list-inline hstack gap-2 mb-0">
+              <li class="list-inline-item">
+                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+              </li>
+              <li class="list-inline-item me-0">
+                <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+</div>
 
 <div *ngIf="isSearch">
     <app-search-lov [listData]="listFilliere" [columns]="columnFilliere"
@@ -243,7 +185,7 @@ title="Référentielle des filiere"
 
 <ng-template #content1 role="document" let-modal>
     <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} Acte pharmacie</h5>
+        <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} acte pharmacie</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
             (click)="modal.dismiss('Cross click')"></button>
     </div>
@@ -261,16 +203,16 @@ title="Référentielle des filiere"
                 </div>
 
                 <div class="col-md-6">
-                    <label for="billinginfo-phone" class="form-label">Libelle</label>
-                    <input type="text" class="form-control border-primary" placeholder="Libelle"
+                    <label for="billinginfo-phone" class="form-label">Libellé</label>
+                    <input type="text" class="form-control border-primary" placeholder="Libellé"
                         [value]="libAct" />
                 </div>
 
 
                 <div class="col-md-3">
                     <label for="country" class="form-label">Valeur prix</label>
-                    <select class="form-select border-success" data-plugin="choices" formControlName="val_prix">
-                        <option value=""></option>
+                    <select class="form-select border-primary" formControlName="val_prix">
+                        <option value="">Sélectionner</option>
                         <option value="P">Prix Public</option>
                         <option value="G">Prix Générique</option>
                         <option value="C">Remb. Cnam</option>
@@ -288,7 +230,7 @@ title="Référentielle des filiere"
             <div class="hstack gap-2 justify-content-end">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal"
                     (click)="modal.close('Close click')">
-                    Close
+                    Fermer
                 </button>
             </div>
         </div>

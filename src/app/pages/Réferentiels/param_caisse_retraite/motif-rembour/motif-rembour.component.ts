@@ -128,7 +128,7 @@ export class MotifRembourComponent {
     console.log("edit :", this.edit)
     //this.formCertif.reset()
     this.modalService.open(content, { size: "xl", centered: true });
-    this.formMotifRembour.reset()
+    this.formMotifRembour.reset({ benef_prime: '', benef_droi: '' })
 
 
   }

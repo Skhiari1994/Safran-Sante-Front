@@ -1,72 +1,68 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
   <app-breadcrumbs
-    title="Prise en charge du baréme de remboursement"
+    title="Prise en charge du barème de remboursement"
     [breadcrumbItems]="breadCrumbItems"
   ></app-breadcrumbs>
 
-  <div class="row">
-    <div class="card-header">
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-        
- 
-        <div class="d-flex flex-wrap gap-2">
-          <div 
-            *ngFor="let filiere of ListeFiliere" 
-            class="badge bg-primary text-white px-3 py-2"
-          >
-            {{ filiere.cod_fil }} - {{ filiere.lib_fill }}
-          </div>
-        </div>
-    
- 
-        <div class="flex-shrink-0">
-          <button
-            class="btn btn-info add-btn"
-            data-bs-toggle="modal"
-            data-bs-target="#showModal"
-            (click)="openModalTab(content1)"
-          >
-            <i class="ri-add-fill me-1 align-bottom"></i> Ajouter
-          </button>
-        </div>
-    
-      </div>
-      <br>   
-    </div>
- 
-    
+</div>
 
-    <div class="card">
-      <div class="card-body">
-        <p-table [value]="listeBareme" [paginator]="true" [rows]="11" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-          <ng-template pTemplate="header">
-            <tr class="table-primary">
-              <th *ngFor="let column of ['cod_fil','abrv_act','lib_act','a_indice','mtt_acte','dat_acte','taux_act','plafonne','plafond','verif_piece','nat_act','verif_vign','plafon_prest']">
-                <div class="d-flex align-items-center">
-                  <span class="me-2" (click)="onSort(column)">{{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line ms-1"></i></span>
-                  <i class="ri-search-line text-muted ms-2" (click)="toggleFilter(column)"></i>
-                  <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm ms-2" style="width: 100px" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="col-md-12">
+        <div class="collapse show" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow mb-4">
+            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
+              <div class="page-card-title">
+                <h5>Liste des barèmes de remboursement</h5>
+                <small>{{ listeBareme?.length || 0 }} barème(s)</small>
+              </div>
+              <button
+                class="btn btn-info add-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#showModal"
+                (click)="openModalTab(content1)"
+              >
+                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter barème
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <div *ngFor="let filiere of ListeFiliere" class="badge bg-primary text-white px-3 py-2">
+                  {{ filiere.cod_fil }} - {{ filiere.lib_fill }}
                 </div>
-              </th>
-              <th>Action</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-            <tr [ngClass]="{ 'bg-light': rowIndex % 2 === 0, 'bg-white': rowIndex % 2 !== 0 }">
-              <td>{{ rowData.cod_fil }}</td>
-              <td>{{ rowData.abrv_act }}</td>
-              <td>{{ rowData.lib_act }}</td>
-              <td>{{ rowData.a_indice == 'O' ? 'Oui' : rowData.a_indice == 'N' ? 'Non' : '' }}</td>
-              <td>{{ rowData.mtt_acte | number:'1.3-3' }}</td>
-              <td>{{ rowData.dat_acte }}</td>
-              <td>{{ rowData.taux_act }}</td>
-              <td>{{ rowData.plafonne == 'O' ? 'Oui' : rowData.plafonne == 'N' ? 'Non' : '' }}</td>
-              <td>{{ rowData.plafond }}</td>
-              <td>{{ rowData.verif_piece == 'O' ? 'Oui' : rowData.verif_piece == 'N' ? 'Non' : '' }}</td>
-              <td>{{ rowData.nat_act == 'M' ? 'Montant' : rowData.nat_act == 'T' ? 'Taux' : '' }}</td>
-              <td>{{ rowData.verif_vign == 'O' ? 'Oui' : rowData.verif_vign == 'N' ? 'Non' : '' }}</td>
-              <td>{{ rowData.plafon_prest == 'O' ? 'Oui' : rowData.plafon_prest == 'N' ? 'Non' : '' }}</td>
+              </div>
+              <div class="table-responsive">
+              <p-table [value]="listeBareme" [paginator]="true" [rows]="11" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="table-primary">
+                    <th *ngFor="let column of ['cod_fil','abrv_act','lib_act','a_indice','mtt_acte','dat_acte','taux_act','plafonne','plafond','verif_piece','nat_act','verif_vign','plafon_prest']">
+                      <div class="th-head">
+                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
+                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
+                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+                      </div>
+                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+                    </th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td class="text-center">{{ rowData.cod_fil }}</td>
+              <td class="text-center">{{ rowData.abrv_act }}</td>
+              <td class="text-center">{{ rowData.lib_act }}</td>
+              <td class="text-center">{{ rowData.a_indice == 'O' ? 'Oui' : rowData.a_indice == 'N' ? 'Non' : '' }}</td>
+              <td class="text-center">{{ rowData.mtt_acte | number:'1.3-3' }}</td>
+              <td class="text-center">{{ rowData.dat_acte }}</td>
+              <td class="text-center">{{ rowData.taux_act }}</td>
+              <td class="text-center">{{ rowData.plafonne == 'O' ? 'Oui' : rowData.plafonne == 'N' ? 'Non' : '' }}</td>
+              <td class="text-center">{{ rowData.plafond }}</td>
+              <td class="text-center">{{ rowData.verif_piece == 'O' ? 'Oui' : rowData.verif_piece == 'N' ? 'Non' : '' }}</td>
+              <td class="text-center">{{ rowData.nat_act == 'M' ? 'Montant' : rowData.nat_act == 'T' ? 'Taux' : '' }}</td>
+              <td class="text-center">{{ rowData.verif_vign == 'O' ? 'Oui' : rowData.verif_vign == 'N' ? 'Non' : '' }}</td>
+              <td class="text-center">{{ rowData.plafon_prest == 'O' ? 'Oui' : rowData.plafon_prest == 'N' ? 'Non' : '' }}</td>
               <td>
                 <ul class="list-inline hstack gap-2 mb-0">
                   <li class="list-inline-item">
@@ -83,7 +79,11 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+              </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -105,195 +105,168 @@
   </div>
   <form [formGroup]="formBareme" class="tablelist-form" autocomplete="off">
     <div class="modal-body">
+      <!-- Identification : filière / assurance / acte -->
       <div class="row g-3">
-        <div class="row">
-          <div class="col-md-2">
-            <label class="form-label">Filiere</label>
-            <app-lov
-              [listData]="ListeFiliere"
-              [columns]="columnFiliere"
-              codeField="cod_fil"
-              [selectedCode]="codeFiliere"
-              (selectedValue)="onSelectedValueFiliere($event)"
-            >
-            </app-lov>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Libelle</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Libelle"
-              [value]="libFiliere"
-              readonly
-            />
-          </div>
+        <div class="col-md-3">
+          <label class="form-label">Filière</label>
+          <app-lov
+            [listData]="ListeFiliere"
+            [columns]="columnFiliere"
+            codeField="cod_fil"
+            [selectedCode]="codeFiliere"
+            (selectedValue)="onSelectedValueFiliere($event)"
+          >
+          </app-lov>
         </div>
-        
-        <div class="row">
-          <div class="col-md-2">
-            <label class="form-label">Acte</label>
-            <app-lov
-              [listData]="ListeActe"
-              [columns]="columnActe"
-              codeField="abrv_act"
-              [selectedCode]="codeActe"
-              (selectedValue)="onSelectedValueActe($event)"
-            >
-            </app-lov>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Libelle</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Libelle"
-              [value]="libActe"
-              readonly
-            />
-          </div>
+        <div class="col-md-3">
+          <label class="form-label">Libellé filière</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libFiliere" readonly />
         </div>
-        
-        <div class="row">
-          <div class="col-md-2">
-            <label class="form-label">Assurance</label>
-            <app-lov
-              [listData]="ListeAssurance"
-              [columns]="columnAssuranc"
-              codeField="cod_assur"
-              [selectedCode]="codeAssur"
-              (selectedValue)="onSelectedValueAssur($event)"
-            >
-            </app-lov>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Libelle</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Libelle"
-              [value]="libAssur"
-              readonly
-            />
-          </div>
+        <div class="col-md-3">
+          <label class="form-label">Assurance</label>
+          <app-lov
+            [listData]="ListeAssurance"
+            [columns]="columnAssuranc"
+            codeField="cod_assur"
+            [selectedCode]="codeAssur"
+            (selectedValue)="onSelectedValueAssur($event)"
+          >
+          </app-lov>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Libellé assurance</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
         </div>
 
-        <div class="row">
-          <div class="col-md-2">
-            <label class="col-form-label">Date acte</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer date d'acte"
-              formControlName="dat_acte"
-              (input)="formatDate2($event)"
-              maxlength="10"
-            />
-          </div>
-          <div class="col-md-2">
-            <label class="col-form-label">Durée d'acte</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer la durée d'acte"
-              formControlName="duree_act"
-            />
-          </div>
+        <div class="col-md-3">
+          <label class="form-label">Acte</label>
+          <app-lov
+            [listData]="ListeActe"
+            [columns]="columnActe"
+            codeField="abrv_act"
+            [selectedCode]="codeActe"
+            (selectedValue)="onSelectedValueActe($event)"
+          >
+          </app-lov>
         </div>
-        <hr />
-        <div class="row">
-          <div class="col-md-2">
-            <label class="col-form-label">Nature d'acte</label>
-            <select
-              id="nat_act"
-              class="form-control"
-              formControlName="nat_act"
-              (change)="onNatureChange($event.target.value)"
-            >
-              <option value=""></option>
-              <option value="M">Montant</option>
-              <option value="T">Taux</option>
-            </select>
-          </div>
+        <div class="col-md-3">
+          <label class="form-label">Libellé acte</label>
+          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libActe" readonly />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Date acte</label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            placeholder="jj/mm/aaaa"
+            formControlName="dat_acte"
+            (input)="formatDate2($event)"
+            maxlength="10"
+          />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Durée d'acte</label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            placeholder="Entrer la durée"
+            formControlName="duree_act"
+          />
+        </div>
+      </div>
 
-          <div class="col-md-2" [hidden]="selectedNature !== 'T'">
-            <label class="col-form-label">Taux d'acte</label>
+      <hr class="my-4" />
+
+      <!-- Remboursement : nature / montant ou taux / plafond -->
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Nature d'acte</label>
+          <select
+            id="nat_act"
+            class="form-select border-primary"
+            formControlName="nat_act"
+            (change)="onNatureChange($event.target.value)"
+          >
+            <option value="">Sélectionner</option>
+            <option value="M">Montant</option>
+            <option value="T">Taux</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <div [hidden]="selectedNature !== 'T'">
+            <label class="form-label">Taux d'acte</label>
             <input
               type="text"
               class="form-control border-primary"
-              placeholder="Entrer le taux d'acte"
+              placeholder="Entrer le taux"
               formControlName="taux_act"
             />
           </div>
-
-          <div class="col-md-2" [hidden]="selectedNature !== 'M'">
-            <label class="col-form-label">Montant d'acte</label>
+          <div [hidden]="selectedNature !== 'M'">
+            <label class="form-label">Montant d'acte</label>
             <input
               type="text"
               class="form-control border-primary"
-              placeholder="Entrer le montant d'acte"
+              placeholder="Entrer le montant"
               formControlName="mtt_acte"
               appMontantMask
             />
           </div>
-          <div class="col-md-2">
-            <label class="col-form-label">Plafonné</label>
-            <select
-              id="plafonne"
-              class="form-control"
-              formControlName="plafonne"
-              (change)="onNatureplafond($event.target.value)"
-            >
-              <option value=""></option>
-              <option value="O">Oui</option>
-              <option value="N">Non</option>
-            </select>
-          </div>
-          <div class="col-md-2" [hidden]="selectedPlafond !== 'O'">
-            <label class="col-form-label">Plafond</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer le montant d'acte"
-              formControlName="plafond"
-            />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Plafonné</label>
+          <select
+            id="plafonne"
+            class="form-select border-primary"
+            formControlName="plafonne"
+            (change)="onNatureplafond($event.target.value)"
+          >
+            <option value="">Sélectionner</option>
+            <option value="O">Oui</option>
+            <option value="N">Non</option>
+          </select>
+        </div>
+        <div class="col-md-3" [hidden]="selectedPlafond !== 'O'">
+          <label class="form-label">Plafond</label>
+          <input
+            type="text"
+            class="form-control border-primary"
+            placeholder="Entrer le plafond"
+            formControlName="plafond"
+          />
+        </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <!-- Options -->
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="chk_a_indice" role="switch" [checked]="formBareme.get('a_indice')?.value"
+              (change)="formBareme.get('a_indice')?.setValue($event.target.checked)">
+            <label class="form-check-label" for="chk_a_indice">A indice</label>
           </div>
         </div>
-        <hr />
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-check form-switch">
-              <input type="checkbox" [checked]="formBareme.get('a_indice')?.value" 
-              (change)="formBareme.get('a_indice')?.setValue($event.target.checked)">
-              <label class="form-check-label" for="SwitchCheck1">A indice</label>
-            </div>
-          </div>
-        
-          <div class="col-md-3">
-            <div class="form-check form-switch">
-              <input type="checkbox" [checked]="formBareme.get('verif_vign')?.value" 
+        <div class="col-md-3">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="chk_verif_vign" role="switch" [checked]="formBareme.get('verif_vign')?.value"
               (change)="formBareme.get('verif_vign')?.setValue($event.target.checked)">
-              
-              <label class="form-check-label" for="SwitchCheck2">Vérifier vigniétte</label>
-            </div>
+            <label class="form-check-label" for="chk_verif_vign">Vérifier vignette</label>
           </div>
-        
-          <div class="col-md-3">
-            <div class="form-check form-switch">
-              <input type="checkbox" [checked]="formBareme.get('verif_piece')?.value" 
+        </div>
+        <div class="col-md-3">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="chk_verif_piece" role="switch" [checked]="formBareme.get('verif_piece')?.value"
               (change)="formBareme.get('verif_piece')?.setValue($event.target.checked)">
-               
-              <label class="form-check-label" for="SwitchCheck3">Vérifier pièces</label>
-            </div>
+            <label class="form-check-label" for="chk_verif_piece">Vérifier pièces</label>
           </div>
-        
-          <div class="col-md-3">
-            <div class="form-check form-switch">
-              <input type="checkbox" [checked]="formBareme.get('plafon_prest')?.value" 
+        </div>
+        <div class="col-md-3">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="chk_plafon_prest" role="switch" [checked]="formBareme.get('plafon_prest')?.value"
               (change)="formBareme.get('plafon_prest')?.setValue($event.target.checked)">
-            
-              <label class="form-check-label" for="SwitchCheck4">Plafond/Prestataire</label>
-            </div>
+            <label class="form-check-label" for="chk_plafon_prest">Plafond/Prestataire</label>
           </div>
         </div>
       </div>

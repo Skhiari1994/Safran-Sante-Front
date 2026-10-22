@@ -56,3 +56,6 @@ import 'intersection-observer';
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+// sockjs-client (chat) attend la variable globale `global` de Node
+(window as any).global = window;

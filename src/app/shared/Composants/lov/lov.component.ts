@@ -47,26 +47,31 @@ export class LovComponent implements OnInit, OnChanges {
     });
 
     if (this.selectedItem) {
-      this.selectedCode = this.selectedItem[this.codeField] || '';
+      this.selectedCode = this.selectedItem[this.codeField] ?? '';
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['listData']) {
       this.filteredData = Array.isArray(this.listData) ? [...this.listData] : [];
-      if (this.listData && this.listData.length > 0 && this.selectedCode) {
+      if (this.listData && this.listData.length > 0 && this.hasCode(this.selectedCode)) {
         this.patchValue(this.selectedCode);
       }
     }
 
     if (changes['selectedItem'] && this.selectedItem) {
-      this.selectedCode = this.selectedItem[this.codeField] || '';
+      this.selectedCode = this.selectedItem[this.codeField] ?? '';
     }
 
-    if (changes['selectedCode'] && changes['selectedCode'].currentValue) {
+    if (changes['selectedCode'] && this.hasCode(changes['selectedCode'].currentValue)) {
       this.patchValue(changes['selectedCode'].currentValue);
     }
   }
+  /** Un code est présent même s'il vaut 0 (ex. numéro de famille 0 = adhérent). */
+  private hasCode(code: any): boolean {
+    return code !== null && code !== undefined && String(code).trim() !== '';
+  }
+
   initializeColumnSearchQueries(): void {
     this.columnSearchQueries = {};
     if (this.columns) {
@@ -119,9 +124,16 @@ export class LovComponent implements OnInit, OnChanges {
     this.filteredData = [...this.listData];
   }
 
+  /** Vide le champ code (utilisé par « Retour » / « Nouveau » des pages de saisie). */
+  clear(): void {
+    this.selectedItem = null;
+    this.selectedCode = '';
+    this.errorMessage = '';
+  }
+
   selectItem(item: ListDataItem): void {
     this.selectedItem = item;
-    this.selectedCode = item[this.codeField] || '';
+    this.selectedCode = item[this.codeField] ?? '';
     this.selectedValue.emit(item);
     this.errorMessage = ''; // Clear error on selection
   }
@@ -171,7 +183,7 @@ export class LovComponent implements OnInit, OnChanges {
   }
   @HostListener('focusout', ['$event'])
   onCodeChange(): void {
-    const normalizedCode = this.selectedCode?.trim().toLowerCase();
+    const normalizedCode = String(this.selectedCode ?? '').trim().toLowerCase();
 
     if (normalizedCode) {
       const foundItem = this.listData.find(

@@ -74,7 +74,7 @@
                   data-plugin="choices"
                   formControlName="cod_retr"
                 >
-                  <option value=""></option>
+                  <option value="">Sélectionner</option>
                   <option value="1">CNSS</option>
                   <option value="2">CNRPS</option>
                 </select>
@@ -149,90 +149,50 @@
     <div class="row" style="margin-top: -24px">
       <!-- First Card -->
       <div class="col-md-6">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
-            <h5 class="card-title text-primary mb-3">Informations Personnel</h5>
+        <div class="collapse show h-100" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
+            <h5 class="card-title text-primary mb-3">Informations personnelles</h5>
 
             <form
               action="javascript:void(0);"
               class="row g-3"
               [formGroup]="formAdherent"
             >
-              
-              <div class="col-6">
-                <label for="billinginfo-firstName" class="form-label"
-                  >Nom Arabe</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer Nom Arabe"
-                  formControlName="nom_pers_a"
-                />
-              </div>
-              <div class="col-6">
-                <label for="billinginfo-lastName" class="form-label"
-                  >Prénom Arabe</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer Prénom Arabe"
-                  formControlName="pren_pers_a"
-                />
+
+              <div class="col-md-6">
+                <label for="billinginfo-firstName" class="form-label">Nom (arabe)</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer le nom en arabe"
+                  formControlName="nom_pers_a" />
               </div>
               <div class="col-md-6">
-                <label for="billinginfo-firstName" class="form-label"
-                  >Nom de jeune fille</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer le nom de jeune fille"
-                  formControlName="nom_jf"
-                />
+                <label for="billinginfo-lastName" class="form-label">Prénom (arabe)</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer le prénom en arabe"
+                  formControlName="pren_pers_a" />
               </div>
               <div class="col-md-6">
-                <label for="billinginfo-lastName" class="form-label"
-                  >Nom jeune fille Arabe</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer le nom de jeune fille Arabe"
-                  formControlName="nom_jf_a"
-                />
+                <label for="billinginfo-firstName" class="form-label">Nom de jeune fille</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer le nom de jeune fille"
+                  formControlName="nom_jf" />
               </div>
-              <div class="col-md-4">
-                <label for="billinginfo-phone" class="form-label"
-                  >Date de naissance</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-warning"
-                  mask="00/00/0000"
-                  formControlName="dat_nais"
-                  placeholder="Entrer date de naissance"
-                  appDateFormatter
-                  (blur)="onBirthHireBlur()"
-                />
+              <div class="col-md-6">
+                <label for="billinginfo-lastName" class="form-label">Nom de jeune fille (arabe)</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer en arabe"
+                  formControlName="nom_jf_a" />
+              </div>
+              <div class="col-md-6">
+                <label for="billinginfo-phone" class="form-label">Date de naissance</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" formControlName="dat_nais"
+                  placeholder="jj/mm/aaaa" appDateFormatter (blur)="onBirthHireBlur()" />
                 <div
                   *ngIf="(formAdherent.get('dat_nais')?.touched || formAdherent.get('dat_emb')?.touched) && (formAdherent.get('dat_nais')?.hasError('birthAfterHire') || formAdherent.get('dat_emb')?.hasError('birthAfterHire'))"
-                  class="bg-danger-subtle text-danger px-2 py-1 rounded mt-1"
-                >
+                  class="bg-danger-subtle text-danger px-2 py-1 rounded mt-1">
                   La date de naissance ne peut pas être supérieure à la date d'embauche.
                 </div>
               </div>
-              <div class="col-8">
-                <label for="billinginfo-phone" class="form-label"
-                  >Lieu de naissance</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer lieu de naissance"
-                  formControlName="lieu_nais"
-                />
+              <div class="col-md-6">
+                <label for="billinginfo-phone" class="form-label">Lieu de naissance</label>
+                <input type="text" class="form-control border-primary" placeholder="Entrer lieu de naissance"
+                  formControlName="lieu_nais" />
               </div>
             </form>
           </div>
@@ -240,8 +200,8 @@
       </div>
 
       <div class="col-md-6">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
+        <div class="collapse show h-100" id="paymentmethodCollapse">
+          <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
             <h5 class="mb-1 text-primary mb-3">Informations Sociales</h5>
 
             <form
@@ -249,132 +209,74 @@
               class="row g-3"
               [formGroup]="formAdherent"
             >
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="country" class="form-label">Sexe</label>
-                <select
-                  class="form-select border-success"
-                  data-plugin="choices"
-                  formControlName="sexe"
-                >
-                  <option value="">Select Sexe...</option>
+                <select class="form-select border-primary" data-plugin="choices" formControlName="sexe">
+                  <option value="">Sélectionner</option>
                   <option value="M">Masculin</option>
                   <option value="F">Feminin</option>
                 </select>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="billinginfo-phone" class="form-label">Cin</label>
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer CIN"
-                  formControlName="cin"
-                  mask="00000000"
-                />
+                <input type="text" class="form-control border-primary" placeholder="Entrer CIN" formControlName="cin"
+                  mask="00000000" />
               </div>
-              <div class="col-md-3">
-                <label for="billinginfo-phone" class="form-label"
-                  >Date d'embauche</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-warning"
-                  mask="00/00/0000"
-                  placeholder="Entrer la date d'embauche"
-                  formControlName="dat_emb"
-                  appDateFormatter
-                  (blur)="onBirthHireBlur()"
-                />
+              <div class="col-md-4">
+                <label for="billinginfo-phone" class="form-label">Date d'embauche</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000"
+                  placeholder="jj/mm/aaaa" formControlName="dat_emb" appDateFormatter
+                  (blur)="onBirthHireBlur()" />
                 <div
                   *ngIf="(formAdherent.get('dat_nais')?.touched || formAdherent.get('dat_emb')?.touched) && (formAdherent.get('dat_nais')?.hasError('birthAfterHire') || formAdherent.get('dat_emb')?.hasError('birthAfterHire'))"
-                  class="bg-danger-subtle text-danger px-2 py-1 rounded mt-1"
-                >
+                  class="bg-danger-subtle text-danger px-2 py-1 rounded mt-1">
                   La date de naissance ne peut pas être supérieure à la date d'embauche.
                 </div>
               </div>
-              <div class="col-md-3">
-                <label for="billinginfo-phone" class="form-label"
-                  >Nationalité</label
-                >
-                <app-lov
-                  [listData]="listNationalite"
-                  [columns]="columnsNat"
-                  codeField="cod_natp"
-                  [selectedCode]="codNatP"
-                  (selectedValue)="onSelectedValueNat($event)"
-                ></app-lov>
+              <div class="col-md-4">
+                <label for="billinginfo-phone" class="form-label">Nationalité</label>
+                <app-lov [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp"
+                  [selectedCode]="codNatP" (selectedValue)="onSelectedValueNat($event)"></app-lov>
               </div>
-              <div class="col-9">
+              <div class="col-md-8">
                 <label for="billinginfo-phone" class="form-label">
-                  Libellé</label
-                >
+                  Libellé nationalité</label>
 
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  [value]="libNat"
-                  readonly
-                  placeholder="Nationalité"
-                />
+                <input type="text" class="form-control border-primary" [value]="libNat" readonly
+                  placeholder="Nationalité" />
               </div>
-              <div class="col-3">
+              <div class="col-md-4">
                 <label for="billinginfo-phone" class="form-label">
-                  Département</label
-                >
+                  Département</label>
 
-                <app-lov
-                  [listData]="listLieu"
-                  [columns]="columnsLieu"
-                  [codeField]="codLieu"
-                  [selectedCode]="codLieuVal"
-                  (selectedValue)="onSelectedValueLieu($event)"
-                >
+                <app-lov [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu" [selectedCode]="codLieuVal"
+                  (selectedValue)="onSelectedValueLieu($event)">
                 </app-lov>
               </div>
-              <div class="col-md-9">
+              <div class="col-md-8">
                 <label for="billinginfo-phone" class="form-label">
-                  Libellé</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  [value]="libLieu"
-                  placeholder="Département"
-                  readonly
-                />
+                  Libellé département</label>
+                <input type="text" class="form-control border-primary" [value]="libLieu" placeholder="Département"
+                  readonly />
               </div>
-              <div class="col-md-12">
-                <label for="country" class="form-label"
-                  >Situation sociale</label
-                >
-                <select
-                  class="form-select border-success"
-                  data-plugin="choices"
-                  formControlName="cod_sit"
-                >
-                  <option value="">Select situation...</option>
+              <div class="col-md-6">
+                <label for="country" class="form-label">Situation sociale</label>
+                <select class="form-select border-primary" data-plugin="choices" formControlName="cod_sit">
+                  <option value="">Sélectionner</option>
                   <option value="C">Célibataire</option>
                   <option value="M">Marié(e)</option>
                   <option value="D">Divorcé(e)</option>
                   <option value="V">Voeuf(ve)</option>
                 </select>
               </div>
-              <div
-                class="col-md-4"
-                *ngIf="
+              <div class="col-md-6" *ngIf="
                   formAdherent.get('cod_sit')?.value === 'M' ||
                   formAdherent.get('cod_sit')?.value === 'D' ||
                   formAdherent.get('cod_sit')?.value === 'V'
-                "
-              >
-                <label for="billinginfo-phone" class="form-label"
-                  >Nombre d'enfants</label
-                >
-                <input
-                  type="text"
-                  class="form-control border-primary"
-                  placeholder="Entrer le nombre d'enfants"
-                  formControlName="nbr_enf"
-                />
+                ">
+                <label for="billinginfo-phone" class="form-label">Nombre d'enfants</label>
+                <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants"
+                  formControlName="nbr_enf" readonly />
               </div>
             </form>
           </div>
@@ -390,7 +292,7 @@
           <div class="collapse show" id="paymentmethodCollapse">
             <div class="card p-4 border shadow-none mb-0 mt-4">
               <h5 class="mb-1 text-primary mb-3">
-                Informations Profesionnelles
+                Informations professionnelles
               </h5>
 
               <form
@@ -398,14 +300,11 @@
                 class="row g-3"
                 [formGroup]="formAdherent"
               >
+                <!-- Statut -->
                 <div class="col-md-4">
                   <label for="country" class="form-label">Corps</label>
-                  <select
-                    class="form-select border-success"
-                    data-plugin="choices"
-                    formControlName="corps"
-                  >
-                    <option value="">Select corps...</option>
+                  <select class="form-select border-primary" formControlName="corps">
+                    <option value="">Sélectionner</option>
                     <option value="C">Cadre commun</option>
                     <option value="S">Sécurité</option>
                     <option value="M">Mediateur administratif</option>
@@ -414,194 +313,104 @@
                     <option value="P">Minéstère d'intérieur</option>
                     <option value="D">Divers</option>
                   </select>
-                 
                 </div>
-                <div class="col-md-4"></div>
                 <div class="col-md-4">
-                  <label for="billinginfo-lastName" class="form-label"
-                    >Etat</label
-                  >
-                  <select
-                    class="form-select border-success"
-                    data-plugin="choices"
-                    formControlName="etat_act"
-                  >
-                    <option value="">Select état...</option>
+                  <label for="billinginfo-lastName" class="form-label">Etat</label>
+                  <select class="form-select border-primary" formControlName="etat_act">
+                    <option value="">Sélectionner</option>
                     <option value="A">Actif</option>
                     <option value="B">Bloqué</option>
                     <option value="I">En Instance</option>
                   </select>
                 </div>
-                <div class="col-md-2">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Code
-                  </label>
-                  <app-lov
-                    [listData]="listAffectation"
-                    [columns]="columnAffect"
-                    [codeField]="codAffect"
-                    [selectedCode]="codAffectVal"
-                    (selectedValue)="onSelectedValueAffect($event)"
-                  >
-                  </app-lov>
-                </div>
-                <div class="col-6">
-                  <label for="billinginfo-lastName" class="form-label"
-                    >Libelle position administratif
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Lib Affectation"
-                    [value]="libAffect"
-                    readonly
-                  />
-                </div>
-                <div class="col-3">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Date de position</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer Date motif"
-                    formControlName="dat_affect"
-                    appDateFormatter
-                  />
-                </div>
-                <div class="col-md-2">
-                  <label for="billinginfo-phone" class="form-label">Code</label>
-                  <app-lov
-                    [listData]="listTypeDepart"
-                    [columns]="columnsTypDepart"
-                    [codeField]="codTypDepart"
-                    [selectedCode]="codTypDepartVal"
-                    (selectedValue)="onSelectedValueTypDepart($event)"
-                  >
-                  </app-lov>
-                </div>
-                <div class="col-md-6">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Libellé de motif de départ</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Type départ"
-                    [value]="libTypDepart"
-                    readonly
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Date de motif</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer Date motif"
-                    formControlName="dat_depart"
-                    appDateFormatter
-                  />
-                </div>
-                <div class="col-4">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Numéro d'affiliation mutuelle</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Num affil mutuelle"
-                    formControlName="num_assur"
-                  />
-                </div>
-                <div class="col-4">
+                <div class="col-md-4">
                   <label for="country" class="form-label">Etat adhésion</label>
-                  <select
-                    class="form-select border-success"
-                    data-plugin="choices"
-                    formControlName="typ_aff"
-                  >
-                    <option value="">Select état...</option>
+                  <select class="form-select border-primary" formControlName="typ_aff">
+                    <option value="">Sélectionner</option>
                     <option value="A">Adhéré</option>
                     <option value="S">Non Adhéré</option>
                   </select>
                 </div>
 
-                <div class="col-4">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Date d'effet</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer d'éffet"
-                    formControlName="dat_ass"
-                    appDateFormatter
-                  />
+                <div class="col-12"><hr class="my-1" /></div>
+
+                <!-- Position administrative -->
+                <div class="col-md-3">
+                  <label for="billinginfo-phone" class="form-label">Code position</label>
+                  <app-lov [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
+                    [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)">
+                  </app-lov>
+                </div>
+                <div class="col-md-6">
+                  <label for="billinginfo-lastName" class="form-label">Libellé position administrative</label>
+                  <input type="text" class="form-control border-primary" placeholder="Libellé position"
+                    [value]="libAffect" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label for="billinginfo-phone" class="form-label">Date de position</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000"
+                    placeholder="jj/mm/aaaa" formControlName="dat_affect" appDateFormatter />
                 </div>
 
-                <div class="col-4">
-                  <label for="country" class="form-label"
-                    >Caisse de retraite</label
-                  >
-                  <select
-                    class="form-select border-success"
-                    data-plugin="choices"
-                    formControlName="cod_retr"
-                  >
-                    <option value=""></option>
+                <!-- Motif de départ -->
+                <div class="col-md-3">
+                  <label for="billinginfo-phone" class="form-label">Code motif de départ</label>
+                  <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
+                    [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)">
+                  </app-lov>
+                </div>
+                <div class="col-md-6">
+                  <label for="billinginfo-phone" class="form-label">Libellé de motif de départ</label>
+                  <input type="text" class="form-control border-primary" placeholder="Motif de départ"
+                    [value]="libTypDepart" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label for="billinginfo-phone" class="form-label">Date de motif</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000"
+                    placeholder="jj/mm/aaaa" formControlName="dat_depart" appDateFormatter />
+                </div>
+
+                <div class="col-12"><hr class="my-1" /></div>
+
+                <!-- Mutuelle et CNAM -->
+                <div class="col-md-4">
+                  <label for="billinginfo-phone" class="form-label">Numéro d'affiliation mutuelle</label>
+                  <input type="text" class="form-control border-primary" placeholder="Num affiliation mutuelle"
+                    formControlName="num_assur" />
+                </div>
+                <div class="col-md-4">
+                  <label for="billinginfo-phone" class="form-label">Date d'effet</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    formControlName="dat_ass" appDateFormatter />
+                </div>
+                <div class="col-md-4">
+                  <label for="billinginfo-phone" class="form-label">Date d'affiliation CNAM</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000"
+                    placeholder="jj/mm/aaaa" formControlName="dat_aff_cnam" appDateFormatter />
+                </div>
+
+                <!-- Retraite et cotisation -->
+                <div class="col-md-4">
+                  <label for="country" class="form-label">Caisse de retraite</label>
+                  <select class="form-select border-primary" formControlName="cod_retr">
+                    <option value="">Sélectionner</option>
                     <option value="1">CNSS</option>
                     <option value="2">CNRPS</option>
                   </select>
                 </div>
-                <div class="col-4">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Identifiant unique CNRPS</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Entrer Identifiant unique CNRPS"
-                    formControlName="num_retr"
-                  />
+                <div class="col-md-4">
+                  <label for="billinginfo-phone" class="form-label">Identifiant unique CNRPS</label>
+                  <input type="text" class="form-control border-primary" placeholder="Entrer l'identifiant unique"
+                    formControlName="num_retr" />
                 </div>
-                <div class="col-4">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Date d'affiliation CNAM</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer la date d'affiliation CNAM"
-                    formControlName="dat_aff_cnam"
-                    appDateFormatter
-                  />
+                <div class="col-md-4">
+                  <label for="billinginfo-phone" class="form-label">Assiette cotisation</label>
+                  <input type="text" class="form-control border-primary" placeholder="Assiette cotisation"
+                    formControlName="mnt_param" />
                 </div>
-                <div class="col-8">
-                  <label for="country" class="form-label"
-                    >Libellé filière</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Entrer Lib fil"
-                  />
-                </div>
-                <div class="col-4">
-                  <label for="billinginfo-phone" class="form-label"
-                    >Assiette Cot.</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Assiette cot."
-                    formControlName="mnt_param"
-                  />
+                <div class="col-md-12">
+                  <label for="country" class="form-label">Libellé filière</label>
+                  <input type="text" class="form-control border-primary" placeholder="Libellé filière" />
                 </div>
               </form>
             </div>
@@ -611,97 +420,47 @@
 
       <div class="row">
         <div class="col-md-6">
-          <div class="collapse show" id="paymentmethodCollapse">
-            <div class="card p-4 border shadow-none mb-0 mt-4">
+          <div class="collapse show h-100" id="paymentmethodCollapse">
+            <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
               <h5 class="mb-1 text-primary mb-3">Père</h5>
               <form [formGroup]="formPere">
-                <div class="row gy-3">
+                <div class="row g-3">
+                  <div class="col-md-12">
+                    <label class="form-label">Nom</label>
+                    <input type="text" class="form-control border-primary" placeholder="Nom et prénom" formControlName="nom_pren" />
+                  </div>
                   <div class="col-md-6">
-                    <label for="cc-name" class="form-label">Nom </label>
-                    <input
-                      type="text"
-                      class="form-control border-primary"
-                      placeholder="Enter name"
-                      formControlName="nom_pren"
-                    />
+                    <label class="form-label">Date de naissance</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_naiss" appDateFormatter />
                   </div>
-
-                  <div class="col-md-4">
-                    <label for="cc-number" class="form-label"
-                      >Date naissance</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control border-primary"
-                      mask="00/00/0000"
-                      placeholder="Entrer date naissance"
-                      formControlName="dat_naiss"
-                      appDateFormatter
-                    />
+                  <div class="col-md-6">
+                    <label class="form-label">Date de décès</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_dece" appDateFormatter />
                   </div>
-
-                  <div class="col-md-3">
-                    <label for="billinginfo-lastName" class="form-label"
-                      >PEC</label
-                    >
-                    <select
-                      class="form-select border-success"
-                      data-plugin="choices"
-                      formControlName="pec"
-                    >
-                      <option value=""></option>
+                  <div class="col-12"><hr class="my-1" /></div>
+                  <div class="col-md-6">
+                    <label class="form-label">PEC</label>
+                    <select class="form-select border-primary" formControlName="pec">
+                      <option value="">Sélectionner</option>
                       <option value="O">Oui</option>
                       <option value="N">Non</option>
                     </select>
                   </div>
-                  <div class="col-md-4">
-                    <label for="cc-number" class="form-label">Date Pec</label>
-                    <input
-                      type="text"
-                      class="form-control border-warning"
-                      mask="00/00/0000"
-                      placeholder="Entrer date pec"
-                      formControlName="dat_pec"
-                      appDateFormatter
-                    />
+                  <div class="col-md-6">
+                    <label class="form-label">Date PEC</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec" appDateFormatter />
                   </div>
-                  <div class="col-md-4">
-                    <label for="cc-number" class="form-label">Date decés</label>
-                    <input
-                      type="text"
-                      class="form-control border-warning"
-                      mask="00/00/0000"
-                      placeholder="Entrer date decés"
-                      formControlName="dat_dece"
-                      appDateFormatter
-                    />
-                  </div>
-                  <div class="col-md-3">
-                    <label for="billinginfo-lastName" class="form-label"
-                      >PEC mutuelle</label
-                    >
-                    <select
-                      class="form-select border-success"
-                      data-plugin="choices"
-                      formControlName="pec_mut"
-                    >
-                      <option value=""></option>
+                  <div class="col-md-6">
+                    <label class="form-label">PEC mutuelle</label>
+                    <select class="form-select border-primary" formControlName="pec_mut">
+                      <option value="">Sélectionner</option>
                       <option value="O">Oui</option>
                       <option value="N">Non</option>
                     </select>
                   </div>
-                  <div class="col-md-4">
-                    <label for="cc-number" class="form-label"
-                      >Date Pec mut</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control border-warning"
-                      mask="00/00/0000"
-                      placeholder="Entrer date decés"
-                      formControlName="dat_pec_mut"
-                      appDateFormatter
-                    />
+                  <div class="col-md-6">
+                    <label class="form-label">Date PEC mutuelle</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec_mut" appDateFormatter />
                   </div>
                 </div>
               </form>
@@ -711,98 +470,49 @@
 
         <!-- Second Card -->
         <div class="col-md-6">
-          <div class="collapse show" id="paymentmethodCollapse">
+          <div class="collapse show h-100" id="paymentmethodCollapse">
             <div
-              class="card p-4 border shadow-none mb-0 mt-4"
+              class="card p-4 border shadow-none mb-0 mt-4 h-100"
               [formGroup]="formMere"
             >
               <h5 class="mb-1 text-primary mb-3">Mère</h5>
-              <div class="row gy-3">
+              <div class="row g-3">
+                <div class="col-md-12">
+                  <label class="form-label">Nom</label>
+                  <input type="text" class="form-control border-primary" placeholder="Nom et prénom" formControlName="nom_pren" />
+                </div>
                 <div class="col-md-6">
-                  <label for="cc-name" class="form-label">Nom </label>
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Enter name"
-                    formControlName="nom_pren"
-                  />
+                  <label class="form-label">Date de naissance</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_naiss" appDateFormatter />
                 </div>
-
-                <div class="col-md-4">
-                  <label for="cc-number" class="form-label"
-                    >Date naissance</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer date naissance"
-                    formControlName="dat_naiss"
-                    appDateFormatter
-                  />
+                <div class="col-md-6">
+                  <label class="form-label">Date de décès</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_dece" appDateFormatter />
                 </div>
-
-                <div class="col-md-3">
-                  <label for="billinginfo-lastName" class="form-label"
-                    >PEC</label
-                  >
-                  <select
-                    class="form-select border-success"
-                    id="select"
-                    data-plugin="choices"
-                    formControlName="pec"
-                  >
-                    <option value=""></option>
+                <div class="col-12"><hr class="my-1" /></div>
+                <div class="col-md-6">
+                  <label class="form-label">PEC</label>
+                  <select class="form-select border-primary" formControlName="pec">
+                    <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
                 </div>
-                <div class="col-md-4">
-                  <label for="cc-number" class="form-label">Date Pec</label>
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer date pec"
-                    formControlName="dat_pec"
-                    appDateFormatter
-                  />
+                <div class="col-md-6">
+                  <label class="form-label">Date PEC</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec" appDateFormatter />
                 </div>
-                <div class="col-md-4">
-                  <label for="cc-number" class="form-label">Date decés</label>
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer date decés"
-                    formControlName="dat_dece"
-                    appDateFormatter
-                  />
-                </div>
-                <div class="col-md-3">
-                  <label for="billinginfo-lastName" class="form-label"
-                    >PEC mutuelle</label
-                  >
-                  <select
-                    class="form-select border-success"
-                    data-plugin="choices"
-                    formControlName="pec_mut"
-                  >
-                    <option value=""></option>
+                <div class="col-md-6">
+                  <label class="form-label">PEC mutuelle</label>
+                  <select class="form-select border-primary" formControlName="pec_mut">
+                    <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
                 </div>
-                <div class="col-md-4">
-                  <label for="cc-number" class="form-label">Date Pec</label>
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    mask="00/00/0000"
-                    placeholder="Entrer date decés"
-                    formControlName="dat_pec_mut"
-                    appDateFormatter
-                  />
+                <div class="col-md-6">
+                  <label class="form-label">Date PEC mutuelle</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec_mut" appDateFormatter />
                 </div>
               </div>
             </div>
@@ -874,11 +584,10 @@
                     >PEC</label
                   >
                   <select
-                    class="form-select border-success"
-                    data-plugin="choices"
+                    class="form-select border-primary"
                     formControlName="pec"
                   >
-                    <option value=""></option>
+                    <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
@@ -910,11 +619,10 @@
                     >PEC mutuelle</label
                   >
                   <select
-                    class="form-select border-success"
-                    data-plugin="choices"
+                    class="form-select border-primary"
                     formControlName="pec_mut"
                   >
-                    <option value=""></option>
+                    <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
@@ -1011,46 +719,33 @@
                         'lib_activite',
                         'Pec',
                         'dat_pec',
-                        'dat_dece',
-                        'Actions'
+                        'dat_dece'
                       ]
                     "
                   >
-                    <div class="d-flex align-items-center">
-                      <span class="me-2" (click)="onSortFamille(column)">
-                        {{ columnTitles[column] || column }}
-                        <i class="ri-arrow-up-down-line ms-1"></i>
-                      </span>
-                      <i
-                        class="ri-search-line text-muted ms-2"
-                        (click)="toggleFilter(column)"
-                      ></i>
-                      <input
-                        *ngIf="showFilters[column]"
-                        type="text"
-                        class="form-control form-control-sm ms-2"
-                        style="width: 100px"
-                        [(ngModel)]="searchz[column]"
-                        (input)="applyFilter()"
-                        placeholder="..."
-                      />
-                    </div>
-                  </th>
+                    <div class="th-head">
+<i class="ri-arrow-up-down-line th-sort" (click)="onSortFamille(column)"></i>
+<span class="th-title" (click)="onSortFamille(column)">{{ columnTitles[column] || column }}</span>
+<i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+</div>
+<input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+</th>
+<th class="text-center">Action</th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
              
                 <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }">
-                  <td>{{ data.num_fam }}</td>
-                  <td>{{ data.nom_pren }}</td>
-                  <td>{{ data.sexe === 'M'?'Masculin':'Féminin' }}</td>
-                  <td>{{ data.handicap === 'O'?'Oui':'Non' }}</td>
-                  <td>{{ data.cod_activite }}</td>
-                  <td>{{ data.lib_activite }}</td>
-                  <td>{{ data.pec === 'O'?'Oui':'Non' }}</td>
-                  <td>{{ data.dat_pec}}</td>
-                  <td>{{ data.dat_dece}}</td> 
+                  <td class="text-center">{{ data.num_fam }}</td>
+                  <td class="text-center">{{ data.nom_pren }}</td>
+                  <td class="text-center">{{ data.sexe === 'M'?'Masculin':'Féminin' }}</td>
+                  <td class="text-center">{{ data.handicap === 'O'?'Oui':'Non' }}</td>
+                  <td class="text-center">{{ data.cod_activite }}</td>
+                  <td class="text-center">{{ data.lib_activite }}</td>
+                  <td class="text-center">{{ data.pec === 'O'?'Oui':'Non' }}</td>
+                  <td class="text-center">{{ data.dat_pec}}</td>
+                  <td class="text-center">{{ data.dat_dece}}</td> 
                   <td>
                     <ul class="list-inline hstack gap-2 mb-0">
                       <li
@@ -1136,45 +831,32 @@
                         'dat_cart',
                         'etat_cart',
                         'perdu',
-                        'obs_cart', 
-                        'Actions'
+                        'obs_cart'
                       ]
                     "
                   >
-                    <div class="d-flex align-items-center">
-                      <span class="me-2" (click)="onSortCarte(column)">
-                        {{ columnTitlesCarte[column] || column }}
-                        <i class="ri-arrow-up-down-line ms-1"></i>
-                      </span>
-                      <i
-                        class="ri-search-line text-muted ms-2"
-                        (click)="toggleFilter(column)"
-                      ></i>
-                      <input
-                        *ngIf="showFilters[column]"
-                        type="text"
-                        class="form-control form-control-sm ms-2"
-                        style="width: 100px"
-                        [(ngModel)]="searchz[column]"
-                        (input)="applyFilter()"
-                        placeholder="..."
-                      />
-                    </div>
-                  </th>
+                    <div class="th-head">
+<i class="ri-arrow-up-down-line th-sort" (click)="onSortCarte(column)"></i>
+<span class="th-title" (click)="onSortCarte(column)">{{ columnTitlesCarte[column] || column }}</span>
+<i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
+</div>
+<input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
+</th>
+<th class="text-center">Action</th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
              
                 <tr>
-                  <td>{{ data.num_fam }}</td>
-                  <td>{{ data.nom_pren }}</td>
-                  <td>{{ data.nat_cart}}</td>
-                  <td>{{ data.num_cart}}</td>
-                  <td>{{ data.dat_cart }}</td>
-                  <td>{{ data.etat_cart=='C'?'Courant':'Non Courant' }}</td>
-                  <td>{{ data.perdu=='O'?'Oui':'Non ' }}</td>
-                  <td>{{ data.obs_cart}}</td> 
+                  <td class="text-center">{{ data.num_fam }}</td>
+                  <td class="text-center">{{ data.nom_pren }}</td>
+                  <td class="text-center">{{ data.nat_cart}}</td>
+                  <td class="text-center">{{ data.num_cart}}</td>
+                  <td class="text-center">{{ data.dat_cart }}</td>
+                  <td class="text-center">{{ data.etat_cart=='C'?'Courant':'Non Courant' }}</td>
+                  <td class="text-center">{{ data.perdu=='O'?'Oui':'Non ' }}</td>
+                  <td class="text-center">{{ data.obs_cart}}</td> 
                   <td>
                     <ul class="list-inline hstack gap-2 mb-0">
                       <li
@@ -1414,12 +1096,13 @@
                     >Sexe</label
                   >
                   <select
-                    class="form-control border-success"
+                    class="form-select border-primary"
                     formControlName="sexe"
                     [ngClass]="{
                       'is-invalid': submitted && form['sexe'].errors
                     }"
                   >
+<option value="">Sélectionner</option>
                     <option value="M">Masculin</option>
                     <option value="F">Feminin</option>
                   </select>
@@ -1438,9 +1121,10 @@
                     >Handicap</label
                   >
                   <select
-                    class="form-control border-success"
+                    class="form-select border-primary"
                     formControlName="handicap"
                   >
+<option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
@@ -1453,9 +1137,10 @@
                     >Pec</label
                   >
                   <select
-                    class="form-control border-success"
+                    class="form-select border-primary"
                     formControlName="pec"
                   >
+<option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
@@ -1568,61 +1253,35 @@
   <ng-template #content2 role="document" let-modal>
     <div class="modal-header bg-info-subtle p-3">
       <h5 class="modal-title" id="exampleModalLabel">Ajouter carte soins</h5>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="close-modal"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
+        (click)="modal.dismiss('Cross click')"></button>
     </div>
     <form [formGroup]="formCarteSoin" class="tablelist-form" autocomplete="off">
       <div formArrayName="carteSoin" class="scrollable-container">
-        <div
-          *ngFor="let enfant of carteSoin.controls; let i = index"
-          [formGroupName]="i"
-          class="row g-3"
-        >
+        <div *ngFor="let enfant of carteSoin.controls; let i = index" [formGroupName]="i" class="row g-3">
           <div class="modal-body">
             <div class="row g-3">
-              <div class="col-lg-2">
+              <div class="col-lg-3">
                 <div>
-                  <label for="name-field" class="form-label"
-                    >Numéro famille</label
-                  >
-                  <app-lov
-                    [listData]="listFamille"
-                    [columns]="columnFamille"
-                    codeField="num_fam"
-                    [selectedCode]="numFam"
-                    (selectedValue)="onSelectedValueFamille($event)"
-                  ></app-lov>
+                  <label for="name-field" class="form-label">Numéro famille</label>
+                  <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam"
+                    [selectedCode]="numFam" (selectedValue)="onSelectedValueFamille($event)"></app-lov>
                 </div>
               </div>
-              <div class="col-lg-6">
+              <div class="col-lg-5">
                 <div>
                   <label for="owner-field" class="form-label">
                     Nom & Prénom
                   </label>
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Enter Nom & Prénom"
-                    readonly
-                    [value]="libNom"
-                  />
+                  <input type="text" class="form-control border-primary" placeholder="Nom et prénom" readonly
+                    [value]="libNom" />
                 </div>
               </div>
-              <div class="col-lg-3">
+              <div class="col-lg-4">
                 <div>
-                  <label for="industry_type-field" class="form-label"
-                    >Nature</label
-                  >
-                  <select
-                    class="form-control border-success"
-                    formControlName="nat_cart"
-                  >
+                  <label for="industry_type-field" class="form-label">Nature</label>
+                  <select class="form-select border-primary" formControlName="nat_cart">
+<option value="">Sélectionner</option>
                     <option value="S">Carte de Soins</option>
                     <option value="M">Carnet Militaire</option>
                   </select>
@@ -1631,43 +1290,25 @@
 
               <div class="col-lg-3">
                 <div>
-                  <label for="industry_type-field" class="form-label"
-                    >Numéro</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Numéro"
-                    formControlName="num_cart"
-                  />
+                  <label for="industry_type-field" class="form-label">Numéro</label>
+                  <input type="text" class="form-control border-primary" placeholder="Numéro"
+                    formControlName="num_cart" />
                 </div>
               </div>
 
               <div class="col-lg-3">
                 <div>
-                  <label for="industry_type-field" class="form-label"
-                    >Date affect</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-warning"
-                    appDateFormatter
-                    mask="00/00/0000"
-                    placeholder="Enter Date affect"
-                    formControlName="dat_cart"
-                  />
+                  <label for="industry_type-field" class="form-label">Date d'affectation</label>
+                  <input type="text" class="form-control border-primary" appDateFormatter mask="00/00/0000"
+                    placeholder="jj/mm/aaaa" formControlName="dat_cart" />
                 </div>
               </div>
 
               <div class="col-lg-3">
                 <div>
-                  <label for="industry_type-field" class="form-label"
-                    >Etat</label
-                  >
-                  <select
-                    class="form-control border-success"
-                    formControlName="etat_cart"
-                  >
+                  <label for="industry_type-field" class="form-label">Etat</label>
+                  <select class="form-select border-primary" formControlName="etat_cart">
+<option value="">Sélectionner</option>
                     <option value="C">Courant</option>
                     <option value="N">Non Courant</option>
                   </select>
@@ -1675,13 +1316,9 @@
               </div>
               <div class="col-lg-3">
                 <div>
-                  <label for="industry_type-field" class="form-label"
-                    >Perdu</label
-                  >
-                  <select
-                    class="form-control border-success"
-                    formControlName="perdu"
-                  >
+                  <label for="industry_type-field" class="form-label">Perdu</label>
+                  <select class="form-select border-primary" formControlName="perdu">
+<option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>
@@ -1690,33 +1327,18 @@
 
               <div class="col-lg-12">
                 <div>
-                  <label for="industry_type-field" class="form-label"
-                    >Observation</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control border-primary"
-                    placeholder="Observation"
-                    formControlName="obs_cart"
-                  />
+                  <label for="industry_type-field" class="form-label">Observation</label>
+                  <input type="text" class="form-control border-primary" placeholder="Observation"
+                    formControlName="obs_cart" />
                 </div>
               </div>
             </div>
           </div>
           <div class="hstack gap-2 justify-content-center" *ngIf="edit">
-            <button
-              type="button"
-              class="btn btn-success"
-              id="add-btn"
-              (click)="addCarteSoin()"
-            >
+            <button type="button" class="btn btn-success" id="add-btn" (click)="addCarteSoin()">
               Ajouter carte soin
             </button>
-            <button
-              type="button"
-              class="btn btn-info"
-              (click)="removeEnfant(i)"
-            >
+            <button type="button" class="btn btn-info" (click)="removeEnfant(i)">
               Annuler
             </button>
           </div>
@@ -1724,23 +1346,14 @@
       </div>
       <div class="modal-footer">
         <div class="hstack gap-2 justify-content-end">
-          <button
-            type="button"
-            class="btn btn-success"
-            data-bs-dismiss="modal"
-            (click)="validateCarteSoin(); modal.close('Close click')"
-          >
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="validateCarteSoin(); modal.close('Close click')">
             Valider
           </button>
         </div>
         <div class="hstack gap-2 justify-content-end">
-          <button
-            type="button"
-            class="btn btn-light"
-            data-bs-dismiss="modal"
-            (click)="modal.close('Close click')"
-          >
-            Close
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
+            Fermer
           </button>
         </div>
       </div>
@@ -1869,11 +1482,10 @@
                     >Addresse Courante</label
                   >
                   <select
-                    class="form-select border-success"
-                    data-plugin="choices"
+                    class="form-select border-primary"
                     formControlName="adr_courant"
                   >
-                    <option value="">Select Adresse</option>
+                    <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
                   </select>

@@ -1,0 +1,16 @@
+
+:host ::ng-deep .table-responsive { overflow-x: auto; }
+:host ::ng-deep table.table > thead > tr > th {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+:host ::ng-deep table.table > tbody > tr > td {
+  text-align: center;
+  vertical-align: middle;
+}
+:host ::ng-deep table.table > tbody > tr > td app-lov { display: block; margin: 0 auto; }
+:host ::ng-deep table.table input.form-control,
+:host ::ng-deep table.table select.form-select { height: 38px; font-size: .875rem; text-align: center; }
+:host ::ng-deep table.table textarea.form-control { text-align: center; }
+:host ::ng-deep table.bulletins-table { table-layout: fixed; min-width: 1370px; }

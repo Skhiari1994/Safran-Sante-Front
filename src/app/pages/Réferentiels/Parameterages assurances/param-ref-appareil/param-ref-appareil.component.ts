@@ -111,7 +111,7 @@ export class ParamRefAppareilComponent {
   openModalTab(content: any) {
     this.edit = true;
 
-    this.formRefAppareil.reset()
+    this.formRefAppareil.reset({ mois: '', devis: '' })
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

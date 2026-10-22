@@ -66,7 +66,7 @@ this.formRefEtablis=this.fb.group({
 
   ngOnInit(){
 
-    this.getEtablissParamMutuelle();
+    this.getAllActiviteEtabliss();
     //this.getAllPoste();
     this.getAllGouv();
     this.getRefEtablis()
@@ -164,8 +164,8 @@ this.formRefEtablis=this.fb.group({
 
 
 
-  getEtablissParamMutuelle() {
-    this.serv.getEtablissParamMutuelle().subscribe((data:any) => {
+  getAllActiviteEtabliss() {
+    this.serv.getAllActiviteEtabliss().subscribe((data:any) => {
      
       this.ListeActiviteEtabliss = data;
       this.columnActiviteEtabliss=[
