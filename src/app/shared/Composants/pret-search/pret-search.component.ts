@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { SaveService } from '../../Service/save.service';
-import { DebCreditService } from 'src/app/pages/Credits/Débloquage des crédit/deb-credit.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 
 @Component({
@@ -36,11 +35,10 @@ export class PretSearchComponent {
   searchSubject = new Subject<string>(); // Debounce subject
   @ViewChild('content') content!: TemplateRef<any>;
   private isSearchSubscription!: Subscription;
-  constructor(private modalService: NgbModal, private saveService: SaveService, private pretService: DebCreditService, private token: TokenStorageService) { }
+  constructor(private modalService: NgbModal, private saveService: SaveService, private token: TokenStorageService) { }
 
   ngOnInit(): void {
     this.filteredData = this.listData;
-    this.getEtatPret();
 
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
       this.filterData();
@@ -99,31 +97,7 @@ export class PretSearchComponent {
       return;
     }
 
-    // 2. Remote Search (if listData is empty)
-    // We call the server even if some fields are empty (the backend handles nulls)
-    if (hasAnyLocalQuery) {
-      this.pretService.getPretEnCoursLov(
-        this.token.getUser().codSoc,
-        this.searchQueries['mat_pers'],
-        this.searchQueries['nomPers'],
-        this.searchQueries['num_comm'],
-        this.searchQueries['cod_etat_pret'],
-        this.searchQueries['cod_pret'],
-        this.searchQueries['mod_remb'],
-        this.searchQueries['dat_saisie'],
-        this.searchQueries['num_retr']
-      ).subscribe(
-        (data) => {
-          this.filteredData = data;
-          console.log('✅ Matches from server :', this.filteredData.length);
-        },
-        (error) => {
-          console.error('Erreur lors du chargement des données :', error);
-        }
-      );
-    } else {
-      this.filteredData = [];
-    }
+    this.filteredData = [];
   }
 
   // Trigger search for each column
@@ -154,10 +128,6 @@ export class PretSearchComponent {
   // Load data (assume listData is already populated)
   loadData() {
     this.filteredData = [...this.listData]; // Copy initial data to filteredData
-  }
-
-  getEtatPret() {
-    this.pretService.getEtatPret().subscribe(data => this.etatPret = data);
   }
 
   // Handle changes to the selected code

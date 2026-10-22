@@ -3,10 +3,10 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import { AdherentService } from '../adherent.service';
 import Swal from 'sweetalert2';
+//import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 
 @Component({
   selector: 'app-maj-plafond',
@@ -46,7 +46,7 @@ export class MajPlafondComponent {
     plafond: "Plafond",
     sold_plaf: "Solde",
   };
-  constructor(private serv: CaisseRetrService, private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
+  constructor(/*private serv: CaisseRetrService, */private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
     private modalService: NgbModal, private saveService: SaveService, private service: PaginationService) {
     this.formPersonnel = this.fb.group({
       cod_soc: [''],

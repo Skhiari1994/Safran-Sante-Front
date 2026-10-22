@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
+//import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { AdherentService } from '../adherent.service';
@@ -44,7 +44,7 @@ export class ConsPlafondComponent {
     plafond: "Plafond",
     sold_plaf: "Consommer",
   };
-  constructor(private serv: CaisseRetrService, private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
+  constructor(/*private serv: CaisseRetrService, */private adherentServ: AdherentService, private token: TokenStorageService, private fb: FormBuilder,
     private modalService: NgbModal, private saveService: SaveService, private service: PaginationService) {
     this.formPersonnel = this.fb.group({
       cod_soc: [''],

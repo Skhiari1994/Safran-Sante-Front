@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
+//import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { AdherentService } from '../adherent.service';
@@ -55,7 +55,7 @@ export class MajAffiliationComponent {
   };
 
   constructor(
-    private serv: CaisseRetrService,
+    //private serv: CaisseRetrService,
     private adherentServ: AdherentService,
     private token: TokenStorageService,
     private fb: FormBuilder,
@@ -141,8 +141,8 @@ export class MajAffiliationComponent {
 
     // Load initial data
     this.getPersonnels()
-    this.getRemb()
-    this.getPrimeRetr()
+    //this.getRemb()
+    //this.getPrimeRetr()
   }
 
   ngOnDestroy() {
@@ -153,7 +153,7 @@ export class MajAffiliationComponent {
     this.saveService.setDisabledDelete(true)
   }
 
-  getPrimeRetr() {
+  /*getPrimeRetr() {
     this.serv.getPrimeRetr().subscribe((data) => {
       this.listPrimeRetr = data
       console.log("this.listPrimeRetr", this.listPrimeRetr)
@@ -164,6 +164,17 @@ export class MajAffiliationComponent {
       ];
     })
   }
+    
+  getRemb() {
+    this.serv.getMotifRembour().subscribe(data => {
+      this.listRemb = data
+      this.columnRemb = [
+        { key: "cod_remb", label: "Code" },
+        { key: "lib_remb", label: "Libelle" },
+      ];
+    })
+  }
+  */
 
   getPersonnels() {
     this.adherentServ.GetAllPers().subscribe(data => {
@@ -179,15 +190,7 @@ export class MajAffiliationComponent {
     })
   }
 
-  getRemb() {
-    this.serv.getMotifRembour().subscribe(data => {
-      this.listRemb = data
-      this.columnRemb = [
-        { key: "cod_remb", label: "Code" },
-        { key: "lib_remb", label: "Libelle" },
-      ];
-    })
-  }
+  
 
   formatDate(dateString: any): string {
     if (dateString && dateString.length === 8) {
