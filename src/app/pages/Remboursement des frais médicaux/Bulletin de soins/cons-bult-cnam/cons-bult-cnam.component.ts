@@ -112,7 +112,7 @@ export class ConsBultCnamComponent {
       nat_bult: ['C'],
       mat_pers_conj: [''],
       num_ass_conj: [''],
-      dat_saisie: [new Date().toLocaleDateString().substring(0, 10)],
+      dat_saisie: [''],
       obs: [''],
       obs_a: [''],
       envoi: [''],
@@ -286,7 +286,7 @@ export class ConsBultCnamComponent {
     });
   }
   getBultSoin() {
-    this.serv.getBultCnam(this.token.getUser().codSoc).subscribe(
+    this.serv.getBultCnamCons(this.token.getUser().codSoc).subscribe(
       (data: any) => {
         this.listBultSoin = Array.isArray(data) ? data : [];
         this.columnsBultSoin = [
