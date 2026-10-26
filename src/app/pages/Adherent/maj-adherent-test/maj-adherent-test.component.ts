@@ -1678,11 +1678,12 @@ export class MajAdherentTestComponent {
     this.edit = true,
       this.formEnfant.reset()
 
+    const nextNum = (this.filteredDataRows?.length || 0) + 1;
     const newEnfantGroup = this.createEnfantFormGroup({
       cod_soc: '',
       mat_pers: '',
-      num_fam: '',
-      parente: '',
+      num_fam: String(nextNum),
+      parente: 'E',
       nom_pren: '',
       dat_naiss: '',
       sexe: '',
@@ -1705,6 +1706,22 @@ export class MajAdherentTestComponent {
     // Open the modal
     this.modalService.open(content, { size: 'lg' });
   }
+
+  setMinDateEnfant(event: any, i: number) {
+    const raw = i > 0 
+      ? this.enfants.at(i - 1).get('dat_naiss')?.value 
+      : this.filteredDataRows?.[this.filteredDataRows.length - 1]?.dat_naiss;
+    const datePrecedente = this.formatDate(raw);
+    if (datePrecedente) {
+      const applyMin = (el: any) => el?._flatpickr?.set('minDate', datePrecedente);
+      if (event?.target?._flatpickr) {
+        applyMin(event.target);
+      } else {
+        setTimeout(() => applyMin(event?.target), 50);
+      }
+    }
+  }
+
   /**
    * Form data get
    */
@@ -1721,13 +1738,42 @@ export class MajAdherentTestComponent {
   }
 
   // Delete Data
-  deleteData(id: any) {
-    // if (id) {
-    //   this.store.dispatch(deleteCompany({ id: this.deleteId.toString() }));
-    // } else {
-    //   this.store.dispatch(deleteCompany({ id: this.checkedValGet.toString() }));
-    // }
-    // this.deleteId = '';
+  deleteData(modal: any) {
+    const enfant = this.deleteId;
+
+    if (!enfant || enfant.num_fam == null) {
+      if (modal) modal.close('Close click');
+      return;
+    }
+
+    const soc = enfant.cod_soc || this.tokenStorage.getUser()?.codSoc;
+    const mat = enfant.mat_pers || this.formAdherent?.get('mat_pers')?.value;
+    const num = enfant.num_fam;
+
+    if (!soc || !mat || num == null) {
+      Swal.fire('Erreur', 'Données de l\'enfant incomplètes pour la suppression.', 'error');
+      if (modal) modal.close('Close click');
+      return;
+    }
+
+    this.adherentServ.deleteFamille(soc, num, mat).subscribe({
+      next: () => {
+        this.filteredDataRows = (this.filteredDataRows || []).filter((item: any) => item.num_fam !== num);
+        if (modal) modal.close('Close click');
+        Swal.fire({
+          icon: 'success',
+          title: 'Supprimé !',
+          text: `L'enfant ${enfant.nom_pren ? '(' + enfant.nom_pren + ') ' : ''}a été supprimé avec succès.`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      },
+      error: (err) => {
+        console.error('Erreur suppression :', err);
+        this.filteredDataRows = (this.filteredDataRows || []).filter((item: any) => item.num_fam !== num);
+        if (modal) modal.close('Close click');
+      }
+    });
     this.masterSelected = false;
   }
 
@@ -1845,11 +1891,12 @@ export class MajAdherentTestComponent {
     )
   }
   addEnfant() {
+    const nextNum = (this.filteredDataRows?.length || 0) + this.enfants.length + 1;
     this.enfants.push(
       this.fb.group({
         cod_soc: [""],
         mat_pers: [""],
-        num_fam: ["", Validators.required],
+        num_fam: [String(nextNum), Validators.required],
         parente: ["E"],
         nom_pren: ["", Validators.required],
         dat_naiss: ["", Validators.required],
@@ -1927,6 +1974,24 @@ export class MajAdherentTestComponent {
           }
         }
       });
+
+      // Contrôle date de naissance >= enfant précédent
+      for (let i = 1; i < enfantsArray.length; i++) {
+        const dPrev = this.parseDdMmYyyy(enfantsArray.at(i - 1).get('dat_naiss')?.value);
+        const dCurr = this.parseDdMmYyyy(enfantsArray.at(i).get('dat_naiss')?.value);
+        if (dPrev && dCurr && dCurr < dPrev) {
+          Swal.fire('Erreur', 'La date de naissance doit être supérieure ou égale à celle du premier enfant', 'error');
+          return;
+        }
+      }
+      if (this.editIndex === null && this.filteredDataRows?.length > 0) {
+        const dPrev = this.parseDdMmYyyy(this.filteredDataRows[this.filteredDataRows.length - 1]?.dat_naiss);
+        const dCurr = this.parseDdMmYyyy(enfantsArray.at(0)?.get('dat_naiss')?.value);
+        if (dPrev && dCurr && dCurr < dPrev) {
+          Swal.fire('Erreur', 'La date de naissance doit être supérieure ou égale à celle de l\'enfant précédent', 'error');
+          return;
+        }
+      }
 
       // If adding a new row, push the data to the table
 

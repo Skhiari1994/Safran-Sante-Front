@@ -440,7 +440,7 @@
                   <div class="col-12"><hr class="my-1" /></div>
                   <div class="col-md-6">
                     <label class="form-label">PEC</label>
-                    <select class="form-select border-primary" formControlName="pec">
+                    <select class="form-select border-primary" formControlName="pec" (change)="formPere.get('pec')?.value !== 'O' && formPere.get('dat_pec')?.setValue('')">
                       <option value="">Sélectionner</option>
                       <option value="O">Oui</option>
                       <option value="N">Non</option>
@@ -448,11 +448,11 @@
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Date PEC</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec" appDateFormatter />
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec" appDateFormatter [readonly]="formPere.get('pec')?.value !== 'O'" />
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">PEC mutuelle</label>
-                    <select class="form-select border-primary" formControlName="pec_mut">
+                    <select class="form-select border-primary" formControlName="pec_mut" (change)="formPere.get('pec_mut')?.value !== 'O' && formPere.get('dat_pec_mut')?.setValue('')">
                       <option value="">Sélectionner</option>
                       <option value="O">Oui</option>
                       <option value="N">Non</option>
@@ -460,7 +460,7 @@
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Date PEC mutuelle</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec_mut" appDateFormatter />
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec_mut" appDateFormatter [readonly]="formPere.get('pec_mut')?.value !== 'O'" />
                   </div>
                 </div>
               </form>
@@ -492,7 +492,7 @@
                 <div class="col-12"><hr class="my-1" /></div>
                 <div class="col-md-6">
                   <label class="form-label">PEC</label>
-                  <select class="form-select border-primary" formControlName="pec">
+                  <select class="form-select border-primary" formControlName="pec" (change)="formMere.get('pec')?.value !== 'O' && formMere.get('dat_pec')?.setValue('')">
                     <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
@@ -500,11 +500,11 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Date PEC</label>
-                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec" appDateFormatter />
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec" appDateFormatter [readonly]="formMere.get('pec')?.value !== 'O'" />
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">PEC mutuelle</label>
-                  <select class="form-select border-primary" formControlName="pec_mut">
+                  <select class="form-select border-primary" formControlName="pec_mut" (change)="formMere.get('pec_mut')?.value !== 'O' && formMere.get('dat_pec_mut')?.setValue('')">
                     <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
                     <option value="N">Non</option>
@@ -512,7 +512,7 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Date PEC mutuelle</label>
-                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec_mut" appDateFormatter />
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa" formControlName="dat_pec_mut" appDateFormatter [readonly]="formMere.get('pec_mut')?.value !== 'O'" />
                 </div>
               </div>
             </div>
@@ -586,6 +586,7 @@
                   <select
                     class="form-select border-primary"
                     formControlName="pec"
+                    (change)="formConjoint.get('pec')?.value !== 'O' && formConjoint.get('dat_pec')?.setValue('')"
                   >
                     <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
@@ -601,6 +602,7 @@
                     placeholder="Entrer date pec"
                     formControlName="dat_pec"
                     appDateFormatter
+                    [readonly]="formConjoint.get('pec')?.value !== 'O'"
                   />
                 </div>
                 <div class="col-md-4">
@@ -621,6 +623,7 @@
                   <select
                     class="form-select border-primary"
                     formControlName="pec_mut"
+                    (change)="formConjoint.get('pec_mut')?.value !== 'O' && formConjoint.get('dat_pec_mut')?.setValue('')"
                   >
                     <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
@@ -636,6 +639,7 @@
                     placeholder="Entrer date décès"
                     formControlName="dat_pec_mut"
                     appDateFormatter
+                    [readonly]="formConjoint.get('pec_mut')?.value !== 'O'"
                   />
                 </div>
                 <div class="col-md-3"></div>
@@ -1139,6 +1143,7 @@
                   <select
                     class="form-select border-primary"
                     formControlName="pec"
+                    (change)="enfant.get('pec')?.value !== 'O' && enfant.get('dat_pec')?.setValue('')"
                   >
 <option value="">Sélectionner</option>
                     <option value="O">Oui</option>
@@ -1158,6 +1163,7 @@
                     mask="00/00/0000"
                     placeholder="Enter Date pec"
                     formControlName="dat_pec"
+                    [readonly]="enfant.get('pec')?.value !== 'O'"
                   />
                 </div>
               </div>

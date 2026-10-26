@@ -24,6 +24,18 @@ function isDateInput(el: any): el is HTMLInputElement {
   return el instanceof HTMLInputElement && (el.matches(MONTH_SELECTOR) || el.matches(DAY_SELECTOR));
 }
 
+function isDateDisabled(el: HTMLInputElement): boolean {
+  if (el.readOnly || el.disabled) return true;
+  const fcn = (el.getAttribute('formcontrolname') || '').toLowerCase();
+  if (fcn === 'dat_pec' || fcn === 'dat_pec_mut') {
+    const pecField = fcn === 'dat_pec' ? 'pec' : 'pec_mut';
+    const container = el.closest('form, div[formgroup], div[formgroupname], .card, .row');
+    const select = container?.querySelector(`select[formcontrolname="${pecField}"]`) as HTMLSelectElement;
+    if (select && select.value !== 'O') return true;
+  }
+  return false;
+}
+
 export function initGlobalDatePicker(): void {
   // Le calendrier peut émettre un « change » alors que le champ n'a pas changé (ex. champ vide qui perd le focus) :
   // on le bloque pour ne pas déclencher les contrôles des pages (messages d'erreur sur une date vide).
@@ -55,7 +67,7 @@ export function initGlobalDatePicker(): void {
       if (!(el instanceof HTMLInputElement) || (el.type !== 'text' && el.type !== '')) return;
       const isMonth = el.matches(MONTH_SELECTOR);
       if (!isMonth && !el.matches(DAY_SELECTOR)) return;
-      if (el.readOnly || el.disabled || (el as any)._flatpickr) return;
+      if (isDateDisabled(el) || (el as any)._flatpickr) return;
 
       const format = isMonth ? 'm/Y' : 'd/m/Y';
       const fp = flatpickr(el, {
@@ -63,12 +75,14 @@ export function initGlobalDatePicker(): void {
         dateFormat: format,
         allowInput: true,
         disableMobile: true,
+        maxDate: new Date(),
         plugins: isMonth ? [monthSelectPlugin({ shorthand: true, dateFormat: 'm/Y', altFormat: 'm/Y' })] : [],
         onOpen: (_selected, _str, inst) => {
-          if (el.readOnly || el.disabled) {
+          if (isDateDisabled(el)) {
             inst.close();
             return;
           }
+          inst.set('maxDate', new Date());
           // la valeur du champ a pu être modifiée par le code (chargement) : on resynchronise le calendrier
           const d = parseInputValue(inst, el.value, format);
           if (d) inst.setDate(d, false);
