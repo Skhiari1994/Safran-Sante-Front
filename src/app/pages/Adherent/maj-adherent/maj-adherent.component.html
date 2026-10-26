@@ -1,995 +1,746 @@
-<div class="row" style="margin-top: 25px"></div>
-<app-breadcrumbs title="Mise à jour adhérent" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
-<div class="row">
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Consultation adhérent" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
 
+<!-- Identité : reste visible pendant le défilement -->
+<div class="row sticky-top" style="z-index: 1010; top: 150px;">
   <div class="col-xl-10">
-    <div class="card" [formGroup]="formAdherent">
-      <div class="container">
-        <!-- Row: Entire Form -->
-        <div class="row mb-1 align-items-center">
-          <!-- Matricule -->
-          <div class="col-md-2">
-            <label for="code" class="form-label">Matricule</label>
-          </div>
-          <div id="fixed-width-matricule">
-            <input type="text" class="form-control" id="code" placeholder="Enter Matricule" formControlName="mat_pers"
-              (change)="checkMatricule($event)" />
-            <div *ngIf="errorMessageMat" class="error-message">{{ errorMessageMat }}</div>
-          </div>
-          <div class="col-md-2"></div>
-          <div class="col-sm-2">
-            <label for="code" class="form-label">Matricule admin</label>
-          </div>
-          <div id="fixed-width-lov">
-            <app-lov [listData]="listMatInt" [columns]="columnsMatInt" codeField="matInt" [selectedCode]="codMatIntVal"
-              (selectedValue)="onSelectedVMatInt($event)"></app-lov>
-          </div>
-
-        </div>
-
-        <div class="row mb-1 align-items-center">
-          <!-- Prénom -->
-
-          <div class="col-md-2">
-            <label for="nom" class="form-label">Nom</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Nom" formControlName="nom_pers" />
-          </div>
-          <div class="col-md-2">
-            <label for="prenom" class="form-label">Prénom</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Prénom" formControlName="pren_pers" />
-          </div>
-
-          <!-- Nom Arabe -->
-
-        </div>
-
-        <div class="row mb-1 align-items-center">
-          <div class="col-md-2">
-            <label for="nom_arabe" class="form-label">Nom Arabe</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Nom Arabe"
-              formControlName="nom_pers_a" />
-          </div>
-          <!-- Prénom Arabe -->
-          <div class="col-md-2">
-            <label for="prenom_arabe" class="form-label">Prénom Arabe</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Prénom Arabe"
-              formControlName="pren_pers_a" />
-          </div>
-
-          <!-- Nom jeune fille -->
-
-        </div>
-
-        <div class="row mb-1 align-items-center">
-          <div class="col-md-2">
-            <label for="nom_jeune_fille" class="form-label">Nom jeune fille</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Nom jeune fille"
-              formControlName="nom_jf" />
-          </div>
-          <!-- Nom jeune fille Arabe -->
-          <div class="col-md-2">
-            <label for="nom_jeune_fille_arabe" class="form-label">Nom jeune fille Arabe</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Nom jeune fille Arabe"
-              formControlName="nom_jf_a" />
-          </div>
-
-          <!-- Date de naissance -->
-
-        </div>
-
-        <div class="row mb-1 align-items-center">
-          <div class="col-md-2">
-            <label for="date_naissance" class="form-label">Date de naissance</label>
-          </div>
-          <div id="fixed-width-date">
-            <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-              placeholder="Enter Date de naissance" formControlName="dat_nais" appDateFormatter />
-          </div>
-          <div class="col-md-2"></div>
-          <!-- Lieu de naissance -->
-          <div class="col-md-2">
-            <label for="lieu_naissance" class="form-label">Lieu de naissance</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter Lieu de naissance"
-              formControlName="lieu_nais" />
-          </div>
-
-          <!-- Sexe -->
-
-        </div>
-
-        <div class="row mb-1 align-items-center">
-          <!-- CIN -->
-          <div class="col-md-2">
-            <label for="sexe" class="form-label">Sexe</label>
-          </div>
-          <div id="fixed-width-label">
-            <select class="form-select" id="select" formControlName="sexe">
-              <option value=""></option>
-              <option value="M">Masculin</option>
-              <option value="F">Féminin</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <label for="cin" class="form-label">CIN</label>
-          </div>
-          <div id="fixed-width-label">
-            <input type="text" class="form-control" id="input" placeholder="Enter CIN" formControlName="cin"
-              mask="00000000" />
-          </div>
-
-          <!-- Nationalité -->
-
-        </div>
-
-        <div class="row mb-1 align-items-center">
-
-          <div class="col-md-2">
-            <label for="nationalite" class="form-label">Nationalité</label>
-          </div>
-          <div id="fixed-width-lov">
-            <app-lov [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp" [selectedCode]="codNatP"
-              (selectedValue)="onSelectedValueNat($event)"></app-lov>
-          </div>
-          <div id="fixed-width-input-display">
-            <input type="text" class="form-control mt-2" [value]="libNat" id="display-input" readonly
-              placeholder="Nationalité sélectionnée" />
+    <div class="row" style="margin-top: -24px">
+      <div class="col-md-12 sticky-top">
+        <div class="collapse show">
+          <div class="card p-4 border shadow-none mb-0 mt-4">
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+              <div class="col-md-2">
+                <label class="form-label">Matricule</label>
+                <input type="text" class="form-control border-info" placeholder="Matricule" formControlName="mat_pers" />
+                <div *ngIf="errorMessageMat" class="error-message">{{ errorMessageMat }}</div>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Matricule admin</label>
+                <app-lov [listData]="listMatInt" [columns]="columnsMatInt" codeField="matInt"
+                  [selectedCode]="codMatIntVal" (selectedValue)="onSelectedVMatInt($event)"></app-lov>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Prénom</label>
+                <input type="text" class="form-control border-primary" placeholder="Prénom"
+                  formControlName="pren_pers" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Caisse de retraite</label>
+                <select class="form-select border-success" formControlName="cod_retr">
+                  <option value="">Sélectionner</option>
+                  <option value="1">CNSS</option>
+                  <option value="2">CNRPS</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Identifiant unique CNRPS</label>
+                <input type="text" class="form-control border-primary" placeholder="Identifiant unique CNRPS"
+                  formControlName="num_retr" />
+              </div>
+            </form>
           </div>
         </div>
-        <div class="row mb-1 align-items-center">
+      </div>
+    </div>
+  </div>
 
-          <div class="col-md-2">
-            <label for="departement" class="form-label">Département</label>
+  <!-- Photo -->
+  <div class="col-xl-2">
+    <div class="row">
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-4">
+            <div class="text-center">
+              <div class="position-relative d-inline-block">
+                <div class="avatar-lg">
+                  <div class="avatar-title bg-light rounded">
+                    <img src="" id="product-img" class="avatar-md h-auto" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div id="fixed-width-lov">
-            <app-lov [listData]="listLieu" [columns]="columnsLieu" codeField="cod_lieu_geog" [selectedCode]="codLieuVal"
-              (selectedValue)="onSelectedValueLieu($event)"></app-lov>
-          </div>
-          <div id="fixed-width-input-display">
-            <input type="text" class="form-control mt-2" [value]="libLieu" id="display-input" readonly
-              placeholder="Département sélectionné" />
-          </div>
-
         </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <div class="row mb-1 align-items-center">
-          <div class="col-md-2">
-            <label for="date_embauche" class="form-label">Date d'embauche</label>
-          </div>
-          <div id="fixed-width-date">
-            <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-              placeholder="Enter Date d'embauche" formControlName="dat_emb" appDateFormatter />
-          </div>
-          <div class="row mt-3">
-            <div class="col-md-3">
-              <label for="situation_sociale" class="form-label">Situation sociale</label>
+<div class="row">
+  <div class="col-xl-10">
+    <div class="card mt-4">
+      <div class="card-body form-steps">
+        <ng-stepper #cdkStepper [linear]="false" class="step-arrow-nav wizard">
+        <cdk-step [optional]="false">
+          <ng-template cdkStepLabel>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" type="button" role="tab" id="tab-info"
+                [class.active]="cdkStepper.selectedIndex === 0"
+                [class.done]="cdkStepper.selectedIndex > 0">Info de base</button>
+            </li>
+          </ng-template>
+          <div class="row">
 
-              <div id="fixed-width-select">
-                <select class="form-select" id="select" formControlName="cod_sit">
-                  <option value=""></option>
+      <!-- Informations personnelles -->
+      <div class="col-md-6">
+        <div class="collapse show h-100">
+          <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
+            <h5 class="card-title text-primary mb-3">Informations personnelles</h5>
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+              <div class="col-md-6">
+                <label class="form-label">Nom (arabe)</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom en arabe"
+                  formControlName="nom_pers_a" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Prénom (arabe)</label>
+                <input type="text" class="form-control border-primary" placeholder="Prénom en arabe"
+                  formControlName="pren_pers_a" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nom de jeune fille</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom de jeune fille"
+                  formControlName="nom_jf" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nom de jeune fille (arabe)</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom de jeune fille en arabe"
+                  formControlName="nom_jf_a" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date de naissance</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_nais" appDateFormatter />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Lieu de naissance</label>
+                <input type="text" class="form-control border-primary" placeholder="Lieu de naissance"
+                  formControlName="lieu_nais" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations sociales -->
+      <div class="col-md-6">
+        <div class="collapse show h-100">
+          <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
+            <h5 class="mb-1 text-primary mb-3">Informations sociales</h5>
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+              <div class="col-md-4">
+                <label class="form-label">Sexe</label>
+                <select class="form-select border-primary" formControlName="sexe">
+                  <option value="">Sélectionner</option>
+                  <option value="M">Masculin</option>
+                  <option value="F">Féminin</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">CIN</label>
+                <input type="text" class="form-control border-primary" placeholder="CIN" formControlName="cin"
+                  mask="00000000" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Date d'embauche</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_emb" appDateFormatter />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Nationalité</label>
+                <app-lov [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp"
+                  [selectedCode]="codNatP" (selectedValue)="onSelectedValueNat($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Libellé nationalité</label>
+                <input type="text" class="form-control border-primary" [value]="libNat" readonly
+                  placeholder="Nationalité" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Département</label>
+                <app-lov [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu"
+                  [selectedCode]="codLieuVal" (selectedValue)="onSelectedValueLieu($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Libellé département</label>
+                <input type="text" class="form-control border-primary" [value]="libLieu" readonly
+                  placeholder="Département" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Situation sociale</label>
+                <select class="form-select border-primary" formControlName="cod_sit">
+                  <option value="">Sélectionner</option>
                   <option value="C">Célibataire</option>
                   <option value="M">Marié(e)</option>
                   <option value="D">Divorcé(e)</option>
                   <option value="V">Veuf(ve)</option>
                 </select>
               </div>
-            </div>
-            <div class="row" *ngIf="
-        formAdherent.get('cod_sit')?.value === 'M' ||
-        formAdherent.get('cod_sit')?.value === 'D'
-      ">
-              <div class="col-md-2">
-                <label for="nb_enfants" class="form-label">Nombre d'enfants</label>
-              </div>
-              <div id="fixed-width-lov">
-                <input type="number" class="form-control" id="code" placeholder="Enter Nombre d'enfants"
+              <div class="col-md-6" *ngIf="formAdherent.get('cod_sit')?.value === 'M' ||
+                  formAdherent.get('cod_sit')?.value === 'D' ||
+                  formAdherent.get('cod_sit')?.value === 'V'">
+                <label class="form-label">Nombre d'enfants</label>
+                <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants"
                   formControlName="nbr_enf" readonly />
               </div>
-            </div>
+            </form>
           </div>
-
-
-
         </div>
       </div>
     </div>
-
-
+    <!-- Informations professionnelles -->
     <div class="col-xl-12">
-      <div class="card">
-
-        <div class="card-body form-steps">
-
-          <ng-stepper #cdkStepper [linear]="false" class="step-arrow-nav wizard">
-            <cdk-step [optional]="false">
-              <ng-template cdkStepLabel>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link done" id="steparrow-gen-info-tab" data-bs-toggle="pill"
-                    data-bs-target="#steparrow-gen-info" type="button" role="tab" aria-controls="steparrow-gen-info"
-                    aria-selected="true">Info de base</button>
-                </li>
-              </ng-template>
-
-
-
-              <div class="col-md-12" [formGroup]="formAdherent">
-                <div class="collapse show" id="paymentmethodCollapse">
-                  <div class="container d-flex justify-content-center align-items-center">
-                    <div class="card-body">
-                      <div class="row">
-                        <div id="fixed-width-select">
-                          <div class="mb-3">
-                            <label for="country" class="form-label">Corps</label>
-                            <select class="form-select" id="select" data-plugin="choices" formControlName="corps">
-                              <option value=""></option>
-                              <option value="C">Cadre commun</option>
-                              <option value="S">Sécurité</option>
-                              <option value="M">
-                                Mediateur administratif
-                              </option>
-                              <option value="H">HCCAF</option>
-                              <option value="I">ITES</option>
-                              <option value="P">Minéstère d'intérieur</option>
-                              <option value="D">Divers</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div class="col-sm-2">
-                        </div>
-
-                        <div id="fixed-width-select">
-                          <div class="mb-3">
-                            <label for="billinginfo-lastName" class="form-label">Etat</label>
-                            <select class="form-select" id="select" data-plugin="choices" formControlName="etat_act">
-                              <option value=""></option>
-                              <option value="A">Actif</option>
-                              <option value="B">Bloqué</option>
-                              <option value="I">En Instance</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div id="fixed-width-lov">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Pos. admin
-                            </label>
-                            <div class="mb-4">
-                              <app-lov [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
-                                [selectedCode]="codAffectVal" (selectedValue)=" onSelectedValueAffect($event) ">
-                              </app-lov>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div id="fixed-width-input-display">
-                          <div class="mb-3">
-                            <label for="billinginfo-lastName" class="form-label">
-                            </label>
-                            <input type="text" class="form-control" id="display-input" placeholder="Lib Affectation"
-                              [value]="libAffect" readonly />
-                          </div>
-                        </div>
-                        <div id="fixed-width-date">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Date Pos.</label>
-                            <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                              placeholder="Entrer Date motif" formControlName="dat_affect" appDateFormatter />
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div id="fixed-width-lov">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Motif départ</label>
-                            <div class="mb-3">
-                              <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart"
-                                [codeField]="codTypDepart" [selectedCode]="codTypDepartVal" (selectedValue)="
-                                      onSelectedValueTypDepart($event)
-                                    ">
-                              </app-lov>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div id="fixed-width-input-display">
-                          <label for="billinginfo-phone" class="form-label"></label>
-                          <div class="mb-3">
-                            <input type="text" class="form-control" id="display-input" placeholder="Type départ"
-                              [value]="libTypDepart" readonly />
-                          </div>
-                        </div>
-                        <div id="fixed-width-date">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Date motif</label>
-                            <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                              placeholder="Entrer Date motif" formControlName="dat_depart" appDateFormatter />
-                          </div>
-                        </div>
-
-                      </div>
-                      <div class="row">
-                        <div id="fixed-width-label">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Num affil mutuelle</label>
-                            <input type="text" class="form-control" id="code" placeholder="Num affil mutuelle"
-                              formControlName="num_assur" />
-                          </div>
-                        </div>
-                        <div id="fixed-width-select">
-                          <div class="mb-3">
-                            <label for="country" class="form-label">Etat adhésion</label>
-                            <select class="form-select" id="select" data-plugin="choices" formControlName="typ_aff">
-                              <option value=""></option>
-                              <option value="A">Adhéré</option>
-                              <option value="S">Non Adhéré</option>
-                            </select>
-                          </div>
-                        </div>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div id="fixed-width-date">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Date effet</label>
-                            <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                              placeholder="Entrer Date effet" formControlName="dat_ass" appDateFormatter />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div id="fixed-width-select">
-                          <div class="mb-3">
-                            <label for="country" class="form-label">Caisse de retraite</label>
-                            <select class="form-select" id="select" data-plugin="choices" formControlName="cod_retr">
-                              <option value=""></option>
-                              <option value="1">CNSS</option>
-                              <option value="2">CNRPS</option>
-                            </select>
-                          </div>
-                        </div>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                        <div id="fixed-width-label">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Identifiant unique CNRPS</label>
-                            <input type="text" class="form-control" id="code"
-                              placeholder="Entrer Identifiant unique CNRPS" formControlName="num_retr" />
-                          </div>
-                        </div>
-                        <div id="fixed-width-date">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">D.aff CNAM</label>
-                            <input type="text" class="form-control" mask="00/00/0000" id="myDateField"
-                              placeholder="Entrer Date affiliation CNAM" formControlName="dat_aff_cnam"
-                              appDateFormatter />
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div id="fixed-width-label">
-                          <div class="mb-3">
-                            <label for="country" class="form-label">Lib fil</label>
-                            <input type="text" class="form-control" id="input" placeholder="Entrer Lib fil" />
-                          </div>
-                        </div>
-
-                        <div class="col-sm-1"></div>
-                        <div id="fixed-width-label">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Assiette cot.</label>
-                            <input type="text" class="form-control" id="code" placeholder="Assiette cot."
-                              formControlName="mnt_param" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
+      <div class="row">
+        <div class="col-md-12">
+          <div class="collapse show">
+            <div class="card p-4 border shadow-none mb-0 mt-4">
+              <h5 class="mb-1 text-primary mb-3">Informations professionnelles</h5>
+              <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+                <div class="col-md-4">
+                  <label class="form-label">Corps</label>
+                  <select class="form-select border-primary" formControlName="corps">
+                    <option value="">Sélectionner</option>
+                    <option value="C">Cadre commun</option>
+                    <option value="S">Sécurité</option>
+                    <option value="M">Médiateur administratif</option>
+                    <option value="H">HCCAF</option>
+                    <option value="I">ITES</option>
+                    <option value="P">Ministère d'intérieur</option>
+                    <option value="D">Divers</option>
+                  </select>
                 </div>
-              </div>
-
-            </cdk-step>
-
-            <cdk-step [optional]="false">
-              <ng-template cdkStepLabel>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="steparrow-description-info-tab" data-bs-toggle="pill"
-                    data-bs-target="#steparrow-description-info" type="button" role="tab"
-                    aria-controls="steparrow-description-info" aria-selected="false">Mode de payement</button>
-                </li>
-              </ng-template>
-              <div class="container d-flex justify-content-center align-items-center">
-                <div class="col-md-8" [formGroup]="formAdherent">
-                  <div class="collapse show" id="paymentmethodCollapse">
-                    <div class="card p-5 border shadow-none mb-0 mt-5">
-                      <div class="row">
-                        <div id="fixed-width-select">
-                          <div class="mb-3">
-                            <label for="country" class="form-label">Mode de payement</label>
-                            <select class="form-select" id="select" data-plugin="choices" formControlName="cod_pay">
-                              <option value=""></option>
-                              <option value="V">Virement</option>
-                              <option value="E">Espèce</option>
-                              <option value="C">Chèque</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div class="col-sm-2">
-                          <div class="mb-3"></div>
-                        </div>
-
-                        <div id="fixed-width-select">
-                          <div class="mb-3">
-                            <label for="billinginfo-lastName" class="form-label">Carte banquaire</label>
-                            <select class="form-select" id="select" data-plugin="choices" formControlName="pers_carte">
-                              <option value=""></option>
-                              <option value="O">Oui</option>
-                              <option value="N">Non</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div id="fixed-width-lov">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Banque
-                            </label>
-                            <div class="mb-4">
-                              <app-lov [listData]="listBanque" [columns]="columnBanque" [codeField]="codBanque"
-                                [selectedCode]="codBanqueVal" (selectedValue)="
-                                        onSelectedValueBanque($event)
-                                      ">
-                              </app-lov>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div id="fixed-width-input-display">
-                          <div class="mb-3">
-                            <label for="billinginfo-lastName" class="form-label">
-                            </label>
-                            <input type="text" class="form-control" id="display-input" placeholder="Banque"
-                              [value]="libBanque" readonly />
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div id="fixed-width-lov">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">Agence
-                            </label>
-                            <div class="mb-4">
-                              <app-lov [listData]="listAgence" [columns]="columnsAgence" [codeField]="codAgence"
-                                [selectedCode]="codAgenceVal" (selectedValue)="
-                                        onSelectedValueAgence($event)
-                                      ">
-                              </app-lov>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div id="fixed-width-input-display">
-                          <div class="mb-3">
-                            <label for="billinginfo-lastName" class="form-label">
-                            </label>
-                            <input type="text" class="form-control" id="display-input" placeholder="Agence"
-                              [value]="libAgence" readonly />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-sm-7">
-                          <div class="mb-3">
-                            <label for="billinginfo-phone" class="form-label">RIB</label>
-                            <input type="text" class="form-control" id="input" placeholder="Entrer RIB"
-                              formControlName="rib" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="col-md-4">
+                  <label class="form-label">Etat</label>
+                  <select class="form-select border-primary" formControlName="etat_act">
+                    <option value="">Sélectionner</option>
+                    <option value="A">Actif</option>
+                    <option value="B">Bloqué</option>
+                    <option value="I">En instance</option>
+                  </select>
                 </div>
-              </div>
+                <div class="col-md-4">
+                  <label class="form-label">Etat adhésion</label>
+                  <select class="form-select border-primary" formControlName="typ_aff">
+                    <option value="">Sélectionner</option>
+                    <option value="A">Adhéré</option>
+                    <option value="S">Non adhéré</option>
+                  </select>
+                </div>
 
-            </cdk-step>
+                <div class="col-12">
+                  <hr class="my-1" />
+                </div>
 
-            <cdk-step [optional]="false">
-              <ng-template cdkStepLabel>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="pills-experience-tab" data-bs-toggle="pill"
-                    data-bs-target="#pills-experience" type="button" role="tab" aria-controls="pills-experience"
-                    aria-selected="false">Famille</button>
-                </li>
-              </ng-template>
-              <div class="row">
-                <!-- First Card -->
+                <!-- Position administrative -->
+                <div class="col-md-3">
+                  <label class="form-label">Code position</label>
+                  <app-lov [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
+                    [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)"></app-lov>
+                </div>
                 <div class="col-md-6">
-                  <div class="collapse show" id="paymentmethodCollapse">
-                    <h5 class="mb-1">Père</h5>
-
-                    <div class="card p-4 border shadow-none mb-0 mt-4" [formGroup]="formPere">
-                      <div class="row gy-3">
-                        <div class="col-md-6">
-                          <label for="cc-name" class="form-label">Nom </label>
-                          <input type="text" class="form-control" id="input" placeholder="Enter name"
-                            formControlName="nom_pren" />
-                        </div>
-
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date naiss.</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date naissance" formControlName="dat_naiss" appDateFormatter />
-                        </div>
-                        <div class="col-sm-3"></div>
-                        <div id="fixed-width-select">
-                          <label for="billinginfo-lastName" class="form-label">PEC</label>
-                          <select class="form-select" id="select" data-plugin="choices" formControlName="pec">
-                            <option value=""></option>
-                            <option value="O">Oui</option>
-                            <option value="N">Non</option>
-                          </select>
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date Pec</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date pec" formControlName="dat_pec" appDateFormatter />
-                        </div>
-                        <div class="col-sm-2"></div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date decés</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date decés" formControlName="dat_dece" appDateFormatter />
-                        </div>
-                        <div id="fixed-width-select">
-                          <label for="billinginfo-lastName" class="form-label">PEC mutuelle</label>
-                          <select class="form-select" id="select" data-plugin="choices" formControlName="pec_mut">
-                            <option value=""></option>
-                            <option value="O">Oui</option>
-                            <option value="N">Non</option>
-                          </select>
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date Pec mut</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date decés" formControlName="dat_pec_mut" appDateFormatter />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <label class="form-label">Libellé position administrative</label>
+                  <input type="text" class="form-control border-primary" placeholder="Libellé position"
+                    [value]="libAffect" readonly />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Date de position</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    formControlName="dat_affect" appDateFormatter />
                 </div>
 
-                <!-- Second Card -->
+                <!-- Motif de départ -->
+                <div class="col-md-3">
+                  <label class="form-label">Code motif de départ</label>
+                  <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
+                    [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)"></app-lov>
+                </div>
                 <div class="col-md-6">
-                  <div class="collapse show" id="paymentmethodCollapse">
-                    <h5 class="mb-1">Mère</h5>
-                    <div class="card p-4 border shadow-none mb-0 mt-4" [formGroup]="formMere">
-                      <div class="row gy-3">
-                        <div class="col-md-6">
-                          <label for="cc-name" class="form-label">Nom </label>
-                          <input type="text" class="form-control" id="input" placeholder="Enter name"
-                            formControlName="nom_pren" />
-                        </div>
-
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date naiss.</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date naissance" formControlName="dat_naiss" appDateFormatter />
-                        </div>
-                        <div class="col-sm-3"></div>
-
-                        <div id="fixed-width-select">
-                          <label for="billinginfo-lastName" class="form-label">PEC</label>
-                          <select class="form-select" id="select" data-plugin="choices" formControlName="pec">
-                            <option value=""></option>
-                            <option value="O">Oui</option>
-                            <option value="N">Non</option>
-                          </select>
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date Pec</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date pec" formControlName="dat_pec" appDateFormatter />
-                        </div>
-                        <div class="col-sm-2"></div>
-
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date decés</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date decés" formControlName="dat_dece" appDateFormatter />
-                        </div>
-                        <div id="fixed-width-select">
-                          <label for="billinginfo-lastName" class="form-label">PEC mutuelle</label>
-                          <select class="form-select" id="select" data-plugin="choices" formControlName="pec_mut">
-                            <option value=""></option>
-                            <option value="O">Oui</option>
-                            <option value="N">Non</option>
-                          </select>
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date Pec</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date decés" formControlName="dat_pec_mut" appDateFormatter />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <label class="form-label">Libellé du motif de départ</label>
+                  <input type="text" class="form-control border-primary" placeholder="Motif de départ"
+                    [value]="libTypDepart" readonly />
                 </div>
-              </div>
-              <br />
-              <div class="container d-flex justify-content-center align-items-center" *ngIf="
-                          formAdherent.get('cod_sit')?.value === 'M' ||
-                          formAdherent.get('cod_sit')?.value === 'D' ||
-                          formAdherent.get('cod_sit')?.value === 'V'
-                        ">
-                <div class="col-md-7">
-                  <div class="collapse show" id="paymentmethodCollapse">
-                    <h5 class="mb-1">Conjoint</h5>
-                    <div class="card p-4 border shadow-none mb-0 mt-4" [formGroup]="formConjoint">
-                      <div class="row gy-3">
-                        <div class="col-md-6">
-                          <label for="cc-name" class="form-label">Nom</label>
-                          <input type="text" class="form-control" id="input" placeholder="Enter name"
-                            formControlName="nom_pren" />
-                        </div>
-                        <div id="fixed-width-date">>
-                          <label for="cc-number" class="form-label">Date naiss.</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date naissance" formControlName="dat_nais" />
-                        </div>
-                        <div class="col-md-6">
-                          <label for="cc-name" class="form-label">Nom JF</label>
-                          <input type="text" class="form-control" id="input" placeholder="Enter Nom JF"
-                            formControlName="nom_jf" />
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date marriage</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date marriage" formControlName="dat_mar" appDateFormatter />
-                        </div>
-                        <div id="fixed-width-select">
-                          <label for="billinginfo-lastName" class="form-label">PEC</label>
-                          <select class="form-select" id="select" data-plugin="choices" formControlName="pec">
-                            <option value=""></option>
-                            <option value="O">Oui</option>
-                            <option value="N">Non</option>
-                          </select>
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date Pec</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date pec" formControlName="dat_pec" appDateFormatter />
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date décès</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date décès" formControlName="dat_dece" appDateFormatter />
-                        </div>
-                        <div id="fixed-width-select">
-                          <label for="billinginfo-lastName" class="form-label">PEC mutuelle</label>
-                          <select class="form-select" id="select" data-plugin="choices" formControlName="pec_mut">
-                            <option value=""></option>
-                            <option value="O">Oui</option>
-                            <option value="N">Non</option>
-                          </select>
-                        </div>
-                        <div id="fixed-width-date">
-                          <label for="cc-number" class="form-label">Date pec mut</label>
-                          <input type="text" class="form-control" id="myDateField" mask="00/00/0000"
-                            placeholder="Entrer date décès" formControlName="dat_pec_mut" appDateFormatter />
-                        </div>
-                        <div class="col-md-3"></div>
-                        <div class="col-md-4">
-                          <label for="billinginfo-lastName" class="form-label">Matricule conjoint</label>
-                          <input type="text" class="form-control" id="input" placeholder="Entrer matricule conjoint"
-                            formControlName="mat_pers_conj" />
-                        </div>
-                        <div class="col-md-2"></div>
-                        <div class="col-md-4">
-                          <label for="cc-number" class="form-label">Numéro assurance</label>
-                          <input type="text" class="form-control" id="input" placeholder="Entrer numéro assurance"
-                            formControlName="num_ass_conj" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </cdk-step>
-
-            <cdk-step [optional]="false" *ngIf="
-                    formAdherent.get('cod_sit')?.value === 'M' ||
-                    formAdherent.get('cod_sit')?.value === 'D' ||
-                    formAdherent.get('cod_sit')?.value === 'V'
-                  ">
-              <ng-template cdkStepLabel>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="steparrow-description-info-tab" data-bs-toggle="pill"
-                    data-bs-target="#steparrow-description-info" type="button" role="tab"
-                    aria-controls="steparrow-description-info" aria-selected="false">Enfants</button>
-                </li>
-              </ng-template>
-              <div class="card">
-                <app-tableau #tableau1 [config]="tableConfig" [initialRows]="dataRows"
-                  (onRowAdded)="handleRowAdded($event)" (deleteRowEvent)="deleteRow($event)">
-                </app-tableau>
-              </div>
-
-            </cdk-step>
-            <cdk-step [optional]="false">
-              <ng-template cdkStepLabel>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="steparrow-description-info-tab" data-bs-toggle="pill"
-                    data-bs-target="#steparrow-description-info" type="button" role="tab"
-                    aria-controls="steparrow-description-info" aria-selected="false">Adresses</button>
-                </li>
-              </ng-template>
-              <div class="mt-4">
-                <div class="d-flex align-items-center mb-2">
-                  <div class="flex-grow-1">
-                    <h5 class="fs-15 mb-0">Addresses</h5>
-                  </div>
-                  <div class="flex-shrink-0">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-sm btn-success mb-3" data-bs-toggle="modal"
-                      data-bs-target="#addAddressModal" (click)="openModalAdd(content)">
-                      Add Address
-                    </button>
-                  </div>
-                </div>
-                <div class="row gy-3">
-                  <div class="col-lg-4 col-sm-6" *ngFor="let i of listAdresse;">
-                    <div class="form-check card-radio">
-                      <input id="shippingAddress01" name="shippingAddress" type="radio" class="form-check-input"
-                        [checked]="i.adrCourant === 'O'">
-                      <label class="form-check-label" for="shippingAddress01">
-                        <span class="mb-4 fw-bold d-block text-muted text-uppercase" *ngIf="i.adrCourant==='O'">Adresse
-                          courante</span>
-
-                        <span class="fs-15 mb-2 d-block">{{i.cod_gouv}}</span>
-                        <span class="text-muted fw-normal text-wrap mb-1 d-block">{{i.rue}}</span>
-                      </label>
-                    </div>
-                    <div class="d-flex flex-wrap p-2 py-1 bg-light rounded-bottom border mt-n1">
-                      <div>
-                        <a href="javascript:void(0);" class="d-block text-body p-1 px-2" data-bs-toggle="modal"
-                          data-bs-target="#addAddressModal" (click)="openModal(content,i)"><i
-                            class="ri-pencil-fill text-muted align-bottom me-1"></i>
-                          Edit</a>
-                      </div>
-                      <div>
-                        <a href="javascript:void(0);" class="d-block text-body p-1 px-2" data-bs-toggle="modal"
-                          data-bs-target="#removeItemModal" (click)="confirm(deleteModel)"><i
-                            class="ri-delete-bin-fill text-muted align-bottom me-1"></i>
-                          Remove</a>
-                      </div>
-                    </div>
-                  </div>
-
+                <div class="col-md-3">
+                  <label class="form-label">Date du motif</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    formControlName="dat_depart" appDateFormatter />
                 </div>
 
-
-              </div>
-
-            </cdk-step>
-            <cdk-step [optional]="false">
-              <ng-template cdkStepLabel>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="steparrow-description-info-tab" data-bs-toggle="pill"
-                    data-bs-target="#steparrow-description-info" type="button" role="tab"
-                    aria-controls="steparrow-description-info" aria-selected="false">Carte soins</button>
-                </li>
-              </ng-template>
-              <div class="card">
-                <app-tableau #tableau2 [config]="CarteSoinTable" [initialRows]="CarteSoinList"
-                  (onRowAdded)="handleRowAdded($event)" (deleteRowEvent)="deleteRow($event)">
-                </app-tableau>
-              </div>
-            </cdk-step>
-          </ng-stepper>
-        </div>
-        <!-- end card body -->
-      </div>
-      <!-- end card -->
-    </div>
-
-
-  </div>
-
-
-
-
-  <div class="col-xl-2">
-    <div class="card">
-
-      <div class="card-body">
-        <div class="mb-4">
-          <h5 class="fs-15 mb-1">Image </h5>
-          <p class="text-muted">Ajouter une image.</p>
-          <div class="text-center">
-            <div class="position-relative d-inline-block">
-              <div class="position-absolute top-100 start-100 translate-middle">
-                <label for="product-image-input" class="mb-0" placement="right" ngbTooltip="Choisir Image">
-                  <div class="avatar-xs">
-                    <div class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
-                      <i class="ri-image-fill"></i>
-                    </div>
-                  </div>
-                </label>
-                <input class="form-control d-none" value="" id="product-image-input" type="file"
-                  accept="image/png, image/gif, image/jpeg" (change)="fileChange($event)">
-              </div>
-              <div class="avatar-lg">
-                <div class="avatar-title bg-light rounded">
-                  <img src="" id="product-img" class="avatar-md h-auto" />
+                <div class="col-12">
+                  <hr class="my-1" />
                 </div>
-              </div>
+
+                <!-- Mutuelle et CNAM -->
+                <div class="col-md-4">
+                  <label class="form-label">Numéro d'affiliation mutuelle</label>
+                  <input type="text" class="form-control border-primary" placeholder="Numéro d'affiliation mutuelle"
+                    formControlName="num_assur" />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Date d'effet</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    formControlName="dat_ass" appDateFormatter />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Date d'affiliation CNAM</label>
+                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                    formControlName="dat_aff_cnam" appDateFormatter />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Assiette cotisation</label>
+                  <input type="text" class="form-control border-primary" placeholder="Assiette cotisation"
+                    formControlName="mnt_param" />
+                </div>
+              </form>
             </div>
           </div>
         </div>
-
       </div>
-    </div>
-
-
-  </div>
-
-  <!-- end row -->
-  <div *ngIf="isSearch">
-    <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
-    </app-search-lov>
-  </div>
-  <!-- editItemModal -->
-  <ng-template #content role="document" let-modal class="modal-dialog modal-lg">
-    <div class="modal-header">
-      <h5 class="modal-title mt-0">Adresse</h5>
-
-      <button type="button" class="btn-close" aria-hidden="true" (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-      <div class="card-body">
-        <form [formGroup]="formAdrPers">
-          <div class="row">
-            <div id="fixed-width-lov">
-              <div class="mb-3">
-                <label for="billinginfo-phone" class="form-label">Gouvernorat
-                </label>
-                <div class="mb-4">
-                  <app-lov [listData]="listGouv" [columns]="columnsGouv" [codeField]="codGouv"
-                    (selectedValue)="onSelectedValueGouv($event)">
-                  </app-lov>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-sm-3">
-              <div class="mb-3">
-                <label for="billinginfo-lastName" class="form-label">
-                </label>
-                <input type="text" class="form-control" id="display-input" placeholder="Gouvernorat" [value]="libGouv"
-                  readonly />
-              </div>
-            </div>
-            <div class="col-sm-2">
-              <div class="mb-3">
-                <label for="billinginfo-lastName" class="form-label">
-                  Téléphone
-                </label>
-                <input type="text" class="form-control" id="input" placeholder="Téléphone" formControlName="tel_pers" />
-              </div>
-            </div>
-            <div class="col-sm-2">
-              <div class="mb-3">
-                <label for="billinginfo-lastName" class="form-label">
-                  Fax
-                </label>
-                <input type="text" class="form-control" id="input" placeholder="Fax" formControlName="fax_pers" />
-              </div>
-            </div>
           </div>
-          <div class="row">
-            <div id="fixed-width-lov">
-              <div class="mb-3">
-                <label for="billinginfo-phone" class="form-label">Poste
-                </label>
-                <div class="mb-4">
-                  <app-lov [listData]="listPoste" [columns]="columnsPoste" [codeField]="codPost"
-                    (selectedValue)="onSelectedValuePoste($event)">
-                  </app-lov>
-                </div>
-              </div>
-            </div>
+        </cdk-step>
 
-            <div class="col-sm-3">
-              <div class="mb-3">
-                <label for="billinginfo-lastName" class="form-label">
-                </label>
-                <input type="text" class="form-control" id="display-input" placeholder="Poste" [value]="libPoste"
-                  readonly />
+        <cdk-step [optional]="false">
+          <ng-template cdkStepLabel>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" type="button" role="tab" id="tab-payement"
+                [class.active]="cdkStepper.selectedIndex === 1"
+                [class.done]="cdkStepper.selectedIndex > 1">Mode de payement</button>
+            </li>
+          </ng-template>
+          <div class="row">
+      <!-- Mode de payement -->
+      <div class="col-md-12">
+        <div class="collapse show">
+          <div class="card p-4 border shadow-none mb-0 mt-4">
+            <h5 class="mb-1 text-primary mb-3">Mode de payement</h5>
+            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
+              <div class="col-md-6">
+                <label class="form-label">Mode de payement</label>
+                <select class="form-select border-success" formControlName="cod_pay">
+                  <option value="">Sélectionner</option>
+                  <option value="V">Virement</option>
+                  <option value="E">Espèce</option>
+                  <option value="C">Chèque</option>
+                </select>
               </div>
-            </div>
-            <div id="fixed-width-select">
-              <div class="mb-3">
-                <label for="state" class="form-label">Addresse Courante</label>
-                <select class="form-select" id="state" data-plugin="choices" formControlName="adr_courant">
+              <div class="col-md-6">
+                <label class="form-label">Carte bancaire</label>
+                <select class="form-select border-success" formControlName="pers_carte">
+                  <option value="">Sélectionner</option>
                   <option value="O">Oui</option>
                   <option value="N">Non</option>
                 </select>
               </div>
+              <div class="col-md-2">
+                <label class="form-label">Banque</label>
+                <app-lov [listData]="listBanque" [columns]="columnBanque" [codeField]="codBanque"
+                  [selectedCode]="codBanqueVal" (selectedValue)="onSelectedValueBanque($event)"></app-lov>
+              </div>
+              <div class="col-md-10">
+                <label class="form-label">Libellé banque</label>
+                <input type="text" class="form-control border-primary" [value]="libBanque" readonly
+                  placeholder="Banque" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Agence</label>
+                <app-lov [listData]="listAgence" [columns]="columnsAgence" [codeField]="codAgence"
+                  [selectedCode]="codAgenceVal" (selectedValue)="onSelectedValueAgence($event)"></app-lov>
+              </div>
+              <div class="col-md-10">
+                <label class="form-label">Libellé agence</label>
+                <input type="text" class="form-control border-primary" [value]="libAgence" readonly
+                  placeholder="Agence" />
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">RIB</label>
+                <input type="text" class="form-control border-primary" placeholder="RIB" formControlName="rib" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+          </div>
+        </cdk-step>
+
+        <cdk-step [optional]="false">
+          <ng-template cdkStepLabel>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" type="button" role="tab" id="tab-famille"
+                [class.active]="cdkStepper.selectedIndex === 2"
+                [class.done]="cdkStepper.selectedIndex > 2">Famille</button>
+            </li>
+          </ng-template>
+          <div class="row"><div class="col-12">
+      <!-- Père / Mère -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="collapse show h-100">
+            <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
+              <h5 class="mb-1 text-primary mb-3">Père</h5>
+              <form [formGroup]="formPere">
+                <div class="row g-3">
+                  <div class="col-md-12">
+                    <label class="form-label">Nom et prénom</label>
+                    <input type="text" class="form-control border-primary" placeholder="Nom et prénom"
+                      formControlName="nom_pren" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date de naissance</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_naiss" appDateFormatter />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date de décès</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_dece" appDateFormatter />
+                  </div>
+                  <div class="col-12">
+                    <hr class="my-1" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">PEC</label>
+                    <select class="form-select border-primary" formControlName="pec">
+                      <option value="">Sélectionner</option>
+                      <option value="O">Oui</option>
+                      <option value="N">Non</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date PEC</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_pec" appDateFormatter />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">PEC mutuelle</label>
+                    <select class="form-select border-primary" formControlName="pec_mut">
+                      <option value="">Sélectionner</option>
+                      <option value="O">Oui</option>
+                      <option value="N">Non</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date PEC mutuelle</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_pec_mut" appDateFormatter />
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="collapse show h-100">
+            <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
+              <h5 class="mb-1 text-primary mb-3">Mère</h5>
+              <form [formGroup]="formMere">
+                <div class="row g-3">
+                  <div class="col-md-12">
+                    <label class="form-label">Nom et prénom</label>
+                    <input type="text" class="form-control border-primary" placeholder="Nom et prénom"
+                      formControlName="nom_pren" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date de naissance</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_naiss" appDateFormatter />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date de décès</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_dece" appDateFormatter />
+                  </div>
+                  <div class="col-12">
+                    <hr class="my-1" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">PEC</label>
+                    <select class="form-select border-primary" formControlName="pec">
+                      <option value="">Sélectionner</option>
+                      <option value="O">Oui</option>
+                      <option value="N">Non</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date PEC</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_pec" appDateFormatter />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">PEC mutuelle</label>
+                    <select class="form-select border-primary" formControlName="pec_mut">
+                      <option value="">Sélectionner</option>
+                      <option value="O">Oui</option>
+                      <option value="N">Non</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date PEC mutuelle</label>
+                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_pec_mut" appDateFormatter />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conjoint -->
+      <div class="col-md-12" *ngIf="formAdherent.get('cod_sit')?.value === 'M' ||
+          formAdherent.get('cod_sit')?.value === 'D' ||
+          formAdherent.get('cod_sit')?.value === 'V'">
+        <div class="collapse show">
+          <div class="card p-4 border shadow-none mb-0 mt-4" [formGroup]="formConjoint">
+            <h5 class="mb-1 text-primary mb-3">Conjoint</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Nom et prénom</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom et prénom"
+                  formControlName="nom_pren" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date de naissance</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_naiss" appDateFormatter />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date de mariage</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_mar" appDateFormatter />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nom de jeune fille</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom de jeune fille"
+                  formControlName="nom_jf" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Matricule conjoint</label>
+                <input type="text" class="form-control border-primary" placeholder="Matricule conjoint"
+                  formControlName="mat_pers_conj" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Numéro assurance</label>
+                <input type="text" class="form-control border-primary" placeholder="Numéro assurance"
+                  formControlName="num_ass_conj" />
+              </div>
+              <div class="col-12">
+                <hr class="my-1" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">PEC</label>
+                <select class="form-select border-primary" formControlName="pec">
+                  <option value="">Sélectionner</option>
+                  <option value="O">Oui</option>
+                  <option value="N">Non</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date PEC</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_pec" appDateFormatter />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">PEC mutuelle</label>
+                <select class="form-select border-primary" formControlName="pec_mut">
+                  <option value="">Sélectionner</option>
+                  <option value="O">Oui</option>
+                  <option value="N">Non</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date PEC mutuelle</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_pec_mut" appDateFormatter />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date de décès</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  formControlName="dat_dece" appDateFormatter />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enfants -->
+      <div class="col-md-12" *ngIf="formAdherent.get('cod_sit')?.value === 'M' ||
+          formAdherent.get('cod_sit')?.value === 'D' ||
+          formAdherent.get('cod_sit')?.value === 'V'">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <h5 class="mb-1 text-primary mb-3">Enfants</h5>
+          <div class="table-responsive table-card mb-2">
+            <p-table [value]="dataRows || []" [paginator]="true" [rows]="6" styleClass="modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-primary">
+                  <th class="text-center">Numéro</th>
+                  <th class="text-center">Nom &amp; Prénom</th>
+                  <th class="text-center">Date naissance</th>
+                  <th class="text-center">Sexe</th>
+                  <th class="text-center">Handicap</th>
+                  <th class="text-center">Code activité</th>
+                  <th class="text-center">Libellé activité</th>
+                  <th class="text-center">PEC</th>
+                  <th class="text-center">Date PEC</th>
+                  <th class="text-center">Date décès</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td class="text-center">{{ data.num_fam }}</td>
+                  <td class="text-center">{{ data.nom_pren }}</td>
+                  <td class="text-center">{{ formatDate(data.dat_naiss) }}</td>
+                  <td class="text-center">{{ data.sexe === 'M' ? 'Masculin' : data.sexe === 'F' ? 'Féminin' : '' }}</td>
+                  <td class="text-center">{{ data.handicap === 'O' ? 'Oui' : 'Non' }}</td>
+                  <td class="text-center">{{ data.cod_activite }}</td>
+                  <td class="text-center">{{ data.lib_activite }}</td>
+                  <td class="text-center">{{ data.pec === 'O' ? 'Oui' : 'Non' }}</td>
+                  <td class="text-center">{{ formatDate(data.dat_pec) }}</td>
+                  <td class="text-center">{{ formatDate(data.dat_dece) }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="10"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+          </div></div>
+        </cdk-step>
+
+        <cdk-step [optional]="false">
+          <ng-template cdkStepLabel>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" type="button" role="tab" id="tab-adresses"
+                [class.active]="cdkStepper.selectedIndex === 3"
+                [class.done]="cdkStepper.selectedIndex > 3">Adresses</button>
+            </li>
+          </ng-template>
           <div class="row">
-            <div class="col-sm-3">
-              <div class="mb-3">
-                <label for="billinginfo-phone" class="form-label">Rue</label>
-                <input type="text" class="form-control" id="input" placeholder="Entrer Rue" formControlName="rue" />
+      <!-- Adresses -->
+      <div class="col-md-12 mb-4">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <h5 class="mb-1 text-primary mb-3">Adresses</h5>
+          <div class="row gy-3">
+            <div class="col-lg-6 col-sm-12" *ngFor="let a of listAdresse">
+              <div class="border rounded p-3 h-100">
+                <span class="badge bg-success-subtle text-success mb-2" *ngIf="a.adrCourant === 'O'">Adresse courante</span>
+                <span class="fs-15 fw-semibold mb-1 d-block">{{ a.libGouv || a.cod_gouv || a.codGouv }}</span>
+                <span class="text-muted d-block mb-1" *ngIf="a.libPoste || a.codPoste">{{ a.libPoste || a.codPoste }}</span>
+                <span class="text-muted d-block">{{ a.rue }}</span>
+                <span class="text-muted d-block" *ngIf="a.tel_pers"><i class="ri-phone-line me-1"></i>{{ a.tel_pers }}</span>
               </div>
             </div>
-            <div class="col-sm-3">
-              <div class="mb-3">
-                <label for="billinginfo-phone" class="form-label">Rue en arabe</label>
-                <input type="text" class="form-control" id="input" placeholder="Entrer Rue en arabe"
-                  formControlName="rue_a" />
-              </div>
+            <div class="col-12" *ngIf="!listAdresse || listAdresse.length === 0">
+              <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
             </div>
           </div>
-        </form>
-
-
-
+        </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Ok</button>
-    </div>
-  </ng-template>
+          </div>
+        </cdk-step>
 
-  <!-- removeItemModal -->
-  <ng-template #deleteModel let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Are you sure ?</h4>
-            <p class="text-muted mx-4 mb-0">
-              Are you sure you want to remove this address ?
-            </p>
+        <cdk-step [optional]="false">
+          <ng-template cdkStepLabel>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" type="button" role="tab" id="tab-carte-soins"
+                [class.active]="cdkStepper.selectedIndex === 4"
+                [class.done]="cdkStepper.selectedIndex > 4">Carte soins</button>
+            </li>
+          </ng-template>
+          <div class="row">
+      <!-- Carte soins -->
+      <div class="col-md-12">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <h5 class="mb-1 text-primary mb-3">Carte soins</h5>
+          <div class="table-responsive table-card mb-2">
+            <p-table [value]="CarteSoinList || []" [paginator]="true" [rows]="6" styleClass="modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-primary">
+                  <th class="text-center">Num fam</th>
+                  <th class="text-center">Nom &amp; Prénom</th>
+                  <th class="text-center">Nature</th>
+                  <th class="text-center">Numéro</th>
+                  <th class="text-center">Date affect</th>
+                  <th class="text-center">Etat</th>
+                  <th class="text-center">Perdu</th>
+                  <th class="text-center">Observation</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td class="text-center">{{ data.num_fam }}</td>
+                  <td class="text-center">{{ data.nom_pren }}</td>
+                  <td class="text-center">{{ data.nat_cart === 'S' ? 'Carte de soins' : data.nat_cart === 'M' ? 'Carnet militaire' : data.nat_cart }}</td>
+                  <td class="text-center">{{ data.num_cart }}</td>
+                  <td class="text-center">{{ formatDate(data.dat_cart) }}</td>
+                  <td class="text-center">{{ data.etat_cart === 'C' ? 'Courant' : 'Non courant' }}</td>
+                  <td class="text-center">{{ data.perdu === 'O' ? 'Oui' : 'Non' }}</td>
+                  <td class="text-center">{{ data.obs_cart }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="8"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
+                </tr>
+              </ng-template>
+            </p-table>
           </div>
         </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Close
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product">
-            Yes, Delete It!
-          </button>
+      </div>
+
+      <!-- Carte soins CNAM -->
+      <div class="col-md-12">
+        <div class="card p-4 border shadow-none mb-0 mt-4">
+          <h5 class="mb-1 text-primary mb-3">Carte soins CNAM</h5>
+          <div class="table-responsive table-card mb-2">
+            <p-table [value]="CarteSoinCnamList" [paginator]="true" [rows]="6" styleClass="modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-primary">
+                  <th class="text-center">Date carte</th>
+                  <th class="text-center">Date début</th>
+                  <th class="text-center">Date fin</th>
+                  <th class="text-center">Observation</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td class="text-center">{{ data.dat_cart }}</td>
+                  <td class="text-center">{{ data.date_debut }}</td>
+                  <td class="text-center">
+                    {{ data.date_fin }}
+                    <span *ngIf="badgeCarteCnam(data) as badge" class="badge ms-1" [ngClass]="badge.cls">{{ badge.label }}</span>
+                  </td>
+                  <td class="text-center">{{ data.obs_cart }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="4"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
         </div>
       </div>
+          </div>
+        </cdk-step>
+        </ng-stepper>
+      </div>
     </div>
-    <!-- /.modal-content -->
+  </div>
+</div>
 
-  </ng-template>
+<!-- Recherche (barre d'outils) -->
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>
