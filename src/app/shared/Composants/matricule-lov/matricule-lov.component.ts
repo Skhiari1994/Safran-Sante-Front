@@ -1,3 +1,4 @@
+import { lovMatch } from 'src/app/shared/lov-match';
 import {
   Component,
   EventEmitter,
@@ -105,7 +106,7 @@ export class MatriculeLovComponent implements OnInit, OnChanges {
     this.filteredData = this.filteredData.filter((item) =>
       Object.keys(this.columnSearchQueries).every((key) => {
         const query = this.columnSearchQueries[key].toLowerCase();
-        return item[key]?.toString().toLowerCase().includes(query);
+        return lovMatch(key, item[key], query);
       })
     );
   }

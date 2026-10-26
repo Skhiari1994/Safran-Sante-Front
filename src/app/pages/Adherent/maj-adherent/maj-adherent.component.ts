@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TableauComponent } from 'src/app/shared/Composants/tableau/tableau.component';
 import { forkJoin, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { CarteCnamAlertService } from '../carte-cnam-alert.service';
 
 @Component({
   selector: 'app-maj-adherent',
@@ -31,6 +32,22 @@ export class MajAdherentComponent {
   dataRows!: any[];
   listActivite!: any[];
   CarteSoinList!: any[];
+  CarteSoinCnamList: any[] = [];
+  /** Écran en lecture seule : aucune saisie, modification ou suppression. */
+  readonly isConsultation = true;
+
+  private static readonly BADGES_CNAM: { [statut: string]: { label: string; cls: string } } = {
+    a_venir: { label: "À venir", cls: "bg-info-subtle text-info" },
+    en_cours: { label: "En cours", cls: "bg-success-subtle text-success" },
+    bientot: { label: "Expire bientôt", cls: "bg-warning-subtle text-warning" },
+    expiree: { label: "Expirée", cls: "bg-danger-subtle text-danger" },
+    remplacee: { label: "Remplacée", cls: "bg-secondary-subtle text-secondary" },
+  };
+
+  badgeCarteCnam(row: any) {
+    const statut = this.carteCnamAlert.statutLigne(row, this.CarteSoinCnamList);
+    return statut ? MajAdherentComponent.BADGES_CNAM[statut] : null;
+  }
 
 
   codeField: string = 'cod_natp';
@@ -122,7 +139,8 @@ export class MajAdherentComponent {
 
     ],
     rowsPerPage: 10,
-    ISDeleted: true
+    ISDeleted: false,
+    readonly: true
 
   };
   CarteSoinTable = {
@@ -148,12 +166,13 @@ export class MajAdherentComponent {
       { header: 'Observation', field: 'obs_cart', editable: true, width: '200px', natureChamp: 'code' },
 
     ],
-    ISDeleted: true
+    ISDeleted: false,
+    readonly: true
 
   };
   patchedCode: any;
   rows: any;
-  constructor(private route: ActivatedRoute, private adherentServ: AdherentService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal, private cdr: ChangeDetectorRef, private tokenStorage: TokenStorage) {
+  constructor(private route: ActivatedRoute, private adherentServ: AdherentService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal, private cdr: ChangeDetectorRef, private tokenStorage: TokenStorage, private carteCnamAlert: CarteCnamAlertService) {
 
     this.formAdherent = this.fb.group({
       cod_soc: [''],
@@ -299,7 +318,12 @@ export class MajAdherentComponent {
     /**
     * BreadCrumb
     */
-    console.log("cod_soc", this.tokenStorage.getUser().codSoc)
+    // Consultation : formulaires verrouillés, boutons Enregistrer / Supprimer / Nouveau de la barre d'outils désactivés
+    [this.formAdherent, this.formAdrPers, this.formPere, this.formMere, this.formConjoint].forEach(f => f?.disable({ emitEvent: false }));
+    this.saveService.clearSaveCallback();
+    this.saveService.clearDeleteCallback();
+    this.saveService.setDisabled(false);
+    this.saveService.setConsultation(true);
     this.saveService.setIsSearch(false)
     this.saveService.isSearch$.subscribe((canSearch) => {
       this.isSearch = canSearch
@@ -308,7 +332,7 @@ export class MajAdherentComponent {
 
     this.breadCrumbItems = [
       { label: 'Adherent' },
-      { label: 'MajAdherent', active: true }
+      { label: 'ConsAdherent', active: true }
     ];
     this.getNationalite()
     this.getDepartement()
@@ -370,6 +394,7 @@ export class MajAdherentComponent {
         this.tableau1 = null as any
         this.tableau2 = null as any
         this.CarteSoinList = []
+        this.CarteSoinCnamList = []
         this.dataRows = []
         this.saveService.setAdded(false); // Reset the observable to false
         this.file = null as any
@@ -380,6 +405,7 @@ export class MajAdherentComponent {
 
   }
   ngOnDestroy() {
+    this.saveService.setConsultation(false);
     if (this.imageURL) {
       URL.revokeObjectURL(this.imageURL);
     }
@@ -628,7 +654,6 @@ export class MajAdherentComponent {
         { key: 'cin', label: 'CIN' },
         { key: 'cod_lieu_geog', label: 'Service' },
       ];
-
 
     });
   }
@@ -959,6 +984,7 @@ export class MajAdherentComponent {
 
   search(item: any) {
     console.log("this.codeField", this.codeField)
+    this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, item.cod_soc, [item.nom_pers, item.pren_pers].filter(Boolean).join(' '));
     this.formAdherent.patchValue({
       cod_soc: item.cod_soc,
       mat_pers: item.mat_pers,
@@ -1032,6 +1058,15 @@ export class MajAdherentComponent {
       },
       error => {
         console.error('Error fetching data:', error);
+      }
+    );
+    this.adherentServ.getCarteSoinCnam(item.cod_soc, item.mat_pers).subscribe(
+      (data: any) => {
+        this.CarteSoinCnamList = Array.isArray(data) ? data : [];
+      },
+      error => {
+        console.error('Error fetching carte soins CNAM:', error);
+        this.CarteSoinCnamList = [];
       }
     );
     this.adherentServ.getPere(item.cod_soc, item.mat_pers).subscribe(

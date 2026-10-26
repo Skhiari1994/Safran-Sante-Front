@@ -126,9 +126,53 @@ export class PrmBanqueComponent {
 
 
 //////////////////////////////////////////////////////
+  banqueEnEdition: any = null;
+
+  editBanque(row: any, content: any) {
+    this.edit = false;
+    this.banqueEnEdition = row;
+    this.formBanque.reset({
+      cod_banq: row.cod_banq,
+      lib_banq: row.lib_banq,
+      lib_banq_a: row.lib_banq_a,
+    });
+    this.modalService.open(content, { size: "xl", centered: true });
+  }
+
+  supprimerBanque(row: any) {
+    Swal.fire({
+      title: "Supprimer cette banque ?",
+      html: `Code <b>${row.cod_banq}</b> – ${row.lib_banq ?? ""}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      this.serv.deleteBanque(row.cod_banq).subscribe({
+        next: () => {
+          if (this.codBanq === row.cod_banq) {
+            this.listAgence = [];
+            this.listAgenceFiltre = [];
+            this.codBanq = null;
+          }
+          this.getBanque();
+          Swal.fire({ position: "top-end", icon: "success", title: "Banque supprimée avec succès !", showConfirmButton: false, timer: 2000 });
+        },
+        error: (err) => {
+          const message = typeof err?.error === "string" && err.error ? err.error : "Suppression impossible";
+          Swal.fire({ icon: "error", title: "Suppression impossible", text: message });
+        },
+      });
+    });
+  }
+
   saveBanque() {
-    
-     this.serv.AddBanque(this.formBanque.value).subscribe((data) => {
+    // En modification, on conserve les champs non affichés (adresse, tél, ...)
+    const banque = this.edit ? this.formBanque.value : { ...this.banqueEnEdition, ...this.formBanque.value };
+     this.serv.AddBanque(banque).subscribe((data) => {
       console.log("data :", data);
       Swal.fire({
         position: "top-end",
@@ -208,6 +252,7 @@ export class PrmBanqueComponent {
   openModalTab(content: any) {
     this.edit = true;
 
+    this.formBanque.reset()
     this.formAgence.reset()
     this.modalService.open(content, { size: "xl", centered: true });
   }

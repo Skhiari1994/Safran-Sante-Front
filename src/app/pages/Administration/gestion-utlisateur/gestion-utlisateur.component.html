@@ -63,12 +63,12 @@
 
             <div class="col-md-4">
               <label for="password" class="form-label">Mot de passe</label>
-              <div class="input-group">
-                <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control border-primary"
+              <div class="position-relative">
+                <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control border-primary pe-5"
                   placeholder="Mot de passe" formControlName="password"
                   [ngClass]="{ 'is-invalid': submitted && form['password'].errors }" />
-                <button type="button" class="btn btn-light border" (click)="showPassword = !showPassword"
-                  title="Afficher / masquer">
+                <button type="button" class="btn btn-link password-toggle" (click)="showPassword = !showPassword"
+                  [title]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" tabindex="-1">
                   <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
                 </button>
               </div>
@@ -76,11 +76,15 @@
             </div>
             <div class="col-md-4">
               <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
-              <div class="input-group">
+              <div class="position-relative">
                 <input [type]="showPassword ? 'text' : 'password'" id="confirmPassword"
-                  class="form-control border-primary" placeholder="Confirmer le mot de passe"
+                  class="form-control border-primary pe-5" placeholder="Confirmer le mot de passe"
                   formControlName="confirmPassword"
                   [ngClass]="{ 'is-invalid': (submitted || form['confirmPassword'].dirty) && utilisateurForm.errors?.['mismatch'] }" />
+                <button type="button" class="btn btn-link password-toggle" (click)="showPassword = !showPassword"
+                  [title]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" tabindex="-1">
+                  <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                </button>
               </div>
               <div class="text-danger fs-12 mt-1"
                 *ngIf="(submitted || form['confirmPassword'].dirty) && utilisateurForm.errors?.['mismatch']">

@@ -1,3 +1,4 @@
+import { lovMatch } from 'src/app/shared/lov-match';
 import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Subscription, debounceTime } from 'rxjs';
@@ -112,7 +113,7 @@ export class ConsBultMutLovComponent {
         return this.columns.some(col => {
           const key = col.key;
           const query = searchQueries[key]?.trim().toLowerCase();
-          return query ? (item[key]?.toString().toLowerCase().includes(query)) : true;
+          return query ? lovMatch(key, item[key], query) : true;
         });
       });
     }

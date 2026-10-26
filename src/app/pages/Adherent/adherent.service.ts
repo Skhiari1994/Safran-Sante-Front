@@ -117,6 +117,23 @@ export class AdherentService {
   getCarteSoin = (soc: String, mat: String): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/famille/getcarteSoinsPers/" + soc + "/" + mat);
   };
+  getCarteSoinCnam = (soc: String, mat: String): Observable<any[]> => {
+    return this.http.get<any[]>(API_URL + "adherent/famille/getCarteSoinsCnam/" + soc + "/" + mat);
+  };
+  getCarteSoinCnamUtilisateur = (mat: string, soc?: string): Observable<any[]> => {
+    let params = new HttpParams().set("mat", mat);
+    if (soc) params = params.set("soc", soc);
+    return this.http.get<any[]>(API_URL + "adherent/famille/getCarteSoinsCnamUtilisateur", { params });
+  };
+  addCarteSoinCnam = (data: any): Observable<any> => {
+    return this.http.post<any>(API_URL + "adherent/famille/addCarteSoinsCnam", data);
+  };
+  updateCarteSoinCnam = (oldNat: string, oldDateDebut: string, data: any): Observable<any> => {
+    return this.http.put<any>(API_URL + "adherent/famille/updateCarteSoinsCnam/" + oldNat + "/" + oldDateDebut.replace(/\//g, "-"), data);
+  };
+  deleteCarteSoinCnam = (soc: string, mat: string, nat: string, dateDebut: string): Observable<any> => {
+    return this.http.delete<any>(API_URL + "adherent/famille/deleteCarteSoinsCnam/" + soc + "/" + mat + "/" + nat + "/" + dateDebut.replace(/\//g, "-"));
+  };
   getActivite = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/famille/getActivite");
   };

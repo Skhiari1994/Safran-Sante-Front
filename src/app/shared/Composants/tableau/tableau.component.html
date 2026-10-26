@@ -1,5 +1,5 @@
 <div class="table-container" >
-  <div class="button-container" style="float: inline-end;" >
+  <div class="button-container" style="float: inline-end;" *ngIf="!config?.readonly">
     <button class="add-row-button" (click)="addNewEmptyRow()">
       <i class="bx bx-add-to-queue"></i>
     </button>
@@ -73,7 +73,7 @@
   
                   <!-- Render LovComponent if the column has isLov enabled -->
                   <ng-container *ngSwitchCase="column.isLov">
-                    <app-lov
+                    <app-lov [disabled]="!!config?.readonly"
                       [listData]="column.lovList"
                       [columns]="column.lovColumns"
                       [placeholder]="column.placeholder || 'Search...'"

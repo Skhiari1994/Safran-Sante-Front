@@ -29,6 +29,15 @@ export class AdminService {
   GetPersValid = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL+ "admin/PERS_VALIDEUR/getPersValid");
   };
+  getUtilisateursConsultation(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/Utilisateur/consultation");
+  }
+  modifierUtilisateur(id: number, data: any): Observable<any> {
+    return this.http.put<any>(API_URL + "admin/Utilisateur/" + id, data);
+  }
+  supprimerUtilisateur(id: number): Observable<any> {
+    return this.http.delete<any>(API_URL + "admin/Utilisateur/" + id);
+  }
   getRole(){
     return this.http.get(API_URL+"admin/Menu/role")
   }
@@ -49,6 +58,9 @@ export class AdminService {
     return this.http.delete<any>(API_URL+"admin/PERS_VALIDEUR/DeletePersValide/"+cod_soc+"/"+mat_pers+"/"+mat_resp);
   };
   
+  getNextEvtId(from: number): Observable<any> {
+    return this.http.get<any>(API_URL + "admin/Menu/nextEvtId/" + from);
+  }
   public getAdmSubModule() {
     return this.http.get<any>(API_URL+"admin/Menu/suModule");
   }
@@ -74,6 +86,9 @@ export class AdminService {
   getPersonnels(): Observable<any[]> {
     return this.http.get<any[]>(API_URL+`adherent/Personnel/getPersonnels`);
   }
+  creerModule(module: any): Observable<any> {
+    return this.http.post<any>(API_URL + "admin/Menu/module", module);
+  }
   saveSubModule(subModule:any[]){
     return this.http.post(API_URL+"admin/Menu/addSubModule",subModule)
   }
@@ -84,11 +99,29 @@ export class AdminService {
   saveAutorisation(auto:any[]){
     return this.http.post(API_URL+"admin/Menu/saveAuto",auto)
   }
+  getAllEvt(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/Menu/evtAll");
+  }
+  getAutorisationsMenu(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/Menu/autorisations");
+  }
+  setAutorisationsNoeud(sumId: number, evtId: number | null, roleIds: number[]): Observable<any> {
+    return this.http.put<any>(API_URL + "admin/Menu/autorisations", { sumId, evtId, roleIds });
+  }
+  setRangs(rangs: { kind: string, id: number, rank: number }[]): Observable<any> {
+    return this.http.put<any>(API_URL + "admin/Menu/ranks", rangs);
+  }
+  deleteModule(id: number): Observable<any> {
+    return this.http.delete<any>(API_URL + "admin/Menu/module/" + id);
+  }
+  deleteNoeud(id: number): Observable<any> {
+    return this.http.delete<any>(API_URL + "admin/Menu/noeud/" + id);
+  }
   DeleteSubModule(id:any){
-    return this.http.delete(API_URL+"admin/Menu/"+id)
+    return this.http.delete(API_URL+"admin/Menu/module/"+id)
   }
   DeleteEvt(id:any){
-    return this.http.delete(API_URL+"admin/Menu/evt/"+id)
+    return this.http.delete(API_URL+"admin/Menu/noeud/"+id)
   }
 
   deleteAdmAutorisation(sumId: number, roleId: number, evtId: number | null): Observable<any> {

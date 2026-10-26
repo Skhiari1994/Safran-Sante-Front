@@ -71,7 +71,7 @@ export class PrmPosteComponent {
   columnTitles: { [key: string]: string } = {
     cod_gouv: "Code gouv",
     lib_gouv: "Libellé gouv.",
-    lib_poste_a: "Libellé gouv. arab", 
+    lib_gouv_a: "Libellé gouv. arab", 
   };
   columnTitles2: { [key: string]: string } = {
     cod_gouv: "Code gouv",
@@ -92,7 +92,7 @@ export class PrmPosteComponent {
   searchz: any = {
     cod_gouv: "",
     lib_gouv: "",
-    lib_poste_a: "", 
+    lib_gouv_a: "", 
   };
   searchz2: any = {
     cod_gouv: "",
@@ -137,6 +137,45 @@ onSort2(column: any) {
 }
 
 //////////////////////////////////////////////////////
+  editGouv(row: any, content: any) {
+    this.edit = false;
+    this.formGouv.reset({
+      cod_gouv: row.cod_gouv,
+      lib_gouv: row.lib_gouv,
+      lib_gouv_a: row.lib_gouv_a,
+    });
+    this.modalService.open(content, { size: "xl", centered: true });
+  }
+
+  supprimerGouv(row: any) {
+    Swal.fire({
+      title: "Supprimer ce gouvernorat ?",
+      html: `Code <b>${row.cod_gouv}</b> – ${row.lib_gouv ?? ""}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      this.serv.deleteGouv(row.cod_gouv).subscribe({
+        next: () => {
+          if (this.listPoste?.length && this.listPoste[0]?.cod_gouv === row.cod_gouv) {
+            this.listPoste = [];
+            this.listPosteFiltre = [];
+          }
+          this.getGouv();
+          Swal.fire({ position: "top-end", icon: "success", title: "Gouvernorat supprimé avec succès !", showConfirmButton: false, timer: 2000 });
+        },
+        error: (err) => {
+          const message = typeof err?.error === "string" && err.error ? err.error : "Suppression impossible";
+          Swal.fire({ icon: "error", title: "Suppression impossible", text: message });
+        },
+      });
+    });
+  }
+
   saveGouv() {
     
      this.serv.AddGouvernerat(this.formGouv.value).subscribe((data) => {
@@ -204,7 +243,7 @@ onSort2(column: any) {
   openModalTab(content: any) {
     this.edit = true;
 
-    //this.formCertif.reset()
+    this.formGouv.reset()
     this.modalService.open(content, { size: "xl", centered: true });
   }
 

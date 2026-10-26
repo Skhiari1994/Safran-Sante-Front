@@ -83,7 +83,7 @@ export class BulletinSoinService {
     if (mat) params['mat'] = mat;
     if (num_fam) params['num_fam'] = num_fam;
     if (dat_soin) params['dat_soin'] = dat_soin;
-    
+
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultCnamCons", { params });
   };
 

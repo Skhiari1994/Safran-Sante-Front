@@ -4,6 +4,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RootReducerState } from '../store';
 import { Store } from '@ngrx/store';
 import { ChatNotificationService } from '../pages/chat/chat-notification.service';
+import { TokenStorage } from '../account/token-storage.service';
+import { CarteCnamAlertService } from '../pages/Adherent/carte-cnam-alert.service';
 
 @Component({
   selector: 'app-layout',
@@ -18,9 +20,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   layoutType!: string;
 
-  constructor(private store: Store<RootReducerState>, private chatNotifications: ChatNotificationService) { }
+  constructor(private store: Store<RootReducerState>, private chatNotifications: ChatNotificationService,
+    private tokenStorage: TokenStorage, private carteCnamAlert: CarteCnamAlertService) { }
 
   ngOnInit(): void {
+    this.alerterCarteCnamApresConnexion();
     this.store.select('layout').subscribe((data) => {
       this.layoutType = data.LAYOUT;
       document.documentElement.setAttribute('data-layout', data.LAYOUT);
@@ -38,6 +42,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   }
 
+
+  /** Alerte d'expiration de la carte CNAM de l'utilisateur connecté, une seule fois par connexion (clé : le token). */
+  private alerterCarteCnamApresConnexion(): void {
+    const token = this.tokenStorage.getToken();
+    const user = this.tokenStorage.getUser();
+    if (!token || !(user?.matPers || user?.useLogin)) return;
+    try {
+      if (sessionStorage.getItem('carteCnamAlerte') === token) return;
+      sessionStorage.setItem('carteCnamAlerte', token);
+    } catch { /* stockage indisponible : on alerte quand même */ }
+    this.carteCnamAlert.verifierPourUtilisateur(user);
+  }
 
   ngOnDestroy(): void {
     this.chatNotifications.reset();

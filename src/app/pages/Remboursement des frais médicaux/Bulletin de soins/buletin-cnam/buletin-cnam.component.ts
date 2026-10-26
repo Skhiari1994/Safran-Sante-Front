@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Table } from 'primeng/table';
+import { CarteCnamAlertService } from '../../../Adherent/carte-cnam-alert.service';
 
 @Component({
   selector: 'app-buletin-cnam',
@@ -108,7 +109,7 @@ export class BuletinCNAMComponent {
 
 
   constructor(private token: TokenStorageService, private serv: BulletinSoinService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal,
-    public service: PaginationService, private cdr: ChangeDetectorRef) {
+    public service: PaginationService, private cdr: ChangeDetectorRef, private carteCnamAlert: CarteCnamAlertService) {
     this.formBuletinSoin = this.fb.group({
       cod_soc: [this.token.getUser().codSoc],
       mat_pers: [''],
@@ -930,6 +931,7 @@ export class BuletinCNAMComponent {
     }
 
     console.log("item :", item);
+    this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, this.token.getUser().codSoc, item.nom);
     this.numAssur = item.numRetr;
     this.nomPers = item.nom;
     this.codAssur = item.codLieuGeog;

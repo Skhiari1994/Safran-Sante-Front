@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'ngx-pagination';
 import { map, forkJoin, tap } from 'rxjs';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { CarteCnamAlertService } from '../../../Adherent/carte-cnam-alert.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { BulletinSoinService } from '../bulletin-soin.service';
@@ -90,7 +91,7 @@ export class ConsBultCnamComponent {
   showMsgPriseCharge!: boolean
 
   constructor(private token: TokenStorageService, private serv: BulletinSoinService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal,
-    public service: PaginationService) {
+    public service: PaginationService, private carteCnamAlert: CarteCnamAlertService) {
     this.formBuletinSoin = this.fb.group({
       cod_soc: [this.token.getUser().codSoc],
       mat_pers: [''],
@@ -336,6 +337,7 @@ export class ConsBultCnamComponent {
     console.log('item.num_fam :', item);
     this.matricule = item.mat_pers;
     this.PEC = item.num_pec;
+    this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, this.token.getUser().codSoc, item.nom_adherent || item.nom_complet_pers);
 
     this.serv.getAdherent(this.token.getUser().codSoc, item.mat_pers).subscribe((data: any) => {
       this.listAdherent = data;

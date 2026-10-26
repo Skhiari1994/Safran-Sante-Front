@@ -66,6 +66,7 @@ export class TopbarComponent implements OnInit {
   isDeletedDisable :boolean = true; 
   isDisabled: boolean = true; // Initially set to true, meaning the button is disabled
   isDisabledSearch: boolean = true;
+  consultation: boolean = false;
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
     public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
     private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService) { }
@@ -104,6 +105,9 @@ export class TopbarComponent implements OnInit {
 
         //////////////////////////// isDisabledSearch button disabled ////////////////////////////////////////
     // Subscribe to the SaveService's isDisabled$ observable to track changes
+    this.saveService.consultation$.subscribe((consultation: boolean) => {
+      this.consultation = consultation;
+    });
     this.saveService.isDisabledSearch$.subscribe((isDisabledSearch: boolean) => {
       this.isDisabledSearch = isDisabledSearch;  // Enable the button if isDisabled is true
     });

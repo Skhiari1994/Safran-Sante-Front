@@ -1,0 +1,95 @@
+<div class="row" style="margin-top: 25px"></div>
+<app-breadcrumbs title="Consultation utilisateur" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="card p-4 border shadow-none mb-3">
+  <h5 class="card-title text-primary mb-3">Liste des utilisateurs</h5>
+  <div class="table-responsive table-card mb-2">
+    <p-table #dt [value]="utilisateurs" [paginator]="true" [rows]="10" [loading]="loading"
+      [globalFilterFields]="['matricule', 'nom', 'prenom', 'role']" styleClass="modern-table">
+      <ng-template pTemplate="caption">
+        <div class="row">
+          <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Rechercher (matricule, nom, prénom, rôle)"
+              (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr class="table-primary">
+          <th class="text-center">Matricule</th>
+          <th class="text-center">Nom</th>
+          <th class="text-center">Prénom</th>
+          <th class="text-center">Rôle</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-u>
+        <tr>
+          <td class="text-center">{{ u.matricule }}</td>
+          <td class="text-center">{{ u.nom }}</td>
+          <td class="text-center">{{ u.prenom }}</td>
+          <td class="text-center">
+            <span *ngFor="let r of roles(u)" class="badge fs-12 me-1" [ngClass]="couleurRole(r)">{{ r }}</span>
+          </td>
+          <td>
+            <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
+              <li class="list-inline-item">
+                <a class="edit-item-btn" title="Modifier" (click)="ouvrirModification(u, modifContent)">
+                  <i class="ri-pencil-fill align-bottom text-muted"></i>
+                </a>
+              </li>
+              <li class="list-inline-item me-0">
+                <a class="remove-item-btn" [class.action-desactivee]="estUtilisateurConnecte(u)"
+                  [title]="estUtilisateurConnecte(u) ? 'Vous ne pouvez pas supprimer votre propre compte' : 'Supprimer'"
+                  (click)="!estUtilisateurConnecte(u) && supprimer(u)">
+                  <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                </a>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center">
+            <span *ngIf="erreur" class="badge bg-danger-subtle text-danger">Chargement impossible</span>
+            <span *ngIf="!erreur" class="badge bg-info-subtle text-info">Aucune donnée disponible !</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Modification utilisateur -->
+<ng-template #modifContent let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Modifier l'utilisateur</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="edition">
+    <div class="row g-3">
+      <div class="col-md-12">
+        <label class="form-label">Matricule</label>
+        <input type="text" class="form-control" [value]="edition.matricule" readonly />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Nom</label>
+        <input type="text" class="form-control border-primary" [(ngModel)]="edition.nom" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Prénom</label>
+        <input type="text" class="form-control border-primary" [(ngModel)]="edition.prenom" />
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Rôles</label>
+        <ng-select [items]="listRoles" bindLabel="name" bindValue="id" [multiple]="true"
+          [(ngModel)]="edition.roleIds" placeholder="Sélectionner les rôles"></ng-select>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-primary" [disabled]="enregistrement" (click)="enregistrer()">Enregistrer</button>
+  </div>
+</ng-template>

@@ -30,6 +30,10 @@ import { DFlPersScgComponent } from './dfl-pers-scg/dfl-pers-scg.component';
 const routes: Routes = [
 
   {
+    path: "ConsAdherent",
+    component: MajAdherentComponent
+  } ,
+  {
     path: "MajAdherent",
     component: MajAdherentComponent
   } ,

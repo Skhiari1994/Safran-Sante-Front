@@ -26,6 +26,13 @@ export class SaveService {
   private isDeletedDisableSource = new BehaviorSubject<boolean>(false);
   isDeletedDisable$ = this.isDeletedDisableSource.asObservable();
 
+  /** Écran de consultation : la barre d'outils désactive Supprimer, Enregistrer et Nouveau. */
+  private consultationSubject = new BehaviorSubject<boolean>(false);
+  consultation$ = this.consultationSubject.asObservable();
+  setConsultation(value: boolean) {
+    this.consultationSubject.next(value);
+  }
+
   constructor(private http: HttpClient) {}
 
   private addSubject = new BehaviorSubject<boolean>(false);

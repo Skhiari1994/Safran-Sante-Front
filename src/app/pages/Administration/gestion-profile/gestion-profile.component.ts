@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import { AdminService } from '../Admin.service';
 import Swal from 'sweetalert2';
@@ -18,8 +18,6 @@ export class GestionProfileComponent {
   selectedRole: any;
   selectedModules: any[] = [];
   expandedModules: Set<number> = new Set();
-  /** Sous-modules cochés dans la colonne « Sélection » (clé « idModule:idSousModule »). */
-  selected = new Set<string>();
   busy = false;
   menuData: any[] = [];
   admstorageautorisationForm!: FormGroup;
@@ -59,7 +57,6 @@ export class GestionProfileComponent {
 
   onRoleChange(roleId: any): void {
     this.selectedRole = roleId.target.value;
-    this.selected.clear();
     this.combineMenuWithAuthorizations();
   }
 
@@ -212,6 +209,13 @@ export class GestionProfileComponent {
     return (item.subItems || []).reduce((all: any[], c: any) => [...all, c, ...this.descendants(c)], []);
   }
 
+
+  /** Vrai si seuls certains sous-éléments sont affichés (case en état « partiel »). */
+  partiel(item: any): boolean {
+    const enfants = this.descendants(item);
+    const coches = enfants.filter((c: any) => c.checked).length;
+    return coches > 0 && coches < enfants.length;
+  }
   private findItem(mod: any, evtId: number): any {
     return this.descendants(mod).find(c => c.id === evtId);
   }
@@ -240,13 +244,27 @@ export class GestionProfileComponent {
     if (!mod) { return; }
 
     if (checked) {
-      this.saveAuth(sumId, null).subscribe({
+      // cocher un module affiche aussi tous ses sous-modules (à tous les niveaux) ; seuls ceux qui ne le sont pas encore sont enregistrés
+      const aCocher: any[] = this.descendants(mod).filter((c: any) => !c.checked);
+      const appels = [
+        ...(mod.authorized ? [] : [this.saveAuth(sumId, null)]),
+        ...aCocher.map(c => this.saveAuth(sumId, c.id))
+      ];
+      this.busy = true;
+      forkJoin(appels.length ? appels : [of(null)]).subscribe({
         next: () => {
           mod.authorized = true;
+          aCocher.forEach(c => { c.checked = true; });
           this.refreshModuleState(mod);
-          this.toast('success', 'Ajout avec succès');
+          this.busy = false;
+          this.toast('success', aCocher.length ? `Module et ${aCocher.length} sous-module(s) affichés` : 'Ajout avec succès');
         },
-        error: () => { event.target.checked = false; this.toast('error', 'Enregistrement impossible'); }
+        error: () => {
+          event.target.checked = false;
+          this.busy = false;
+          this.toast('error', 'Enregistrement impossible');
+          this.combineMenuWithAuthorizations();
+        }
       });
       return;
     }
@@ -256,7 +274,7 @@ export class GestionProfileComponent {
     forkJoin([this.deleteAuth(sumId, null), ...children.map(c => this.deleteAuth(sumId, c.id))]).subscribe({
       next: () => {
         mod.authorized = false;
-        this.descendants(mod).forEach((c: any) => { c.checked = false; this.selected.delete(this.key(sumId, c.id)); });
+        this.descendants(mod).forEach((c: any) => { c.checked = false; });
         this.refreshModuleState(mod);
         this.busy = false;
         this.toast('info', children.length ? 'Module et sous-modules masqués' : 'Module masqué');
@@ -278,13 +296,22 @@ export class GestionProfileComponent {
     if (!mod || !item) { return; }
 
     if (checked) {
-      this.saveAuth(sumId, evtId).subscribe({
+      // même logique qu'un module : cocher un sous-module coche aussi ses propres sous-éléments
+      const aCocher: any[] = [item, ...this.descendants(item)].filter(c => !c.checked);
+      this.busy = true;
+      forkJoin(aCocher.length ? aCocher.map(c => this.saveAuth(sumId, c.id)) : [of(null)]).subscribe({
         next: () => {
-          item.checked = true;
+          aCocher.forEach(c => { c.checked = true; });
           this.refreshModuleState(mod);
-          this.toast('success', 'Ajout avec succès');
+          this.busy = false;
+          this.toast('success', aCocher.length > 1 ? `Sous-module et ${aCocher.length - 1} sous-élément(s) affichés` : 'Ajout avec succès');
         },
-        error: () => { event.target.checked = false; this.toast('error', 'Enregistrement impossible'); }
+        error: () => {
+          event.target.checked = false;
+          this.busy = false;
+          this.toast('error', 'Enregistrement impossible');
+          this.combineMenuWithAuthorizations();
+        }
       });
       return;
     }
@@ -299,88 +326,6 @@ export class GestionProfileComponent {
       error: () => {
         event.target.checked = true;
         this.toast('error', 'Suppression impossible');
-        this.combineMenuWithAuthorizations();
-      }
-    });
-  }
-
-  // ------------------------------------------------------------------ sélection multiple
-  private key(sumId: number, evtId: number): string {
-    return `${sumId}:${evtId}`;
-  }
-
-  isSelected(sumId: number, evtId: number): boolean {
-    return this.selected.has(this.key(sumId, evtId));
-  }
-
-  toggleSelect(sumId: number, evtId: number, event: any): void {
-    event.target.checked ? this.selected.add(this.key(sumId, evtId)) : this.selected.delete(this.key(sumId, evtId));
-  }
-
-  private selectedCount(mod: any): number {
-    return this.descendants(mod).filter((c: any) => this.isSelected(mod.id, c.id)).length;
-  }
-
-  isModuleFullySelected(mod: any): boolean {
-    const n = this.descendants(mod).length;
-    return n > 0 && this.selectedCount(mod) === n;
-  }
-
-  isModulePartlySelected(mod: any): boolean {
-    const n = this.selectedCount(mod);
-    return n > 0 && n < this.descendants(mod).length;
-  }
-
-  /** Coche / décoche la sélection de tous les sous-modules d'un module. */
-  toggleSelectModule(mod: any, event: any): void {
-    this.descendants(mod).forEach((c: any) => {
-      event.target.checked ? this.selected.add(this.key(mod.id, c.id)) : this.selected.delete(this.key(mod.id, c.id));
-    });
-  }
-
-  get totalSubItems(): number {
-    return this.menuData.reduce((n, m) => n + this.descendants(m).length, 0);
-  }
-
-  toggleSelectAll(event: any): void {
-    this.menuData.forEach(m => this.toggleSelectModule(m, event));
-  }
-
-  clearSelection(): void {
-    this.selected.clear();
-  }
-
-  /** Affiche ou masque d'un coup tous les sous-modules sélectionnés. */
-  applySelection(show: boolean): void {
-    if (this.busy || !this.selected.size) { return; }
-    if (!this.hasRole()) { return; }
-
-    const calls: any[] = [];
-    const changed: { mod: any; child: any }[] = [];
-    this.menuData.forEach(mod => this.descendants(mod).forEach((child: any) => {
-      if (this.isSelected(mod.id, child.id) && !!child.checked !== show) {
-        calls.push(show ? this.saveAuth(mod.id, child.id) : this.deleteAuth(mod.id, child.id));
-        changed.push({ mod, child });
-      }
-    }));
-
-    if (!calls.length) {
-      this.toast('info', show ? 'Déjà tous affichés' : 'Déjà tous masqués');
-      this.selected.clear();
-      return;
-    }
-
-    this.busy = true;
-    forkJoin(calls).subscribe({
-      next: () => {
-        changed.forEach(({ mod, child }) => { child.checked = show; this.refreshModuleState(mod); });
-        this.selected.clear();
-        this.busy = false;
-        this.toast('success', `${changed.length} sous-module(s) ${show ? 'affiché(s)' : 'masqué(s)'}`);
-      },
-      error: () => {
-        this.busy = false;
-        this.toast('error', 'Une partie des modifications a échoué');
         this.combineMenuWithAuthorizations();
       }
     });

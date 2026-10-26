@@ -5,6 +5,7 @@ import { GestionProfileComponent } from './gestion-profile/gestion-profile.compo
 import { GestionMenuComponent } from './gestion-menu/gestion-menu.component'; 
 import { ParametrageRapportsComponent } from './parametrage-rapports/parametrage-rapports.component';
 import { GestionUtlisateurComponent } from './gestion-utlisateur/gestion-utlisateur.component';
+import { ConsultationUtilisateurComponent } from './consultation-utilisateur/consultation-utilisateur.component';
 import { MajValideurComponent } from './maj-valideur/maj-valideur.component';
   
 
@@ -24,6 +25,10 @@ const routes: Routes = [
     
     
     
+  },
+  {
+    path: "UtilisateurConsultation",
+    component: ConsultationUtilisateurComponent,
   },
   {
     path: "gestionProfil",

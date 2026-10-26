@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { AdherentService } from "../adherent.service";
+import { CarteCnamAlertService } from "../carte-cnam-alert.service";
 import {
   AbstractControl,
   FormArray,
@@ -55,6 +56,7 @@ export class MajAdherentTestComponent {
   dataRows!: any[];
   listActivite!: any[];
   CarteSoinList!: any[];
+  CarteSoinCnamList: any[] = [];
   filteredDataRows: any
   filteredDataCarteSoint: any
   codeField: string = "cod_natp";
@@ -360,7 +362,9 @@ export class MajAdherentTestComponent {
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
     public service: PaginationService,
-    private tokenStorage: TokenStorage
+    private tokenStorage: TokenStorage,
+    private carteCnamAlert: CarteCnamAlertService,
+    private route: ActivatedRoute
   ) {
     this.formAdherent = this.fb.group({
       cod_soc: [""],
@@ -574,6 +578,7 @@ export class MajAdherentTestComponent {
         this.tableau1 = null as any;
         this.tableau2 = null as any;
         this.CarteSoinList = [];
+        this.CarteSoinCnamList = [];
         this.filteredDataCarteSoint = []
         this.filteredDataRows = []
         this.dataRows = [];
@@ -865,6 +870,12 @@ export class MajAdherentTestComponent {
   getPersonnels() {
     this.adherentServ.getPersonnelsCredit().subscribe((data) => {
       this.listPersonnel = data;
+      // ouverture depuis l'alerte de carte CNAM (?mat=...) : on charge directement cet adhérent
+      const matDemande = this.route.snapshot.queryParamMap.get("mat");
+      if (matDemande) {
+        const adherent = data.find((p: any) => String(p.mat_pers) === matDemande);
+        if (adherent) this.search(adherent);
+      }
       this.columnsSearch = [
         { key: "mat_pers", label: "Matricule" },
         { key: "mat_int", label: "Mat. Administratif" },
@@ -1217,6 +1228,7 @@ export class MajAdherentTestComponent {
   }
 
   search(item: any) {
+    this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, item.cod_soc, [item.nom_pers, item.pren_pers].filter(Boolean).join(' '));
     this.serachEdit = true
     this.codMatIntVal = item.mat_int
     this.codNatP = item.cod_natp
@@ -1328,6 +1340,14 @@ export class MajAdherentTestComponent {
 
         console.log("this.CarteSoinList", this.CarteSoinList);
         // Set the lovList for the column in tableConfig
+      },
+      (error) => {
+        console.error("Error fetching data:", error);
+      }
+    );
+    this.adherentServ.getCarteSoinCnam(item.cod_soc, item.mat_pers).subscribe(
+      (data: any[]) => {
+        this.CarteSoinCnamList = data || [];
       },
       (error) => {
         console.error("Error fetching data:", error);
@@ -1612,6 +1632,179 @@ export class MajAdherentTestComponent {
     // Open the modal
     this.modalService.open(content, { size: 'lg' });
   }
+  private static readonly BADGES_CNAM: { [statut: string]: { label: string; cls: string } } = {
+    a_venir: { label: "À venir", cls: "bg-info-subtle text-info" },
+    en_cours: { label: "En cours", cls: "bg-success-subtle text-success" },
+    bientot: { label: "Expire bientôt", cls: "bg-warning-subtle text-warning" },
+    expiree: { label: "Expirée", cls: "bg-danger-subtle text-danger" },
+    remplacee: { label: "Remplacée", cls: "bg-secondary-subtle text-secondary" },
+  };
+
+  badgeCarteCnam(row: any) {
+    const statut = this.carteCnamAlert.statutLigne(row, this.CarteSoinCnamList);
+    return statut ? MajAdherentTestComponent.BADGES_CNAM[statut] : null;
+  }
+
+  // ---- CRUD carte soins CNAM ----
+  formCarteCnam!: FormGroup;
+  /** Clé d'origine de la ligne en cours de modification (la date de début fait partie de la clé). */
+  carteCnamEnCours: { nat_cart: string; date_debut: string } | null = null;
+  private cnamModalRef: any;
+
+  private initFormCarteCnam(data?: any) {
+    this.formCarteCnam = this.fb.group({
+      nat_cart: [data?.nat_cart || "C"],
+      dat_cart: [data?.dat_cart || "", [Validators.required, this.dateFrValide]],
+      date_debut: [data?.date_debut || "", [Validators.required, this.dateFrValide]],
+      date_fin: [data?.date_fin || "", [Validators.required, this.dateFrValide]],
+      obs_cart: [data?.obs_cart || ""],
+    }, { validators: this.periodeCarteCnamValide.bind(this) });
+  }
+
+  /** ngx-mask renvoie « jjmmaaaa » sans les « / » : on ramène toute date au format jj/mm/aaaa. */
+  private normaliserDateFr(value: any): string {
+    const s = String(value ?? "");
+    return /^\d{8}$/.test(s) ? `${s.substring(0, 2)}/${s.substring(2, 4)}/${s.substring(4)}` : s;
+  }
+
+  /** Date jj/mm/aaaa existante (refuse par exemple le 31/02). */
+  private dateFrValide: ValidatorFn = (control: AbstractControl) => {
+    const s = this.normaliserDateFr(control.value);
+    const d = this.carteCnamAlert.parseDateFr(s);
+    const relue = d
+      ? `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`
+      : "";
+    return relue === s ? null : { dateInvalide: true };
+  };
+
+  private periodeCarteCnamValide(group: AbstractControl) {
+    const debut = this.carteCnamAlert.parseDateFr(this.normaliserDateFr(group.get("date_debut")?.value));
+    const fin = this.carteCnamAlert.parseDateFr(this.normaliserDateFr(group.get("date_fin")?.value));
+    return debut && fin && fin < debut ? { periodeInvalide: true } : null;
+  }
+
+  private adherentCourant(): { cod_soc: string; mat_pers: string } | null {
+    const cod_soc = this.formAdherent.get("cod_soc")?.value;
+    const mat_pers = this.formAdherent.get("mat_pers")?.value;
+    if (!cod_soc || !mat_pers) {
+      Swal.fire("Attention", "Veuillez d'abord charger un adhérent.", "warning");
+      return null;
+    }
+    return { cod_soc, mat_pers };
+  }
+
+  openAddCarteCnam(content: any) {
+    if (!this.adherentCourant()) return;
+    this.carteCnamEnCours = null;
+    this.initFormCarteCnam(this.carteCnamAlert.periodeSuivante(this.CarteSoinCnamList) ?? undefined);
+    this.cnamModalRef = this.modalService.open(content, { centered: true });
+  }
+
+  openEditCarteCnam(content: any, row: any) {
+    this.carteCnamEnCours = { nat_cart: row.nat_cart, date_debut: row.date_debut };
+    this.initFormCarteCnam(row);
+    this.cnamModalRef = this.modalService.open(content, { centered: true });
+  }
+
+  saveCarteCnam() {
+    const adherent = this.adherentCourant();
+    if (!adherent) return;
+    if (this.formCarteCnam.invalid) {
+      this.formCarteCnam.markAllAsTouched();
+      return;
+    }
+    const v = this.formCarteCnam.value;
+    const data = {
+      ...v,
+      dat_cart: this.normaliserDateFr(v.dat_cart),
+      date_debut: this.normaliserDateFr(v.date_debut),
+      date_fin: this.normaliserDateFr(v.date_fin),
+      ...adherent,
+    };
+    const enCours = this.carteCnamEnCours;
+
+    // cartes à comparer : celles de l'adhérent, sauf la ligne en cours de modification
+    const autres = (this.CarteSoinCnamList || []).filter(
+      c => !(enCours && c.nat_cart === enCours.nat_cart && c.date_debut === enCours.date_debut)
+    );
+
+    const chevauche = this.carteCnamAlert.chevauchement(data, autres);
+    if (chevauche) {
+      Swal.fire(
+        "Période impossible",
+        `Cette période chevauche la carte du ${chevauche.date_debut} au ${chevauche.date_fin}.`,
+        "error"
+      );
+      return;
+    }
+
+    const trous = this.carteCnamAlert.trous(data, autres);
+    if (!trous.length) {
+      this.envoyerCarteCnam(data, adherent, enCours);
+      return;
+    }
+    Swal.fire({
+      icon: "warning",
+      title: "Période non couverte",
+      html: trous.map(t => `<p class="mb-1">${t}</p>`).join(""),
+      showCancelButton: true,
+      confirmButtonText: "Enregistrer quand même",
+      cancelButtonText: "Corriger",
+    }).then((result) => {
+      if (result.isConfirmed) this.envoyerCarteCnam(data, adherent, enCours);
+    });
+  }
+
+  private envoyerCarteCnam(data: any, adherent: { cod_soc: string; mat_pers: string },
+    enCours: { nat_cart: string; date_debut: string } | null) {
+    const requete = enCours
+      ? this.adherentServ.updateCarteSoinCnam(enCours.nat_cart, enCours.date_debut, data)
+      : this.adherentServ.addCarteSoinCnam(data);
+    requete.subscribe({
+      next: () => {
+        this.cnamModalRef?.close();
+        Swal.fire({ position: "top-end", icon: "success", title: enCours ? "Modifié avec succès !" : "Ajouté avec succès !", showConfirmButton: false, timer: 2000 });
+        this.rechargerCartesCnam(adherent);
+      },
+      error: (err: HttpErrorResponse) => {
+        const message = err.status === 409
+          ? "Une carte existe déjà sur cette période (même date de début ou chevauchement)."
+          : err.error?.message || "Échec de l'enregistrement.";
+        Swal.fire("Erreur", message, "error");
+      },
+    });
+  }
+
+  deleteCarteCnam(row: any) {
+    const adherent = this.adherentCourant();
+    if (!adherent) return;
+    Swal.fire({
+      title: "Supprimer cette carte ?",
+      text: `Période du ${row.date_debut} au ${row.date_fin}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Supprimer",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      this.adherentServ.deleteCarteSoinCnam(adherent.cod_soc, adherent.mat_pers, row.nat_cart, row.date_debut).subscribe({
+        next: () => {
+          Swal.fire({ position: "top-end", icon: "success", title: "Supprimé avec succès !", showConfirmButton: false, timer: 2000 });
+          this.rechargerCartesCnam(adherent);
+        },
+        error: (err: HttpErrorResponse) => {
+          Swal.fire("Erreur", err.error?.message || "Échec de la suppression.", "error");
+        },
+      });
+    });
+  }
+
+  private rechargerCartesCnam(adherent: { cod_soc: string; mat_pers: string }) {
+    this.adherentServ.getCarteSoinCnam(adherent.cod_soc, adherent.mat_pers).subscribe((data: any[]) => {
+      this.CarteSoinCnamList = data || [];
+    });
+  }
+
   openEditCarteModal(content: any, index: number) {
     this.editCarteIndex = index;
     const CarteData = this.filteredDataCarteSoint[index];

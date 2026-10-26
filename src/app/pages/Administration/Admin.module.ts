@@ -23,6 +23,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { GestionProfileComponent } from './gestion-profile/gestion-profile.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { GestionMenuComponent } from './gestion-menu/gestion-menu.component';
+import { ConsultationUtilisateurComponent } from './consultation-utilisateur/consultation-utilisateur.component';
+import { TableModule } from 'primeng/table';
 import { MajValideurComponent } from './maj-valideur/maj-valideur.component';
 import { GestionUtlisateurComponent } from './gestion-utlisateur/gestion-utlisateur.component';
 import { ExtraspagesModule } from '../extrapages/extraspages.module';
@@ -38,6 +40,7 @@ GestionProfileComponent,
 GestionMenuComponent,
 MajValideurComponent,
 GestionUtlisateurComponent,
+ConsultationUtilisateurComponent,
  
 ParametrageRapportsComponent
     ],
@@ -58,6 +61,7 @@ ParametrageRapportsComponent
    NgxPaginationModule,
    ExtraspagesModule,
 NgxMaskPipe,
+    TableModule,
   ],
 
   providers: [

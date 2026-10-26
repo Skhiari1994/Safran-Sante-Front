@@ -1,3 +1,4 @@
+import { lovMatch } from 'src/app/shared/lov-match';
 import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
@@ -91,7 +92,7 @@ export class PretSearchComponent {
         this.columns.every(col => {
           const query = this.searchQueries[col.key]?.toLowerCase().trim();
           if (!query) return true;
-          return String(item[col.key] || '').toLowerCase().includes(query);
+          return lovMatch(col.key, item[col.key], query);
         })
       );
       return;

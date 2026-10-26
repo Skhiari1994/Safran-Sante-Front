@@ -392,7 +392,7 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" (click)="delete()"  class="btn btn-outline-danger btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Delete">
+                    <button type="button" (click)="delete()" [disabled]="consultation" class="btn btn-outline-danger btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Delete">
                         <i class="ri-delete-bin-line"></i>
                     </button>
                 </li>
@@ -402,12 +402,12 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button"  [disabled]="!isDisabled" (click)="isSaved()" class="btn btn-outline-success btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Save">
+                    <button type="button"  [disabled]="!isDisabled || consultation" (click)="isSaved()" class="btn btn-outline-success btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Save">
                         <i class="ri-save-line"></i>
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button"  (click)="resetForm()"  class="btn btn-outline-warning btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Add New">
+                    <button type="button"  (click)="resetForm()" [disabled]="consultation" class="btn btn-outline-warning btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Add New">
                         <i class="ri-add-box-line"></i>
                     </button>
                 </li>

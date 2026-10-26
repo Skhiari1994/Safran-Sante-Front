@@ -40,6 +40,7 @@
 </div>
 <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
                       </th>
+                      <th>Actions</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
@@ -47,6 +48,18 @@
                       <td class="text-center">{{ rowData.cod_banq }}</td>
                       <td class="text-center">{{ rowData.lib_banq }}</td>
                       <td class="text-center">{{ rowData.lib_banq_a }}</td>
+                      <td>
+                        <ul class="list-inline hstack gap-2 mb-0">
+                          <li class="list-inline-item">
+                            <a class="edit-item-btn" (click)="$event.stopPropagation(); editBanque(rowData, content)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                          </li>
+                          <li class="list-inline-item me-0" ngbTooltip="Supprimer" placement="top">
+                            <a class="remove-item-btn" (click)="$event.stopPropagation(); supprimerBanque(rowData)">
+                              <i class="ri-delete-bin-fill align-bottom text-muted"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </td>
                     </tr>
                   </ng-template>
                 </p-table>
@@ -151,8 +164,9 @@
                         <input
                           type="text"
                           class="form-control border-warning"
-                           placeholder="Enter code poste"
+                           placeholder="Enter code banque"
                           formControlName="cod_banq"
+                          [readonly]="!edit"
                         />
                       </div>
                     </div>

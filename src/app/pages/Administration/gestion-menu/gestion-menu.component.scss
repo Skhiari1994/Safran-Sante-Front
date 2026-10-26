@@ -22,3 +22,20 @@
 :host ::ng-deep .menu-table td { vertical-align: middle; }
 :host ::ng-deep .menu-table input.form-control,
 :host ::ng-deep .menu-table select.form-select { height: 38px; font-size: .875rem; }
+
+/* Champs verrouillés : le clic traverse le champ pour sélectionner la ligne */
+:host ::ng-deep .menu-table input:disabled,
+:host ::ng-deep .menu-table select:disabled {
+  pointer-events: none;
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+/* Ligne sélectionnée (celle dont les sous-modules sont affichés) */
+:host ::ng-deep .menu-table tr.table-active > td {
+  background-color: rgba(64, 81, 137, 0.08);
+  box-shadow: none;
+}
+:host ::ng-deep .menu-table tr.table-active > td:first-child {
+  box-shadow: inset 4px 0 0 #405189;
+}

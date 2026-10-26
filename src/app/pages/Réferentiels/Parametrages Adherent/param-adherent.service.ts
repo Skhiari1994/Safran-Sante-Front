@@ -88,6 +88,12 @@ export class ParamAdherentService {
     return this.http.get<any[]>(API_URL+ "referentiel/paramAdherent/getActiviteEnf");
   };
 
+  deleteBanque(codBanq: string): Observable<any> {
+    return this.http.delete<any>(API_URL+ "referentiel/paramAdherent/deleteBanque/" + encodeURIComponent(codBanq));
+  }
+  deleteGouv(codGouv: string): Observable<any> {
+    return this.http.delete<any>(API_URL+ "referentiel/paramAdherent/deleteGouv/" + encodeURIComponent(codGouv));
+  }
   deletePoste (data: any): Observable<any> {
     return this.http.post<any>(API_URL+ "referentiel/paramAdherent/deletePoste", data);
   }

@@ -32,6 +32,8 @@ interface TableConfig<T = any> {
   columns: TableColumn<T>[];
   //rowsPerPage?: number;
   ISDeleted?:boolean
+  /** Consultation : masque le bouton d'ajout de ligne et la colonne de suppression. */
+  readonly?: boolean
 
 }
 

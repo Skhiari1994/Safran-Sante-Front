@@ -1,3 +1,4 @@
+import { lovMatch } from 'src/app/shared/lov-match';
 import {
   Component,
   EventEmitter,
@@ -28,6 +29,7 @@ export class LovComponent implements OnInit, OnChanges {
   @Input() codeField: string = '';
   @Input() selectedItem: ListDataItem | null = null;
   @Input() selectedCode: string = ''; // Input for patching code
+  @Input() disabled: boolean = false; // Lecture seule : champ grisé et recherche masquée
   @Output() selectedValue = new EventEmitter<ListDataItem>();
   @Output() selectedCodeChange = new EventEmitter<string>(); // Two-way binding
 
@@ -110,7 +112,7 @@ export class LovComponent implements OnInit, OnChanges {
         }
 
         // Convert to string and check if it includes the query
-        return fieldValue.toString().toLowerCase().includes(query);
+        return lovMatch(key, fieldValue, query);
       });
     });
   }

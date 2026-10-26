@@ -1,0 +1,19 @@
+:host ::ng-deep .modern-table .p-datatable-thead > tr > th,
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
+  font-size: 0.85rem;
+}
+
+:host ::ng-deep .edit-item-btn,
+:host ::ng-deep .remove-item-btn {
+  cursor: pointer;
+}
+
+:host ::ng-deep .action-desactivee {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

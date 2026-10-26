@@ -1,3 +1,4 @@
+import { lovMatch } from 'src/app/shared/lov-match';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime } from 'rxjs/operators';
@@ -91,7 +92,7 @@ export class SearchLovComponent {
         const query = this.searchQueries[col.key]?.toLowerCase() || '';
         if (!query) return true; // No query for this column means include the item
         const value = item[col.key]?.toString().toLowerCase() || '';
-        return value.includes(query);
+        return lovMatch(col.key, value, query);
       })
     );
   }

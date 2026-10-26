@@ -5,9 +5,9 @@
       <div class="col-md-12">
         <div class="input-group">
           <input type="text" [(ngModel)]="selectedCode" class="form-control border-primary" placeholder="Code"
-            (ngModelChange)="onCodeChange()" />
+            (ngModelChange)="onCodeChange()" [disabled]="disabled" />
           &nbsp;&nbsp;
-          <div class="input-group-append">
+          <div class="input-group-append" *ngIf="!disabled">
             <a (click)="openModal(content)" aria-label="Search">
               <i class="bx bx-search-alt-2"></i>
             </a>
