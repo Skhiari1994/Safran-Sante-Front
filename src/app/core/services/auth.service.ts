@@ -8,6 +8,8 @@ import { GlobalComponent } from "../../global-component";
 import { Store } from '@ngrx/store';
 import { RegisterSuccess, loginFailure, loginSuccess, logout, logoutSuccess } from 'src/app/store/Authentication/authentication.actions';
 import { environment } from 'src/environments/environment';
+import { Societe } from 'src/app/pages/Adherent/adherent.service';
+import { SocieteLogin } from 'src/app/pages/Adherent/adherent.service';
 
 //;
 
@@ -40,7 +42,7 @@ export class AuthenticationService {
      * @param email email
      * @param password password
      */
-    register(user:any) {
+    register(user: any) {
         // return getFirebaseBackend()!.registerUser(email, password).then((response: any) => {
         //     const user = response;
         //     return user;
@@ -60,18 +62,14 @@ export class AuthenticationService {
         );
     }
 
-    /**
-     * Performs the auth
-     * @param email email of user
-     * @param password password of user
-     */
-    login(AuthenticationRequest :any) {
-        // return getFirebaseBackend()!.loginUser(email, password).then((response: any) => {
-        //     const user = response;
-        //     return user;
-        // });
+    getSocietesByLogin(matPers: string, cin: string): Observable<SocieteLogin[]> {
+        return this.http.get<SocieteLogin[]>(
+            `${API_URL}api/auth/getSocieteByLogin/${matPers}/${cin}`
+        );
+    }
 
-        return this.http.post(API_URL+ 'api/auth/authenticate', AuthenticationRequest, httpOptions).pipe(
+    login(AuthenticationRequest: any) {
+        return this.http.post(API_URL + 'api/auth/authenticate', AuthenticationRequest, httpOptions).pipe(
             map((response: any) => {
                 const user = response;
                 return user;
@@ -117,17 +115,16 @@ export class AuthenticationService {
             return message;
         });
     }
-confirmeCompte(token:string)
-{
-    let params = new HttpParams()
-    .set('token', token);
-    return this.http.get(API_URL + 'api/auth/activate-account',{params})
-}
 
-newPassword(user:any)
-{
-    
-    return this.http.put(API_URL + 'api/auth/updatePass',user)
-}
+    confirmeCompte(token: string) {
+        let params = new HttpParams()
+            .set('token', token);
+        return this.http.get(API_URL + 'api/auth/activate-account', { params })
+    }
+
+    newPassword(user: any) {
+
+        return this.http.put(API_URL + 'api/auth/updatePass', user)
+    }
 }
 

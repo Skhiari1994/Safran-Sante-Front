@@ -420,7 +420,6 @@ export class MajAdherentTestComponent {
       file_name: [""],
       content_type: [""],
       path: [""],
-      id_photo_pers: [""],
     });
     this.formAdrPers = this.fb.group({
       cod_gouv: ['', Validators.required],
@@ -1497,24 +1496,7 @@ export class MajAdherentTestComponent {
         nbr_enf: data
       })
     })
-    // this.adherentServ.getFamille(this.tokenStorage.getUser().codSoc, item.mat_pers).subscribe(
-    //   (data: any) => {
-    //     console.log("titou :",data)
-    //     //  this.listActivite = data;
-    //     //this.listFamille = data;
-
-    //     // Set the lovList for the column in tableConfig
-    //     const codeColumn = this.CarteSoinTable.columns.find(
-    //       (column) => column.field === "num_fam"
-    //     );
-    //     if (codeColumn) {
-    //       codeColumn.lovList = data; 
-    //     }
-    //   },
-    //   (error) => {
-    //     console.error("Error fetching data:", error);
-    //   }
-    // );
+    
     this.getFamille()
 
     this.adherentServ.getPhoto(item.cod_soc, item.mat_pers).subscribe(

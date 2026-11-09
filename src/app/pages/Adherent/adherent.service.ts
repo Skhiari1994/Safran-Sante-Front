@@ -12,6 +12,16 @@ export interface Personnel {
   nom: string;
 }
 
+export interface Societe {
+  cod_soc: string;
+  lib_soc: string;
+}
+
+export interface SocieteLogin {
+  codSoc: string;
+  libSoc: string;
+}
+
 const API_URL = environment.urlServer;
 
 @Injectable({
@@ -20,6 +30,10 @@ const API_URL = environment.urlServer;
 export class AdherentService {
 
   constructor(private http: HttpClient) { }
+
+  getSocietesByLogin(matPers: string, cin: string): Observable<Societe[]> {
+    return this.http.get<Societe[]>(`${API_URL}getSocieteByLogin/${matPers}/${cin}`);
+  }
   AddPersonnel(data: any): Observable<any> {
     return this.http.post<any>(API_URL + "adherent/Personnel/addUser", data);
   }

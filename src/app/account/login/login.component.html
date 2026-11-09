@@ -4,7 +4,8 @@
         <div class="bg-overlay"></div>
 
         <div class="shape">
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1440 120">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 1440 120">
                 <path d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"></path>
             </svg>
         </div>
@@ -37,7 +38,9 @@
 
                                     <div class="mb-3">
                                         <label class="form-label" for="username">Matricule</label>
-                                        <input type="email" class="form-control" id="email" formControlName="useLogin" [ngClass]="{ 'is-invalid': submitted && f['useLogin'].errors }" placeholder="Entrez votre matricule">
+                                        <input type="email" class="form-control" id="email" formControlName="useLogin"
+                                            [ngClass]="{ 'is-invalid': submitted && f['useLogin'].errors }"
+                                            placeholder="Entrez votre matricule">
                                         @if(submitted && f['useLogin'].errors){
                                         <div class="invalid-feedback">
                                             @if(f['useLogin'].errors['required']){
@@ -51,13 +54,36 @@
                                     </div>
 
                                     <div class="mb-3">
+                                        <label class="form-label" for="username">Cin</label>
+                                        <input type="text" class="form-control" id="cin" formControlName="cin"
+                                            [ngClass]="{ 'is-invalid': submitted && f['cin'].errors }"
+                                            placeholder="Entrez votre cin" required>
+                                        @if(submitted && f['cin'].errors){
+                                        <div class="invalid-feedback">
+                                            @if(f['cin'].errors['required']){
+                                            <div>CIN est requis</div>
+                                            }
+                                            @if(f['cin'].errors['cin']){
+                                            <div>CIN doit être valide</div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="mb-3">
                                         <div class="float-end">
-                                            <a routerLink="/pass-reset/basic" class="text-muted">Mot de passe oublié ?</a>
+                                            <a routerLink="/pass-reset/basic" class="text-muted">Mot de passe oublié
+                                                ?</a>
                                         </div>
                                         <label class="form-label" for="password-input">Mot de passe</label>
                                         <div class="position-relative auth-pass-inputgroup mb-3">
-                                            <input [type]="fieldTextType ? 'text' : 'password'" class="form-control pe-5" placeholder="Entrez le mot de passe" id="password-input" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
-                                            <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"><i class="mdi align-middle" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType
+                                            <input [type]="fieldTextType ? 'text' : 'password'"
+                                                class="form-control pe-5" placeholder="Entrez le mot de passe"
+                                                id="password-input" formControlName="password"
+                                                [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
+                                            <button title="Se connecter"
+                                                class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
+                                                type="button" id="password-addon"><i class="mdi align-middle" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType
                                           }" (click)="toggleFieldTextType()"></i></button>
                                             @if(submitted && f['password'].errors){
                                             <div class="invalid-feedback">
@@ -69,16 +95,42 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-3">
+                                        <label class="form-label" for="cod_soc">Société</label>
+
+                                        <select id="cod_soc" class="form-select" formControlName="cod_soc" [ngClass]="{
+        'is-invalid': submitted && f['cod_soc'].errors
+    }">
+
+                                            <option value="">Sélectionner une société</option>
+
+                                            @for (soc of listSociete; track soc.codSoc) {
+                                            <option [value]="soc.codSoc">
+                                                {{ soc.codSoc }} - {{ soc.libSoc }}
+                                            </option>
+                                            }
+
+                                        </select>
+
+                                        @if (submitted && f['cod_soc'].errors?.['required']) {
+                                        <div class="invalid-feedback">
+                                            La société est requise
+                                        </div>
+                                        }
+                                    </div>
+
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="auth-remember-check">
+                                        <input class="form-check-input" type="checkbox" value=""
+                                            id="auth-remember-check">
                                         <label class="form-check-label" for="auth-remember-check">Se souvenir de moi</label>
                                     </div>
 
                                     <div class="mt-4">
-                                        <button class="btn btn-success w-100" type="submit">Se connecter</button>
+                                        <button class="btn btn-success w-100" type="submit"
+                                            [disabled]="loginForm.invalid">Se connecter</button>
                                     </div>
 
-                                 
+
                                 </form>
                             </div>
                         </div>
@@ -86,7 +138,7 @@
                     </div>
                     <!-- end card -->
 
-                 
+
 
                 </div>
             </div>
@@ -95,7 +147,7 @@
                 <div class="col-lg-12">
                     <div class="text-center mt-sm-5 mb-4 text-white-50">
                         <div>
-                                <img src="assets/images/safran-logo.png" alt="" height="120">
+                            <img src="assets/images/safran-logo.png" alt="" height="120">
                         </div>
                     </div>
                 </div>
@@ -112,7 +164,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center">
-                        <p class="mb-0 text-muted">&copy; {{year}} SAFRAN-GROUP <i class="mdi mdi-heart text-danger"></i> by ArabSoft</p>
+                        <p class="mb-0 text-muted">&copy; {{year}} SAFRAN-GROUP <i
+                                class="mdi mdi-heart text-danger"></i> by ArabSoft</p>
                     </div>
                 </div>
             </div>

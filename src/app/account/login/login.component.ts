@@ -5,9 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 // Login Auth
 import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../core/services/auth.service';
-// import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
-import { first } from 'rxjs/operators';
+import { Societe } from '../../pages/Adherent/adherent.service';
+import { Observable } from 'rxjs';
 import { ToastService } from './toast-service';
+import { SocieteLogin } from 'src/app/pages/Adherent/adherent.service';
 
 @Component({
   selector: 'app-login',
@@ -30,6 +31,8 @@ export class LoginComponent implements OnInit {
   // set the current year
   year: number = new Date().getFullYear();
 
+  listSociete: any[] = [];
+
   constructor(private formBuilder: UntypedFormBuilder, private authenticationService: AuthenticationService, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService) {
     // redirect to home if already logged in
@@ -46,11 +49,23 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.loginForm = this.formBuilder.group({
+      cin: ['', [Validators.required]],
       useLogin: ['', [Validators.required]],
       password: ['', [Validators.required]],
+      cod_soc: ['', [Validators.required]],
     });
-    // get return url from route parameters or default to '/'
-    // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    this.loginForm.get('useLogin')?.valueChanges.subscribe(() => {
+      this.loadSocietes();
+    });
+
+    this.loginForm.get('cin')?.valueChanges.subscribe(() => {
+      this.loadSocietes();
+    });
+  }
+
+  getSocietesByLogin(matPers: string, cin: string): Observable<SocieteLogin[]> {
+    return this.authenticationService.getSocietesByLogin(matPers, cin);
   }
 
   // convenience getter for easy access to form fields
@@ -61,8 +76,8 @@ export class LoginComponent implements OnInit {
    */
   onSubmit() {
     this.submitted = true;
-     // Login Api
-     console.log("this.loginForm.value",this.loginForm.value)
+    // Login Api
+    console.log("this.loginForm.value", this.loginForm.value)
 
     this.authenticationService.login(this.loginForm.value).subscribe((data: any) => {
 
@@ -76,27 +91,6 @@ export class LoginComponent implements OnInit {
         this.toastService.show(data.data, { classname: 'bg-danger text-white', delay: 15000 });
       }
     });
-
-    // stop here if form is invalid
-    // if (this.loginForm.invalid) {
-    //   return;
-    // } else {
-    //   if (environment.defaultauth === 'firebase') {
-    //     this.authenticationService.login(this.f['email'].value, this.f['password'].value).then((res: any) => {
-    //       this.router.navigate(['/']);
-    //     })
-    //       .catch(error => {
-    //         this.error = error ? error : '';
-    //       });
-    //   } else {
-    //     this.authFackservice.login(this.f['email'].value, this.f['password'].value).pipe(first()).subscribe(data => {
-    //           this.router.navigate(['/']);
-    //         },
-    //         error => {
-    //           this.error = error ? error : '';
-    //         });
-    //   }
-    // }
   }
 
   /**
@@ -104,6 +98,60 @@ export class LoginComponent implements OnInit {
    */
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
+  }
+
+  loadSocietes(): void {
+
+    const useLogin = this.loginForm.get('useLogin')?.value;
+    const cin = this.loginForm.get('cin')?.value;
+
+    console.log('useLogin : ' + useLogin)
+    console.log('cin : ' + cin)
+
+    // Don't call API until both fields are filled
+    if (!useLogin || !cin) {
+      this.listSociete = [];
+      this.loginForm.patchValue({
+        cod_soc: ''
+      });
+      return;
+    }
+
+    this.authenticationService.getSocietesByLogin(useLogin, cin)
+      .subscribe({
+        next: (societes) => {
+
+          console.log('societes :', societes);
+
+          console.log('societes[0] :', societes[0]);
+
+          console.log('societes[0].cod_soc :', societes[0].codSoc);
+
+          this.listSociete = societes;
+
+
+          // If only one society, select it automatically
+          if (societes.length === 1) {
+            this.loginForm.patchValue({
+              cod_soc: societes[0].codSoc
+            });
+          } else {
+            // Multiple societies → let user choose
+            this.loginForm.patchValue({
+              cod_soc: ''
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Erreur récupération sociétés', error);
+
+          this.listSociete = [];
+
+          this.loginForm.patchValue({
+            cod_soc: ''
+          });
+        }
+      });
   }
 
 }
