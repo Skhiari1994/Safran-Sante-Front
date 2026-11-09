@@ -21,7 +21,7 @@ describe('ChatWebSocketService', () => {
   });
 
   it('should request all users with expected URL', () => {
-    const expectedUrl = `${environment.gatewayUrl}${environment.chatApiUrl}/users`;
+    const expectedUrl = `${environment.gatewayUrl}${environment.chatApiUrl}/contacts`;
 
     service.getAllUsers().subscribe((users) => {
       expect(users).toEqual([{ id: 'u1', username: 'sirine' } as any]);

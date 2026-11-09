@@ -18,7 +18,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Matricule admin</label>
-                <app-lov [listData]="listMatInt" [columns]="columnsMatInt" codeField="matInt"
+                <app-lov [disabled]="isConsultation" [listData]="listMatInt" [columns]="columnsMatInt" codeField="matInt"
                   [selectedCode]="codMatIntVal" (selectedValue)="onSelectedVMatInt($event)"></app-lov>
               </div>
               <div class="col-md-2">
@@ -154,7 +154,7 @@
               </div>
               <div class="col-md-4">
                 <label class="form-label">Nationalité</label>
-                <app-lov [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp"
+                <app-lov [disabled]="isConsultation" [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp"
                   [selectedCode]="codNatP" (selectedValue)="onSelectedValueNat($event)"></app-lov>
               </div>
               <div class="col-md-8">
@@ -164,7 +164,7 @@
               </div>
               <div class="col-md-4">
                 <label class="form-label">Département</label>
-                <app-lov [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu"
+                <app-lov [disabled]="isConsultation" [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu"
                   [selectedCode]="codLieuVal" (selectedValue)="onSelectedValueLieu($event)"></app-lov>
               </div>
               <div class="col-md-8">
@@ -172,7 +172,7 @@
                 <input type="text" class="form-control border-primary" [value]="libLieu" readonly
                   placeholder="Département" />
               </div>
-              <div class="col-md-6">
+              <div class="col-md-6"> 
                 <label class="form-label">Situation sociale</label>
                 <select class="form-select border-primary" formControlName="cod_sit">
                   <option value="">Sélectionner</option>
@@ -240,7 +240,7 @@
                 <!-- Position administrative -->
                 <div class="col-md-3">
                   <label class="form-label">Code position</label>
-                  <app-lov [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
+                  <app-lov [disabled]="isConsultation" [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
                     [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)"></app-lov>
                 </div>
                 <div class="col-md-6">
@@ -257,7 +257,7 @@
                 <!-- Motif de départ -->
                 <div class="col-md-3">
                   <label class="form-label">Code motif de départ</label>
-                  <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
+                  <app-lov [disabled]="isConsultation" [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
                     [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)"></app-lov>
                 </div>
                 <div class="col-md-6">
@@ -338,7 +338,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Banque</label>
-                <app-lov [listData]="listBanque" [columns]="columnBanque" [codeField]="codBanque"
+                <app-lov [disabled]="isConsultation" [listData]="listBanque" [columns]="columnBanque" [codeField]="codBanque"
                   [selectedCode]="codBanqueVal" (selectedValue)="onSelectedValueBanque($event)"></app-lov>
               </div>
               <div class="col-md-10">
@@ -348,7 +348,7 @@
               </div>
               <div class="col-md-2">
                 <label class="form-label">Agence</label>
-                <app-lov [listData]="listAgence" [columns]="columnsAgence" [codeField]="codAgence"
+                <app-lov [disabled]="isConsultation" [listData]="listAgence" [columns]="columnsAgence" [codeField]="codAgence"
                   [selectedCode]="codAgenceVal" (selectedValue)="onSelectedValueAgence($event)"></app-lov>
               </div>
               <div class="col-md-10">

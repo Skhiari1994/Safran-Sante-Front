@@ -13,6 +13,21 @@
   cursor: pointer;
 }
 
+/* Pastilles société : une teinte propre à chaque société (différente des rôles) */
+.soc-badge {
+  display: inline-block;
+  padding: 0.35em 0.7em;
+  border-radius: 999px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.soc-0 { background: #ede7f6; color: #5e35b1; }
+.soc-1 { background: #e0f2f1; color: #00796b; }
+.soc-2 { background: #fff3e0; color: #e65100; }
+.soc-3 { background: #fce4ec; color: #c2185b; }
+.soc-4 { background: #e3f2fd; color: #1565c0; }
+.soc-5 { background: #f1f8e9; color: #558b2f; }
+
 :host ::ng-deep .action-desactivee {
   opacity: 0.35;
   cursor: not-allowed;

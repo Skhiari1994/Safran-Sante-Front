@@ -4,6 +4,7 @@ import { ToastService } from './toast-service';
 import { circle, latLng, tileLayer } from 'leaflet';
 import { BestSelling, Recentelling, TopSelling, statData } from 'src/app/core/data';
 import { ChartType } from './dashboard.model';
+import { TokenStorage } from 'src/app/account/token-storage.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +30,15 @@ export class DashboardComponent implements OnInit {
   currentDate: any;
 
 
-  constructor(public toastService: ToastService) {
+  // ---- page d'accueil : bienvenue + raccourcis selon les droits du profil
+  salutation = 'Bonjour';
+  nomComplet = '';
+  libSociete = '';
+  roleLibelle = '';
+  roleCle = '';
+  dateDuJour = '';
+
+  constructor(public toastService: ToastService, private tokenStorage: TokenStorage) {
     var date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -54,6 +63,8 @@ export class DashboardComponent implements OnInit {
     this._analyticsChart('["--vz-warning", "--vz-primary", "--vz-danger"]');
     this._SalesCategoryChart('["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]');
 
+    this.initialiserBienvenue();
+
     if (sessionStorage.getItem('toast')) {
       this.toastService.show('Connexion réussie.', { 
         classname: 'bg-success text-center text-white', 
@@ -61,6 +72,22 @@ export class DashboardComponent implements OnInit {
     });
       sessionStorage.removeItem('toast');
     }
+  }
+
+  private initialiserBienvenue(): void {
+    const maintenant = new Date();
+    const h = maintenant.getHours();
+    this.salutation = h < 5 || h >= 18 ? 'Bonsoir' : h < 12 ? 'Bonjour' : 'Bon après-midi';
+    this.nomComplet = this.tokenStorage.getNomComplet();
+    this.libSociete = this.tokenStorage.getLibSociete();
+    const jour = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+      .format(maintenant);
+    this.dateDuJour = jour.charAt(0).toUpperCase() + jour.slice(1);
+
+    const roleBrut: string = this.tokenStorage.getUser()?.roles?.[0]?.name || '';
+    this.roleCle = roleBrut.trim().toLowerCase().replace(/\s+/g, '-');
+    this.roleLibelle = ({ ADMIN: 'Administrateur', RH: 'RH', CHEF: 'Chef', UTILISATEUR: 'Utilisateur' } as { [r: string]: string })
+      [roleBrut.trim().toUpperCase()] || roleBrut.replace(/\s+/g, ' ').trim();
   }
 
   num: number = 0;

@@ -8,6 +8,7 @@ import { AuthenticationService } from '../../core/services/auth.service';
 import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import { Router } from '@angular/router';
 import { TokenStorageService } from '../../core/services/token-storage.service';
+import { TokenStorage } from 'src/app/account/token-storage.service';
 
 // Language
 import { CookieService } from 'ngx-cookie-service';
@@ -37,6 +38,11 @@ export class TopbarComponent implements OnInit {
   countryName: any;
   cookieValue: any;
   userData: any;
+  profilNom = '';
+  profilSociete = '';
+  profilInitiales = '?';
+  profilRole = '';
+  profilRoleCle = '';
   cartData!: CartModel[];
   total = 0;
   cart_length: any = 0;
@@ -69,9 +75,22 @@ export class TopbarComponent implements OnInit {
   consultation: boolean = false;
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
     public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
-    private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService) { }
+    private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService,
+    private tokenStorage: TokenStorage) { }
   ngOnInit(): void {
     this.userData = this.TokenStorageService.getUser();
+    this.profilNom = this.tokenStorage.getNomComplet();
+    this.profilSociete = this.tokenStorage.getLibSociete();
+    // initiales de l'avatar : première lettre du premier et du dernier mot du nom
+    const mots = this.profilNom.trim().split(/\s+/).filter(Boolean);
+    this.profilInitiales = mots.length
+      ? (mots[0][0] + (mots.length > 1 ? mots[mots.length - 1][0] : '')).toUpperCase()
+      : '?';
+    // rôle affiché dans le menu du profil
+    const roleBrut: string = this.userData?.roles?.[0]?.name || '';
+    this.profilRoleCle = roleBrut.trim().toLowerCase().replace(/\s+/g, '-');
+    this.profilRole = ({ ADMIN: 'Administrateur', RH: 'RH', CHEF: 'Chef', UTILISATEUR: 'Utilisateur' } as { [r: string]: string })[roleBrut.trim().toUpperCase()]
+      || roleBrut.replace(/\s+/g, ' ').trim();
     this.element = document.documentElement;
 
     // Cookies wise Language set

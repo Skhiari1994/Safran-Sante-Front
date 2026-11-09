@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { TokenStorage } from 'src/app/account/token-storage.service';
 
 
 export interface Personnel {
@@ -29,7 +30,7 @@ const API_URL = environment.urlServer;
 })
 export class AdherentService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private tokenStorage: TokenStorage) { }
 
   getSocietesByLogin(matPers: string, cin: string): Observable<Societe[]> {
     return this.http.get<Societe[]>(`${API_URL}getSocieteByLogin/${matPers}/${cin}`);
@@ -119,14 +120,24 @@ export class AdherentService {
   getPersonnelsByMat = (soc: any, mat: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnelles/" + soc + "/" + mat);
   };
+  /** Personnel de la société choisie au login (liste de recherche des écrans adhérent). */
   getPersonnels = (): Observable<any[]> => {
-    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnelles");
+    const codSoc = this.tokenStorage.getSociete();
+    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnelles", {
+      params: codSoc ? { codSoc } : {}
+    });
   };
   getPersonnelsCredit = (): Observable<any[]> => {
-    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnels");
+    const codSoc = this.tokenStorage.getSociete();
+    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnels", {
+      params: codSoc ? { codSoc } : {}
+    });
   };
   getPersonnelsEnInstance = (): Observable<any[]> => {
-    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnellesEnInstance");
+    const codSoc = this.tokenStorage.getSociete();
+    return this.http.get<any[]>(API_URL + "adherent/Personnel/getPersonnellesEnInstance", {
+      params: codSoc ? { codSoc } : {}
+    });
   };
   getCarteSoin = (soc: String, mat: String): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/famille/getcarteSoinsPers/" + soc + "/" + mat);

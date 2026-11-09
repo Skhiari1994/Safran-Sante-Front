@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { TokenStorage } from 'src/app/account/token-storage.service';
 const API_URL = environment.urlServer;
 
 @Injectable({
@@ -9,7 +10,7 @@ const API_URL = environment.urlServer;
 })
 export class AdminService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private tokenStorage: TokenStorage) { }
 
   GetUser = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL+ "api/auth/getUser");
@@ -29,8 +30,11 @@ export class AdminService {
   GetPersValid = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL+ "admin/PERS_VALIDEUR/getPersValid");
   };
-  getUtilisateursConsultation(): Observable<any[]> {
-    return this.http.get<any[]>(API_URL + "admin/Utilisateur/consultation");
+  /** Utilisateurs de la société choisie au login (tous si codSoc est vide). */
+  getUtilisateursConsultation(codSoc?: string | null): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/Utilisateur/consultation", {
+      params: codSoc ? { codSoc } : {}
+    });
   }
   modifierUtilisateur(id: number, data: any): Observable<any> {
     return this.http.put<any>(API_URL + "admin/Utilisateur/" + id, data);
@@ -83,8 +87,12 @@ export class AdminService {
   getMenu(): Observable<any[]> {
     return this.http.get<any[]>(API_URL+`admin/Menu/menu`);
   }
+  /** Personnel de la société choisie au login. */
   getPersonnels(): Observable<any[]> {
-    return this.http.get<any[]>(API_URL+`adherent/Personnel/getPersonnels`);
+    const codSoc = this.tokenStorage.getSociete();
+    return this.http.get<any[]>(API_URL+`adherent/Personnel/getPersonnels`, {
+      params: codSoc ? { codSoc } : {}
+    });
   }
   creerModule(module: any): Observable<any> {
     return this.http.post<any>(API_URL + "admin/Menu/module", module);

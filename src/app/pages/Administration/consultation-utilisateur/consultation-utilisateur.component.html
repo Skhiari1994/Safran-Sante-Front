@@ -4,13 +4,30 @@
 <div class="card p-4 border shadow-none mb-3">
   <h5 class="card-title text-primary mb-3">Liste des utilisateurs</h5>
   <div class="table-responsive table-card mb-2">
-    <p-table #dt [value]="utilisateurs" [paginator]="true" [rows]="10" [loading]="loading"
-      [globalFilterFields]="['matricule', 'nom', 'prenom', 'role']" styleClass="modern-table">
+    <p-table #dt [value]="utilisateursFiltres" [paginator]="true" [rows]="10" [loading]="loading"
+      [globalFilterFields]="['matricule', 'nom', 'prenom', 'cin', 'role', 'libSoc']" styleClass="modern-table">
       <ng-template pTemplate="caption">
         <div class="row">
           <div class="col-md-4">
-            <input type="text" class="form-control" placeholder="Rechercher (matricule, nom, prénom, rôle)"
+            <input type="text" class="form-control" placeholder="Rechercher (matricule, nom, prénom, CIN…)"
               (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" aria-label="Filtrer par société" [(ngModel)]="societeFiltre"
+              (ngModelChange)="appliquerFiltres()">
+              <option value="">Toutes les sociétés</option>
+              <option *ngFor="let s of societes" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" aria-label="Filtrer par rôle" [(ngModel)]="roleFiltre"
+              (ngModelChange)="appliquerFiltres()">
+              <option value="">Tous les rôles</option>
+              <option *ngFor="let r of rolesDisponibles" [value]="r">{{ r }}</option>
+            </select>
+          </div>
+          <div class="col-md-2 d-flex align-items-center text-muted">
+            {{ utilisateursFiltres.length }} utilisateur(s)
           </div>
         </div>
       </ng-template>
@@ -19,7 +36,9 @@
           <th class="text-center">Matricule</th>
           <th class="text-center">Nom</th>
           <th class="text-center">Prénom</th>
+          <th class="text-center">CIN</th>
           <th class="text-center">Rôle</th>
+          <th class="text-center">Société</th>
           <th class="text-center">Action</th>
         </tr>
       </ng-template>
@@ -28,8 +47,13 @@
           <td class="text-center">{{ u.matricule }}</td>
           <td class="text-center">{{ u.nom }}</td>
           <td class="text-center">{{ u.prenom }}</td>
+          <td class="text-center">{{ u.cin || '—' }}</td>
           <td class="text-center">
             <span *ngFor="let r of roles(u)" class="badge fs-12 me-1" [ngClass]="couleurRole(r)">{{ r }}</span>
+          </td>
+          <td class="text-center">
+            <span *ngIf="u.libSoc; else aucuneSoc" class="soc-badge fs-12" [ngClass]="classeSociete(u.libSoc)">{{ u.libSoc }}</span>
+            <ng-template #aucuneSoc>—</ng-template>
           </td>
           <td>
             <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
@@ -51,7 +75,7 @@
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5" class="text-center">
+          <td colspan="7" class="text-center">
             <span *ngIf="erreur" class="badge bg-danger-subtle text-danger">Chargement impossible</span>
             <span *ngIf="!erreur" class="badge bg-info-subtle text-info">Aucune donnée disponible !</span>
           </td>

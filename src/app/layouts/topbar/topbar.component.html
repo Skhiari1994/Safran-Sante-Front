@@ -352,30 +352,34 @@
                     </div> 
                 </div>-->
 
-                <div class="dropdown ms-sm-3 header-item topbar-user" ngbDropdown  style="height: 80%;">
-                    <button type="button"  class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                        <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user" src="assets/images/safran-logo.png" alt="Header Avatar">
-                           <!--  <span class="text-start ms-xl-2">
-                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{userData.first_name}}
-                                    {{userData.last_name}}</span>
-                                <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">{{userData.role
-                                    == 0 ? 'Admin':'User'}}</span>
-                            </span> -->
+                <div class="dropdown ms-sm-3 header-item topbar-user profile-menu" ngbDropdown placement="bottom-end">
+                    <button type="button" class="profile-btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        [attr.aria-label]="'Profil de ' + (profilNom || 'l\'utilisateur') + (profilSociete ? ', ' + profilSociete : '')" ngbDropdownToggle>
+                        <span class="profile-avatar" aria-hidden="true">{{ profilInitiales }}</span>
+                        <span class="profile-text" *ngIf="profilNom || profilSociete">
+                            <span class="profile-name" [title]="profilNom">{{ profilNom }}</span>
+                            <span class="profile-company" [title]="profilSociete">{{ profilSociete }}</span>
                         </span>
+                        <i class="ri-arrow-down-s-line profile-chevron" aria-hidden="true"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                       
-                        <h6 class="dropdown-header">Bienvenue!</h6>
-                       <!--  <a class="dropdown-item" routerLink="/pages/profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                        <a class="dropdown-item" routerLink="/"><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
-                        <a class="dropdown-item" routerLink="/"><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Taches</span></a>
-                        <a class="dropdown-item" routerLink="/"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
+                    <div class="dropdown-menu dropdown-menu-end profile-dropdown" ngbDropdownMenu aria-labelledby="page-header-user-dropdown">
+                        <div class="profile-card">
+                            <span class="profile-avatar profile-avatar-lg" aria-hidden="true">{{ profilInitiales }}</span>
+                            <div class="profile-card-text">
+                                <span class="profile-card-name">{{ profilNom }}</span>
+                                <span class="profile-card-company">{{ profilSociete }}</span>
+                                <span class="profile-role" *ngIf="profilRole" [ngClass]="'role-' + profilRoleCle">{{ profilRole }}</span>
+                            </div>
+                        </div>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" routerLink="/pages/profile"><span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
-                        --> <!-- <a class="dropdown-item" routerLink="/auth/lockscreen/basic"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a> -->
-                        <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+                        <button type="button" class="dropdown-item profile-logout" (click)="logout()">
+                            <i class="ri-logout-box-r-line" aria-hidden="true"></i>
+                            <span data-key="t-logout">Se déconnecter</span>
+                        </button>
                     </div>
+                </div>
+                <div class="header-item d-none d-sm-flex ms-3 pe-2 profile-brand">
+                    <img src="assets/images/safran-logo.png" alt="Safran" height="30">
                 </div>
             </div>
         </div>

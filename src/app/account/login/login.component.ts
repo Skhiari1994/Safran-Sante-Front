@@ -53,7 +53,15 @@ export class LoginComponent implements OnInit {
       useLogin: ['', [Validators.required]],
       password: ['', [Validators.required]],
       cod_soc: ['', [Validators.required]],
+      remember: [false],
     });
+
+    // "Se souvenir de moi" : on retrouve le matricule et le CIN (jamais le mot de passe)
+    const memorise = this.lireIdentifiantsMemorises();
+    if (memorise) {
+      this.loginForm.patchValue({ useLogin: memorise.useLogin, cin: memorise.cin, remember: true });
+      this.loadSocietes();
+    }
 
     this.loginForm.get('useLogin')?.valueChanges.subscribe(() => {
       this.loadSocietes();
@@ -77,11 +85,13 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     // Login Api
-    console.log("this.loginForm.value", this.loginForm.value)
+    // "remember" ne concerne que le navigateur : il n'est pas envoyé au serveur (et le mot de passe n'est pas loggé)
+    const { remember, ...identifiants } = this.loginForm.value;
 
-    this.authenticationService.login(this.loginForm.value).subscribe((data: any) => {
+    this.authenticationService.login(identifiants).subscribe((data: any) => {
 
       if (data) {
+        this.memoriserIdentifiants();
         localStorage.setItem('toast', 'true');
         localStorage.setItem('currentUser', JSON.stringify(data));
         localStorage.setItem('token', data.token);
@@ -91,6 +101,32 @@ export class LoginComponent implements OnInit {
         this.toastService.show(data.data, { classname: 'bg-danger text-white', delay: 15000 });
       }
     });
+  }
+
+  private readonly CLE_MEMOIRE = 'rememberedLogin';
+
+  private lireIdentifiantsMemorises(): { useLogin: string, cin: string } | null {
+    try {
+      const brut = localStorage.getItem(this.CLE_MEMOIRE);
+      const v = brut ? JSON.parse(brut) : null;
+      return v?.useLogin && v?.cin ? v : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Case cochée : on retient matricule + CIN ; décochée : on oublie. Le mot de passe n'est jamais stocké. */
+  private memoriserIdentifiants(): void {
+    try {
+      if (this.loginForm.value.remember) {
+        localStorage.setItem(this.CLE_MEMOIRE,
+          JSON.stringify({ useLogin: this.loginForm.value.useLogin, cin: this.loginForm.value.cin }));
+      } else {
+        localStorage.removeItem(this.CLE_MEMOIRE);
+      }
+    } catch {
+      // stockage indisponible (navigation privée…) : la connexion continue sans mémorisation
+    }
   }
 
   /**
@@ -120,12 +156,6 @@ export class LoginComponent implements OnInit {
     this.authenticationService.getSocietesByLogin(useLogin, cin)
       .subscribe({
         next: (societes) => {
-
-          console.log('societes :', societes);
-
-          console.log('societes[0] :', societes[0]);
-
-          console.log('societes[0].cod_soc :', societes[0].codSoc);
 
           this.listSociete = societes;
 

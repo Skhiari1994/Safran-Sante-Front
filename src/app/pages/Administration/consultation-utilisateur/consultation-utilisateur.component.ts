@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { TokenStorage } from 'src/app/account/token-storage.service';
 import { AdminService } from '../Admin.service';
 
 @Component({
@@ -12,6 +13,13 @@ import { AdminService } from '../Admin.service';
 export class ConsultationUtilisateurComponent implements OnInit {
   breadCrumbItems!: Array<{}>;
   utilisateurs: any[] = [];
+  utilisateursFiltres: any[] = [];
+  societes: string[] = [];
+  /** libellé de la société filtrée ; '' = toutes ; undefined = pas encore initialisé */
+  societeFiltre?: string;
+  rolesDisponibles: string[] = [];
+  /** nom du rôle filtré ; '' = tous */
+  roleFiltre = '';
   listRoles: any[] = [];
   loading = true;
   erreur = false;
@@ -20,15 +28,18 @@ export class ConsultationUtilisateurComponent implements OnInit {
   enregistrement = false;
   private modalRef?: NgbModalRef;
 
+  // noms tels qu'ils sont dans la table ROLE (comparés sans casse ni espaces multiples)
   private readonly COULEURS_ROLES: { [role: string]: string } = {
     'ADMIN': 'bg-danger-subtle text-danger',
-    'RH/SOCIAL': 'bg-info-subtle text-info',
-    'ADHÉRENT': 'bg-success-subtle text-success',
+    'RH': 'bg-info-subtle text-info',
+    'UTILISATEUR': 'bg-success-subtle text-success',
     'CHEF': 'bg-warning-subtle text-warning',
+    'GESTION DES FRAIS MEDICAUX': 'bg-primary-subtle text-primary',
   };
   private readonly COULEURS_AUTRES = ['bg-primary-subtle text-primary', 'bg-secondary-subtle text-secondary', 'bg-dark-subtle text-dark'];
 
-  constructor(private adminServ: AdminService, private modalService: NgbModal, private token: TokenStorageService) { }
+  constructor(private adminServ: AdminService, private modalService: NgbModal, private token: TokenStorageService,
+    private tokenSociete: TokenStorage) { }
 
   ngOnInit(): void {
     this.breadCrumbItems = [
@@ -44,6 +55,14 @@ export class ConsultationUtilisateurComponent implements OnInit {
     this.adminServ.getUtilisateursConsultation().subscribe({
       next: (data: any[]) => {
         this.utilisateurs = data || [];
+        this.societes = Array.from(new Set(this.utilisateurs.map(u => u.libSoc).filter(Boolean))).sort() as string[];
+        // au premier chargement, on filtre sur la société choisie au login ; ensuite on garde le choix courant
+        if (this.societeFiltre === undefined) {
+          const libelle = this.tokenSociete.getLibSociete();
+          this.societeFiltre = this.societes.includes(libelle) ? libelle : '';
+        }
+        this.rolesDisponibles = Array.from(new Set(this.utilisateurs.flatMap(u => this.roles(u)))).sort();
+        this.appliquerFiltres();
         this.loading = false;
       },
       error: (err: any) => {
@@ -54,16 +73,29 @@ export class ConsultationUtilisateurComponent implements OnInit {
     });
   }
 
+  /** combine les filtres société et rôle ('' = pas de filtre) */
+  appliquerFiltres(): void {
+    this.utilisateursFiltres = this.utilisateurs.filter(u =>
+      (!this.societeFiltre || u.libSoc === this.societeFiltre) &&
+      (!this.roleFiltre || this.roles(u).includes(this.roleFiltre)));
+  }
+
   roles(u: any): string[] {
     return (u?.role || '').split(',').map((r: string) => r.trim()).filter(Boolean);
   }
 
   couleurRole(role: string): string {
-    const connu = this.COULEURS_ROLES[role.toUpperCase()];
+    const connu = this.COULEURS_ROLES[role.replace(/\s+/g, ' ').trim().toUpperCase()];
     if (connu) return connu;
     let h = 0;
     for (const c of role) h = (h * 31 + c.charCodeAt(0)) % 997;
     return this.COULEURS_AUTRES[h % this.COULEURS_AUTRES.length];
+  }
+
+  /** classe de couleur stable d'une société (selon sa position dans la liste triée) */
+  classeSociete(libSoc: string): string {
+    const i = this.societes.indexOf(libSoc);
+    return 'soc-' + (i < 0 ? 0 : i % 6);
   }
 
   estUtilisateurConnecte(u: any): boolean {
