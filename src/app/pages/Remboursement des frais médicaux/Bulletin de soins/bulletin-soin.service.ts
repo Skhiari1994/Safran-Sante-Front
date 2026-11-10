@@ -360,4 +360,25 @@ export class BulletinSoinService {
   existeLigBultMed(data: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigBultMed", data);
   }
+
+  getConsultationBulletins(codSoc: string, matPers: string, natBult: string, annee: number): Observable<any[]> {
+    let params = new HttpParams()
+      .set('codSoc', codSoc)
+      .set('matPers', matPers)
+      .set('annee', annee.toString());
+    if (natBult) {
+      params = params.set('natBult', natBult);
+    }
+    return this.http.get<any[]>(API_URL + 'Remb/BultSoin/consultation', { params });
+  }
+
+  getPlafondCnamAdherent(mat: string): Observable<any[]> {
+    const params = new HttpParams().set('mat', mat);
+    return this.http.get<any[]>(API_URL + 'Remb/Personnel/getPlafondCnam', { params });
+  }
+
+  getPlafondAssurAdherent(mat: string): Observable<any[]> {
+    const params = new HttpParams().set('mat', mat);
+    return this.http.get<any[]>(API_URL + 'Remb/Personnel/getPlafondAssur', { params });
+  }
 }

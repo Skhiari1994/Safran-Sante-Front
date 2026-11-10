@@ -4,6 +4,7 @@ import { BuletinMutuelleComponent } from './buletin-mutuelle/buletin-mutuelle.co
 import { BuletinCNAMComponent } from './buletin-cnam/buletin-cnam.component';
 import { ConsBuletinMutuelleComponent } from './cons-buletin-mutuelle/cons-buletin-mutuelle.component';
 import { ConsBultCnamComponent } from './cons-bult-cnam/cons-bult-cnam.component';
+import { ConsultationSoinComponent } from './consultation-soin/consultation-soin.component';
 
 // Component pages
  
@@ -26,6 +27,10 @@ const routes: Routes = [
     {
     path: "ConsBultCnam",
     component: ConsBultCnamComponent
+  },
+  {
+    path: 'ConsultationSoin',
+    component: ConsultationSoinComponent
   },
 ];
 

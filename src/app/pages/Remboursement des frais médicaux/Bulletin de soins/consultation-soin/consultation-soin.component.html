@@ -1,0 +1,310 @@
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Consultation Bulletins et Plafonds"></app-breadcrumbs>
+</div>
+
+<!-- ==================== BANDEAU FILTRES DE RECHERCHE ==================== -->
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="card p-3 border shadow-sm">
+      <form [formGroup]="filterForm" (ngSubmit)="rechercher()" class="row g-3 align-items-end">
+
+        <!-- 1. Liste déroulante Régime / Nature -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-dark">
+            <i class="ri-filter-3-line text-primary me-1"></i>Régime / Nature
+          </label>
+          <select class="form-select border-primary" formControlName="natBult" (change)="rechercher()">
+            <option value="">Tous (CNAM & Mutuelle)</option>
+            <option value="C">CNAM (C)</option>
+            <option value="M">Mutuelle (M)</option>
+          </select>
+        </div>
+
+        <!-- 2. Saisie Année -->
+        <div class="col-md-2">
+          <label class="form-label fw-semibold text-dark">
+            <i class="ri-calendar-event-line text-primary me-1"></i>Année
+          </label>
+          <input type="number" class="form-control border-primary" formControlName="annee"
+                 placeholder="Année (ex: 2021)" (keyup.enter)="rechercher()" (change)="rechercher()" />
+        </div>
+
+        <!-- 3. Matricule Personnel -->
+        <div class="col-md-3" *ngIf="isUser">
+          <label class="form-label fw-semibold text-dark">
+            <i class="ri-user-line text-primary me-1"></i>Matricule Adhérent
+          </label>
+          <input type="text" class="form-control border-primary bg-white" placeholder="Matricule"
+                 formControlName="matPers" readonly />
+        </div>
+
+        <!-- Si RH ou ADMIN : recherche de matricule via LOV -->
+        <div class="col-md-3" *ngIf="!isUser">
+          <label class="form-label fw-semibold text-dark">
+            <i class="ri-user-line text-primary me-1"></i>Matricule Adhérent
+          </label>
+          <app-lov [listData]="listPersonnel" [columns]="columnsMat" codeField="mat_pers"
+            [selectedCode]="filterForm.value.matPers" (selectedValue)="onSelectedMatricule($event)"
+            (input)="onMatriculeInput($event)">
+          </app-lov>
+        </div>
+
+        <!-- 4. Boutons d'action -->
+        <div class="col-md-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary flex-grow-1" [disabled]="loading">
+            <i class="ri-search-line me-1" *ngIf="!loading"></i>
+            <span class="spinner-border spinner-border-sm me-1" *ngIf="loading"></span>
+            Rechercher
+          </button>
+          <button type="button" class="btn btn-light border" (click)="reinitialiser()" [disabled]="loading" title="Réinitialiser">
+            <i class="ri-refresh-line"></i>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LIGNE 1 : LES 2 BLOCS PLAFONDS ==================== -->
+<div class="row g-3 mt-1">
+
+  <!-- ==================== BLOC 1 : PLAFOND CNAM ==================== -->
+  <div class="col-xl-6" *ngIf="filterForm.value.natBult !== 'M'">
+    <div class="card border shadow-sm h-100 mb-0">
+      <div class="card-header bg-primary-subtle border-bottom border-primary py-2 d-flex justify-content-between align-items-center">
+        <h5 class="card-title text-primary m-0 fs-15 fw-bold">
+          <i class="ri-shield-cross-fill me-1"></i> Plafond CNAM (Année {{ filterForm.value.annee }})
+        </h5>
+        <span class="badge bg-primary">CNAM</span>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="plafondCnam; else noPlafCnam">
+          <div class="row g-3 text-center">
+            <div class="col-4">
+              <div class="p-2 border rounded bg-light">
+                <small class="text-muted d-block text-uppercase">Plafond Annuel</small>
+                <span class="fs-5 fw-bold text-dark">{{ plafondCnam.plafond | number:'1.3-3' }} DT</span>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="p-2 border rounded bg-success-subtle">
+                <small class="text-success d-block text-uppercase fw-semibold">Solde Plafond</small>
+                <span class="fs-5 fw-bold text-success">{{ plafondCnam.sold_plaf | number:'1.3-3' }} DT</span>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="p-2 border rounded bg-info-subtle">
+                <small class="text-info d-block text-uppercase fw-semibold">Solde Estimé</small>
+                <span class="fs-5 fw-bold text-info">{{ plafondCnam.sold_cnam_estim | number:'1.3-3' }} DT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noPlafCnam>
+          <div class="alert alert-warning mb-0 text-center py-3">
+            <i class="ri-information-line me-1"></i> Aucun plafond CNAM enregistré pour l'adhérent <strong>{{ filterForm.value.matPers }}</strong> en <strong>{{ filterForm.value.annee }}</strong>.
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BLOC 2 : PLAFOND MUTUELLE ==================== -->
+  <div class="col-xl-6" *ngIf="filterForm.value.natBult !== 'C'">
+    <div class="card border shadow-sm h-100 mb-0">
+      <div class="card-header bg-success-subtle border-bottom border-success py-2 d-flex justify-content-between align-items-center">
+        <h5 class="card-title text-success m-0 fs-15 fw-bold">
+          <i class="ri-heart-pulse-fill me-1"></i> Plafond Mutuelle (Année {{ filterForm.value.annee }})
+        </h5>
+        <span class="badge bg-success">Mutuelle</span>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="plafondMutuelle; else noPlafMut">
+          <div class="row g-3 text-center">
+            <div class="col-3">
+              <div class="p-2 border rounded bg-light">
+                <small class="text-muted d-block text-uppercase">Assurance</small>
+                <span class="fs-6 fw-bold text-dark text-truncate d-block" [title]="plafondMutuelle.libAssur || plafondMutuelle.cod_assur">
+                  {{ plafondMutuelle.libAssur || plafondMutuelle.cod_assur }}
+                </span>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="p-2 border rounded bg-light">
+                <small class="text-muted d-block text-uppercase">Plafond</small>
+                <span class="fs-6 fw-bold text-dark">{{ plafondMutuelle.plafond | number:'1.3-3' }} DT</span>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="p-2 border rounded bg-success-subtle">
+                <small class="text-success d-block text-uppercase fw-semibold">Solde Plafond</small>
+                <span class="fs-6 fw-bold text-success">{{ plafondMutuelle.sold_plaf | number:'1.3-3' }} DT</span>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="p-2 border rounded bg-info-subtle">
+                <small class="text-info d-block text-uppercase fw-semibold">Solde Estimé</small>
+                <span class="fs-6 fw-bold text-info">{{ plafondMutuelle.sold_assur_estim | number:'1.3-3' }} DT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noPlafMut>
+          <div class="alert alert-warning mb-0 text-center py-3">
+            <i class="ri-information-line me-1"></i> Aucun plafond Mutuelle enregistré pour l'adhérent <strong>{{ filterForm.value.matPers }}</strong> en <strong>{{ filterForm.value.annee }}</strong>.
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== LIGNE 2 : LES 2 BLOCS BULLETINS ==================== -->
+<div class="row g-3 mt-1">
+
+  <!-- ==================== BLOC 3 : BULLETINS CNAM ==================== -->
+  <div class="col-12" *ngIf="filterForm.value.natBult !== 'M'">
+    <div class="card border shadow-sm">
+      <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+        <h5 class="card-title text-primary m-0 fs-15 fw-bold">
+          <i class="ri-file-list-3-line me-1"></i> Bulletins de soin CNAM
+          <span class="badge bg-primary ms-2">{{ bulletinsCnam.length }} bulletin(s)</span>
+        </h5>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <p-table [value]="bulletinsCnam" responsiveLayout="scroll"
+            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+            <ng-template pTemplate="header">
+              <tr class="bg-primary text-white">
+                <th style="width: 50px;" class="text-center">#</th>
+                <th style="width: 130px;">N° Soin</th>
+                <th style="width: 120px;">Date Soin</th>
+                <th style="width: 120px;">Date Saisie</th>
+                <th style="width: 110px;">Bénéficiaire</th>
+                <th style="width: 140px;" class="text-end">Total Honoraires</th>
+                <th style="width: 140px;" class="text-end">Total Net</th>
+                <th style="width: 150px;" class="text-end">Total Remboursé</th>
+                <th style="width: 120px;">Régime</th>
+                <th>Observation</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-b let-i="rowIndex">
+              <tr>
+                <td class="text-center text-muted">{{ i + 1 }}</td>
+                <td><strong class="text-primary">{{ b.num_soin }}</strong></td>
+                <td>{{ b.dat_soin }}</td>
+                <td>{{ b.dat_saisie }}</td>
+                <td>{{ getBeneficiaire(b) }}</td>
+                <td class="text-end font-monospace">{{ b.tot_honor | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace">{{ b.tot_net | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace text-success fw-bold">{{ b.tot_remb | number:'1.3-3' }}</td>
+                <td>{{ getLibRemb(b) }}</td>
+                <td class="text-truncate" style="max-width: 250px;" [title]="b.obs">{{ b.obs || '-' }}</td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="footer" *ngIf="bulletinsCnam.length > 0">
+              <tr class="bg-light fw-bold">
+                <td colspan="5" class="text-end text-uppercase">Total CNAM :</td>
+                <td class="text-end font-monospace">{{ totalHonorCnam | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace">{{ totalNetCnam | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace text-success fs-6">{{ totalRembCnam | number:'1.3-3' }}</td>
+                <td colspan="2"></td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="10" class="text-center py-4 text-muted">
+                  <i class="ri-inbox-line fs-2 d-block mb-1 text-secondary"></i>
+                  Aucun bulletin CNAM trouvé pour cette sélection.
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BLOC 4 : BULLETINS MUTUELLE ==================== -->
+  <div class="col-12" *ngIf="filterForm.value.natBult !== 'C'">
+    <div class="card border shadow-sm">
+      <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+        <h5 class="card-title text-success m-0 fs-15 fw-bold">
+          <i class="ri-file-list-3-line me-1"></i> Bulletins de soin Mutuelle
+          <span class="badge bg-success ms-2">{{ bulletinsMutuelle.length }} bulletin(s)</span>
+        </h5>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <p-table [value]="bulletinsMutuelle" responsiveLayout="scroll"
+            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
+            <ng-template pTemplate="header">
+              <tr class="bg-success text-white">
+                <th style="width: 50px;" class="text-center">#</th>
+                <th style="width: 130px;">N° Soin</th>
+                <th style="width: 120px;">Date Soin</th>
+                <th style="width: 120px;">Date Saisie</th>
+                <th style="width: 110px;">Assurance</th>
+                <th style="width: 110px;">Bénéficiaire</th>
+                <th style="width: 140px;" class="text-end">Total Honoraires</th>
+                <th style="width: 140px;" class="text-end">Total Net</th>
+                <th style="width: 150px;" class="text-end">Total Remboursé</th>
+                <th style="width: 120px;">Régime</th>
+                <th>Observation</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-b let-i="rowIndex">
+              <tr>
+                <td class="text-center text-muted">{{ i + 1 }}</td>
+                <td><strong class="text-success">{{ b.num_soin }}</strong></td>
+                <td>{{ b.dat_soin }}</td>
+                <td>{{ b.dat_saisie }}</td>
+                <td><span class="badge bg-info-subtle text-info">{{ b.cod_assur }}</span></td>
+                <td>{{ getBeneficiaire(b) }}</td>
+                <td class="text-end font-monospace">{{ b.tot_honor | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace">{{ b.tot_net | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace text-success fw-bold">{{ b.tot_remb | number:'1.3-3' }}</td>
+                <td>{{ getLibRemb(b) }}</td>
+                <td class="text-truncate" style="max-width: 250px;" [title]="b.obs">{{ b.obs || '-' }}</td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="footer" *ngIf="bulletinsMutuelle.length > 0">
+              <tr class="bg-light fw-bold">
+                <td colspan="6" class="text-end text-uppercase">Total Mutuelle :</td>
+                <td class="text-end font-monospace">{{ totalHonorMut | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace">{{ totalNetMut | number:'1.3-3' }}</td>
+                <td class="text-end font-monospace text-success fs-6">{{ totalRembMut | number:'1.3-3' }}</td>
+                <td colspan="2"></td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="11" class="text-center py-4 text-muted">
+                  <i class="ri-inbox-line fs-2 d-block mb-1 text-secondary"></i>
+                  Aucun bulletin Mutuelle trouvé pour cette sélection.
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+

@@ -1031,6 +1031,7 @@
                     placeholder="Enter num fam"
                     required
                     formControlName="num_fam"
+                    readonly
                     [ngClass]="{
                       'is-invalid': submitted && form['num_fam'].errors
                     }"
@@ -1081,6 +1082,8 @@
                     appDateFormatter
                     mask="00/00/0000"
                     formControlName="dat_naiss"
+                    (focus)="setMinDateEnfant($event, i)"
+                    (click)="setMinDateEnfant($event, i)"
                     [ngClass]="{
                       'is-invalid': submitted && form['dat_naiss'].errors
                     }"

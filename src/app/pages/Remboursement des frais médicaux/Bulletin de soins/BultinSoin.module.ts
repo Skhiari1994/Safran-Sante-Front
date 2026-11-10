@@ -31,6 +31,7 @@ import { NgxSliderModule } from 'ngx-slider-v2';
 import { BuletinCNAMComponent } from './buletin-cnam/buletin-cnam.component';
 import { ConsBuletinMutuelleComponent } from './cons-buletin-mutuelle/cons-buletin-mutuelle.component';
 import { ConsBultCnamComponent } from './cons-bult-cnam/cons-bult-cnam.component';
+import { ConsultationSoinComponent } from './consultation-soin/consultation-soin.component';
 
 // PrimeNG imports
 import { TableModule } from 'primeng/table';
@@ -51,7 +52,8 @@ import { MessageService } from 'primeng/api';
     MontantMaskDirective,
     BuletinCNAMComponent,
     ConsBuletinMutuelleComponent,
-    ConsBultCnamComponent
+    ConsBultCnamComponent,
+    ConsultationSoinComponent
   ],
   imports: [
     CommonModule,
