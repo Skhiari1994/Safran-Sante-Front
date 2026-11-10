@@ -1,37 +1,70 @@
 <div class="lov-container">
   <ng-template #content let-modal>
-    <div class="modal-header">
-      <h5 class="modal-title">Sélectionnez une valeur</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+    <div class="modal-header lov-header">
+      <div>
+        <h5 class="modal-title">Sélectionnez une valeur</h5>
+        <p class="lov-subtitle">Filtrez avec un ou plusieurs champs, puis cliquez sur une ligne pour la choisir.</p>
+      </div>
+      <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <div class="modal-body">
-      <!-- Search fields -->
-      <div class="row mb-3">
-        <div *ngFor="let col of columns" class="col-md-12 form-group d-flex align-items-center mb-2">
-          <!-- Label for the search input -->
-          <label for="{{ col.key }}" class="mr-2" style="width: 150px;">
-            {{ col.label }}
-          </label>
 
-          <!-- Search input field -->
-          <input type="text" [(ngModel)]="searchQueries[col.key]" (input)="onSearch()"
-            placeholder="Recherche {{ col.label }}" class="form-control" style="width: 250px;" />
+    <div class="modal-body lov-body">
+      <!-- Filtres : une grille de champs, libellé au-dessus -->
+      <section class="lov-filters" aria-label="Filtres de recherche">
+        <!-- Filtre rapide Sexe : sur sa propre ligne, avec la largeur dont ses trois options ont besoin -->
+        <div class="lov-quick" *ngIf="filtreSexe">
+          <span class="lov-label lov-quick-label" id="lov-sexe-label">Sexe</span>
+          <div class="lov-segmented" role="group" aria-labelledby="lov-sexe-label">
+            <button type="button" class="lov-seg" [class.active]="sexeFiltre === ''"
+              [attr.aria-pressed]="sexeFiltre === ''" (click)="choisirSexe('')">
+              Tous<span class="lov-seg-count">{{ comptesSexe.tous }}</span>
+            </button>
+            <button type="button" class="lov-seg" [class.active]="sexeFiltre === 'M'"
+              [attr.aria-pressed]="sexeFiltre === 'M'" (click)="choisirSexe('M')">
+              <i class="ri-men-line" aria-hidden="true"></i>Masculin<span class="lov-seg-count">{{ comptesSexe.M }}</span>
+            </button>
+            <button type="button" class="lov-seg" [class.active]="sexeFiltre === 'F'"
+              [attr.aria-pressed]="sexeFiltre === 'F'" (click)="choisirSexe('F')">
+              <i class="ri-women-line" aria-hidden="true"></i>Féminin<span class="lov-seg-count">{{ comptesSexe.F }}</span>
+            </button>
+          </div>
         </div>
+
+        <div class="row g-3">
+          <div *ngFor="let col of visibleColumns" [ngClass]="colClass">
+            <label class="lov-label" [attr.for]="'lov-' + col.key">{{ col.label }}</label>
+            <div class="lov-field">
+              <i class="ri-search-line" aria-hidden="true"></i>
+              <input type="text" [id]="'lov-' + col.key" [(ngModel)]="searchQueries[col.key]" (input)="onSearch()"
+                placeholder="Rechercher…" class="form-control" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+        <div class="lov-filters-actions" *ngIf="hasQuery()">
+          <button type="button" class="btn btn-sm btn-light" (click)="showAll()">
+            <i class="ri-close-circle-line me-1" aria-hidden="true"></i>Effacer les filtres
+          </button>
+        </div>
+      </section>
+
+      <!-- Résultats -->
+      <div class="lov-count" aria-live="polite">
+        <span><b>{{ filteredData.length }}</b> ligne(s)</span>
+        <span class="lov-count-hint" *ngIf="affichees.length < filteredData.length">
+          {{ affichees.length }} affichées · faites défiler ou affinez la recherche
+        </span>
       </div>
 
-      <!-- Table -->
-      <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-        <table class="table table-striped">
-          <thead class="table-light">
+      <div class="lov-table-wrap" (scroll)="onScrollTableau($event)">
+        <table class="table lov-table">
+          <thead>
             <tr>
-              <th *ngFor="let col of columns">{{ col.label }}</th>
+              <th *ngFor="let col of visibleColumns" scope="col">{{ col.label }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of filteredData; trackBy: trackByFn" (click)="selectItem(item); modal.close()">
-              <td *ngFor="let col of columns">
+            <tr *ngFor="let item of affichees; trackBy: trackByFn" (click)="selectItem(item); modal.close()">
+              <td *ngFor="let col of visibleColumns">
                 <ng-container *ngIf="col.key === 'dat_nais'; else normalCell">
                   {{ formatDateValue(item[col.key]) }}
                 </ng-container>
@@ -41,18 +74,12 @@
               </td>
             </tr>
           </tbody>
-
-
-
-
         </table>
 
-      </div>
-      <div colspan="{{ columns.length }}" class="alert alert-info text-end">
-        Nombre d'enregistrement : <b> {{ filteredData.length }} </b> ligne(s)
-      </div>
-      <div *ngIf="filteredData.length === 0" class="alert alert-warning text-center">
-        Aucun résultat trouvé
+        <div *ngIf="filteredData.length === 0" class="lov-empty">
+          <i class="ri-search-eye-line" aria-hidden="true"></i>
+          <span>Aucun résultat trouvé</span>
+        </div>
       </div>
     </div>
   </ng-template>

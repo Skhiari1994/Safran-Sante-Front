@@ -104,7 +104,7 @@ export class ConsBultCnamComponent {
       tot_honor: [''],
       tot_net: [''],
       tot_remb: [''],
-      reg_remb: [''],
+      reg_remb: [{ value: '', disabled: true }], // consultation : lecture seule
       cod_malad: [''],
       num_pec: [''],
       cod_fil: [''],
@@ -143,7 +143,15 @@ export class ConsBultCnamComponent {
     this.addLigneVisite()
     this.addLigneAppareil(0)
   }
+  ngOnDestroy() {
+    this.saveService.setConsultation(false);
+  }
+
   ngOnInit() {
+    // Consultation : Supprimer / Enregistrer / Nouveau de la barre d'outils désactivés (Rechercher et Imprimer restent actifs)
+    this.saveService.clearSaveCallback();
+    this.saveService.clearDeleteCallback();
+    this.saveService.setConsultation(true);
     this.getPersonnel()
     this.getRegimeRemb()
     this.getBultSoin();
@@ -188,7 +196,11 @@ export class ConsBultCnamComponent {
     );
   }
 
+  /** Écran de consultation : les données sont uniquement lues, jamais créées, modifiées ni supprimées. */
+  readonly lectureSeule = true;
+
   addBultSoin() {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     // Vérifier si le formulaire principal est valide
     if (!this.formBuletinSoin.valid) {
       Swal.fire({
@@ -287,7 +299,8 @@ export class ConsBultCnamComponent {
     });
   }
   getBultSoin() {
-    this.serv.getBultCnamCons(this.token.getUser().codSoc).subscribe(
+    // liste légère : la fiche complète n'est chargée qu'à la sélection d'une ligne (voir search)
+    this.serv.getBultCnamListe(this.token.getUser().codSoc).subscribe(
       (data: any) => {
         this.listBultSoin = Array.isArray(data) ? data : [];
         this.columnsBultSoin = [
@@ -333,8 +346,20 @@ export class ConsBultCnamComponent {
     );
   }
 
+  /** Une ligne de la liste légère est choisie : on charge sa fiche complète, puis on remplit l'écran. */
   search(item: any) {
-    console.log('item.num_fam :', item);
+    this.serv.getBultCnamCons(this.token.getUser().codSoc, item.mat_pers, item.num_fam, item.dat_soin).subscribe({
+      next: (rows: any) => {
+        const lignes: any[] = Array.isArray(rows) ? rows : [];
+        // plusieurs bulletins le même jour pour la même personne : on reprend celui du bordereau choisi
+        const complet = lignes.find(r => r.cod_bord === item.cod_bord) ?? lignes[0] ?? item;
+        this.chargerBulletin(complet);
+      },
+      error: () => this.showServerError()
+    });
+  }
+
+  private chargerBulletin(item: any) {
     this.matricule = item.mat_pers;
     this.PEC = item.num_pec;
     this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, this.token.getUser().codSoc, item.nom_adherent || item.nom_complet_pers);
@@ -1036,6 +1061,7 @@ export class ConsBultCnamComponent {
     this.modalService.open(content, { centered: true });
   }
   ConfirmDelete(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.lignes.at(index).value; // Récupérer les données de la ligne
     console.log("ligne:", ligne);
     const cle = {
@@ -1287,6 +1313,7 @@ export class ConsBultCnamComponent {
   }
 
   removeLignePhar(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
 
 
 
@@ -1327,6 +1354,7 @@ export class ConsBultCnamComponent {
     this.modalService.open(content, { centered: true });
   }
   ConfirmDeleteMed(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.phar.at(index).value; // Récupérer les données de la ligne
     console.log("ligne:", ligne);
     const cle = {
@@ -1531,6 +1559,7 @@ export class ConsBultCnamComponent {
   }
 
   removeLigneVisite(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     this.visite.removeAt(index);
     this.calculateTotalsVisite()
   }
@@ -1543,6 +1572,7 @@ export class ConsBultCnamComponent {
     this.modalService.open(content, { centered: true });
   }
   ConfirmDeleteVisit(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.visite.at(index).value; // Récupérer les données de la ligne
     console.log("ligne:", ligne);
     const cle = {
@@ -1712,6 +1742,7 @@ export class ConsBultCnamComponent {
 
 
   removeLigneAppareil(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     this.appareil.removeAt(index);
     this.calculateTotalsAppareil()
   }
@@ -1724,6 +1755,7 @@ export class ConsBultCnamComponent {
     this.modalService.open(content, { centered: true });
   }
   ConfirmDeleteApp(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.appareil.at(index).value; // Récupérer les données de la ligne
     console.log("ligne:", ligne);
     const cle = {

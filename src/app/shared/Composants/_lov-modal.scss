@@ -1,0 +1,147 @@
+/* Style commun des fenêtres « Sélectionnez une valeur » (app-search-lov et app-lov). */
+/* ---------- Fenêtre « Sélectionnez une valeur » : filtres en grille + tableau lisible ---------- */
+.lov-header {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--vz-border-color, #e9ebec);
+}
+
+.lov-subtitle {
+  margin: 0.125rem 0 0;
+  font-size: 0.8125rem;
+  color: #5b6270;
+}
+
+.lov-body {
+  padding-top: 1.25rem;
+}
+
+.lov-filters {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--vz-light, #f6f8fb);
+  border: 1px solid var(--vz-border-color, #e9ebec);
+  border-radius: 10px;
+}
+
+.lov-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #495057;
+}
+
+/* champ avec une loupe à l'intérieur */
+.lov-field {
+  position: relative;
+
+  i {
+    position: absolute;
+    top: 50%;
+    left: 0.625rem;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #8a93a2;
+    pointer-events: none;
+  }
+
+  .form-control {
+    height: 38px;
+    padding-left: 2rem;
+    font-size: 0.875rem;
+    background-color: #fff;
+    border-radius: 8px;
+
+    &:focus {
+      border-color: var(--vz-primary, #405189);
+      box-shadow: 0 0 0 3px rgba(64, 81, 137, 0.15);
+    }
+  }
+}
+
+.lov-filters-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.lov-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  color: #495057;
+}
+
+.lov-count-hint {
+  color: #5b6270;
+}
+
+.lov-table-wrap {
+  max-height: 48vh;
+  overflow-y: auto;
+  border: 1px solid var(--vz-border-color, #e9ebec);
+  border-radius: 10px;
+}
+
+/* en-tête fixe pendant le défilement ; les anciennes bordures de cellules sont retirées */
+table.lov-table {
+  margin: 0;
+
+  th,
+  td {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    text-align: left;
+    border: 0;
+    border-bottom: 1px solid var(--vz-border-color, #eef0f3);
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #495057;
+    background: var(--vz-light, #f3f6f9);
+  }
+
+  tbody tr {
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+
+    &:hover {
+      background-color: #e8f0fe;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+.lov-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  color: #5b6270;
+
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+/* Filtre Sexe : sélecteur segmenté (rail gris clair + curseur blanc sur l'option choisie) */

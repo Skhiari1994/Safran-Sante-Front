@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -32,6 +32,16 @@ export class LoginComponent implements OnInit {
   year: number = new Date().getFullYear();
 
   listSociete: any[] = [];
+  /** Connexion en cours : le bouton est bloqué pour éviter un double envoi. */
+  connexionEnCours = false;
+  /** Identifiants refusés par le serveur : CIN et mot de passe passent en rouge. */
+  erreurIdentifiants = false;
+  /** Déclenche la petite secousse de la carte à chaque échec. */
+  secousse = false;
+  @ViewChild('passwordInput') passwordInput?: ElementRef<HTMLInputElement>;
+
+  /** Matricule et CIN saisis mais aucune société trouvée : l'un des deux est faux. */
+  societesIntrouvables = false;
 
   constructor(private formBuilder: UntypedFormBuilder, private authenticationService: AuthenticationService, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService) {
@@ -63,6 +73,12 @@ export class LoginComponent implements OnInit {
       this.loadSocietes();
     }
 
+    // le message d'erreur disparaît dès que l'utilisateur corrige sa saisie
+    this.loginForm.valueChanges.subscribe(() => {
+      if (this.error) this.error = '';
+      this.erreurIdentifiants = false;
+    });
+
     this.loginForm.get('useLogin')?.valueChanges.subscribe(() => {
       this.loadSocietes();
     });
@@ -88,19 +104,56 @@ export class LoginComponent implements OnInit {
     // "remember" ne concerne que le navigateur : il n'est pas envoyé au serveur (et le mot de passe n'est pas loggé)
     const { remember, ...identifiants } = this.loginForm.value;
 
-    this.authenticationService.login(identifiants).subscribe((data: any) => {
+    this.error = '';
+    this.connexionEnCours = true;
 
-      if (data) {
-        this.memoriserIdentifiants();
-        localStorage.setItem('toast', 'true');
-        localStorage.setItem('currentUser', JSON.stringify(data));
-        localStorage.setItem('token', data.token);
-        this.router.navigate(['/']);
-
-      } else {
-        this.toastService.show(data.data, { classname: 'bg-danger text-white', delay: 15000 });
+    this.authenticationService.login(identifiants).subscribe({
+      next: (data: any) => {
+        this.connexionEnCours = false;
+        if (data) {
+          this.memoriserIdentifiants();
+          localStorage.setItem('toast', 'true');
+          localStorage.setItem('currentUser', JSON.stringify(data));
+          localStorage.setItem('token', data.token);
+          this.router.navigate(['/']);
+        } else {
+          this.error = 'Connexion impossible. Réessayez.';
+        }
+      },
+      error: (err: any) => {
+        this.connexionEnCours = false;
+        this.error = this.messageErreur(err);
+        // statut 400/401 = identifiants refusés ; 0 (serveur injoignable) et 5xx = pas la faute de la saisie
+        const statut = typeof err?.status === 'number' ? err.status : 0;
+        this.erreurIdentifiants = statut > 0 && statut < 500;
+        this.signalerEchec();
       }
     });
+  }
+
+  /** Secousse de la carte, puis le curseur revient dans le mot de passe, texte sélectionné, pour le retaper. */
+  private signalerEchec(): void {
+    this.secousse = false;
+    setTimeout(() => {
+      this.secousse = true;                       // relancée à chaque échec
+      this.passwordInput?.nativeElement.focus();
+      this.passwordInput?.nativeElement.select();
+    }, 0);
+    setTimeout(() => (this.secousse = false), 600);
+  }
+
+  /** Message affiché selon la cause de l'échec de connexion. */
+  private messageErreur(err: any): string {
+    const statut = typeof err?.status === 'number' ? err.status : 0;
+    if (statut === 0) {
+      return 'Impossible de joindre le serveur. Vérifiez votre connexion puis réessayez.';
+    }
+    if (statut >= 500) {
+      return 'Le service est momentanément indisponible. Réessayez dans un instant.';
+    }
+    // 401 (mauvais identifiants) et 400 (saisie invalide) : on reste volontairement général, pour ne pas dire
+    // quelle information est fausse.
+    return 'Identifiants incorrects. Vérifiez votre matricule, votre CIN, votre mot de passe et votre société.';
   }
 
   private readonly CLE_MEMOIRE = 'rememberedLogin';
@@ -146,6 +199,7 @@ export class LoginComponent implements OnInit {
 
     // Don't call API until both fields are filled
     if (!useLogin || !cin) {
+      this.societesIntrouvables = false;
       this.listSociete = [];
       this.loginForm.patchValue({
         cod_soc: ''
@@ -158,6 +212,7 @@ export class LoginComponent implements OnInit {
         next: (societes) => {
 
           this.listSociete = societes;
+          this.societesIntrouvables = societes.length === 0;
 
 
           // If only one society, select it automatically
@@ -175,6 +230,7 @@ export class LoginComponent implements OnInit {
         error: (error) => {
           console.error('Erreur récupération sociétés', error);
 
+          this.societesIntrouvables = true;
           this.listSociete = [];
 
           this.loginForm.patchValue({

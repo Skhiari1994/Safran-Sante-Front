@@ -67,6 +67,17 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultMut", { params });
   }
+  /** Liste légère (code bordereau, matricule, num fam, date soin) des bulletins mutuelle, pour la fenêtre de recherche. */
+  getBultMutListe = (soc: any): Observable<any> => {
+    return this.http.get<any>(API_URL + "Remb/BultSoin/getBultMutListe", { params: { soc } });
+  };
+
+  /** Fiche complète d'un bulletin mutuelle choisi dans la liste légère. */
+  getBultMutFiche = (soc: any, mat: any, num_fam: any, dat_soin: any): Observable<any> => {
+    const params = new HttpParams().set("soc", soc).set("mat", mat).set("num_fam", num_fam).set("dat_soin", dat_soin);
+    return this.http.get<any>(API_URL + "Remb/BultSoin/getBultMutFiche", { params });
+  };
+
   getBultSoinCons = (mat?: string, num_fam?: string, dat_soin?: string): Observable<any> => {
     let params: any = {};
 
@@ -74,6 +85,11 @@ export class BulletinSoinService {
     if (num_fam) params['num_fam'] = num_fam;
     if (dat_soin) params['dat_soin'] = dat_soin;
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultSoinCons", { params });
+  };
+
+  /** Liste légère (code bordereau, matricule, num fam, date soin) pour la fenêtre de recherche. */
+  getBultCnamListe = (soc: any): Observable<any> => {
+    return this.http.get<any>(API_URL + "Remb/BultSoin/getBultCnamListe", { params: { soc } });
   };
 
   getBultCnamCons = (soc: any,mat?: string, num_fam?: string, dat_soin?: string): Observable<any> => {

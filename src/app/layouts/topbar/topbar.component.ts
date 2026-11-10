@@ -18,6 +18,7 @@ import { allNotification, messages } from './data'
 import { CartModel } from './topbar.model';
 import { cartData } from './data';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import { debounceTime, Subject } from 'rxjs';
 import { MajAdherentComponent } from 'src/app/pages/Adherent/maj-adherent/maj-adherent.component';
@@ -273,6 +274,11 @@ resetForm() {
   /**
    * Logout the user
    */
+  /** « Gérer mon compte » : fenêtre de changement de mot de passe. */
+  ouvrirGestionCompte() {
+    this.modalService.open(ChangePasswordModalComponent, { centered: true, backdrop: 'static' });
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
