@@ -1,0 +1,36 @@
+
+
+
+/* Échec de connexion : contour rouge sur les champs refusés (sans l'icône de validation Bootstrap, qui
+   passerait sous le bouton « œil » du mot de passe) */
+.form-control.champ-erreur {
+  border-color: #dc3545;
+
+  &:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.18);
+  }
+}
+
+.login-erreur {
+  font-size: 0.875rem;
+}
+
+/* Petite secousse de la carte à chaque échec, désactivée pour les personnes qui limitent les animations */
+@keyframes login-secousse {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(7px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(3px); }
+}
+
+.login-secousse {
+  animation: login-secousse 0.5s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-secousse {
+    animation: none;
+  }
+}

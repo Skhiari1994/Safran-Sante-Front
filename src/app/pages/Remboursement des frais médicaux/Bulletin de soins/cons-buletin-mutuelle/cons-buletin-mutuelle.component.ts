@@ -170,7 +170,15 @@ export class ConsBuletinMutuelleComponent {
   }
 
 
+  ngOnDestroy() {
+    this.saveService.setConsultation(false);
+  }
+
   ngOnInit() {
+    // Consultation : Supprimer / Enregistrer / Nouveau de la barre d'outils désactivés (Rechercher et Imprimer restent actifs)
+    this.saveService.clearSaveCallback();
+    this.saveService.clearDeleteCallback();
+    this.saveService.setConsultation(true);
     this.getPersonnel()
     this.getPersCons()
     this.getBultSoin()
@@ -190,7 +198,11 @@ export class ConsBuletinMutuelleComponent {
     ]
   }
 
+  /** Écran de consultation : les données sont uniquement lues, jamais créées, modifiées ni supprimées. */
+  readonly lectureSeule = true;
+
   addBultSoin() {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const formatDates = (form: FormGroup, fields: string[]): string[] =>
       fields.reduce<string[]>((formatted, field) => {
         const value = this.formatDate(form.get(field)?.value);
@@ -524,9 +536,9 @@ export class ConsBuletinMutuelleComponent {
     })
   }
   getBultSoin() {
-    this.serv.getBultMut('01').subscribe((data: any) => {
+    // liste légère de la société de connexion ; la fiche complète est chargée à la sélection (voir search)
+    this.serv.getBultMutListe(this.token.getUser().codSoc).subscribe((data: any) => {
       this.listBultSoin = Array.isArray(data) ? data : [];
-      console.log("listBultSoin :", data)
       this.columnsBultSoin = [
         { key: "cod_bord", label: "Code bord" },
         { key: "mat_pers", label: "Matricule" },
@@ -535,8 +547,20 @@ export class ConsBuletinMutuelleComponent {
       ]
     })
   }
+  /** Une ligne de la liste légère est choisie : on charge sa fiche complète, puis on remplit l'écran. */
   search(item: any) {
-    console.log('item.num_fam :', item);
+    this.serv.getBultMutFiche(this.token.getUser().codSoc, item.mat_pers, item.num_fam, item.dat_soin).subscribe({
+      next: (rows: any) => {
+        const lignes: any[] = Array.isArray(rows) ? rows : [];
+        // plusieurs bulletins le même jour pour la même personne : on reprend celui du bordereau choisi
+        const complet = lignes.find(r => r.cod_bord === item.cod_bord) ?? lignes[0] ?? item;
+        this.chargerBulletin(complet);
+      },
+      error: (err: any) => console.error('Erreur chargement du bulletin', err)
+    });
+  }
+
+  private chargerBulletin(item: any) {
     this.matricule = item.mat_pers;
     this.PEC = item.num_pec;
     this.matConj = item.mat_pers_conj;
@@ -969,6 +993,7 @@ export class ConsBuletinMutuelleComponent {
   }
 
   removeLigne(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     this.lignes.removeAt(index);
     this.calculateTotals(); // Met à jour les totaux
 
@@ -981,6 +1006,7 @@ export class ConsBuletinMutuelleComponent {
   }
 
   removeLignePhar(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     this.phar.removeAt(index);
     this.calculateTotalsPhar()
   }
@@ -1178,6 +1204,7 @@ export class ConsBuletinMutuelleComponent {
     this.modalService.open(content, { centered: true });
   }
   ConfirmDelete(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.lignes.at(index).value; // Récupérer les données de la ligne
 
     const cle = {
@@ -1234,6 +1261,7 @@ export class ConsBuletinMutuelleComponent {
     this.modalService.open(content, { centered: true });
   }
   ConfirmDeletePhar(index: number): void {
+    if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const phar = this.phar.at(index).value; // Récupérer les données de la ligne
 
     const cle = {

@@ -178,24 +178,31 @@ export class AdherentService {
   getAffilPersMut = (soc: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getAffilPersMut/" + soc);
   };
+
   getAffilPersByMat = (soc: any, mat: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getAffilPersByMat/" + soc + "/" + mat);
   };
+
   getAffilMutuelle = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getAffilMutuelle");
   };
+
   getAffilPersRenouvAdhesion = (soc: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getAffilPersRenouvAdhesion/" + soc);
   };
+
   getAffilMutuelleEnInstance = (soc: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/getAffilPersEnInstance/" + soc);
   };
+
   getListDepart = (soc: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/listDepart/" + soc);
   };
+
   getListPersonnelDepart = (soc: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/listPersonnelDepart/" + soc);
   };
+  
   getListReiteg = (soc: any): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "adherent/Personnel/listReinteg/" + soc);
   };

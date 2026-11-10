@@ -33,7 +33,50 @@ export class LovComponent implements OnInit, OnChanges {
   @Output() selectedValue = new EventEmitter<ListDataItem>();
   @Output() selectedCodeChange = new EventEmitter<string>(); // Two-way binding
 
-  filteredData: ListDataItem[] = [];
+  /** Colonnes jamais montrées dans la fenêtre (ni champ de filtre, ni colonne du tableau) : le matricule administratif. */
+  @Input() hiddenKeys: string[] = ['mat_int'];
+  /** Colonnes réellement affichées = columns moins hiddenKeys. */
+  visibleColumns: { key: string; label: string }[] = [];
+
+  /** Nombre de lignes créées dans le tableau : afficher des milliers de lignes d'un coup bloque le navigateur. */
+  readonly taillePage = 100;
+  private limiteAffichage = this.taillePage;
+  /** Lignes réellement affichées (début de filteredData) ; la suite arrive au défilement. */
+  affichees: ListDataItem[] = [];
+
+  private _filteredData: ListDataItem[] = [];
+  get filteredData(): ListDataItem[] {
+    return this._filteredData;
+  }
+  /** Chaque nouvelle liste (ouverture, recherche) repart des 100 premières lignes. */
+  set filteredData(valeur: ListDataItem[]) {
+    this._filteredData = valeur || [];
+    this.limiteAffichage = this.taillePage;
+    this.affichees = this._filteredData.slice(0, this.limiteAffichage);
+  }
+
+  /** Défilement vers le bas du tableau : on ajoute les 100 lignes suivantes. */
+  onScrollTableau(event: Event): void {
+    const el = event.target as HTMLElement;
+    if (this.affichees.length < this._filteredData.length && el.scrollTop + el.clientHeight >= el.scrollHeight - 80) {
+      this.limiteAffichage += this.taillePage;
+      this.affichees = this._filteredData.slice(0, this.limiteAffichage);
+    }
+  }
+
+  /** Largeur d'un champ de filtre selon le nombre de colonnes : 2 à 4 champs par ligne, jamais une longue pile. */
+  get colClass(): string {
+    const n = this.visibleColumns.length;
+    if (n <= 2) return 'col-12 col-md-6';
+    if (n === 3) return 'col-12 col-md-4';
+    if (n === 4) return 'col-12 col-sm-6 col-lg-3';
+    if (n <= 6) return 'col-12 col-sm-6 col-lg-4';
+    return 'col-12 col-sm-6 col-lg-3';
+  }
+
+  hasQuery(): boolean {
+    return Object.values(this.columnSearchQueries).some(q => !!q && q.trim() !== '');
+  }
   columnSearchQueries: { [key: string]: string } = {}; // Individual column search queries
   searchSubject = new Subject<string>(); // Debounce subject
   errorMessage: string = ''; // Property to track errors
@@ -41,6 +84,7 @@ export class LovComponent implements OnInit, OnChanges {
   constructor(private modalService: NgbModal) { }
 
   ngOnInit(): void {
+    this.visibleColumns = (this.columns || []).filter(c => !this.hiddenKeys.includes(c.key));
     this.filteredData = [...this.listData];
     this.initializeColumnSearchQueries();
 
@@ -54,6 +98,8 @@ export class LovComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.visibleColumns = (this.columns || []).filter(c => !this.hiddenKeys.includes(c.key));
+
     if (changes['listData']) {
       this.filteredData = Array.isArray(this.listData) ? [...this.listData] : [];
       if (this.listData && this.listData.length > 0 && this.hasCode(this.selectedCode)) {
@@ -141,8 +187,9 @@ export class LovComponent implements OnInit, OnChanges {
   }
 
   openModal(content: any): void {
-    // Clear search queries when modal opens (filteredData will be empty due to filter logic)
+    // champs de filtre vidés à l'ouverture : on repart donc de la liste complète (100 premières lignes)
     this.initializeColumnSearchQueries();
+    this.filteredData = [...this.listData];
     this.modalService.open(content, { size: 'xl' });
   }
   patchValue(patchedCode: any): void {

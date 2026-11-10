@@ -42,15 +42,15 @@ export class MajCertifFamComponent {
   ) {
     this.formAdherent = this.fb.group({
       cod_soc: [""],
-      mat_pers: [""],
-      cod_assur: [""],
-      nom_pers: [""],
-      etat_act: [""],
-      dat_emb: [""],
-      cod_sit: [""],
-      nbr_enf: [""],
-      num_assur: [""],
-      dat_ass: [""],
+      mat_pers: [{ value: '', disabled: true }],
+      cod_assur: [{ value: '', disabled: true }],
+      nom_pers: [{ value: '', disabled: true }],
+      etat_act: [{ value: '', disabled: true }],
+      dat_emb: [{ value: '', disabled: true }],
+      cod_sit: [{ value: '', disabled: true }],
+      nbr_enf: [{ value: '', disabled: true }],
+      num_assur: [{ value: '', disabled: true }],
+      dat_ass: [{ value: '', disabled: true }],
     });
     this.formCertif = this.fb.group({
       CertifFam: this.fb.array([

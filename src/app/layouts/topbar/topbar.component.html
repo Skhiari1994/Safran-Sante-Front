@@ -372,9 +372,20 @@
                             </div>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <button type="button" class="dropdown-item profile-logout" (click)="logout()">
-                            <i class="ri-logout-box-r-line" aria-hidden="true"></i>
-                            <span data-key="t-logout">Se déconnecter</span>
+                        <button type="button" class="dropdown-item profile-action" (click)="ouvrirGestionCompte()">
+                            <span class="profile-action-icon" aria-hidden="true"><i class="ri-user-settings-line"></i></span>
+                            <span class="profile-action-text">
+                                <span class="profile-action-title">Gérer mon compte</span>
+                                <span class="profile-action-sub">Modifier mon mot de passe</span>
+                            </span>
+                            <i class="ri-arrow-right-s-line profile-action-arrow" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="dropdown-item profile-action profile-action-danger" (click)="logout()">
+                            <span class="profile-action-icon" aria-hidden="true"><i class="ri-logout-box-r-line"></i></span>
+                            <span class="profile-action-text">
+                                <span class="profile-action-title" data-key="t-logout">Se déconnecter</span>
+                                <span class="profile-action-sub">Fermer ma session</span>
+                            </span>
                         </button>
                     </div>
                 </div>

@@ -13,19 +13,19 @@
                     <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Matricule</label>
-                        <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" disabled readonly />
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Nom</label>
-                        <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" disabled readonly />
                     </div>
                     <div class="col-md-5">
                         <label class="form-label">Prénom</label>
-                        <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pren_pers" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pren_pers" disabled readonly />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Etat</label>
-                        <select class="form-select border-primary" formControlName="etat_act">
+                        <select class="form-select border-primary" formControlName="etat_act" disabled readonly>
                             <option value="">Sélectionner</option>
                             <option value="A">ACTIF</option>
                             <option value="B">Bloqué(e)</option>
@@ -33,11 +33,11 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Date d'embauche</label>
-                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" disabled readonly />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Situation sociale</label>
-                        <select class="form-select border-primary" formControlName="cod_sit">
+                        <select class="form-select border-primary" formControlName="cod_sit" disabled readonly>
                             <option value="">Sélectionner</option>
                             <option value="C">Célibataire</option>
                             <option value="M">Marié(e)</option>
@@ -47,23 +47,23 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Nombre d'enfants</label>
-                        <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants" formControlName="nbr_enf" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants" formControlName="nbr_enf" disabled readonly />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Code assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_assur" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_assur" disabled readonly />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Libellé assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" disabled readonly />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Numéro assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="Numéro assurance" formControlName="num_assur" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="Numéro assurance" formControlName="num_assur" disabled readonly />
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Date assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_ass" readonly />
+                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_ass" disabled readonly />
                     </div>
                     </div>
                 </form>

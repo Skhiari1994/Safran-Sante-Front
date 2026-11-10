@@ -82,7 +82,7 @@ export class AdherentService {
 
   getDossierMld(mat: any): Observable<any[]> {
     const params = new HttpParams()
-      .set('cod_soc', this.cod_soc ?? '')
+      .set('soc', this.cod_soc ?? '')
       .set('mat', mat)
     return this.http.get<any[]>(API_URL + "Remb/Personnel/getDossierMll", { params });
   }

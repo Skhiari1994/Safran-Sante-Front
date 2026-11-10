@@ -217,3 +217,10 @@ th, td {
     }
   }
 }
+
+/* Liste en lecture seule : même aspect que les champs readonly voisins (fond blanc, texte normal) */
+.form-select.champ-lecture-seule:disabled {
+  background-color: #fff;
+  opacity: 1;
+  cursor: default;
+}
