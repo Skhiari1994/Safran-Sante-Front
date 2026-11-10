@@ -56,49 +56,49 @@ export class MajDossMldComponent {
     private modalService: NgbModal, private saveService: SaveService) {
     this.formPersonnel = this.fb.group({
       cod_soc: [''],
-      mat_pers: [''],
-      cod_assur: [''],
-      nom_pers: [''],
-      sexe: [''],
-      cin: [''],
-      dat_nais: [''],
-      pren_pers: [''],
-      dat_emb: [''],
-      cod_sit: [''],
-      nbr_enf: [''],
-      cod_retr: [''],
-      num_retr: [''],
-      num_assur: [''],
-      dat_ass: [''],
-      cod_pay: [''],
-      rib: [''],
-      nom_pers_a: [''],
-      pren_pers_a: [''],
-      cod_natp: [''],
-      cod_banq: [''],
-      cod_agc: [''],
-      dat_dece: [''],
-      etat_act: [''],
-      dat_motif: [''],
-      cod_lieu_geog: [''],
-      bas_plafond: [''],
-      nom_jf: [''],
-      nom_jf_a: [''],
-      photo_pers: [''],
-      lieu_nais: [''],
-      mnt_param: [''],
-      etat_prof: [''],
-      dat_aff_cnam: [''],
-      corps: [''],
-      cod_affect: [''],
-      dat_affect: [''],
-      cod_typ_depart: [''],
-      dat_depart: [''],
-      typ_aff: [''],
-      cod_user: [''],
-      dat_maj: [''],
-      mat_int: [''],
-      pers_carte: [''],
+      mat_pers: [{ value: '', disabled: true }],
+      cod_assur: [{ value: '', disabled: true }],
+      nom_pers: [{ value: '', disabled: true }],
+      sexe: [{ value: '', disabled: true }],
+      cin: [{ value: '', disabled: true }],
+      dat_nais: [{ value: '', disabled: true }],
+      pren_pers: [{ value: '', disabled: true }],
+      dat_emb: [{ value: '', disabled: true }],
+      cod_sit: [{ value: '', disabled: true }],
+      nbr_enf: [{ value: '', disabled: true }],
+      cod_retr: [{ value: '', disabled: true }],
+      num_retr: [{ value: '', disabled: true }],
+      num_assur: [{ value: '', disabled: true }],
+      dat_ass: [{ value: '', disabled: true }],
+      cod_pay: [{ value: '', disabled: true }],
+      rib: [{ value: '', disabled: true }],
+      nom_pers_a: [{ value: '', disabled: true }],
+      pren_pers_a: [{ value: '', disabled: true }],
+      cod_natp: [{ value: '', disabled: true }],
+      cod_banq: [{ value: '', disabled: true }],
+      cod_agc: [{ value: '', disabled: true }],
+      dat_dece: [{ value: '', disabled: true }],
+      etat_act: [{ value: '', disabled: true }],
+      dat_motif: [{ value: '', disabled: true }],
+      cod_lieu_geog: [{ value: '', disabled: true }],
+      bas_plafond: [{ value: '', disabled: true }],
+      nom_jf: [{ value: '', disabled: true }],
+      nom_jf_a: [{ value: '', disabled: true }],
+      photo_pers: [{ value: '', disabled: true }],
+      lieu_nais: [{ value: '', disabled: true }],
+      mnt_param: [{ value: '', disabled: true }],
+      etat_prof: [{ value: '', disabled: true }],
+      dat_aff_cnam: [{ value: '', disabled: true }],
+      corps: [{ value: '', disabled: true }],
+      cod_affect: [{ value: '', disabled: true }],
+      dat_affect: [{ value: '', disabled: true }],
+      cod_typ_depart: [{ value: '', disabled: true }],
+      dat_depart: [{ value: '', disabled: true }],
+      typ_aff: [{ value: '', disabled: true }],
+      cod_user: [{ value: '', disabled: true }],
+      dat_maj: [{ value: '', disabled: true }],
+      mat_int: [{ value: '', disabled: true }],
+      pers_carte: [{ value: '', disabled: true }],
 
     })
 
@@ -113,23 +113,18 @@ export class MajDossMldComponent {
           etat_dos_mld: [''],
           num_fam: [''],
 
-
-
         }),
       ]),
     });
   }
 
   ngOnInit() {
-
     this.saveService.isSearch$.subscribe((canSearch) => {
       this.isSearch = true
       console.log("is search valid", canSearch)
 
     })
     this.getPersonnels()
-
-    //this.getAllVirAnticip()
   }
 
   ngOnDestroy() {
@@ -137,8 +132,6 @@ export class MajDossMldComponent {
     this.saveService.clearSaveCallback();
     this.saveService.setCanSave(false)
   }
-
-
 
   getPersonnels() {
     this.adherentServ.getPersActif().subscribe(data => {
@@ -172,7 +165,6 @@ export class MajDossMldComponent {
     const enfantsArray = this.formDossMalad.get('doss') as FormArray;
 
     const selectedFormGroup = enfantsArray.at(0) as FormGroup;
-
 
     if (selectedFormGroup) {
 
@@ -294,16 +286,6 @@ export class MajDossMldComponent {
       ];
     })
   }
-
-  // onSelectRefEtablis(item: any) {
-  //   console.log("item :", item);
-  //   this.libRef = item.nom
-  //   this.formDossMalad.patchValue({
-  //     prf_typ: item.prf_typ,
-  //     prf_cod: item.prf_cod,
-  //   });
-
-  // }
 
   // Tri et filtres par colonne du tableau des dossiers
   private sortAsc = true;
