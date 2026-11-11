@@ -129,6 +129,16 @@ export class ConsultationSoinComponent implements OnInit {
     return b?.num_fam || '-';
   }
 
+  getLibAssur(b: any): string {
+    if (b?.lib_assur) {
+      return b.lib_assur;
+    }
+    if (this.plafondMutuelle && this.plafondMutuelle.cod_assur === b?.cod_assur && this.plafondMutuelle.libAssur) {
+      return this.plafondMutuelle.libAssur;
+    }
+    return b?.cod_assur || '-';
+  }
+
   chargerAdherents(matricule: string): void {
     this.bultService.getAdherent(this.codSoc, matricule).subscribe({
       next: (data: any[]) => {

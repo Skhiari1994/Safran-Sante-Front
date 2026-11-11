@@ -256,7 +256,7 @@
                 <th style="width: 130px;">N° Soin</th>
                 <th style="width: 120px;">Date Soin</th>
                 <th style="width: 120px;">Date Saisie</th>
-                <th style="width: 110px;">Assurance</th>
+                <th style="width: 130px;">Assurance</th>
                 <th style="width: 110px;">Bénéficiaire</th>
                 <th style="width: 140px;" class="text-end">Total Honoraires</th>
                 <th style="width: 140px;" class="text-end">Total Net</th>
@@ -272,7 +272,7 @@
                 <td><strong class="text-success">{{ b.num_soin }}</strong></td>
                 <td>{{ b.dat_soin }}</td>
                 <td>{{ b.dat_saisie }}</td>
-                <td><span class="badge bg-info-subtle text-info">{{ b.cod_assur }}</span></td>
+                <td><span class="badge bg-info-subtle text-info">{{ getLibAssur(b) }}</span></td>
                 <td>{{ getBeneficiaire(b) }}</td>
                 <td class="text-end font-monospace">{{ b.tot_honor | number:'1.3-3' }}</td>
                 <td class="text-end font-monospace">{{ b.tot_net | number:'1.3-3' }}</td>
