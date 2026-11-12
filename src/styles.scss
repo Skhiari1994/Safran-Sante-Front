@@ -688,6 +688,31 @@ input[placeholder*="dd/mm" i]:not([readonly]):not(:disabled) {
 .flatpickr-calendar {
   z-index: 200000 !important;
   font-family: inherit;
+
+  .flatpickr-monthDropdown-months,
+  .flatpickr-monthDropdown-month,
+  .flatpickr-monthSelect-month {
+    text-transform: capitalize !important;
+  }
+
+  .cur-year-select {
+    appearance: menulist;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 600;
+    color: inherit;
+    padding: 0 0 0 0.5ch;
+
+    option {
+      color: #212529 !important;
+      background-color: #ffffff !important;
+      font-weight: normal;
+    }
+  }
 }
 
 

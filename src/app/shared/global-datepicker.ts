@@ -2,13 +2,9 @@ import flatpickr from 'flatpickr';
 import { French } from 'flatpickr/dist/l10n/fr';
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect';
 
-/**
- * Calendrier global : tout champ texte de date de l'application (jj/mm/aaaa) ouvre un calendrier
- * au clic. La saisie manuelle reste possible. Les champs « mois/année » (00/0000) ouvrent un
- * sélecteur de mois.
- *
- * Détection par le DOM : aucun import à faire dans les modules, ni de changement dans les pages.
- */
+French.months.longhand = French.months.longhand.map(m => m.charAt(0).toUpperCase() + m.slice(1)) as any;
+French.months.shorthand = French.months.shorthand.map(m => m.charAt(0).toUpperCase() + m.slice(1)) as any;
+
 const DAY_SELECTOR =
   'input[mask="00/00/0000"], input[appdateformatter], input[placeholder*="jj/mm" i], input[placeholder*="dd/mm" i]';
 const MONTH_SELECTOR = 'input[mask="00/0000"]';
@@ -36,9 +32,124 @@ function isDateDisabled(el: HTMLInputElement): boolean {
   return false;
 }
 
+function setupYearSelect(fp: flatpickr.Instance): void {
+  const container = fp.calendarContainer?.querySelector('.flatpickr-current-month');
+  if (!container) return;
+
+  const existingSelect = container.querySelector('select.flatpickr-year-select') as HTMLSelectElement;
+  if (existingSelect) {
+    if (existingSelect.value !== fp.currentYear.toString()) {
+      existingSelect.value = fp.currentYear.toString();
+    }
+    return;
+  }
+
+  const numWrapper = container.querySelector('.numInputWrapper');
+  if (!numWrapper) return;
+
+  const sel = document.createElement('select');
+  sel.className = 'flatpickr-monthDropdown-months flatpickr-year-select';
+  sel.setAttribute('aria-label', 'Année');
+  sel.setAttribute('tabindex', '-1');
+
+  const curYear = new Date().getFullYear();
+  const maxYear = Math.max(curYear, fp.currentYear || curYear);
+  const minYear = Math.min(1940, fp.currentYear || 1940);
+  for (let y = maxYear; y >= minYear; y--) {
+    const opt = document.createElement('option');
+    opt.className = 'flatpickr-monthDropdown-month';
+    opt.value = y.toString();
+    opt.textContent = y.toString();
+    opt.style.color = '#212529';
+    opt.style.backgroundColor = '#ffffff';
+    sel.appendChild(opt);
+  }
+
+  sel.value = fp.currentYear.toString();
+
+  const menu = document.createElement('div');
+  menu.className = 'flatpickr-year-menu';
+  menu.style.cssText =
+    'display:none;position:absolute;box-sizing:border-box;max-height:298px;width:92px;padding:4px 0;overflow-y:auto;overflow-x:hidden;background:#fff;color:#212529;border:1px solid rgba(0,0,0,0.2);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:99999;font-family:inherit;font-size:13.5px;';
+
+  for (let y = maxYear; y >= minYear; y--) {
+    const item = document.createElement('div');
+    item.textContent = y.toString();
+    item.style.cssText =
+      'height:24px;line-height:24px;padding:0 12px;cursor:pointer;box-sizing:border-box;font-family:inherit;text-align:left;';
+    item.onmouseenter = () => {
+      item.style.backgroundColor = '#0078d7';
+      item.style.color = '#ffffff';
+    };
+    item.onmouseleave = () => {
+      if (y === fp.currentYear) {
+        item.style.backgroundColor = '#e5f1fb';
+        item.style.color = '#000000';
+      } else {
+        item.style.backgroundColor = 'transparent';
+        item.style.color = '#212529';
+      }
+    };
+    item.onclick = (e) => {
+      e.stopPropagation();
+      fp.changeYear(y);
+      sel.value = y.toString();
+      menu.style.display = 'none';
+    };
+    menu.appendChild(item);
+  }
+
+  const toggleMenu = () => {
+    if (menu.style.display === 'block') {
+      menu.style.display = 'none';
+    } else {
+      const rect = sel.getBoundingClientRect();
+      const containerRect = fp.calendarContainer.getBoundingClientRect();
+      menu.style.top = rect.bottom - containerRect.top + 2 + 'px';
+      const left = rect.left - containerRect.left;
+      const maxLeft = containerRect.width - 94;
+      menu.style.left = Math.min(left, maxLeft) + 'px';
+      menu.style.display = 'block';
+      menu.querySelectorAll('div').forEach((d) => {
+        d.style.backgroundColor = 'transparent';
+        d.style.color = '#212529';
+      });
+      const active = Array.from(menu.children).find((c) => c.textContent === fp.currentYear.toString()) as HTMLElement;
+      if (active) {
+        active.style.backgroundColor = '#e5f1fb';
+        active.style.color = '#000000';
+        menu.scrollTop = active.offsetTop - 132;
+      }
+    }
+  };
+
+  sel.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMenu();
+  });
+  sel.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  sel.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      toggleMenu();
+    }
+  });
+
+  fp.calendarContainer.appendChild(menu);
+  document.addEventListener('click', () => {
+    menu.style.display = 'none';
+  });
+
+  numWrapper.replaceWith(sel);
+  fp.currentYearElement = sel as any;
+  fp.yearElements[0] = sel as any;
+}
+
 export function initGlobalDatePicker(): void {
-  // Le calendrier peut émettre un « change » alors que le champ n'a pas changé (ex. champ vide qui perd le focus) :
-  // on le bloque pour ne pas déclencher les contrôles des pages (messages d'erreur sur une date vide).
   document.addEventListener(
     'focusin',
     (ev: Event) => {
@@ -77,15 +188,30 @@ export function initGlobalDatePicker(): void {
         disableMobile: true,
         maxDate: new Date(),
         plugins: isMonth ? [monthSelectPlugin({ shorthand: true, dateFormat: 'm/Y', altFormat: 'm/Y' })] : [],
+        onReady: (_d, _s, inst) => setupYearSelect(inst),
+        onYearChange: (_selected, _str, inst) => {
+          const yearSel = inst.calendarContainer?.querySelector('select.flatpickr-year-select') as HTMLSelectElement;
+          if (yearSel) yearSel.value = inst.currentYear.toString();
+        },
+        onMonthChange: (_selected, _str, inst) => {
+          const yearSel = inst.calendarContainer?.querySelector('select.flatpickr-year-select') as HTMLSelectElement;
+          if (yearSel) yearSel.value = inst.currentYear.toString();
+        },
         onOpen: (_selected, _str, inst) => {
           if (isDateDisabled(el)) {
             inst.close();
             return;
           }
+          setupYearSelect(inst);
+          const yearSel = inst.calendarContainer?.querySelector('select.flatpickr-year-select') as HTMLSelectElement;
+          if (yearSel) yearSel.value = inst.currentYear.toString();
           inst.set('maxDate', new Date());
-          // la valeur du champ a pu être modifiée par le code (chargement) : on resynchronise le calendrier
           const d = parseInputValue(inst, el.value, format);
           if (d) inst.setDate(d, false);
+        },
+        onClose: (_selected, _str, inst) => {
+          const menu = inst.calendarContainer?.querySelector('.flatpickr-year-menu') as HTMLElement;
+          if (menu) menu.style.display = 'none';
         },
       }) as flatpickr.Instance;
       fp.open();
