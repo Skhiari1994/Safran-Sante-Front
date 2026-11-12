@@ -741,6 +741,6 @@
 
 <!-- Recherche (barre d'outils) -->
 <div *ngIf="isSearch">
-  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" [filtreSexe]="true" (selectedValue)="search($event)">
   </app-search-lov>
 </div>

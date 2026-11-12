@@ -691,6 +691,6 @@
   </ng-template>
 </div>
 <div *ngIf="isSearch">
-  <app-search-lov [listData]="listBultSoin" [columns]="columnsBultSoin" (selectedValue)="search($event)">
+  <app-search-lov [listData]="listBultSoin" [columns]="columnsBultSoin" [filtreSexe]="true" (selectedValue)="search($event)">
   </app-search-lov>
 </div>
