@@ -16,37 +16,32 @@
                 <app-lov [listData]="listPersonnel" [columns]="columnsMat" codeField="mat_pers"
                   [selectedCode]="matricule" (selectedValue)="onSelectedVMat($event)"></app-lov>
               </div>
-              <div class="col-md-2">
+              <!--div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Num ass.</label>
                 <input type="text" class="form-control border-primary" placeholder="num assurance"
                   formControlName="num_assur" readonly />
-              </div>
-              <div class="col-md-4">
-                <label for="billinginfo-firstName" class="form-label">Nom</label>
+              </div-->
+              <div class="col-md-6">
+                <label for="billinginfo-firstName" class="form-label">Nom & Prénom</label>
                 <input type="text" class="form-control border-primary" placeholder="Nom" [value]="nomPers" readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Date saisie</label>
                 <input type="text" class="form-control border-primary" placeholder="Date saisie"
-                  formControlName="dat_saisie" readonly />
+                  formControlName="dat_saisie" disabled readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Code assurance</label>
-                <input type="text" class="form-control border-primary" placeholder="Code assurance"
-                  formControlName="cod_assur" readonly />
+                <input type="text" class="form-control border-primary" placeholder="Code assurance" formControlName="cod_assur" disabled readonly />
               </div>
               <div class="col-md-6">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_assur"
-                  readonly />
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_assur" disabled readonly />
               </div>
-
-
 
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Id CNRPS</label>
-                <input type="text" class="form-control border-primary" placeholder="Motif départ" [value]="num_retr"
-                  readonly />
+                <input type="text" class="form-control border-primary" placeholder="Motif départ" [value]="num_retr" disabled readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Fillière</label>
@@ -55,23 +50,22 @@
               </div>
               <div class="col-md-9">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill"
-                  readonly />
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill" disabled readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-phone" class="form-label">Préstataire</label>
                 <app-lov [listData]="listAdherent" [columns]="columnsAdherent" codeField="num_fam"
                   [selectedCode]="numFam" (selectedValue)="onSelectedAdherent($event)"></app-lov>
               </div>
-              <div class="col-md-5">
-                <label for="billinginfo-firstName" class="form-label">Nom adhérent</label>
+              <div class="col-md-6">
+                <label for="billinginfo-firstName" class="form-label">Prénom</label>
                 <input type="text" class="form-control border-primary" placeholder="Nom adhérent" [value]="nomAdherent"
-                  readonly />
+                  disabled readonly />
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Date naissance</label>
-                <input type="text" class="form-control border-primary" placeholder="Date naissance" [value]="datNais"
-                  readonly />
+                <input type="text" class="form-control border-primary" placeholder="Date naissance" [value]="datNais" mask="00/00/0000"
+                  disabled readonly />
               </div>
             </div>
           </div>
@@ -92,11 +86,13 @@
 
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Ans</label>
-                <input type="text" class="form-control border-primary" placeholder="Ans" [value]="ageAn" readonly />
+                <input type="text" class="form-control border-primary" placeholder="Ans" [value]="ageAn" disabled
+                  readonly />
               </div>
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Mois</label>
-                <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" readonly />
+                <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" disabled
+                  readonly />
               </div>
               <div class="col-md-2"></div>
               <div class="col-md-4">
@@ -131,8 +127,8 @@
 
               <div class="col-md-3" *ngIf="showMsgMalad">
                 <label for="billinginfo-phone" class="form-label">Code maladie</label>
-                <app-lov [listData]="listMed || []" [columns]="columnsMed || []" codeField="cod_MED" [selectedCode]="Med"
-                  (selectedValue)="onSelectedMed($event)"></app-lov>
+                <app-lov [listData]="listMed || []" [columns]="columnsMed || []" codeField="cod_MED"
+                  [selectedCode]="Med" (selectedValue)="onSelectedMed($event)"></app-lov>
               </div>
               <div class="col-md-5" *ngIf="showMsgMalad ">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
@@ -159,32 +155,32 @@
   <div class="card p-4 border shadow-none mb-0 mt-4">
     <form action="javascript:void(0);" class="row g-3">
       <div class="row">
-      <!-- Première colonne -->
-      <div class="col-md-6">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Solde CNAM</label>
-            <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-              placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+        <!-- Première colonne -->
+        <div class="col-md-6">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Solde CNAM</label>
+              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
+                placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Ligne de séparation -->
-      <div class="col-md-1 d-flex align-items-stretch">
-        <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
-      </div>
+        <!-- Ligne de séparation -->
+        <div class="col-md-1 d-flex align-items-stretch">
+          <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
+        </div>
 
-      <!-- Deuxième colonne -->
-      <div class="col-md-5">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Solde estimatif</label>
-            <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-              placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+        <!-- Deuxième colonne -->
+        <div class="col-md-5">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Solde estimatif</label>
+              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
+                placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </form>
   </div>
@@ -199,14 +195,15 @@
             <h5>Saisie des visites</h5>
             <small>{{ visite.length }} visite(s)</small>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLigneVisite()"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter visite</button>
+          <button type="button" class="btn btn-info add-btn" (click)="addLigneVisite()"><i
+              class="ri-add-fill me-1 align-bottom"></i> Ajouter visite</button>
         </div>
         <p-table #dtVisite [value]="visite.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
           [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} visites'"
           [rowsPerPageOptions]="[10,25,50]" editMode="row" dataKey="value.uniqueId" [style]="{width:'100%'}"
-          styleClass="p-datatable-gridlines p-datatable-striped modern-table"
-          selectionMode="multiple" [(selection)]="selectedVisites">
+          styleClass="p-datatable-gridlines p-datatable-striped modern-table" selectionMode="multiple"
+          [(selection)]="selectedVisites">
           <ng-template pTemplate="header">
             <tr>
               <th style="text-align:center;width:50px"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
@@ -230,7 +227,8 @@
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" placeholder="dd/mm/yyyy"
                       mask="00/00/0000" class="w-full" formControlName="dat_act"
-                      (input)="ensureDatActNotAfterSoinsVisite(ri)" (change)="ensureDatActNotAfterSoinsVisite(ri)" /></ng-template>
+                      (input)="ensureDatActNotAfterSoinsVisite(ri)"
+                      (change)="ensureDatActNotAfterSoinsVisite(ri)" /></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('dat_act')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -244,8 +242,9 @@
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full" [value]="libVisite[ri] || ''"
-                      readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
+                      [value]="libVisite[ri] || ''" readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ libVisite[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -261,7 +260,8 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText inputmode="decimal" type="number" class="w-full"
-                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" formControlName="mnt_net" [value]="(mntNetArrayVisite && mntNetArrayVisite[ri]) || ''"
+                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed"
+                      formControlName="mnt_net" [value]="(mntNetArrayVisite && mntNetArrayVisite[ri]) || ''"
                       readonly /></ng-template>
                   <ng-template pTemplate="output"><span style="display:block;text-align:right">{{
                       rowData.get('mnt_net')?.value | number:'1.3-3' }}</span></ng-template>
@@ -269,20 +269,22 @@
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><select class="form-select border-success w-100" style="min-width:170px" formControlName="prf_typ"
-                      (click)="$event.stopPropagation()" (mousedown)="$event.stopPropagation()"
-                      (change)="OnselectRefTypVisite($event)">
+                  <ng-template pTemplate="input"><select class="form-select border-success w-100"
+                      style="min-width:170px" formControlName="prf_typ" (click)="$event.stopPropagation()"
+                      (mousedown)="$event.stopPropagation()" (change)="OnselectRefTypVisite($event)">
                       <option value="">Sélectionner</option>
                       <option value="1">Personne Physique</option>
                       <option value="2">Etablissement</option>
                     </select></ng-template>
-                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' : rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
+                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' :
+                    rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><app-lov [listData]="listRefEtablisVisit || []"
-                      [columns]="columnsRefEtablisVisit || []" codeField="prf_cod" [selectedCode]="(refEtablisVisit && refEtablisVisit[ri]) || ''"
+                      [columns]="columnsRefEtablisVisit || []" codeField="prf_cod"
+                      [selectedCode]="(refEtablisVisit && refEtablisVisit[ri]) || ''"
                       (selectedValue)="onSelectedEtablisVisite($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('prf_cod')?.value }}</ng-template>
                 </p-cellEditor>
@@ -290,16 +292,21 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
-                      [value]="etab_rsoc_visite[ri] || ''" readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                      [value]="etab_rsoc_visite[ri] || ''" readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ etab_rsoc_visite[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier" (click)="startRowEditVisite(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne" (click)="closeRowEditVisite(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                <a class="remove-item-btn" pTooltip="Supprimer" (click)="confirmVisit(ri, deleteModelVisit, rowData.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
-              </div>
+                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
+                    (click)="startRowEditVisite(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
+                    (click)="closeRowEditVisite(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
+                  <a class="remove-item-btn" pTooltip="Supprimer"
+                    (click)="confirmVisit(ri, deleteModelVisit, rowData.value)"><i
+                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -319,7 +326,8 @@
             <h5>Saisie des pharmacies</h5>
             <small>{{ phar.length }} médicament(s)</small>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLignePhar(phar.length)"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter médicament</button>
+          <button type="button" class="btn btn-info add-btn" (click)="addLignePhar(phar.length)"><i
+              class="ri-add-fill me-1 align-bottom"></i> Ajouter médicament</button>
         </div>
         <p-table #dtPhar [value]="phar.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
@@ -354,7 +362,8 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" placeholder="dd/mm/yyyy"
-                      mask="00/00/0000" class="w-full" formControlName="dat_act" (input)="ensureDatActNotAfterSoinsPhar(ri)"
+                      mask="00/00/0000" class="w-full" formControlName="dat_act"
+                      (input)="ensureDatActNotAfterSoinsPhar(ri)"
                       (change)="ensureDatActNotAfterSoinsPhar(ri)" /></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('dat_act')?.value }}</ng-template>
                 </p-cellEditor>
@@ -362,28 +371,30 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><app-lov [listData]="listMed || []" [columns]="columnsMed || []"
-                      codeField="cod_med" [selectedCode]="(Med && Med[ri]) || ''" (selectedValue)="onSelectedMed($event, ri)"></app-lov></ng-template>
+                      codeField="cod_med" [selectedCode]="(Med && Med[ri]) || ''"
+                      (selectedValue)="onSelectedMed($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('cod_med')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" class="w-full" [value]="libMed[ri] || ''"
-                      readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                      readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ libMed[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
-                      formControlName="indice" (change)="verif_indice_phar($event, ri)" /></ng-template>
+                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full" formControlName="indice"
+                      (change)="verif_indice_phar($event, ri)" /></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('indice')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
-                      formControlName="abrv_act" readonly /></ng-template>
+                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full" formControlName="abrv_act"
+                      readonly /></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('abrv_act')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -399,64 +410,53 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText inputmode="decimal" type="number" class="w-full"
-                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" formControlName="mnt_net" [value]="(mntNetArrayPhar && mntNetArrayPhar[ri]) || ''"
+                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed"
+                      formControlName="mnt_net" [value]="(mntNetArrayPhar && mntNetArrayPhar[ri]) || ''"
                       readonly /></ng-template>
                   <ng-template pTemplate="output"><span style="display:block;text-align:right">{{
                       rowData.get('mnt_net')?.value | number:'1.3-3' }}</span></ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
-  <p-cellEditor>
-    <ng-template pTemplate="input">
-      <input 
-        pInputText 
-        type="number" 
-        class="w-full"
-        formControlName="nbr_piece" 
-        (change)="verif_piece_pahr($event, ri)"
-        min="0"
-        step="1"
-      />
-    </ng-template>
-    <ng-template pTemplate="output">
-      {{ rowData.get('nbr_piece')?.value }}
-    </ng-template>
-  </p-cellEditor>
-</td>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="number" class="w-full" formControlName="nbr_piece"
+                      (change)="verif_piece_pahr($event, ri)" min="0" step="1" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ rowData.get('nbr_piece')?.value }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
               <td pEditableColumn>
-  <p-cellEditor>
-    <ng-template pTemplate="input">
-      <input 
-        pInputText 
-        type="number" 
-        class="w-full"
-        formControlName="nbr_vign" 
-        (change)="verif_vign_pahr($event, ri)"
-        min="0"
-        step="1"
-      />
-    </ng-template>
-    <ng-template pTemplate="output">
-      {{ rowData.get('nbr_vign')?.value }}
-    </ng-template>
-  </p-cellEditor>
-</td>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="number" class="w-full" formControlName="nbr_vign"
+                      (change)="verif_vign_pahr($event, ri)" min="0" step="1" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ rowData.get('nbr_vign')?.value }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
               <td pEditableColumn (click)="$event.stopPropagation()">
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><select class="form-select border-success w-100" style="min-width:170px" formControlName="prf_typ"
-                      (click)="$event.stopPropagation()" (mousedown)="$event.stopPropagation()"
-                      (change)="OnselectRefTypMed($event)">
+                  <ng-template pTemplate="input"><select class="form-select border-success w-100"
+                      style="min-width:170px" formControlName="prf_typ" (click)="$event.stopPropagation()"
+                      (mousedown)="$event.stopPropagation()" (change)="OnselectRefTypMed($event)">
                       <option value="">Sélectionner</option>
                       <option value="1">Personne Physique</option>
                       <option value="2">Etablissement</option>
                     </select></ng-template>
-                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' : rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
+                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' :
+                    rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><app-lov [listData]="listRefEtablisMed || []"
-                      [columns]="columnsRefEtablisMed || []" codeField="prf_cod" [selectedCode]="(refEtablisPhar && refEtablisPhar[ri]) || ''"
+                      [columns]="columnsRefEtablisMed || []" codeField="prf_cod"
+                      [selectedCode]="(refEtablisPhar && refEtablisPhar[ri]) || ''"
                       (selectedValue)="onSelectedEtablisPhar($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('prf_cod')?.value }}</ng-template>
                 </p-cellEditor>
@@ -464,7 +464,8 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
-                      [value]="etab_rsoc_phar[ri] || ''" readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                      [value]="etab_rsoc_phar[ri] || ''" readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ etab_rsoc_phar[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -477,10 +478,14 @@
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier" (click)="startRowEditPhar(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne" (click)="closeRowEditPhar(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                <a class="remove-item-btn" pTooltip="Supprimer" (click)="confirmMed(ri, deleteModelMed, rowData.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
-              </div>
+                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
+                    (click)="startRowEditPhar(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
+                    (click)="closeRowEditPhar(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
+                  <a class="remove-item-btn" pTooltip="Supprimer"
+                    (click)="confirmMed(ri, deleteModelMed, rowData.value)"><i
+                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -505,7 +510,8 @@
             <h5>Saisie des actes</h5>
             <small>{{ lignes.length }} acte(s)</small>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLigne(lignes.length)"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter acte</button>
+          <button type="button" class="btn btn-info add-btn" (click)="addLigne(lignes.length)"><i
+              class="ri-add-fill me-1 align-bottom"></i> Ajouter acte</button>
         </div>
         <p-table #dtActes [value]="lignes.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
@@ -524,8 +530,7 @@
                 Date Acte</th>
               <th style="text-align: left; width: 160px; min-width: 160px; max-width: 160px;">
                 Acte</th>
-              <th
-                style="text-align: left; min-width: 180px; max-width: 200px;">
+              <th style="text-align: left; min-width: 180px; max-width: 200px;">
                 Libellé</th>
               <th style="text-align: center; width: 70px; max-width: 70px;">
                 Unit</th>
@@ -571,7 +576,8 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" class="w-full" [value]="libAct[ri] || ''"
-                      readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                      readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ libAct[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -594,7 +600,9 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText inputmode="decimal" type="number" class="w-full"
-                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" formControlName="mnt_net" [value]="(mntNetArray && mntNetArray[ri]) || ''" readonly /></ng-template>
+                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed"
+                      formControlName="mnt_net" [value]="(mntNetArray && mntNetArray[ri]) || ''"
+                      readonly /></ng-template>
                   <ng-template pTemplate="output"><span style="display:block;text-align:right">{{
                       rowData.get('mnt_net')?.value | number:'1.3-3' }}</span></ng-template>
                 </p-cellEditor>
@@ -621,22 +629,24 @@
               <!-- Type établis -->
               <td pEditableColumn (click)="$event.stopPropagation()">
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><select class="form-select border-success w-100" style="min-width:170px" formControlName="prf_typ"
-                      (click)="$event.stopPropagation()" (mousedown)="$event.stopPropagation()"
-                      (change)="OnselectRefTyp($event)">
+                  <ng-template pTemplate="input"><select class="form-select border-success w-100"
+                      style="min-width:170px" formControlName="prf_typ" (click)="$event.stopPropagation()"
+                      (mousedown)="$event.stopPropagation()" (change)="OnselectRefTyp($event)">
                       <option value="">Sélectionner</option>
                       <option value="1">Personne Physique</option>
                       <option value="2">Etablissement</option>
                     </select></ng-template>
-                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' : rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
+                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' :
+                    rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
                 </p-cellEditor>
               </td>
 
               <!-- Code -->
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><app-lov [listData]="listRefEtablis || []" [columns]="columnsRefEtablis || []"
-                      codeField="prf_cod" [selectedCode]="(refEtablis && refEtablis[ri]) || ''" appendTo="body"
+                  <ng-template pTemplate="input"><app-lov [listData]="listRefEtablis || []"
+                      [columns]="columnsRefEtablis || []" codeField="prf_cod"
+                      [selectedCode]="(refEtablis && refEtablis[ri]) || ''" appendTo="body"
                       (selectedValue)="onSelectedEtablis($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('prf_cod')?.value }}</ng-template>
                 </p-cellEditor>
@@ -645,8 +655,9 @@
               <!-- Etablissement -->
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full" [value]="etab_rsoc[ri] || ''"
-                      readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
+                      [value]="etab_rsoc[ri] || ''" readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ etab_rsoc[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -661,9 +672,13 @@
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier" (click)="startRowEditActes(rowData, ri)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne" (click)="closeRowEditActes(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                <a class="remove-item-btn" *ngIf="lignes.length > 1" pTooltip="Supprimer" (click)="confirmAct(ri, deleteModel, rowData.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
+                    (click)="startRowEditActes(rowData, ri)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
+                    (click)="closeRowEditActes(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
+                  <a class="remove-item-btn" *ngIf="lignes.length > 1" pTooltip="Supprimer"
+                    (click)="confirmAct(ri, deleteModel, rowData.value)"><i
+                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
                 </div>
               </td>
             </tr>
@@ -684,7 +699,8 @@
             <h5>Saisie des appareils</h5>
             <small>{{ appareil.length }} appareil(s)</small>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLigneAppareil(appareil.length)"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter appareil</button>
+          <button type="button" class="btn btn-info add-btn" (click)="addLigneAppareil(appareil.length)"><i
+              class="ri-add-fill me-1 align-bottom"></i> Ajouter appareil</button>
         </div>
         <p-table #dtApp [value]="appareil.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
@@ -714,22 +730,25 @@
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" placeholder="dd/mm/yyyy"
                       mask="00/00/0000" class="w-full" formControlName="dat_act"
-                      (input)="ensureDatActNotAfterSoinsApp(ri)" (change)="ensureDatActNotAfterSoinsApp(ri)" /></ng-template>
+                      (input)="ensureDatActNotAfterSoinsApp(ri)"
+                      (change)="ensureDatActNotAfterSoinsApp(ri)" /></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('dat_act')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><app-lov [listData]="listAppareil || []" [columns]="columnsAppareil || []"
-                      codeField="cod_app" [selectedCode]="(appareilCode && appareilCode[ri]) || ''"
+                  <ng-template pTemplate="input"><app-lov [listData]="listAppareil || []"
+                      [columns]="columnsAppareil || []" codeField="cod_app"
+                      [selectedCode]="(appareilCode && appareilCode[ri]) || ''"
                       (selectedValue)="onSelectedAppareil($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('cod_app')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full" [value]="libAppareil[ri] || ''"
-                      readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
+                      [value]="libAppareil[ri] || ''" readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ libAppareil[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
@@ -745,7 +764,8 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText inputmode="decimal" type="number" class="w-full"
-                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" formControlName="mnt_net" [value]="(mntNetArrayAppareil && mntNetArrayAppareil[ri]) || ''"
+                      style="text-align:right;background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed"
+                      formControlName="mnt_net" [value]="(mntNetArrayAppareil && mntNetArrayAppareil[ri]) || ''"
                       readonly /></ng-template>
                   <ng-template pTemplate="output"><span style="display:block;text-align:right">{{
                       rowData.get('mnt_net')?.value | number:'1.3-3' }}</span></ng-template>
@@ -753,20 +773,22 @@
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><select class="form-select border-success w-100" style="min-width:170px" formControlName="prf_typ"
-                      (click)="$event.stopPropagation()" (mousedown)="$event.stopPropagation()"
-                      (change)="OnselectRefTypApp($event)">
+                  <ng-template pTemplate="input"><select class="form-select border-success w-100"
+                      style="min-width:170px" formControlName="prf_typ" (click)="$event.stopPropagation()"
+                      (mousedown)="$event.stopPropagation()" (change)="OnselectRefTypApp($event)">
                       <option value="">Sélectionner</option>
                       <option value="1">Personne Physique</option>
                       <option value="2">Etablissement</option>
                     </select></ng-template>
-                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' : rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
+                  <ng-template pTemplate="output">{{ rowData.get('prf_typ')?.value === '1' ? 'Personne Physique' :
+                    rowData.get('prf_typ')?.value === '2' ? 'Etablissement' : '' }}</ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><app-lov [listData]="listRefEtablisApp || []"
-                      [columns]="columnsRefEtablisApp || []" codeField="prf_cod" [selectedCode]="(refEtablisApp && refEtablisApp[ri]) || ''"
+                      [columns]="columnsRefEtablisApp || []" codeField="prf_cod"
+                      [selectedCode]="(refEtablisApp && refEtablisApp[ri]) || ''"
                       (selectedValue)="onSelectedEtablisApp($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('prf_cod')?.value }}</ng-template>
                 </p-cellEditor>
@@ -774,16 +796,21 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><input pInputText type="text" class="w-full"
-                      [value]="etab_rsoc_appareil[ri] || ''" readonly style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
+                      [value]="etab_rsoc_appareil[ri] || ''" readonly
+                      style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
                   <ng-template pTemplate="output">{{ etab_rsoc_appareil[ri] || '' }}</ng-template>
                 </p-cellEditor>
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier" (click)="startRowEditApp(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne" (click)="closeRowEditApp(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                <a class="remove-item-btn" pTooltip="Supprimer" (click)="confirmApp(ri, deleteModelApp, rowData.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
-              </div>
+                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
+                    (click)="startRowEditApp(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
+                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
+                    (click)="closeRowEditApp(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
+                  <a class="remove-item-btn" pTooltip="Supprimer"
+                    (click)="confirmApp(ri, deleteModelApp, rowData.value)"><i
+                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                </div>
               </td>
             </tr>
           </ng-template>

@@ -13,49 +13,52 @@
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Matricule</label>
                 <input type="text" class="form-control border-primary" placeholder="Matricule" [value]="matricule"
-                  readonly />
+                  disabled readonly />
               </div>
-              <div class="col-md-2">
+              <!--div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Num ass.</label>
                 <input type="text" class="form-control border-primary" placeholder="num assurance"
-                  formControlName="num_assur" readonly />
-              </div>
-              <div class="col-md-5">
-                <label for="billinginfo-firstName" class="form-label">Nom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom" [value]="nomPers" readonly />
+                  formControlName="num_assur" disabled readonly />
+              </div-->
+              <div class="col-md-7">
+                <label for="billinginfo-firstName" class="form-label">Nom & Prénom</label>
+                <input type="text" class="form-control border-primary" placeholder="Nom & Prénom" [value]="nomPers"
+                  disabled readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Date saisie</label>
                 <input type="text" class="form-control border-primary" placeholder="Date saisie"
-                  formControlName="dat_saisie" readonly />
+                  formControlName="dat_saisie" disabled readonly />
               </div>
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Code assurance</label>
                 <input type="text" class="form-control border-primary" placeholder="Code assurance"
-                  formControlName="cod_assur" readonly />
+                  formControlName="cod_assur" disabled readonly />
               </div>
               <div class="col-md-7">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
                 <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_assur"
-                  readonly />
+                  disabled readonly />
               </div>
-
-
-
               <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Id CNRPS</label>
-                <input type="text" class="form-control border-primary" placeholder="Motif départ" [value]="num_retr"
-                  readonly />
+                <label for="billinginfo-firstName" class="form-label">Id CNSS/CNRPS</label>
+                <input type="text" class="form-control border-primary" placeholder="Id CNSS/CNRPS" [value]="num_retr"
+                  disabled readonly />
               </div>
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Fillière</label>
-                <input type="text" class="form-control border-primary" placeholder="Fillière"
-                  formControlName="cod_fil" readonly />
+                <input type="text" class="form-control border-primary" placeholder="Fillière" formControlName="cod_fil"
+                  disabled readonly />
               </div>
-              <div class="col-md-10">
+              <div class="col-md-7">
                 <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill"
+                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill" disabled
                   readonly />
+              </div>
+              <div class="col-md-3">
+                <label for="num_soin" class="form-label">N° soin</label>
+                <input id="num_soin" type="text" class="form-control border-primary"
+                       placeholder="N° soin" formControlName="num_soin" disabled readonly />
               </div>
             </div>
           </div>
@@ -68,59 +71,56 @@
           <!-- Deuxième colonne -->
           <div class="col-md-5">
             <div class="row g-3">
-              <div class="col-md-2">
+              <div class="col-md-6">
                 <label for="billinginfo-firstName" class="form-label">Préstataire</label>
-                <input type="text" class="form-control border-primary" placeholder="Préstataire" [value]="numFam"
-                  readonly />
-              </div>
-              <div class="col-md-4">
-                <label for="billinginfo-firstName" class="form-label">Nom adhérent</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom adhérent" [value]="nomAdherent"
-                  readonly />
+                <input id="prestataire" type="text" class="form-control border-primary" placeholder="Préstataire"
+                  [value]="(numFam !== null && numFam !== undefined && numFam !== '')
+                   ? numFam + ' - ' + (nomAdherent || nomPers || '')
+                   : ''" disabled readonly />
               </div>
               <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date naissance</label>
-                <input type="text" class="form-control border-primary" placeholder="Date naissance" [value]="datNais"
-                  readonly />
+                <label for="billinginfo-firstName" class="form-label">Date soin</label>
+                <input type="text" class="form-control border-primary" placeholder="Date soin"
+                  formControlName="dat_soin" mask="00/00/0000" (change)="controleDatSoin($event)" disabled readonly />
               </div>
               <div class="col-md-3">
                 <label for="billinginfo-firstName" class="form-label">Code Bordereau</label>
                 <input type="text" class="form-control border-primary" placeholder="Code Bordereau"
-                  formControlName="cod_bord" readonly />
-              </div>
-              <div class="col-md-4">
-                <label for="billinginfo-firstName" class="form-label">Date soin</label>
-                <input type="text" class="form-control border-primary" placeholder="Date soin"
-                  formControlName="dat_soin" mask="00/00/0000" readonly (change)="controleDatSoin($event)" />
+                  formControlName="cod_bord" disabled readonly />
               </div>
 
+              <div class="col-md-3">
+                <label for="billinginfo-firstName" class="form-label">Date naissance</label>
+                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="Date naissance"
+                  [value]="formatDateNaissance(datNais)" disabled readonly />
+              </div>
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Ans</label>
-                <input type="text" class="form-control border-primary" placeholder="Ans" [value]="ageAn" readonly />
+                <input type="text" class="form-control border-primary" placeholder="Ans" [value]="ageAn" disabled
+                  readonly />
               </div>
               <div class="col-md-2">
                 <label for="billinginfo-firstName" class="form-label">Mois</label>
-                <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" readonly />
+                <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" disabled
+                  readonly />
               </div>
-              <div class="col-md-4">
+              <div class="col-md-5">
                 <label for="billinginfo-firstName" class="form-label">Régime remboursement</label>
-                <select class="form-select border-primary champ-lecture-seule" data-plugin="choices" formControlName="reg_remb">
+                <select class="form-select border-primary champ-lecture-seule" data-plugin="choices"
+                  formControlName="reg_remb" disabled readonly>
                   <option value="">Sélectionner</option>
                   <option *ngFor="let i of listRegimeRemb" [value]="i.reg_remb">{{i.lib_remb}}</option>
-
                 </select>
               </div>
+
               <div class="col-md-4" *ngIf="showMsgDatAccouch">
                 <label for="billinginfo-firstName" class="form-label">Date prévu accouchement</label>
                 <input type="text" class="form-control border-primary" placeholder="Date prévu accouchement" readonly
                   formControlName="dat_prev_accouch" mask="00/00/0000" />
               </div>
-
-
               <div class="col-md-3" *ngIf="showMsgPriseCharge">
                 <label for="billinginfo-firstName" class="form-label">Num Pec</label>
-                <input type="text" class="form-control border-primary" placeholder="Num Pec" readonly
-                  [value]="PEC" />
+                <input type="text" class="form-control border-primary" placeholder="Num Pec" readonly [value]="PEC" />
               </div>
               <div class="col-md-5" *ngIf="showMsgPriseCharge">
                 <label for="billinginfo-firstName" class="form-label">Etablissement</label>
@@ -132,8 +132,6 @@
                 <input type="text" class="form-control border-primary" placeholder="Date pec" readonly
                   [value]="datPec" />
               </div>
-
-
               <div class="col-md-3" *ngIf="showMsgMalad ">
                 <label for="billinginfo-firstName" class="form-label">Code maladie</label>
                 <input type="text" class="form-control border-primary" placeholder="Code maladie" readonly
@@ -148,11 +146,13 @@
                 <label for="billinginfo-firstName" class="form-label">Numéro dossier</label>
                 <input type="text" class="form-control border-primary" placeholder="Numéro dossier" readonly />
               </div>
+
               <div class="col-md-12">
-                <label for="billinginfo-firstName" class="form-label">Obs</label>
-                <textarea class="form-control border-primary" placeholder="Observation" readonly
-                  formControlName="obs"></textarea>
+                <label class="form-label">Observation</label>
+                <input type="text" class="form-control border-primary" placeholder="Observation" disabled readonly
+                  formControlName="obs" />
               </div>
+
             </div>
           </div>
         </div>
@@ -165,32 +165,32 @@
   <div class="card p-4 border shadow-none mb-0 mt-4">
     <form action="javascript:void(0);" class="row g-3">
       <div class="row">
-      <!-- Première colonne -->
-      <div class="col-md-6">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Solde CNAM</label>
-            <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-              placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+        <!-- Première colonne -->
+        <div class="col-md-6">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Solde CNAM</label>
+              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
+                placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Ligne de séparation -->
-      <div class="col-md-1 d-flex align-items-stretch">
-        <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
-      </div>
+        <!-- Ligne de séparation -->
+        <div class="col-md-1 d-flex align-items-stretch">
+          <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
+        </div>
 
-      <!-- Deuxième colonne -->
-      <div class="col-md-5">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Solde estimatif</label>
-            <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-              placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+        <!-- Deuxième colonne -->
+        <div class="col-md-5">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Solde estimatif</label>
+              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
+                placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </form>
   </div>
@@ -202,12 +202,11 @@
       <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
         <div class="col-12 mb-3">
           <div class="border mb-3" role="tablist" aria-orientation="horizontal">
-            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1"
-              class="nav nav-pills bult-tabs">
+            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs">
               <li [ngbNavItem]="1">
                 <a ngbNavLink>
-                        <h5 class="nav-titl m-0">Les visites</h5>
-                      </a>
+                  <h5 class="nav-titl m-0">Les visites</h5>
+                </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
@@ -275,8 +274,8 @@
               </li>
               <li [ngbNavItem]="2">
                 <a ngbNavLink>
-                        <h5 class="nav-titl m-0">Les actes</h5>
-                      </a>
+                  <h5 class="nav-titl m-0">Les actes</h5>
+                </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
@@ -350,8 +349,8 @@
               </li>
               <li [ngbNavItem]="3">
                 <a ngbNavLink>
-                        <h5 class="nav-titl m-0">Pharmacies</h5>
-                      </a>
+                  <h5 class="nav-titl m-0">Pharmacies</h5>
+                </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
@@ -424,8 +423,8 @@
               </li>
               <li [ngbNavItem]="4">
                 <a ngbNavLink>
-                        <h5 class="nav-titl m-0">Les appareils</h5>
-                      </a>
+                  <h5 class="nav-titl m-0">Les appareils</h5>
+                </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
@@ -495,8 +494,8 @@
               </li>
               <li [ngbNavItem]="5">
                 <a ngbNavLink>
-                        <h5 class="nav-titl m-0">Consultation actes Mut</h5>
-                      </a>
+                  <h5 class="nav-titl m-0">Consultation actes Mut</h5>
+                </a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->

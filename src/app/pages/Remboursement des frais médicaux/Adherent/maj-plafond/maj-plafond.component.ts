@@ -218,7 +218,7 @@ export class MajPlafondComponent {
 
     });
     this.libAssur = item.lib_assur
-    this.adherentServ.getPlafondAssur(item.mat_pers).subscribe((data: any) => {
+    this.adherentServ.getPlafondAssur(item.cod_soc, item.mat_pers).subscribe((data: any) => {
       this.listPlafAssur = data
     })
 
@@ -226,6 +226,7 @@ export class MajPlafondComponent {
       this.listPlafCnam = data
     })
   }
+
   savePlafAssur() {
 
     this.adherentServ.addPlafAssur(this.formPlafondAssur.value).subscribe((data) => {
@@ -237,12 +238,16 @@ export class MajPlafondComponent {
         timer: 2000,
       });
 
-      this.adherentServ.getPlafondAssur(this.formPersonnel.get('mat_pers')?.value).subscribe((data: any) => {
+      const codSoc = this.formPersonnel.get('cod_soc')?.value;
+      const matPers = this.formPersonnel.get('mat_pers')?.value;
+
+      this.adherentServ.getPlafondAssur(codSoc, matPers).subscribe((data: any) => {
         this.listPlafAssur = data
       })
     })
 
   }
+
   savePlafCnam() {
 
     this.adherentServ.addPlafCnam(this.formPlafondCnam.value).subscribe((data) => {

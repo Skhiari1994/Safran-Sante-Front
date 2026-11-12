@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
-//import { CaisseRetrService } from 'src/app/pages/CaisseRetraite/caisse-retr.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { AdherentService } from '../adherent.service';
@@ -13,6 +12,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
   templateUrl: './cons-plafond.component.html',
   styleUrl: './cons-plafond.component.scss'
 })
+
 export class ConsPlafondComponent {
   pSusp: any
   pSusp2: any
@@ -34,11 +34,13 @@ export class ConsPlafondComponent {
   editCarteIndex: any
   columnTitles2: { [key: string]: string } = {
     annee_assur: "Année",
+    nom_prest: "Bénéficiaire",
     cod_assur: "Assurance",
     libAssur: "Libelle",
     plafond: "Plafond",
     sold_plaf: "Consommer"
   };
+
   columnTitles: { [key: string]: string } = {
     annee_cnam: "Année",
     plafond: "Plafond",
@@ -95,7 +97,6 @@ export class ConsPlafondComponent {
 
     })
 
-
   }
 
   ngOnInit() {
@@ -103,7 +104,6 @@ export class ConsPlafondComponent {
     this.saveService.isSearch$.subscribe((canSearch) => {
       this.isSearch = true
       console.log("is search valid", canSearch)
-
     })
     this.getPersonnels()
 
@@ -114,9 +114,6 @@ export class ConsPlafondComponent {
     this.saveService.clearSaveCallback();
     this.saveService.setCanSave(false)
   }
-
-
-
 
   getPersonnels() {
     this.adherentServ.getPersActif().subscribe(data => {
@@ -195,11 +192,10 @@ export class ConsPlafondComponent {
       mat_int: item.mat_int,
       pers_carte: item.pers_carte,
 
-
-
     });
+
     this.libAssur = item.lib_assur
-    this.adherentServ.getPlafondAssur(item.mat_pers).subscribe((data: any) => {
+    this.adherentServ.getPlafondAssur(item.cod_soc, item.mat_pers).subscribe((data: any) => {
       this.listPlafAssur = data
     })
 
@@ -208,15 +204,6 @@ export class ConsPlafondComponent {
     })
   }
 
-  // onSelectRefEtablis(item: any) {
-  //   console.log("item :", item);
-  //   this.libRef = item.nom
-  //   this.formDossMalad.patchValue({
-  //     prf_typ: item.prf_typ,
-  //     prf_cod: item.prf_cod,
-  //   });
-
-  // }
 
   openModalTab(content: any) {
     this.edit = true;
@@ -230,10 +217,12 @@ export class ConsPlafondComponent {
   // Filtres par colonne : clés préfixées « a_ » (plafond mutuelle) et « c_ » (plafond CNAM)
   showFilters: { [key: string]: boolean } = {};
   searchz: { [key: string]: string } = {};
+
   toggleFilter(key: string) {
     this.showFilters[key] = !this.showFilters[key];
     if (!this.showFilters[key]) this.searchz[key] = '';
   }
+
   filterRows(list: any[], prefix: string): any[] {
     const keys = Object.keys(this.searchz).filter(k => k.startsWith(prefix) && this.searchz[k]);
     if (!keys.length) return list || [];
@@ -245,16 +234,17 @@ export class ConsPlafondComponent {
   onSort(column: any) {
     this.listPlafAssur = this.service.onSort(column, this.listPlafAssur);
   }
+
   onSort2(column: any) {
     this.listPlafCnam = this.service.onSort(column, this.listPlafCnam);
   }
+
   getTotalPages(): number {
     return Math.ceil(this.listPlafAssur.length / 6);
   }
+
   getTotalPages2(): number {
     return Math.ceil(this.listPlafCnam.length / 6);
   }
+
 }
-
-
-

@@ -31,14 +31,17 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("wdat_soin", wdat_soin).set("datNais", datNais).set("datSaisie", datSaisie)
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_plafond_mutuelle", { params })
   }
+  
   get_plafond_cnam(soc: any, mat: any, wdat_soin: any, datNais: any, codAssur: any, datSaisie: any) {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("wdat_soin", wdat_soin).set("datNais", datNais).set("codAssur", codAssur).set("datSaisie", datSaisie)
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_plafond_cnam", { params })
   }
+
   getPersonnelBultSoin = (soc: any): Observable<any[]> => {
     const params = new HttpParams().set("soc", soc)
     return this.http.get<any[]>(API_URL + "Remb/Personnel/getPersonnelBultSoin", { params });
   };
+
   getAdherent = (soc: any, mat: any): Observable<any[]> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat)
     return this.http.get<any[]>(API_URL + "Remb/Personnel/getAdherent", { params });
@@ -275,6 +278,7 @@ export class BulletinSoinService {
       )
     });
   }
+
   addAllLigBultArriver(dataVisit: any, dataAct: any, dataMed: any, dataApp: any): Observable<any> {
     return forkJoin({
       visit: this.http.post<any>(API_URL + "Remb/BordArriv/addLigVisitArriver", dataVisit),
@@ -288,10 +292,12 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("codMed", codMed)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getNumLigMed", { params });
   }
+
   getNumLigAct = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getNumLigAct", { params });
   }
+
   getNumLigApp = (soc: any, mat: any, numFam: any, datSoin: any, codApp: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("codApp", codApp)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getNumLigApp", { params });
@@ -302,32 +308,64 @@ export class BulletinSoinService {
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultCnam", { params });
   }
 
-  getLigBultAct = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
+  getLigBultAct = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
+    console.log('getLigBultAct @@@@@')
+    console.log('numSoin ---> ',numSoin)
+    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultAct", { params });
   }
+
   getLigBultActCons = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultActCons", { params });
   }
-  getLigBultVisit = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
+
+  getLigBultVisit = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
+    console.log('getLigBultVisit @@@@@')
+    console.log('numSoin ---> ',numSoin)
+    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultVisit", { params });
   }
+
   getLigBultVisitCons = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultVisitCons", { params });
   }
-  getLigBultMed = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
+
+  getLigBultMed = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
+    console.log('getLigBultMed @@@@@')
+    console.log('numSoin ---> ',numSoin)
+    let params = new HttpParams()
+      .set("soc", soc)
+      .set("mat", mat)
+      .set("numFam", numFam)
+      .set("datSoin", datSoin);
+  
+    if (numSoin !== null && numSoin !== undefined && numSoin !== '') {
+      params = params.set("numSoin", numSoin);
+    }
+  
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultMed", { params });
   }
+
   getLigBultMedCons = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultMedCons", { params });
   }
-  getLigBultApp = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
+  
+  getLigBultApp = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
+    console.log('getLigBultApp @@@@@')
+    console.log('numSoin ---> ',numSoin)
+    let params = new HttpParams()
+      .set("soc", soc)
+      .set("mat", mat)
+      .set("numFam", numFam)
+      .set("datSoin", datSoin);
+  
+    if (numSoin !== null && numSoin !== undefined && numSoin !== '') {
+      params = params.set("numSoin", numSoin);
+    }
+
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultApp", { params });
   }
 

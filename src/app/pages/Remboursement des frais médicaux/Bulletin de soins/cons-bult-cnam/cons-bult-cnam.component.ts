@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'ngx-pagination';
-import { map, forkJoin, tap } from 'rxjs';
+import { map, forkJoin, tap, Subject, merge } from 'rxjs';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { CarteCnamAlertService } from '../../../Adherent/carte-cnam-alert.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { BulletinSoinService } from '../bulletin-soin.service';
+import { switchMap, takeUntil } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-cons-bult-cnam',
@@ -94,33 +96,33 @@ export class ConsBultCnamComponent {
     public service: PaginationService, private carteCnamAlert: CarteCnamAlertService) {
     this.formBuletinSoin = this.fb.group({
       cod_soc: [this.token.getUser().codSoc],
-      mat_pers: [''],
-      num_fam: [''],
-      dat_soin: [''],
-      cod_bord: [''],
-      cod_assur: [''],
-      num_soin: [''],
-      ord_bult: [''],
-      tot_honor: [''],
-      tot_net: [''],
-      tot_remb: [''],
+      mat_pers: [{ value: '', disabled: true }],
+      num_fam: [{ value: '', disabled: true }],
+      dat_soin: [{ value: '', disabled: true }],
+      cod_bord: [{ value: '', disabled: true }],
+      cod_assur: [{ value: '', disabled: true }],
+      num_soin: [{ value: '', disabled: true }],
+      ord_bult: [{ value: '', disabled: true }],
+      tot_honor: [{ value: '', disabled: true }],
+      tot_net: [{ value: '', disabled: true }],
+      tot_remb: [{ value: '', disabled: true }],
       reg_remb: [{ value: '', disabled: true }], // consultation : lecture seule
-      cod_malad: [''],
-      num_pec: [''],
-      cod_fil: [''],
-      num_assur: [''],
-      dat_prev_accouch: [''],
-      nat_bult: ['C'],
-      mat_pers_conj: [''],
-      num_ass_conj: [''],
-      dat_saisie: [''],
-      obs: [''],
-      obs_a: [''],
-      envoi: [''],
-      ann_plaf_imp: [''],
-      reg_adh: [''],
-      mod_pay: [''],
-      dat_vir: [''],
+      cod_malad: [{ value: '', disabled: true }],
+      num_pec: [{ value: '', disabled: true }],
+      cod_fil: [{ value: '', disabled: true }],
+      num_assur: [{ value: '', disabled: true }],
+      dat_prev_accouch: [{ value: '', disabled: true }],
+      nat_bult: [{ value: 'C', disabled: true }],
+      mat_pers_conj: [{ value: '', disabled: true }],
+      num_ass_conj: [{ value: '', disabled: true }],
+      dat_saisie: [{ value: '', disabled: true }],
+      obs: [{ value: '', disabled: true }],
+      obs_a: [{ value: '', disabled: true }],
+      envoi: [{ value: '', disabled: true }],
+      ann_plaf_imp: [{ value: '', disabled: true }],
+      reg_adh: [{ value: '', disabled: true }],
+      mod_pay: [{ value: '', disabled: true }],
+      dat_vir: [{ value: '', disabled: true }],
 
     })
 
@@ -143,8 +145,11 @@ export class ConsBultCnamComponent {
     this.addLigneVisite()
     this.addLigneAppareil(0)
   }
+
   ngOnDestroy() {
     this.saveService.setConsultation(false);
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngOnInit() {
@@ -152,11 +157,9 @@ export class ConsBultCnamComponent {
     this.saveService.clearSaveCallback();
     this.saveService.clearDeleteCallback();
     this.saveService.setConsultation(true);
-    this.getPersonnel()
-    this.getRegimeRemb()
+    this.getPersonnel();
+    this.getRegimeRemb();
     this.getBultSoin();
-    this.calculerTotaux()
-    //this.getBultSoin()
     this.calculerTotaux();
 
     this.columnsBultSoin = [
@@ -166,9 +169,8 @@ export class ConsBultCnamComponent {
     ];
 
   }
-  checkBultSoinService() {
-    console.log('Checking getBultCnam service...');
 
+  checkBultSoinService() {
     this.serv.getBultCnam(this.token.getUser().codSoc).subscribe(
       (data: any) => {
         console.log('getBultCnam returned:', data);
@@ -180,8 +182,6 @@ export class ConsBultCnamComponent {
         console.error('getBultCnam error:', error);
       }
     );
-
-    console.log('Checking getPersonnelBultSoin service...');
 
     this.serv.getPersonnelBultSoin(this.token.getUser().codSoc).subscribe(
       (data: any) => {
@@ -255,7 +255,6 @@ export class ConsBultCnamComponent {
         const validArrays = formArrays.map(array =>
           array.controls.filter(control => control.valid).map(control => control.value)
         );
-        console.log("visite : ,act :,med : ,app : ", validArrays)
         this.serv.addAllLigBult(validArrays[0], validArrays[2], validArrays[1], validArrays[3]).subscribe(
           response => {
             const errors = [];
@@ -298,6 +297,7 @@ export class ConsBultCnamComponent {
       confirmButtonText: 'OK'
     });
   }
+
   getBultSoin() {
     // liste légère : la fiche complète n'est chargée qu'à la sélection d'une ligne (voir search)
     this.serv.getBultCnamListe(this.token.getUser().codSoc).subscribe(
@@ -318,6 +318,7 @@ export class ConsBultCnamComponent {
       }
     );
   }
+
   getBultSoinRecords() {
     this.serv.getBultCnam(this.token.getUser().codSoc).subscribe(
       (data: any) => {
@@ -339,7 +340,6 @@ export class ConsBultCnamComponent {
         ];
       },
       error => {
-        console.error('Error loading bulletin records:', error);
         // Fall back to personnel list on error
         this.getBultSoin();
       }
@@ -359,28 +359,38 @@ export class ConsBultCnamComponent {
     });
   }
 
+  private destroy$ = new Subject<void>();
+  private cancelLoad$ = new Subject<void>();
+
+
   private chargerBulletin(item: any) {
-    this.matricule = item.mat_pers;
+    // cancel any requests still running for the previous bulletin
+    this.cancelLoad$.next();
+    const stop$ = merge(this.cancelLoad$, this.destroy$);
+
+    const codSoc = this.token.getUser().codSoc;
+    const { mat_pers, num_fam, dat_soin, cod_fil, cod_assur, num_assur,
+      cod_soc, dat_saisie, num_soin } = item;
+
+    // ---- 1. synchronous state (no waiting on the network) ----
+    this.matricule = mat_pers;
     this.PEC = item.num_pec;
-    this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, this.token.getUser().codSoc, item.nom_adherent || item.nom_complet_pers);
-
-    this.serv.getAdherent(this.token.getUser().codSoc, item.mat_pers).subscribe((data: any) => {
-      this.listAdherent = data;
-      this.numFam = item.num_fam;
-    });
-
+    this.numFam = num_fam;
     this.nomPers = item.nom_complet_pers;
-    this.nomAdherent = item.nom_adherent;
     this.lib_assur = item.lib_assur;
     this.lib_fill = item.lib_fill;
 
+    const nomPrestataire = item.nom_adherent ?? item.nom_complet_pers;
+    this.nomAdherent = nomPrestataire;
+
+    this.carteCnamAlert.verifierExpirationMatricule(
+      mat_pers, codSoc, item.nom_adherent || item.nom_complet_pers);
+
     this.formBuletinSoin.patchValue({
-      cod_soc: item.cod_soc,
-      mat_pers: item.mat_pers,
-      num_fam: item.num_fam,
-      dat_soin: item.dat_soin,
+      cod_soc, mat_pers, num_fam, dat_soin, cod_assur, dat_saisie,
+      nomPers: item.nom_complet_pers,
+      nomAdherent: nomPrestataire,
       cod_bord: item.cod_bord,
-      cod_assur: item.cod_assur,
       num_soin: item.num_soin,
       ord_bult: item.ord_bult,
       tot_honor: item.tot_honor,
@@ -395,7 +405,6 @@ export class ConsBultCnamComponent {
       nat_bult: item.nat_bult,
       mat_pers_conj: item.mat_pers_conj,
       num_ass_conj: item.num_ass_conj,
-      dat_saisie: item.dat_saisie,
       obs: item.obs,
       obs_a: item.obs_a,
       envoi: item.envoi,
@@ -405,61 +414,114 @@ export class ConsBultCnamComponent {
       dat_vir: item.dat_vir,
     });
 
-    this.serv.getMeds(item.cod_fil, item.cod_assur).subscribe((medData: any) => {
-      this.listMed = medData;
-      this.columnsMed = [
-        { key: "cod_med", label: "Code" },
-        { key: "lib_med", label: "Libelle" },
-        { key: "med_prix", label: "Mdc Prix" },
-      ];
+    // ---- 2. adherent ----
+    this.serv.getAdherent(codSoc, mat_pers)
+      .pipe(takeUntil(stop$))
+      .subscribe({
+        next: (data: any) => (this.listAdherent = data),
+        error: (e) => console.error('getAdherent', e),
+      });
 
-      this.serv.getLigBultMed(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
+    console.log('cod_fil --> ',cod_fil)
+    console.log('cod_assur --> ',cod_assur)
+    // ---- 3. medicines ----
+    this.serv.getMeds(cod_fil, cod_assur).pipe(
+      tap((medData: any) => {
+        this.listMed = medData;
+        console.log('this listMed after service ----> ',this.listMed);
+        this.columnsMed = [
+          { key: 'cod_med', label: 'Code' },
+          { key: 'lib_med', label: 'Libelle' },
+          { key: 'med_prix', label: 'Mdc Prix' },
+        ];
+      }),
+      switchMap(() => this.serv.getLigBultMed(cod_soc, mat_pers, num_fam, dat_soin, item.num_soin)),
+      takeUntil(stop$)
+    ).subscribe({
+      next: (data: any) => {
         this.loadDataIntoTableMed(data);
         this.calculateTotalsPhar();
-      });
+      },
+      error: (e) => console.error('medicines', e),
     });
 
-    this.serv.getActes(this.parente, this.sexe, item.cod_fil, item.num_assur).subscribe((acteList: any) => {
-      this.listActe = acteList;
-      this.columnActe = [
-        { key: "abrv_act", label: "Abrv acte" },
-        { key: "lib_act", label: "Libelle" },
-      ];
+    // ---- 4. sexe/parente first, THEN actes and visites ----
+    this.serv.getSexe(codSoc, mat_pers, num_fam).pipe(
+      takeUntil(stop$)
+    ).subscribe({
+      next: (sx: any) => {
+        this.sexe = sx.sexe;
+        this.parente = sx.parente;
 
-      this.serv.getLigBultAct(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
-        this.loadDataIntoTable(data);
-      });
-    });
-
-    this.serv.getSexe(this.token.getUser().codSoc, item.mat_pers, item.num_fam).subscribe((sx: any) => {
-      this.sexe = sx.sexe;
-      this.parente = sx.parente;
-      this.serv.getVisite(this.parente, this.sexe, item.cod_fil, item.cod_assur).subscribe((visList: any) => {
-        this.listVisite = visList;
-        this.columnVisite = [
-          { key: "cod_Visit", label: "Abrv acte" },
-          { key: "lib_Visit", label: "Libelle" },
-        ];
-
-        this.serv.getLigBultVisit(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
-          this.loadDataIntoTableVisite(data);
-          this.calculateTotalsVisite();
+        // actes (needs parente + sexe)
+        this.serv.getActes(this.parente, this.sexe, cod_fil, num_assur).pipe(
+          tap((acteList: any) => {
+            this.listActe = acteList;
+            this.columnActe = [
+              { key: 'abrv_act', label: 'Abrv acte' },
+              { key: 'lib_act', label: 'Libelle' },
+            ];
+          }),
+          switchMap(() => this.serv.getLigBultAct(cod_soc, mat_pers, num_fam, dat_soin, item.num_soin)),
+          takeUntil(stop$)
+        ).subscribe({
+          next: (data: any) => this.loadDataIntoTable(data),
+          error: (e) => console.error('actes', e),
         });
-      });
+
+        // visites (needs parente + sexe)
+        this.serv.getVisite(this.parente, this.sexe, cod_fil, cod_assur).pipe(
+          tap((visList: any) => {
+            this.listVisite = visList;
+            this.columnVisite = [
+              { key: 'cod_Visit', label: 'Abrv acte' },
+              { key: 'lib_Visit', label: 'Libelle' },
+            ];
+          }),
+          switchMap(() => this.serv.getLigBultVisit(cod_soc, mat_pers, num_fam, dat_soin, item.num_soin)),
+          takeUntil(stop$)
+        ).subscribe({
+          next: (data: any) => {
+            this.loadDataIntoTableVisite(data);
+            this.calculateTotalsVisite();
+          },
+          error: (e) => console.error('visites', e),
+        });
+      },
+      error: (e) => console.error('getSexe', e),
     });
 
-    this.serv.getLigBultApp(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
-      this.loadDataIntoTablApp(data);
-      this.calculateTotalsAppareil();
-    });
-
-    this.serv.get_plafond_cnam(this.token.getUser().codSoc, item.mat_pers, item.dat_soin, this.datNais,
-      item.cod_assur, item.dat_saisie).subscribe((data: any) => {
-        this.ageAn = data.ageAn;
-        this.ageMois = data.ageMois;
-        this.soldPlafond = Number(data.soldPlafond).toFixed(3);
-        this.soldPlafondEstim = Number(data.soldPlafondEstim).toFixed(3);
+    // ---- 5. appareils ----
+    this.serv.getLigBultApp(cod_soc, mat_pers, num_fam, dat_soin, item.num_soin)
+      .pipe(takeUntil(stop$))
+      .subscribe({
+        next: (data: any) => {
+          this.loadDataIntoTablApp(data);
+          this.calculateTotalsAppareil();
+        },
+        error: (e) => console.error('appareils', e),
       });
+
+    // ---- 6. birth date, THEN age + plafond ----
+    this.serv.getDatNais(codSoc, mat_pers, num_fam).pipe(
+      tap((d: any) => (this.datNais = d?.dat_nais)),
+      switchMap((d: any) => {
+        if (!d?.dat_nais) {
+          throw new Error(`No birth date for mat_pers=${mat_pers}, num_fam=${num_fam}`);
+        }
+        return this.serv.get_plafond_cnam(
+          codSoc, mat_pers, dat_soin, d.dat_nais, cod_assur, dat_saisie);
+      }),
+      takeUntil(stop$)
+    ).subscribe({
+      next: (data: any) => {
+        this.ageAn = data?.ageAn ?? 0;
+        this.ageMois = data?.ageMois ?? 0;
+        this.soldPlafond = Number(data?.soldPlafond ?? 0).toFixed(3);
+        this.soldPlafondEstim = Number(data?.soldPlafondEstim ?? 0).toFixed(3);
+      },
+      error: (e) => console.error('plafond CNAM', e),
+    });
   }
 
   loadDataIntoTable(data: any[]) {
@@ -566,6 +628,20 @@ export class ConsBultCnamComponent {
   }
 
 
+  formatDateNaissance(date: string): string {
+    if (!date) {
+      return '';
+    }
+
+    // yyyy-MM-dd -> dd/MM/yyyy
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const [year, month, day] = date.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    return date;
+  }
+
 
   loadDataIntoTableVisite(data: any) {
     this.visiteCode = [];
@@ -656,8 +732,14 @@ export class ConsBultCnamComponent {
 
     forkJoin(observables).subscribe(() => {
       data.forEach((item: any) => {
-        const selectedMed = this.listMed.find(med => med.cod_med === item.cod_med);
+        const norm = (v: any) => String(v ?? '').trim().toUpperCase();
+
+        const selectedMed = (this.listMed || []).find(med => norm(med.cod_med) === norm(item.cod_med));
         this.libMed.push(selectedMed?.lib_med || item.lib_med || item.libelle || '');
+
+        console.log('getMeds params -> cod_fil:', JSON.stringify(item.cod_fil), 'cod_assur:', JSON.stringify(item.cod_assur));
+        console.log('listMed size:', this.listMed);
+        console.log('row cod_med:', JSON.stringify(item.cod_med), typeof item.cod_med);
 
         const selectedEtab = this.listRefEtablisMed.find(e => e.prf_cod === item.prf_cod);
         this.etab_rsoc_phar.push(selectedEtab?.etab_rsoc || selectedEtab?.met_etab || item.lib_etablis || '');
@@ -777,9 +859,18 @@ export class ConsBultCnamComponent {
     this.formBuletinSoin.patchValue({
       num_fam: item.num_fam
     })
-    this.serv.getDatNais(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe((data: any) => {
-      this.datNais = data.dat_nais
-    })
+
+    this.serv.getDatNais(
+      this.token.getUser().codSoc,
+      this.formBuletinSoin.get('mat_pers')?.value,
+      item.num_fam
+    ).subscribe((data: any) => {
+
+      console.log('getDatNais response:', data);
+      console.log('dat_nais:', data?.dat_nais);
+
+      this.datNais = data?.dat_nais;
+    });
 
 
     this.serv.getSexe(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe((data: any) => {
@@ -811,6 +902,7 @@ export class ConsBultCnamComponent {
     })
 
   }
+
   onSelectedVMat(item: any) {
     console.log("item :", item)
     this.numAssur = item.numRetr,
@@ -1489,13 +1581,12 @@ export class ConsBultCnamComponent {
   }
   totalHonorairesPhar: number = 0;
   totalNetPhar: number = 0;
+
   calculateTotalsPhar() {
-    console.log("this.phar :", this.phar)
     this.totalHonorairesPhar = this.phar.controls.reduce((sum, ligne) => {
       const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
       return sum + honor;
     }, 0);
-
     this.totalNetPhar = this.phar.controls.reduce((sum, ligne) => {
       const net = parseFloat((ligne.get('mnt_net')?.value || '0')) || 0;
       return sum + net;
@@ -1504,9 +1595,8 @@ export class ConsBultCnamComponent {
 
   libMed: string[] = []
   selectedMed: any
-  onSelectedMed(selectedValue: any, index: number): void {
 
-    console.log('selectedValue', selectedValue);
+  onSelectedMed(selectedValue: any, index: number): void {
     this.selectedMed = selectedValue
     const selectedMed = this.listMed.find(acte => acte.cod_med === selectedValue.cod_med);
     this.libMed[index] = selectedMed.lib_med
@@ -1516,13 +1606,11 @@ export class ConsBultCnamComponent {
       mdc_prix: selectedValue.mdc_prix
     });
 
-
   }
   /* Fin Traitement des medicaments*/
 
 
   /* Traitement des Visites*/
-
   get visite(): FormArray {
     return this.ligVisiteForm.get('visite') as FormArray;
   }
@@ -1567,14 +1655,12 @@ export class ConsBultCnamComponent {
   selectedIndexVisit: number | null = null;
   confirmVisit(index: any, content: any, id: any) {
     this.selectedIndexVisit = index
-    console.log("this.selectedIndex:", this.selectedIndexVisit);
-    //this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+
   ConfirmDeleteVisit(index: number): void {
     if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.visite.at(index).value; // Récupérer les données de la ligne
-    console.log("ligne:", ligne);
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -1585,11 +1671,8 @@ export class ConsBultCnamComponent {
       dat_act: ligne.dat_act,
     };
 
-    console.log("Clé à vérifier :", cle);
-
     this.serv.existeLigBultVisit(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
 
         if (exists) {
           // Si l'enregistrement existe, on appelle le service de suppression
@@ -1623,14 +1706,15 @@ export class ConsBultCnamComponent {
       }
     });
   }
-  etab_rsoc_visite: string[] = []
-  onSelectedEtablisVisite(selectedValue: any, index: number): void {
-    console.log('selectedValueVisit', selectedValue);
 
+  etab_rsoc_visite: string[] = []
+
+  onSelectedEtablisVisite(selectedValue: any, index: number): void {
     const selectedActe = this.listRefEtablisVisit.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
     this.etab_rsoc_visite[index] = selectedActe.etab_rsoc
     this.visite.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
   }
+
   mntNetArrayVisite: number[] = [];
   calcul_mnt_net_visite(event: any, index: number) {
     const ligBult = this.ligVisiteForm.get('visite') as FormArray;
@@ -1643,16 +1727,15 @@ export class ConsBultCnamComponent {
         confirmButtonText: 'OK',
       });
     }
-    console.log("ligBult :", ligBult.value[index].abrv_act)
+
     this.serv.calculer_montant_net_visit(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligBult.value[index].cod_visit,
       event.target.value, this.formBuletinSoin.get("dat_soin")?.value, this.selectedVisit.prix_Visit, this.selectedVisit.taux_Remb, '0').subscribe((data: any) => {
         this.mntNet = data.p_mnt_net
-
         this.mntNetArrayVisite[index] = data.p_mnt_net;
         this.visite.at(index).patchValue({ mnt_net: this.mntNetArrayVisite[index] });
         this.calculateTotalsVisite();
-        console.log(this.mntNetArrayVisite)
       })
+
   }
 
   totalHonorairesVisite: number = 0;
@@ -1673,7 +1756,6 @@ export class ConsBultCnamComponent {
     const ligPhar = this.ligVisiteForm.get('visite') as FormArray;
     this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].abrv_act.indice).
       subscribe((data: any) => {
-        console.log("data", data)
         if (data.reponse != null) {
           Swal.fire({
             title: 'Message',
@@ -1754,10 +1836,10 @@ export class ConsBultCnamComponent {
     //this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+
   ConfirmDeleteApp(index: number): void {
     if (this.lectureSeule) { return; } // écran de consultation : aucune création ni suppression
     const ligne = this.appareil.at(index).value; // Récupérer les données de la ligne
-    console.log("ligne:", ligne);
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -1768,11 +1850,9 @@ export class ConsBultCnamComponent {
       num_lig_app: ligne.num_lig_app,
     };
 
-    console.log("Clé à vérifier :", cle);
 
     this.serv.existeLigBultApp(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
 
         if (exists) {
           // Si l'enregistrement existe, on appelle le service de suppression
@@ -1805,15 +1885,17 @@ export class ConsBultCnamComponent {
       }
     });
   }
-  etab_rsoc_appareil: string[] = []
-  onSelectedEtablisApp(selectedValue: any, index: number): void {
-    console.log('selectedValue', selectedValue);
 
+  etab_rsoc_appareil: string[] = []
+
+  onSelectedEtablisApp(selectedValue: any, index: number): void {
     const selectedActe = this.listRefEtablisApp.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
     this.etab_rsoc_appareil[index] = selectedActe.etab_rsoc
     this.appareil.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
   }
+
   mntNetArrayAppareil: number[] = [];
+
   calcul_mnt_net_app(event: any, index: number) {
     const ligBult = this.ligAppareilForm.get('appareil') as FormArray;
     if (event.target.value == null) {
@@ -1824,16 +1906,15 @@ export class ConsBultCnamComponent {
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'OK',
       });
+
     }
-    console.log("ligBult :", ligBult.value[index].abrv_act)
+
     this.serv.calculer_montant_net_app(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, this.formBuletinSoin.get("num_fam")?.value,
       this.formBuletinSoin.get("dat_soin")?.value, event.target.value, ligBult.value[index].cod_app, 0).subscribe((data: any) => {
         this.mntNet = data.p_mnt_net ?? 0
-
         this.mntNetArrayAppareil[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
         this.appareil.at(index).patchValue({ mnt_net: this.mntNetArrayAppareil[index] });
         this.calculateTotalsAppareil();
-        console.log(this.mntNetArrayVisite)
       })
   }
 
@@ -1855,7 +1936,6 @@ export class ConsBultCnamComponent {
     const ligPhar = this.ligAppareilForm.get('appareil') as FormArray;
     this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].abrv_act.indice).
       subscribe((data: any) => {
-        console.log("data", data)
         if (data.reponse != null) {
           Swal.fire({
             title: 'Message',

@@ -77,7 +77,8 @@ export class AdherentService {
   }
 
   getPersActif(): Observable<any[]> {
-    return this.http.get<any[]>(API_URL + "Remb/Personnel/getPersActif");
+    const params = new HttpParams().set('soc', this.cod_soc ?? '')
+    return this.http.get<any[]>(API_URL + "Remb/Personnel/getPersActif", { params });
   }
 
   getDossierMld(mat: any): Observable<any[]> {
@@ -102,8 +103,8 @@ export class AdherentService {
     return this.http.post<any>(API_URL + "Remb/Personnel/addDossMld", data);
   }
 
-  getPlafondAssur = (mat: any): Observable<any[]> => {
-    const params = new HttpParams().set('mat', mat)
+  getPlafondAssur = (soc : any, mat: any): Observable<any[]> => {
+    const params = new HttpParams().set('soc', soc).set('mat', mat);
     return this.http.get<any[]>(API_URL + "Remb/Personnel/getPlafondAssur", { params });
   };
 
