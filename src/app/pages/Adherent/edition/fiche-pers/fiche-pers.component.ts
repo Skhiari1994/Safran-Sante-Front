@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TokenStorage } from 'src/app/account/token-storage.service';
-import { IndemnitesService } from 'src/app/pages/Indemnites/indemnites.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { Personnel, AdherentService } from '../../adherent.service';
@@ -21,8 +20,7 @@ export class FichePersComponent {
     private personnelService: AdherentService,
     private token: TokenStorage,
     private fb: FormBuilder,
-    private saveService: SaveService,
-    private serv: IndemnitesService
+    private saveService: SaveService
   ) {
     this.formAdherent = this.fb.group({
       mat_pers_deb: [''],

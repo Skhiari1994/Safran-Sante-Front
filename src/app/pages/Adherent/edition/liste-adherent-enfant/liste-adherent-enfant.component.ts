@@ -3,7 +3,6 @@ import { AdherentService } from '../../adherent.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SaveService } from 'src/app/shared/Service/save.service';
-import { IndemnitesService } from 'src/app/pages/Indemnites/indemnites.service';
 import Swal from 'sweetalert2';
 
 @Component({

@@ -5,7 +5,6 @@ import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
-import { CotisationService } from 'src/app/pages/Cotisation/cotisation.service';
 import { CnamFichRequest, EnvoiServiceService } from '../envoi-service.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import { catchError, forkJoin, map, of, tap } from 'rxjs';

@@ -2,7 +2,6 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import { Personnel, AdherentService } from 'src/app/pages/Adherent/adherent.service';
-import { IndemnitesService } from 'src/app/pages/Indemnites/indemnites.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { EditionService } from '../edition.service';

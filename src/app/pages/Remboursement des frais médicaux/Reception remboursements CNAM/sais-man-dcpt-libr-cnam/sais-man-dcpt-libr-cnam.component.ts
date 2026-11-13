@@ -4,12 +4,11 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { PaginationService } from "src/app/core/services/pagination.service";
 import { TokenStorage } from "src/app/account/token-storage.service";
-import { BulletinSoinService } from "../../Bulletin de soins/bulletin-soin.service";
+import { BulletinSoinService } from "../../Bulletin de soins/bulletin-soin.service"; 
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { SaveService } from "src/app/shared/Service/save.service";
 import Swal from "sweetalert2";
 import { AdherentService } from "src/app/pages/Adherent/adherent.service";
-import { IndemnitesService } from "src/app/pages/Indemnites/indemnites.service";
 @Component({
   selector: 'app-sais-man-dcpt-libr-cnam',
   templateUrl: './sais-man-dcpt-libr-cnam.component.html',
@@ -291,7 +290,7 @@ export class SaisManDcptLibrCnamComponent {
   etab_rsoc_appareil!: any[];
   boolCodBord: boolean = false;
 
-  constructor(public service: PaginationService, private servLibre: ReceptionRemboursementService, private tokenStorage: TokenStorage, public paginationService: PaginationService, private adherentServ: AdherentService, private indemniteServ: IndemnitesService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
+  constructor(public service: PaginationService, private servLibre: ReceptionRemboursementService, private tokenStorage: TokenStorage, public paginationService: PaginationService, private adherentServ: AdherentService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
 
     this.dataFamProcScol = {
       codSoc: null,
@@ -535,17 +534,10 @@ export class SaisManDcptLibrCnamComponent {
     ///////////////////////////save
     this.saveService.registerSaveCallback(() => this.saveGlobal());
 
-
-
     this.saveService.isSearch$.subscribe((canSearch) => {
       this.isSearch = canSearch
-
-      console.log("is search valid", canSearch)
     })
 
-
-
-    this.getgetListTypDon()
     // Listen for form changes
     this.formSaiseIndScol.statusChanges.subscribe(status => {
       this.isFormValid = status === 'VALID';
@@ -1048,24 +1040,10 @@ export class SaisManDcptLibrCnamComponent {
       }
     });
   }
-  /*  getPersonnels() {
-     this.indemniteServ.PersCotisActif('01').subscribe((data) => {
-       console.log("personnel", data);
-       this.listPersonnel = data;
-       this.columnsSearch = [
-         { key: "mat_pers", label: "Matricule" },
-         { key: "nom_pers", label: "Nom" },
-         { key: "pren_pers", label: "Prénom" },
-         { key: "num_retr", label: "Id unique" },
-         { key: "cin", label: "CIN" },
-       ];
-     });
-   } */
 
   onSelectedValueBordArriver(event: any): void {
     console.log("data", event)
     if (event) {
-
 
       this.cod_bord = event.cod_bord;
       this.dateBord = event.dat_bord;
@@ -1255,24 +1233,6 @@ export class SaisManDcptLibrCnamComponent {
           }) */
   }
 
-
-
-  getPersonnels() {
-    this.indemniteServ.getPersIndAff(this.tokenStorage.getUser().codSoc, this.selectedCodeLieu).subscribe((data) => {
-      console.log("personnel", data);
-      this.listPersonnel = data;
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "nom_pers", label: "Nom" },
-        { key: "pren_pers", label: "Prénom" },
-        { key: "num_retr", label: "Id unique" },
-        { key: "cin", label: "CIN" },
-      ];
-    });
-  }
-
   onSelectedValue(item: any) {
     if (!item || !item.mat_pers) {
       console.error("onSelectedValue: item is undefined or missing mat_pers", item);
@@ -1303,19 +1263,6 @@ export class SaisManDcptLibrCnamComponent {
 
       console.log("Form updated with:", this.formSaiseIndScol.value);
     }
-
-
-  }
-
-
-  onSelectedValueLieu(item: any) {
-    this.selectedCodeLieu = item.cod_lieu_geog; // Mise à jour du champ code
-    this.libLieu = item.lib_lieu; // Mise à jour du champ libellé
-    this.formAdherent.patchValue({
-      cod_lieu_geog: item.cod_lieu_geog,
-    });
-    this.codAffect = item.cod_lieu_geog;
-    this.getPersonnels();
 
   }
 
@@ -1453,47 +1400,15 @@ export class SaisManDcptLibrCnamComponent {
     });
   }
 
-  getgetListTypDon() {
-    this.indemniteServ.getgetListNatDon().subscribe((data) => {
-      this.listTypDon = data;
-      console.log(this.listTypDon);
-      // Définir les colonnes dynamiques du tableau
-      this.columnsNat = [
-        { key: "lib_nat_Don", label: "Libelle" },
-        { key: "max_mnt_don", label: "Plafond" },
-        { key: "concerne", label: "Concerne" },
-        { key: "cod_affect", label: "Affectation" },
-
-
-        // { key: 'lib_tit_a', label: 'Libellé 2éme langue' }
-      ];
-    });
-  }
-
   onSelectedValueTypDon(item: any) {
-
     this.libNatDon = item.lib_nat_Don;
     this.typDonVal = item.nat_Don
     this.max_mnt_don = item.max_mnt_don
     // Prepare data objects
     this.concern = item.concerne
     this.codAffect = item.cod_affect
-    this.PersIndValid();
-
   }
 
-  PersIndValid() {
-    this.indemniteServ.PersIndValid(this.tokenStorage.getUser().codSoc, this.selectedCodeLieu, this.typDonVal).subscribe((data) => {
-
-      this.dataRows = data
-      this.listDem = data
-
-      this.filteredDataRows = [...this.dataRows];
-      console.log("demande en instance ", data, this.codAffect, this.typDonVal)
-
-    })
-
-  }
   updateMontant(data: any) {
     this.mntAccDon = data.mnt_acc_don
 
@@ -1602,21 +1517,10 @@ export class SaisManDcptLibrCnamComponent {
     }
   }
 
-
-
-
-
-
-
-
-
   onSelectedValueFamille(item: any) {
     this.numFam = item.num_fam
 
-
-
     const datSaisie = this.getCurrentDate();
-    console.log("data proc fam ", item)
 
     this.dataFamProcScol = {
       codSoc: this.tokenStorage.getUser().codSoc,
@@ -1625,56 +1529,19 @@ export class SaisManDcptLibrCnamComponent {
       natDon: this.typDonVal,
       datDemDon: datSaisie,
     };
+
     console.log("data proc fam ", this.dataFamProcScol)
-
-    this.indemniteServ.execProcFamScol(this.dataFamProcScol).subscribe((data => {
-      console.log("data RETURN ", data)
-
-
-      const valid = Number(data.valid);
-
-      // Handle response statuses
-      switch (valid) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-          Swal.fire({
-            icon: 'warning',
-            title: 'Message:',
-            text: data.p_status,
-            confirmButtonText: 'OK',
-          });
-          break;
-        case 0:
-          this.formSaiseIndScol.patchValue({
-            num_fam: item.num_fam,
-            nom_fam: item.nom_pren, // Ensure this is correct, previously it was `num_fam`
-
-            mnt_dem_don: this.max_mnt_don
-          });
-          break;
-
-        default:
-          console.error("Unhandled response.valid value:", data.valid);
-          break;
-      }
-
-
-
-    }))
-
 
     if (!item || !item.num_fam) {
       console.error("onSelectedValueFamille: item is undefined or missing properties", item);
       return;
     }
 
-
     console.log("Form updated with:", item);
     this.VerifTypDon()
 
   }
+  
   VerifTypDon() {
     const user = this.tokenStorage.getUser();
     const datSaisie = this.getCurrentDate();
@@ -1689,60 +1556,10 @@ export class SaisManDcptLibrCnamComponent {
       datDemDon: datSaisie
     };
     console.log("execProcTypDon:", this.datProcTypDon);
-
-    // Call the service
-    this.indemniteServ.execProcTypDon(this.datProcTypDon).subscribe({
-      next: (response) => {
-        console.log("Response from execProcTypDon:", response);
-        const valid = Number(response.valid);
-
-        switch (valid) {
-          case 1:
-          case 2:
-          case 3:
-            Swal.fire({
-              icon: 'warning',
-              title: 'Message:',
-              text: response.p_status,
-              confirmButtonText: 'OK',
-            });
-            break;
-
-          case 4:
-            this.isFormValid = true; // Enable button when valid
-            this.benif = response.p_typ_benef
-            break;
-
-          default:
-            console.error("Unhandled response.valid value:", response.valid);
-            break;
-        }
-      },
-      error: (error) => {
-        console.error("Error during execProcTypDon:", error);
-      }
-    });
   }
 
   getFamille(mat: any) {
     console.log("famille 1", mat)
-
-    this.indemniteServ.getFamilleEnfant(this.tokenStorage.getUser().codSoc, mat).subscribe(
-      (data: any) => {
-        this.listFamille = data;
-        console.log("famille", data)
-        this.columnFamille = [
-          { key: "num_fam", label: "Num fam" },
-          { key: "nom_pren", label: "Nom" },
-          { key: "dat_naiss", label: "Date naissance  " },
-        ];
-        // Set the lovList for the column in tableConfig
-
-      },
-      error => {
-        console.error('Error fetching data:', error);
-      }
-    );
   }
 
 
@@ -1776,18 +1593,14 @@ export class SaisManDcptLibrCnamComponent {
 
     return null; // Pas d'erreur
   }
+
   openModalTab(content: any) {
-
     this.modalService.open(content, { size: "lg", centered: true });
-
-
   }
   openModalTab2(content: any) {
-
     this.modalService.open(content, { size: "xl", centered: true });
-
-
   }
+
   openModalEdit(content: any) {
     /******************************************************************* */
     this.formSaiseIndScol.patchValue(this.selectedRows);
@@ -1802,96 +1615,14 @@ export class SaisManDcptLibrCnamComponent {
     // Open the modal
     this.modalService.open(content, { size: "lg", centered: true });
 
-
   }
-
 
   getValueModPay(arg0: any) {
     this.modPay = arg0
-
   }
+
   addDemDon() {
-
-
-    this.indemniteServ.chekExisteDem(this.datProcTypDon).subscribe((data => {
-
-      console.log("data.p_status :", data.p_status);
-
-      if (data.p_status === 1) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Entrée en double',
-          text: "Veuillez vérifier si cet adhérent n'a pas encore bénéficié de cette indemnité pour le même prestataire.",
-          confirmButtonText: 'OK'
-        });
-      } else
-        if (data.p_status === 0) {
-          console.log("Valeurs du formulaire :", this.formSaiseIndScol.value);
-
-          // Vérifier que les données du formulaire et de l'utilisateur sont présentes
-          const user = this.tokenStorage.getUser();
-          if (!this.formSaiseIndScol?.valid || !user) {
-            console.error("Le formulaire est invalide ou les informations utilisateur sont manquantes.");
-            return;
-          }
-
-          const datSaisie = this.getCurrentDate();
-
-          // Déterminer le type de bénéficiaire
-          this.benif = (Number(this.numFam) !== 0) ? 'E' : 'A';
-
-          // Création de l'objet de demande
-          const newRowDem = {
-            typ_don: 'I',
-            cod_soc: user.codSoc,
-            mat_pers: this.matricule,
-            nom_pers: this.formSaiseIndScol.value.nom_pers,
-            num_fam: this.numFam,
-            mnt_dem_don: Number(this.formSaiseIndScol.value.mnt_dem_don),
-            mnt_livre: Number(this.formSaiseIndScol.value.mnt_livre),
-            mode_payement: this.formSaiseIndScol.value.mode_payement,
-            nat_don: this.typDonVal,
-            cod_lieu_geog: this.selectedCodeLieu,
-            cod_affect: this.codAffect,
-            mnt_acc_don: Number(this.formSaiseIndScol.value.mnt_dem_don) + Number(this.formSaiseIndScol.value.mnt_livre),
-            typ_benificiaire: this.benif,
-            cod_fond: '01',
-            corps: this.corps
-          };
-
-          // Vérifier si la ligne existe déjà dans la liste
-          const isDuplicate = this.listDem.some(row =>
-            row.mat_pers === newRowDem.mat_pers &&
-            row.num_fam === newRowDem.num_fam &&
-            row.nat_don === newRowDem.nat_don &&
-            row.mnt_dem_don === newRowDem.mnt_dem_don
-          );
-
-          if (isDuplicate) {
-            // Afficher un message d'erreur si la ligne est un doublon
-            Swal.fire({
-              icon: 'error',
-              title: 'Entrée en double',
-              text: 'Cette entrée existe déjà dans la liste.',
-              confirmButtonText: 'OK'
-            });
-            return; // Ne pas ajouter la ligne si elle est un doublon
-          }
-
-          // Ajouter la nouvelle ligne à la liste si elle n'est pas un doublon
-          this.listDem.push(newRowDem);
-          console.log('Liste mise à jour listDem:', this.listDem);
-
-        }
-
-    }))
-
   }
-
-
-
-
-
 
 }
 
