@@ -6,6 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 
 @Component({
@@ -150,8 +151,9 @@ onSort2(column: any) {
   supprimerGouv(row: any) {
     Swal.fire({
       title: "Supprimer ce gouvernorat ?",
-      html: `Code <b>${row.cod_gouv}</b> – ${row.lib_gouv ?? ""}`,
-      icon: "warning",
+      // même corbeille animée que la fenêtre de suppression des autres pages (à la place du point d'exclamation)
+      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+             <div class="mt-2">Code <b>${row.cod_gouv}</b> – ${row.lib_gouv ?? ""}</div>`,
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#6c757d",
@@ -166,33 +168,21 @@ onSort2(column: any) {
             this.listPosteFiltre = [];
           }
           this.getGouv();
-          Swal.fire({ position: "top-end", icon: "success", title: "Gouvernorat supprimé avec succès !", showConfirmButton: false, timer: 2000 });
+          notifSucces("Gouvernorat supprimé avec succès !");
         },
-        error: (err) => {
-          const message = typeof err?.error === "string" && err.error ? err.error : "Suppression impossible";
-          Swal.fire({ icon: "error", title: "Suppression impossible", text: message });
-        },
+        error: (err) => notifErreur("Suppression impossible", err, "Suppression impossible"),
       });
     });
   }
 
   saveGouv() {
     
-     this.serv.AddGouvernerat(this.formGouv.value).subscribe((data) => {
-      console.log("data :", data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.serv
-      .getGouv()
-      .subscribe((data) => {
-        console.log("data", data);
-        this.listGouv = data;
-      });
+     this.serv.AddGouvernerat(this.formGouv.value).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.getGouv();
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -202,20 +192,17 @@ onSort2(column: any) {
       control.get("cod_gouv")?.patchValue(posteFormArray.value[0].cod_gouv);
     });
     console.log("posteFormArray ",posteFormArray.value)
-    this.serv.AddPoste(posteFormArray.value).subscribe((data) => {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.serv
-      .getPoste(posteFormArray.value[0].cod_gouv)
-      .subscribe((data) => {
-        this.listPoste = data;
-        this.listPosteFiltre=data
-      });
+    this.serv.AddPoste(posteFormArray.value).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.serv
+          .getPoste(posteFormArray.value[0].cod_gouv)
+          .subscribe((data) => {
+            this.listPoste = data;
+            this.listPosteFiltre = data;
+          });
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -306,22 +293,18 @@ onSort2(column: any) {
         cod_poste: this.deleteId.cod_poste
     }
 
-    this.serv.deletePoste(idPost).subscribe((data=>{
-
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Poste supprimé avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.serv
-      .getPoste( this.deleteId.cod_gouv)
-      .subscribe((data) => {
-        console.log("data", data);
-        this.listPoste = data;
-      });
-    }))
+    this.serv.deletePoste(idPost).subscribe({
+      next: () => {
+        notifSucces("Poste supprimé avec succès !");
+        this.serv
+          .getPoste(this.deleteId.cod_gouv)
+          .subscribe((data) => {
+            this.listPoste = data;
+            this.listPosteFiltre = data;
+          });
+      },
+      error: (err) => notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE),
+    })
   
    
 

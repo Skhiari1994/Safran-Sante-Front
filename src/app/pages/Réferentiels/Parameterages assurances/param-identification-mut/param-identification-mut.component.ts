@@ -330,8 +330,9 @@ AjouterFiliere() {
   GetActivMutuelle(cod_assur: string): void {
     this.serv.GetActivMutuelle(cod_assur).subscribe(
       data => {
-        this.ListAcivMutuelle = data; 
-         
+        this.ListAcivMutuelle = data;
+        this.ListAcivMutuelleFiltre = data;
+
       },
       error => {
         

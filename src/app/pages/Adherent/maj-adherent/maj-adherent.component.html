@@ -4,735 +4,784 @@
 </div>
 
 <!-- Identité : reste visible pendant le défilement -->
-<div class="row sticky-top" style="z-index: 1010; top: 150px;">
-  <div class="col-xl-10">
-    <div class="row" style="margin-top: -24px">
-      <div class="col-md-12 sticky-top">
-        <div class="collapse show">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
-            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-              <div class="col-md-2">
-                <label class="form-label">Matricule</label>
-                <input type="text" class="form-control border-info" placeholder="Matricule" formControlName="mat_pers" />
+<div class="row sticky-top" style="z-index: 1010; top: 160px;">
+  <div class="col-12">
+    <div class="card mt-4 mb-0">
+      <div class="card-body py-3">
+        <form action="javascript:void(0);" class="row g-3 align-items-center" [formGroup]="formAdherent" autocomplete="off">
+
+          <!-- Identité : les champs se partagent toute la largeur disponible -->
+          <div class="col">
+            <div class="row g-3">
+              <div class="col-md-6 col-xl-3">
+                <label for="adh-mat" class="form-label">Matricule</label>
+                <input id="adh-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers" />
                 <div *ngIf="errorMessageMat" class="error-message">{{ errorMessageMat }}</div>
               </div>
-              <div class="col-md-2">
+              <div class="col-md-6 col-xl-3">
                 <label class="form-label">Matricule admin</label>
                 <app-lov [disabled]="isConsultation" [listData]="listMatInt" [columns]="columnsMatInt" codeField="matInt"
                   [selectedCode]="codMatIntVal" (selectedValue)="onSelectedVMatInt($event)"></app-lov>
               </div>
-              <div class="col-md-2">
-                <label class="form-label">Nom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" />
+              <div class="col-md-6 col-xl-3">
+                <label for="adh-nom" class="form-label">Nom</label>
+                <input id="adh-nom" type="text" class="form-control" placeholder="Nom" formControlName="nom_pers" />
               </div>
-              <div class="col-md-2">
-                <label class="form-label">Prénom</label>
-                <input type="text" class="form-control border-primary" placeholder="Prénom"
-                  formControlName="pren_pers" />
+              <div class="col-md-6 col-xl-3">
+                <label for="adh-prenom" class="form-label">Prénom</label>
+                <input id="adh-prenom" type="text" class="form-control" placeholder="Prénom" formControlName="pren_pers" />
               </div>
-              <div class="col-md-2">
-                <label class="form-label">Caisse de retraite</label>
-                <select class="form-select border-success" formControlName="cod_retr">
-                  <option value="">Sélectionner</option>
-                  <option value="1">CNSS</option>
-                  <option value="2">CNRPS</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Identifiant unique CNRPS</label>
-                <input type="text" class="form-control border-primary" placeholder="Identifiant unique CNRPS"
-                  formControlName="num_retr" />
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Photo -->
-  <div class="col-xl-2">
-    <div class="row">
-      <div class="card">
-        <div class="card-body">
-          <div class="mb-4">
-            <div class="text-center">
-              <div class="position-relative d-inline-block">
-                <div class="avatar-lg">
-                  <div class="avatar-title bg-light rounded">
-                    <img src="" id="product-img" class="avatar-md h-auto" />
-                  </div>
+          <!-- Photo, à droite -->
+          <div class="col-auto">
+            <div class="position-relative d-inline-block me-2">
+              <div class="avatar-lg">
+                <div class="avatar-title bg-primary-subtle text-primary rounded fs-2 overflow-hidden">
+                  <i class="ri-user-3-line" aria-hidden="true"></i>
+                  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" id="product-img" alt="" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
                 </div>
               </div>
             </div>
           </div>
-        </div>
+
+        </form>
       </div>
     </div>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-xl-10">
+  <div class="col-12">
     <div class="card mt-4">
       <div class="card-body form-steps">
         <ng-stepper #cdkStepper [linear]="false" class="step-arrow-nav wizard">
-        <cdk-step [optional]="false">
-          <ng-template cdkStepLabel>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" type="button" role="tab" id="tab-info"
-                [class.active]="cdkStepper.selectedIndex === 0"
-                [class.done]="cdkStepper.selectedIndex > 0">Info de base</button>
-            </li>
-          </ng-template>
-          <div class="row">
 
-      <!-- Informations personnelles -->
-      <div class="col-md-6">
-        <div class="collapse show h-100">
-          <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
-            <h5 class="card-title text-primary mb-3">Informations personnelles</h5>
-            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-              <div class="col-md-6">
-                <label class="form-label">Nom (arabe)</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom en arabe"
-                  formControlName="nom_pers_a" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Prénom (arabe)</label>
-                <input type="text" class="form-control border-primary" placeholder="Prénom en arabe"
-                  formControlName="pren_pers_a" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Nom de jeune fille</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom de jeune fille"
-                  formControlName="nom_jf" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Nom de jeune fille (arabe)</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom de jeune fille en arabe"
-                  formControlName="nom_jf_a" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Date de naissance</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_nais" appDateFormatter />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Lieu de naissance</label>
-                <input type="text" class="form-control border-primary" placeholder="Lieu de naissance"
-                  formControlName="lieu_nais" />
+          <!-- ÉTAPE 1 : Info de base -->
+          <cdk-step [optional]="false">
+            <ng-template cdkStepLabel>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" role="tab" id="tab-info"
+                  [class.active]="cdkStepper.selectedIndex === 0"
+                  [class.done]="cdkStepper.selectedIndex > 0">Info de base</button>
+              </li>
+            </ng-template>
+
+            <form action="javascript:void(0);" [formGroup]="formAdherent" autocomplete="off">
+              <div class="row g-4 mt-1">
+
+                <!-- Informations personnelles -->
+                <div class="col-xl-6">
+                  <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                    <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-line" aria-hidden="true"></i></span></div>
+                    <div>
+                      <h5 class="card-title mb-0">Informations personnelles</h5>
+                      <p class="text-muted fs-13 mb-0">État civil de l'adhérent.</p>
+                    </div>
+                  </div>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="adh-nom-ar" class="form-label">Nom en arabe</label>
+                      <input id="adh-nom-ar" type="text" class="form-control" placeholder="الاسم" dir="rtl" lang="ar"
+                        formControlName="nom_pers_a" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="adh-prenom-ar" class="form-label">Prénom en arabe</label>
+                      <input id="adh-prenom-ar" type="text" class="form-control" placeholder="اللقب" dir="rtl" lang="ar"
+                        formControlName="pren_pers_a" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="adh-jf" class="form-label">Nom de jeune fille</label>
+                      <input id="adh-jf" type="text" class="form-control" placeholder="Nom de jeune fille" formControlName="nom_jf" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="adh-jf-ar" class="form-label">Nom de jeune fille en arabe</label>
+                      <input id="adh-jf-ar" type="text" class="form-control" placeholder="اسم الأم" dir="rtl" lang="ar"
+                        formControlName="nom_jf_a" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="adh-naiss" class="form-label">Date de naissance</label>
+                      <input id="adh-naiss" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_nais" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="adh-lieu-naiss" class="form-label">Lieu de naissance</label>
+                      <input id="adh-lieu-naiss" type="text" class="form-control" placeholder="Lieu de naissance"
+                        formControlName="lieu_nais" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Informations sociales -->
+                <div class="col-xl-6">
+                  <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                    <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-profile-line" aria-hidden="true"></i></span></div>
+                    <div>
+                      <h5 class="card-title mb-0">Informations sociales</h5>
+                      <p class="text-muted fs-13 mb-0">Identité, nationalité et situation familiale.</p>
+                    </div>
+                  </div>
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label for="adh-sexe" class="form-label">Sexe</label>
+                      <select id="adh-sexe" class="form-select" formControlName="sexe">
+                        <option value="">Sélectionner</option>
+                        <option value="M">Masculin</option>
+                        <option value="F">Féminin</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-cin" class="form-label">CIN</label>
+                      <input id="adh-cin" type="text" inputmode="numeric" class="form-control" placeholder="8 chiffres"
+                        formControlName="cin" mask="00000000" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-emb" class="form-label">Date d'embauche</label>
+                      <input id="adh-emb" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_emb" appDateFormatter />
+                    </div>
+
+                    <div class="col-md-4">
+                      <label class="form-label">Nationalité</label>
+                      <app-lov [disabled]="isConsultation" [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp"
+                        [selectedCode]="codNatP" (selectedValue)="onSelectedValueNat($event)"></app-lov>
+                    </div>
+                    <div class="col-md-8">
+                      <label for="adh-nat-lib" class="form-label">Libellé nationalité</label>
+                      <input id="adh-nat-lib" type="text" class="form-control" [value]="libNat" disabled placeholder="Nationalité" />
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Département</label>
+                      <app-lov [disabled]="isConsultation" [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu"
+                        [selectedCode]="codLieuVal" (selectedValue)="onSelectedValueLieu($event)"></app-lov>
+                    </div>
+                    <div class="col-md-8">
+                      <label for="adh-lieu-lib" class="form-label">Libellé département</label>
+                      <input id="adh-lieu-lib" type="text" class="form-control" [value]="libLieu" disabled placeholder="Département" />
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="adh-sit" class="form-label">Situation sociale</label>
+                      <select id="adh-sit" class="form-select" formControlName="cod_sit">
+                        <option value="">Sélectionner</option>
+                        <option value="C">Célibataire</option>
+                        <option value="M">Marié(e)</option>
+                        <option value="D">Divorcé(e)</option>
+                        <option value="V">Veuf(ve)</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6"
+                      *ngIf="formAdherent.get('cod_sit')?.value === 'M' || formAdherent.get('cod_sit')?.value === 'D' || formAdherent.get('cod_sit')?.value === 'V'">
+                      <label for="adh-nbr-enf" class="form-label">Nombre d'enfants</label>
+                      <input id="adh-nbr-enf" type="text" class="form-control" placeholder="Nombre d'enfants"
+                        formControlName="nbr_enf" readonly />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Informations professionnelles -->
+                <div class="col-12">
+                  <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                    <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-briefcase-line" aria-hidden="true"></i></span></div>
+                    <div>
+                      <h5 class="card-title mb-0">Informations professionnelles</h5>
+                      <p class="text-muted fs-13 mb-0">Statut, position administrative, affiliation mutuelle et cotisation.</p>
+                    </div>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Statut</h6>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-corps" class="form-label">Corps</label>
+                      <select id="adh-corps" class="form-select" formControlName="corps">
+                        <option value="">Sélectionner</option>
+                        <option value="C">Cadre commun</option>
+                        <option value="S">Sécurité</option>
+                        <option value="M">Médiateur administratif</option>
+                        <option value="H">HCCAF</option>
+                        <option value="I">ITES</option>
+                        <option value="P">Ministère de l'intérieur</option>
+                        <option value="D">Divers</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-etat" class="form-label">État</label>
+                      <select id="adh-etat" class="form-select" formControlName="etat_act">
+                        <option value="">Sélectionner</option>
+                        <option value="A">Actif</option>
+                        <option value="B">Bloqué</option>
+                        <option value="I">En instance</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-typ-aff" class="form-label">État adhésion</label>
+                      <select id="adh-typ-aff" class="form-select" formControlName="typ_aff">
+                        <option value="">Sélectionner</option>
+                        <option value="A">Adhéré</option>
+                        <option value="S">Non adhéré</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                      <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Position administrative</h6>
+                    </div>
+                    <div class="col-md-3 col-xl-2">
+                      <label class="form-label">Code position</label>
+                      <app-lov [disabled]="isConsultation" [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
+                        [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)"></app-lov>
+                    </div>
+                    <div class="col-md-6 col-xl-7">
+                      <label for="adh-aff-lib" class="form-label">Libellé position administrative</label>
+                      <input id="adh-aff-lib" type="text" class="form-control" placeholder="Libellé position" [value]="libAffect" disabled />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="adh-dat-aff" class="form-label">Date de position</label>
+                      <input id="adh-dat-aff" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_affect" appDateFormatter />
+                    </div>
+
+                    <div class="col-md-3 col-xl-2">
+                      <label class="form-label">Code motif de départ</label>
+                      <app-lov [disabled]="isConsultation" [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
+                        [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)"></app-lov>
+                    </div>
+                    <div class="col-md-6 col-xl-7">
+                      <label for="adh-dep-lib" class="form-label">Libellé du motif de départ</label>
+                      <input id="adh-dep-lib" type="text" class="form-control" placeholder="Motif de départ" [value]="libTypDepart" disabled />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="adh-dat-dep" class="form-label">Date du motif</label>
+                      <input id="adh-dat-dep" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_depart" appDateFormatter />
+                    </div>
+
+                    <div class="col-12 mt-4">
+                      <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Mutuelle, CNAM et retraite</h6>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-num-assur" class="form-label">N° d'affiliation mutuelle</label>
+                      <input id="adh-num-assur" type="text" class="form-control" placeholder="N° d'affiliation mutuelle"
+                        formControlName="num_assur" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-dat-ass" class="form-label">Date d'effet</label>
+                      <input id="adh-dat-ass" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_ass" appDateFormatter />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-dat-cnam" class="form-label">Date d'affiliation CNAM</label>
+                      <input id="adh-dat-cnam" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_aff_cnam" appDateFormatter />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-retr" class="form-label">Caisse de retraite</label>
+                      <select id="adh-retr" class="form-select" formControlName="cod_retr">
+                        <option value="">Sélectionner</option>
+                        <option value="1">CNSS</option>
+                        <option value="2">CNRPS</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-num-retr" class="form-label">Identifiant unique CNRPS</label>
+                      <input id="adh-num-retr" type="text" class="form-control" placeholder="Identifiant unique"
+                        formControlName="num_retr" />
+                    </div>
+                    <div class="col-md-4">
+                      <label for="adh-assiette" class="form-label">Assiette de cotisation</label>
+                      <input id="adh-assiette" type="text" inputmode="decimal" class="form-control" placeholder="Assiette de cotisation"
+                        formControlName="mnt_param" />
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </form>
-          </div>
-        </div>
-      </div>
+          </cdk-step>
 
-      <!-- Informations sociales -->
-      <div class="col-md-6">
-        <div class="collapse show h-100">
-          <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
-            <h5 class="mb-1 text-primary mb-3">Informations sociales</h5>
-            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-              <div class="col-md-4">
-                <label class="form-label">Sexe</label>
-                <select class="form-select border-primary" formControlName="sexe">
-                  <option value="">Sélectionner</option>
-                  <option value="M">Masculin</option>
-                  <option value="F">Féminin</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">CIN</label>
-                <input type="text" class="form-control border-primary" placeholder="CIN" formControlName="cin"
-                  mask="00000000" />
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Date d'embauche</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_emb" appDateFormatter />
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Nationalité</label>
-                <app-lov [disabled]="isConsultation" [listData]="listNationalite" [columns]="columnsNat" codeField="cod_natp"
-                  [selectedCode]="codNatP" (selectedValue)="onSelectedValueNat($event)"></app-lov>
-              </div>
-              <div class="col-md-8">
-                <label class="form-label">Libellé nationalité</label>
-                <input type="text" class="form-control border-primary" [value]="libNat" disabled
-                  placeholder="Nationalité" />
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Département</label>
-                <app-lov [disabled]="isConsultation" [listData]="listLieu" [columns]="columnsLieu" [codeField]="codLieu"
-                  [selectedCode]="codLieuVal" (selectedValue)="onSelectedValueLieu($event)"></app-lov>
-              </div>
-              <div class="col-md-8">
-                <label class="form-label">Libellé département</label>
-                <input type="text" class="form-control border-primary" [value]="libLieu" disabled
-                  placeholder="Département" />
-              </div>
-              <div class="col-md-6"> 
-                <label class="form-label">Situation sociale</label>
-                <select class="form-select border-primary" formControlName="cod_sit">
-                  <option value="">Sélectionner</option>
-                  <option value="C">Célibataire</option>
-                  <option value="M">Marié(e)</option>
-                  <option value="D">Divorcé(e)</option>
-                  <option value="V">Veuf(ve)</option>
-                </select>
-              </div>
-              <div class="col-md-6" *ngIf="formAdherent.get('cod_sit')?.value === 'M' ||
-                  formAdherent.get('cod_sit')?.value === 'D' ||
-                  formAdherent.get('cod_sit')?.value === 'V'">
-                <label class="form-label">Nombre d'enfants</label>
-                <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants"
-                  formControlName="nbr_enf" readonly />
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Informations professionnelles -->
-    <div class="col-xl-12">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="collapse show">
-            <div class="card p-4 border shadow-none mb-0 mt-4">
-              <h5 class="mb-1 text-primary mb-3">Informations professionnelles</h5>
-              <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-                <div class="col-md-4">
-                  <label class="form-label">Corps</label>
-                  <select class="form-select border-primary" formControlName="corps">
-                    <option value="">Sélectionner</option>
-                    <option value="C">Cadre commun</option>
-                    <option value="S">Sécurité</option>
-                    <option value="M">Médiateur administratif</option>
-                    <option value="H">HCCAF</option>
-                    <option value="I">ITES</option>
-                    <option value="P">Ministère d'intérieur</option>
-                    <option value="D">Divers</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Etat</label>
-                  <select class="form-select border-primary" formControlName="etat_act">
-                    <option value="">Sélectionner</option>
-                    <option value="A">Actif</option>
-                    <option value="B">Bloqué</option>
-                    <option value="I">En instance</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Etat adhésion</label>
-                  <select class="form-select border-primary" formControlName="typ_aff">
-                    <option value="">Sélectionner</option>
-                    <option value="A">Adhéré</option>
-                    <option value="S">Non adhéré</option>
-                  </select>
-                </div>
+          <!-- ÉTAPE 2 : Mode de paiement -->
+          <cdk-step [optional]="false">
+            <ng-template cdkStepLabel>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" role="tab" id="tab-payement"
+                  [class.active]="cdkStepper.selectedIndex === 1"
+                  [class.done]="cdkStepper.selectedIndex > 1">Mode de payement</button>
+              </li>
+            </ng-template>
 
-                <div class="col-12">
-                  <hr class="my-1" />
+            <div class="mt-1">
+              <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-bank-card-line" aria-hidden="true"></i></span></div>
+                <div>
+                  <h5 class="card-title mb-0">Mode de paiement</h5>
+                  <p class="text-muted fs-13 mb-0">Mode de règlement et coordonnées bancaires.</p>
                 </div>
+              </div>
 
-                <!-- Position administrative -->
-                <div class="col-md-3">
-                  <label class="form-label">Code position</label>
-                  <app-lov [disabled]="isConsultation" [listData]="listAffectation" [columns]="columnAffect" [codeField]="codAffect"
-                    [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)"></app-lov>
+              <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent" autocomplete="off">
+                <div class="col-md-6">
+                  <label for="adh-pay" class="form-label">Mode de paiement</label>
+                  <select id="adh-pay" class="form-select" formControlName="cod_pay">
+                    <option value="">Sélectionner</option>
+                    <option value="V">Virement</option>
+                    <option value="E">Espèce</option>
+                    <option value="C">Chèque</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Libellé position administrative</label>
-                  <input type="text" class="form-control border-primary" placeholder="Libellé position"
-                    [value]="libAffect" disabled />
+                  <label for="adh-carte" class="form-label">Carte bancaire</label>
+                  <select id="adh-carte" class="form-select" formControlName="pers_carte">
+                    <option value="">Sélectionner</option>
+                    <option value="O">Oui</option>
+                    <option value="N">Non</option>
+                  </select>
                 </div>
-                <div class="col-md-3">
-                  <label class="form-label">Date de position</label>
-                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                    formControlName="dat_affect" appDateFormatter />
+                <div class="col-md-3 col-xl-2">
+                  <label class="form-label">Banque</label>
+                  <app-lov [disabled]="isConsultation" [listData]="listBanque" [columns]="columnBanque" [codeField]="codBanque"
+                    [selectedCode]="codBanqueVal" (selectedValue)="onSelectedValueBanque($event)"></app-lov>
                 </div>
-
-                <!-- Motif de départ -->
-                <div class="col-md-3">
-                  <label class="form-label">Code motif de départ</label>
-                  <app-lov [disabled]="isConsultation" [listData]="listTypeDepart" [columns]="columnsTypDepart" [codeField]="codTypDepart"
-                    [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)"></app-lov>
+                <div class="col-md-9 col-xl-4">
+                  <label for="adh-banq-lib" class="form-label">Libellé banque</label>
+                  <input id="adh-banq-lib" type="text" class="form-control" [value]="libBanque" disabled placeholder="Banque" />
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Libellé du motif de départ</label>
-                  <input type="text" class="form-control border-primary" placeholder="Motif de départ"
-                    [value]="libTypDepart" disabled />
+                <div class="col-md-3 col-xl-2">
+                  <label class="form-label">Agence</label>
+                  <app-lov [disabled]="isConsultation" [listData]="listAgence" [columns]="columnsAgence" [codeField]="codAgence"
+                    [selectedCode]="codAgenceVal" (selectedValue)="onSelectedValueAgence($event)"></app-lov>
                 </div>
-                <div class="col-md-3">
-                  <label class="form-label">Date du motif</label>
-                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                    formControlName="dat_depart" appDateFormatter />
+                <div class="col-md-9 col-xl-4">
+                  <label for="adh-agc-lib" class="form-label">Libellé agence</label>
+                  <input id="adh-agc-lib" type="text" class="form-control" [value]="libAgence" disabled placeholder="Agence" />
                 </div>
-
-                <div class="col-12">
-                  <hr class="my-1" />
-                </div>
-
-                <!-- Mutuelle et CNAM -->
-                <div class="col-md-4">
-                  <label class="form-label">Numéro d'affiliation mutuelle</label>
-                  <input type="text" class="form-control border-primary" placeholder="Numéro d'affiliation mutuelle"
-                    formControlName="num_assur" />
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Date d'effet</label>
-                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                    formControlName="dat_ass" appDateFormatter />
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Date d'affiliation CNAM</label>
-                  <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                    formControlName="dat_aff_cnam" appDateFormatter />
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Assiette cotisation</label>
-                  <input type="text" class="form-control border-primary" placeholder="Assiette cotisation"
-                    formControlName="mnt_param" />
+                <div class="col-md-12">
+                  <label for="adh-rib" class="form-label">RIB</label>
+                  <input id="adh-rib" type="text" class="form-control" placeholder="RIB" formControlName="rib" />
                 </div>
               </form>
             </div>
-          </div>
-        </div>
-      </div>
-          </div>
-        </cdk-step>
+          </cdk-step>
 
-        <cdk-step [optional]="false">
-          <ng-template cdkStepLabel>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" type="button" role="tab" id="tab-payement"
-                [class.active]="cdkStepper.selectedIndex === 1"
-                [class.done]="cdkStepper.selectedIndex > 1">Mode de payement</button>
-            </li>
-          </ng-template>
-          <div class="row">
-      <!-- Mode de payement -->
-      <div class="col-md-12">
-        <div class="collapse show">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
-            <h5 class="mb-1 text-primary mb-3">Mode de payement</h5>
-            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-              <div class="col-md-6">
-                <label class="form-label">Mode de payement</label>
-                <select class="form-select border-success" formControlName="cod_pay">
-                  <option value="">Sélectionner</option>
-                  <option value="V">Virement</option>
-                  <option value="E">Espèce</option>
-                  <option value="C">Chèque</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Carte bancaire</label>
-                <select class="form-select border-success" formControlName="pers_carte">
-                  <option value="">Sélectionner</option>
-                  <option value="O">Oui</option>
-                  <option value="N">Non</option>
-                </select>
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Banque</label>
-                <app-lov [disabled]="isConsultation" [listData]="listBanque" [columns]="columnBanque" [codeField]="codBanque"
-                  [selectedCode]="codBanqueVal" (selectedValue)="onSelectedValueBanque($event)"></app-lov>
-              </div>
-              <div class="col-md-10">
-                <label class="form-label">Libellé banque</label>
-                <input type="text" class="form-control border-primary" [value]="libBanque" disabled
-                  placeholder="Banque" />
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">Agence</label>
-                <app-lov [disabled]="isConsultation" [listData]="listAgence" [columns]="columnsAgence" [codeField]="codAgence"
-                  [selectedCode]="codAgenceVal" (selectedValue)="onSelectedValueAgence($event)"></app-lov>
-              </div>
-              <div class="col-md-10">
-                <label class="form-label">Libellé agence</label>
-                <input type="text" class="form-control border-primary" [value]="libAgence" disabled
-                  placeholder="Agence" />
-              </div>
-              <div class="col-md-12">
-                <label class="form-label">RIB</label>
-                <input type="text" class="form-control border-primary" placeholder="RIB" formControlName="rib" />
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-          </div>
-        </cdk-step>
+          <!-- ÉTAPE 3 : Famille -->
+          <cdk-step [optional]="false">
+            <ng-template cdkStepLabel>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" role="tab" id="tab-famille"
+                  [class.active]="cdkStepper.selectedIndex === 2"
+                  [class.done]="cdkStepper.selectedIndex > 2">Famille</button>
+              </li>
+            </ng-template>
 
-        <cdk-step [optional]="false">
-          <ng-template cdkStepLabel>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" type="button" role="tab" id="tab-famille"
-                [class.active]="cdkStepper.selectedIndex === 2"
-                [class.done]="cdkStepper.selectedIndex > 2">Famille</button>
-            </li>
-          </ng-template>
-          <div class="row"><div class="col-12">
-      <!-- Père / Mère -->
-      <div class="row">
-        <div class="col-md-6">
-          <div class="collapse show h-100">
-            <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
-              <h5 class="mb-1 text-primary mb-3">Père</h5>
-              <form [formGroup]="formPere">
-                <div class="row g-3">
-                  <div class="col-md-12">
-                    <label class="form-label">Nom et prénom</label>
-                    <input type="text" class="form-control border-primary" placeholder="Nom et prénom"
-                      formControlName="nom_pren" />
+            <div class="row g-4 mt-1">
+
+              <!-- Père -->
+              <div class="col-xl-6">
+                <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                  <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-men-line" aria-hidden="true"></i></span></div>
+                  <div>
+                    <h5 class="card-title mb-0">Père</h5>
+                    <p class="text-muted fs-13 mb-0">Identité et prise en charge.</p>
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date de naissance</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                </div>
+                <form [formGroup]="formPere" autocomplete="off">
+                  <div class="row g-3">
+                    <div class="col-md-12">
+                      <label for="pere-nom" class="form-label">Nom et prénom</label>
+                      <input id="pere-nom" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_pren" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pere-naiss" class="form-label">Date de naissance</label>
+                      <input id="pere-naiss" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_naiss" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pere-dece" class="form-label">Date de décès</label>
+                      <input id="pere-dece" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_dece" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pere-pec" class="form-label">PEC</label>
+                      <select id="pere-pec" class="form-select" formControlName="pec">
+                        <option value="">Sélectionner</option>
+                        <option value="O">Oui</option>
+                        <option value="N">Non</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pere-dat-pec" class="form-label">Date PEC</label>
+                      <input id="pere-dat-pec" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_pec" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pere-pec-mut" class="form-label">PEC mutuelle</label>
+                      <select id="pere-pec-mut" class="form-select" formControlName="pec_mut">
+                        <option value="">Sélectionner</option>
+                        <option value="O">Oui</option>
+                        <option value="N">Non</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pere-dat-pec-mut" class="form-label">Date PEC mutuelle</label>
+                      <input id="pere-dat-pec-mut" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_pec_mut" appDateFormatter />
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Mère -->
+              <div class="col-xl-6">
+                <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                  <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-women-line" aria-hidden="true"></i></span></div>
+                  <div>
+                    <h5 class="card-title mb-0">Mère</h5>
+                    <p class="text-muted fs-13 mb-0">Identité et prise en charge.</p>
+                  </div>
+                </div>
+                <form [formGroup]="formMere" autocomplete="off">
+                  <div class="row g-3">
+                    <div class="col-md-12">
+                      <label for="mere-nom" class="form-label">Nom et prénom</label>
+                      <input id="mere-nom" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_pren" />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="mere-naiss" class="form-label">Date de naissance</label>
+                      <input id="mere-naiss" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_naiss" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="mere-dece" class="form-label">Date de décès</label>
+                      <input id="mere-dece" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_dece" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="mere-pec" class="form-label">PEC</label>
+                      <select id="mere-pec" class="form-select" formControlName="pec">
+                        <option value="">Sélectionner</option>
+                        <option value="O">Oui</option>
+                        <option value="N">Non</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="mere-dat-pec" class="form-label">Date PEC</label>
+                      <input id="mere-dat-pec" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_pec" appDateFormatter />
+                    </div>
+                    <div class="col-md-6">
+                      <label for="mere-pec-mut" class="form-label">PEC mutuelle</label>
+                      <select id="mere-pec-mut" class="form-select" formControlName="pec_mut">
+                        <option value="">Sélectionner</option>
+                        <option value="O">Oui</option>
+                        <option value="N">Non</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="mere-dat-pec-mut" class="form-label">Date PEC mutuelle</label>
+                      <input id="mere-dat-pec-mut" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                        formControlName="dat_pec_mut" appDateFormatter />
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Conjoint -->
+              <div class="col-12"
+                *ngIf="formAdherent.get('cod_sit')?.value === 'M' || formAdherent.get('cod_sit')?.value === 'D' || formAdherent.get('cod_sit')?.value === 'V'">
+                <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                  <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-heart-line" aria-hidden="true"></i></span></div>
+                  <div>
+                    <h5 class="card-title mb-0">Conjoint</h5>
+                    <p class="text-muted fs-13 mb-0">Identité, mariage et prise en charge.</p>
+                  </div>
+                </div>
+                <div class="row g-3" [formGroup]="formConjoint">
+                  <div class="col-md-6 col-xl-4">
+                    <label for="conj-nom" class="form-label">Nom et prénom</label>
+                    <input id="conj-nom" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_pren" />
+                  </div>
+                  <div class="col-md-6 col-xl-4">
+                    <label for="conj-jf" class="form-label">Nom de jeune fille</label>
+                    <input id="conj-jf" type="text" class="form-control" placeholder="Nom de jeune fille" formControlName="nom_jf" />
+                  </div>
+                  <div class="col-md-4 col-xl-2">
+                    <label for="conj-naiss" class="form-label">Date de naissance</label>
+                    <input id="conj-naiss" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
                       formControlName="dat_naiss" appDateFormatter />
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date de décès</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  <div class="col-md-4 col-xl-2">
+                    <label for="conj-mar" class="form-label">Date de mariage</label>
+                    <input id="conj-mar" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                      formControlName="dat_mar" appDateFormatter />
+                  </div>
+                  <div class="col-md-4 col-xl-3">
+                    <label for="conj-mat" class="form-label">Matricule conjoint</label>
+                    <input id="conj-mat" type="text" class="form-control" placeholder="Matricule conjoint"
+                      formControlName="mat_pers_conj" />
+                  </div>
+                  <div class="col-md-6 col-xl-3">
+                    <label for="conj-ass" class="form-label">N° d'assurance</label>
+                    <input id="conj-ass" type="text" class="form-control" placeholder="N° d'assurance" formControlName="num_ass_conj" />
+                  </div>
+                  <div class="col-md-6 col-xl-3">
+                    <label for="conj-dece" class="form-label">Date de décès</label>
+                    <input id="conj-dece" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
                       formControlName="dat_dece" appDateFormatter />
                   </div>
-                  <div class="col-12">
-                    <hr class="my-1" />
+
+                  <div class="col-12 mt-4">
+                    <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Prise en charge</h6>
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">PEC</label>
-                    <select class="form-select border-primary" formControlName="pec">
+                  <div class="col-md-3">
+                    <label for="conj-pec" class="form-label">PEC</label>
+                    <select id="conj-pec" class="form-select" formControlName="pec">
                       <option value="">Sélectionner</option>
                       <option value="O">Oui</option>
                       <option value="N">Non</option>
                     </select>
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date PEC</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  <div class="col-md-3">
+                    <label for="conj-dat-pec" class="form-label">Date PEC</label>
+                    <input id="conj-dat-pec" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
                       formControlName="dat_pec" appDateFormatter />
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">PEC mutuelle</label>
-                    <select class="form-select border-primary" formControlName="pec_mut">
+                  <div class="col-md-3">
+                    <label for="conj-pec-mut" class="form-label">PEC mutuelle</label>
+                    <select id="conj-pec-mut" class="form-select" formControlName="pec_mut">
                       <option value="">Sélectionner</option>
                       <option value="O">Oui</option>
                       <option value="N">Non</option>
                     </select>
                   </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date PEC mutuelle</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+                  <div class="col-md-3">
+                    <label for="conj-dat-pec-mut" class="form-label">Date PEC mutuelle</label>
+                    <input id="conj-dat-pec-mut" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
                       formControlName="dat_pec_mut" appDateFormatter />
                   </div>
                 </div>
-              </form>
-            </div>
-          </div>
-        </div>
+              </div>
 
-        <div class="col-md-6">
-          <div class="collapse show h-100">
-            <div class="card p-4 border shadow-none mb-0 mt-4 h-100">
-              <h5 class="mb-1 text-primary mb-3">Mère</h5>
-              <form [formGroup]="formMere">
-                <div class="row g-3">
-                  <div class="col-md-12">
-                    <label class="form-label">Nom et prénom</label>
-                    <input type="text" class="form-control border-primary" placeholder="Nom et prénom"
-                      formControlName="nom_pren" />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date de naissance</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                      formControlName="dat_naiss" appDateFormatter />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date de décès</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                      formControlName="dat_dece" appDateFormatter />
-                  </div>
-                  <div class="col-12">
-                    <hr class="my-1" />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">PEC</label>
-                    <select class="form-select border-primary" formControlName="pec">
-                      <option value="">Sélectionner</option>
-                      <option value="O">Oui</option>
-                      <option value="N">Non</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date PEC</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                      formControlName="dat_pec" appDateFormatter />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">PEC mutuelle</label>
-                    <select class="form-select border-primary" formControlName="pec_mut">
-                      <option value="">Sélectionner</option>
-                      <option value="O">Oui</option>
-                      <option value="N">Non</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Date PEC mutuelle</label>
-                    <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                      formControlName="dat_pec_mut" appDateFormatter />
+              <!-- Enfants -->
+              <div class="col-12"
+                *ngIf="formAdherent.get('cod_sit')?.value === 'M' || formAdherent.get('cod_sit')?.value === 'D' || formAdherent.get('cod_sit')?.value === 'V'">
+                <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                  <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-parent-line" aria-hidden="true"></i></span></div>
+                  <div>
+                    <h5 class="card-title mb-0">Enfants</h5>
+                    <p class="text-muted fs-13 mb-0">
+                      {{ dataRows?.length || 0 }} enfant{{ (dataRows?.length || 0) > 1 ? 's' : '' }}
+                    </p>
                   </div>
                 </div>
-              </form>
+
+                <p-table [value]="dataRows || []" [paginator]="(dataRows?.length || 0) > 6" [rows]="6"
+                  styleClass="p-datatable-sm modern-table">
+                  <ng-template pTemplate="header">
+                    <tr class="table-light">
+                      <th scope="col">Numéro</th>
+                      <th scope="col">Nom et prénom</th>
+                      <th scope="col">Date de naissance</th>
+                      <th scope="col">Sexe</th>
+                      <th scope="col">Handicap</th>
+                      <th scope="col">Activité</th>
+                      <th scope="col">Libellé activité</th>
+                      <th scope="col">PEC</th>
+                      <th scope="col">Date PEC</th>
+                      <th scope="col">Date de décès</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td><span class="badge bg-primary-subtle text-primary fs-12">{{ data.num_fam }}</span></td>
+                      <td class="fw-medium">{{ data.nom_pren }}</td>
+                      <td>{{ formatDate(data.dat_naiss) }}</td>
+                      <td>
+                        <span *ngIf="data.sexe === 'M'" class="badge bg-info-subtle text-info fs-12">Masculin</span>
+                        <span *ngIf="data.sexe === 'F'" class="badge fs-12" style="background:#fde7f3;color:#c2185b">Féminin</span>
+                      </td>
+                      <td>
+                        <span class="badge fs-12" [ngClass]="data.handicap === 'O' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary'">
+                          {{ data.handicap === 'O' ? 'Oui' : 'Non' }}
+                        </span>
+                      </td>
+                      <td>{{ data.cod_activite }}</td>
+                      <td>{{ data.lib_activite }}</td>
+                      <td>
+                        <span class="badge fs-12" [ngClass]="data.pec === 'O' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                          {{ data.pec === 'O' ? 'Oui' : 'Non' }}
+                        </span>
+                      </td>
+                      <td>{{ formatDate(data.dat_pec) }}</td>
+                      <td>{{ formatDate(data.dat_dece) }}</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="10" class="text-center text-muted py-5">
+                        <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                        Aucun enfant enregistré
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+
             </div>
-          </div>
-        </div>
-      </div>
+          </cdk-step>
 
-      <!-- Conjoint -->
-      <div class="col-md-12" *ngIf="formAdherent.get('cod_sit')?.value === 'M' ||
-          formAdherent.get('cod_sit')?.value === 'D' ||
-          formAdherent.get('cod_sit')?.value === 'V'">
-        <div class="collapse show">
-          <div class="card p-4 border shadow-none mb-0 mt-4" [formGroup]="formConjoint">
-            <h5 class="mb-1 text-primary mb-3">Conjoint</h5>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Nom et prénom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom et prénom"
-                  formControlName="nom_pren" />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Date de naissance</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_naiss" appDateFormatter />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Date de mariage</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_mar" appDateFormatter />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Nom de jeune fille</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom de jeune fille"
-                  formControlName="nom_jf" />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Matricule conjoint</label>
-                <input type="text" class="form-control border-primary" placeholder="Matricule conjoint"
-                  formControlName="mat_pers_conj" />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Numéro assurance</label>
-                <input type="text" class="form-control border-primary" placeholder="Numéro assurance"
-                  formControlName="num_ass_conj" />
-              </div>
-              <div class="col-12">
-                <hr class="my-1" />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">PEC</label>
-                <select class="form-select border-primary" formControlName="pec">
-                  <option value="">Sélectionner</option>
-                  <option value="O">Oui</option>
-                  <option value="N">Non</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Date PEC</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_pec" appDateFormatter />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">PEC mutuelle</label>
-                <select class="form-select border-primary" formControlName="pec_mut">
-                  <option value="">Sélectionner</option>
-                  <option value="O">Oui</option>
-                  <option value="N">Non</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Date PEC mutuelle</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_pec_mut" appDateFormatter />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Date de décès</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_dece" appDateFormatter />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          <!-- ÉTAPE 4 : Adresses -->
+          <cdk-step [optional]="false">
+            <ng-template cdkStepLabel>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" role="tab" id="tab-adresses"
+                  [class.active]="cdkStepper.selectedIndex === 3"
+                  [class.done]="cdkStepper.selectedIndex > 3">Adresses</button>
+              </li>
+            </ng-template>
 
-      <!-- Enfants -->
-      <div class="col-md-12" *ngIf="formAdherent.get('cod_sit')?.value === 'M' ||
-          formAdherent.get('cod_sit')?.value === 'D' ||
-          formAdherent.get('cod_sit')?.value === 'V'">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-          <h5 class="mb-1 text-primary mb-3">Enfants</h5>
-          <div class="table-responsive table-card mb-2">
-            <p-table [value]="dataRows || []" [paginator]="true" [rows]="6" styleClass="modern-table">
-              <ng-template pTemplate="header">
-                <tr class="table-primary">
-                  <th class="text-center">Numéro</th>
-                  <th class="text-center">Nom &amp; Prénom</th>
-                  <th class="text-center">Date naissance</th>
-                  <th class="text-center">Sexe</th>
-                  <th class="text-center">Handicap</th>
-                  <th class="text-center">Code activité</th>
-                  <th class="text-center">Libellé activité</th>
-                  <th class="text-center">PEC</th>
-                  <th class="text-center">Date PEC</th>
-                  <th class="text-center">Date décès</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-data>
-                <tr>
-                  <td class="text-center">{{ data.num_fam }}</td>
-                  <td class="text-center">{{ data.nom_pren }}</td>
-                  <td class="text-center">{{ formatDate(data.dat_naiss) }}</td>
-                  <td class="text-center">{{ data.sexe === 'M' ? 'Masculin' : data.sexe === 'F' ? 'Féminin' : '' }}</td>
-                  <td class="text-center">{{ data.handicap === 'O' ? 'Oui' : 'Non' }}</td>
-                  <td class="text-center">{{ data.cod_activite }}</td>
-                  <td class="text-center">{{ data.lib_activite }}</td>
-                  <td class="text-center">{{ data.pec === 'O' ? 'Oui' : 'Non' }}</td>
-                  <td class="text-center">{{ formatDate(data.dat_pec) }}</td>
-                  <td class="text-center">{{ formatDate(data.dat_dece) }}</td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="10"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </div>
-      </div>
-          </div></div>
-        </cdk-step>
+            <div class="mt-1 mb-2">
+              <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-map-pin-2-line" aria-hidden="true"></i></span></div>
+                <div>
+                  <h5 class="card-title mb-0">Adresses</h5>
+                  <p class="text-muted fs-13 mb-0">
+                    {{ listAdresse?.length || 0 }} adresse{{ (listAdresse?.length || 0) > 1 ? 's' : '' }}
+                  </p>
+                </div>
+              </div>
 
-        <cdk-step [optional]="false">
-          <ng-template cdkStepLabel>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" type="button" role="tab" id="tab-adresses"
-                [class.active]="cdkStepper.selectedIndex === 3"
-                [class.done]="cdkStepper.selectedIndex > 3">Adresses</button>
-            </li>
-          </ng-template>
-          <div class="row">
-      <!-- Adresses -->
-      <div class="col-md-12 mb-4">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-          <h5 class="mb-1 text-primary mb-3">Adresses</h5>
-          <div class="row gy-3">
-            <div class="col-lg-6 col-sm-12" *ngFor="let a of listAdresse">
-              <div class="border rounded p-3 h-100">
-                <span class="badge bg-success-subtle text-success mb-2" *ngIf="a.adrCourant === 'O'">Adresse courante</span>
-                <span class="fs-15 fw-semibold mb-1 d-block">{{ a.libGouv || a.cod_gouv || a.codGouv }}</span>
-                <span class="text-muted d-block mb-1" *ngIf="a.libPoste || a.codPoste">{{ a.libPoste || a.codPoste }}</span>
-                <span class="text-muted d-block">{{ a.rue }}</span>
-                <span class="text-muted d-block" *ngIf="a.tel_pers"><i class="ri-phone-line me-1"></i>{{ a.tel_pers }}</span>
+              <div class="row g-3">
+                <div class="col-md-6 col-xl-4" *ngFor="let a of listAdresse">
+                  <div class="border rounded h-100 p-3"
+                    [ngClass]="{ 'border-primary bg-primary-subtle bg-opacity-10': a.adrCourant === 'O' }">
+                    <span class="badge bg-primary mb-2" *ngIf="a.adrCourant === 'O'">Adresse courante</span>
+                    <span class="fs-15 fw-semibold d-block">{{ a.libGouv || a.cod_gouv || a.codGouv }}</span>
+                    <span class="text-muted d-block" *ngIf="a.libPoste || a.codPoste">{{ a.libPoste || a.codPoste }}</span>
+                    <span class="text-muted d-block">{{ a.rue }}</span>
+                    <span class="text-muted d-block" *ngIf="a.tel_pers"><i class="ri-phone-line me-1" aria-hidden="true"></i>{{ a.tel_pers }}</span>
+                  </div>
+                </div>
+                <div class="col-12" *ngIf="!listAdresse || listAdresse.length === 0">
+                  <div class="text-center text-muted py-4">
+                    <i class="ri-map-pin-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucune adresse enregistrée
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-12" *ngIf="!listAdresse || listAdresse.length === 0">
-              <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+          </cdk-step>
+
+          <!-- ÉTAPE 5 : Carte soins -->
+          <cdk-step [optional]="false">
+            <ng-template cdkStepLabel>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" type="button" role="tab" id="tab-carte-soins"
+                  [class.active]="cdkStepper.selectedIndex === 4"
+                  [class.done]="cdkStepper.selectedIndex > 4">Carte soins</button>
+              </li>
+            </ng-template>
+
+            <div class="mt-1">
+              <!-- Carte soins -->
+              <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-bottom-dashed">
+                <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span></div>
+                <div>
+                  <h5 class="card-title mb-0">Carte soins</h5>
+                  <p class="text-muted fs-13 mb-0">
+                    {{ CarteSoinList?.length || 0 }} carte{{ (CarteSoinList?.length || 0) > 1 ? 's' : '' }}
+                  </p>
+                </div>
+              </div>
+
+              <p-table [value]="CarteSoinList || []" [paginator]="(CarteSoinList?.length || 0) > 6" [rows]="6"
+                styleClass="p-datatable-sm modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="table-light">
+                    <th scope="col">N° famille</th>
+                    <th scope="col">Nom et prénom</th>
+                    <th scope="col">Nature</th>
+                    <th scope="col">Numéro</th>
+                    <th scope="col">Date d'affectation</th>
+                    <th scope="col">État</th>
+                    <th scope="col">Perdue</th>
+                    <th scope="col">Observation</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data>
+                  <tr>
+                    <td><span class="badge bg-primary-subtle text-primary fs-12">{{ data.num_fam }}</span></td>
+                    <td class="fw-medium">{{ data.nom_pren }}</td>
+                    <td>{{ data.nat_cart === 'S' ? 'Carte de soins' : data.nat_cart === 'M' ? 'Carnet militaire' : data.nat_cart }}</td>
+                    <td>{{ data.num_cart }}</td>
+                    <td>{{ formatDate(data.dat_cart) }}</td>
+                    <td>
+                      <span class="badge fs-12" [ngClass]="data.etat_cart === 'C' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                        {{ data.etat_cart === 'C' ? 'Courant' : 'Non courant' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge fs-12" [ngClass]="data.perdu === 'O' ? 'bg-danger-subtle text-danger' : 'bg-secondary-subtle text-secondary'">
+                        {{ data.perdu === 'O' ? 'Oui' : 'Non' }}
+                      </span>
+                    </td>
+                    <td>{{ data.obs_cart }}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="8" class="text-center text-muted py-5">
+                      <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                      Aucune carte soins enregistrée
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+
+              <!-- Carte soins CNAM -->
+              <div class="d-flex align-items-center gap-3 pb-3 mb-3 mt-5 border-bottom border-bottom-dashed">
+                <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-bank-card-2-line" aria-hidden="true"></i></span></div>
+                <div>
+                  <h5 class="card-title mb-0">Carte soins CNAM</h5>
+                  <p class="text-muted fs-13 mb-0">
+                    {{ CarteSoinCnamList?.length || 0 }} carte{{ (CarteSoinCnamList?.length || 0) > 1 ? 's' : '' }}
+                  </p>
+                </div>
+              </div>
+
+              <p-table [value]="CarteSoinCnamList || []" [paginator]="(CarteSoinCnamList?.length || 0) > 6" [rows]="6"
+                styleClass="p-datatable-sm modern-table">
+                <ng-template pTemplate="header">
+                  <tr class="table-light">
+                    <th scope="col">Date carte</th>
+                    <th scope="col">Date début</th>
+                    <th scope="col">Date fin</th>
+                    <th scope="col">Observation</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data>
+                  <tr>
+                    <td>{{ data.dat_cart }}</td>
+                    <td>{{ data.date_debut }}</td>
+                    <td>
+                      {{ data.date_fin }}
+                      <span *ngIf="badgeCarteCnam(data) as badge" class="badge ms-1" [ngClass]="badge.cls">{{ badge.label }}</span>
+                    </td>
+                    <td>{{ data.obs_cart }}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-5">
+                      <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                      Aucune carte CNAM enregistrée
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
             </div>
-          </div>
-        </div>
-      </div>
-          </div>
-        </cdk-step>
+          </cdk-step>
 
-        <cdk-step [optional]="false">
-          <ng-template cdkStepLabel>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" type="button" role="tab" id="tab-carte-soins"
-                [class.active]="cdkStepper.selectedIndex === 4"
-                [class.done]="cdkStepper.selectedIndex > 4">Carte soins</button>
-            </li>
-          </ng-template>
-          <div class="row">
-      <!-- Carte soins -->
-      <div class="col-md-12">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-          <h5 class="mb-1 text-primary mb-3">Carte soins</h5>
-          <div class="table-responsive table-card mb-2">
-            <p-table [value]="CarteSoinList || []" [paginator]="true" [rows]="6" styleClass="modern-table">
-              <ng-template pTemplate="header">
-                <tr class="table-primary">
-                  <th class="text-center">Num fam</th>
-                  <th class="text-center">Nom &amp; Prénom</th>
-                  <th class="text-center">Nature</th>
-                  <th class="text-center">Numéro</th>
-                  <th class="text-center">Date affect</th>
-                  <th class="text-center">Etat</th>
-                  <th class="text-center">Perdu</th>
-                  <th class="text-center">Observation</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-data>
-                <tr>
-                  <td class="text-center">{{ data.num_fam }}</td>
-                  <td class="text-center">{{ data.nom_pren }}</td>
-                  <td class="text-center">{{ data.nat_cart === 'S' ? 'Carte de soins' : data.nat_cart === 'M' ? 'Carnet militaire' : data.nat_cart }}</td>
-                  <td class="text-center">{{ data.num_cart }}</td>
-                  <td class="text-center">{{ formatDate(data.dat_cart) }}</td>
-                  <td class="text-center">{{ data.etat_cart === 'C' ? 'Courant' : 'Non courant' }}</td>
-                  <td class="text-center">{{ data.perdu === 'O' ? 'Oui' : 'Non' }}</td>
-                  <td class="text-center">{{ data.obs_cart }}</td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="8"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Carte soins CNAM -->
-      <div class="col-md-12">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-          <h5 class="mb-1 text-primary mb-3">Carte soins CNAM</h5>
-          <div class="table-responsive table-card mb-2">
-            <p-table [value]="CarteSoinCnamList" [paginator]="true" [rows]="6" styleClass="modern-table">
-              <ng-template pTemplate="header">
-                <tr class="table-primary">
-                  <th class="text-center">Date carte</th>
-                  <th class="text-center">Date début</th>
-                  <th class="text-center">Date fin</th>
-                  <th class="text-center">Observation</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-data>
-                <tr>
-                  <td class="text-center">{{ data.dat_cart }}</td>
-                  <td class="text-center">{{ data.date_debut }}</td>
-                  <td class="text-center">
-                    {{ data.date_fin }}
-                    <span *ngIf="badgeCarteCnam(data) as badge" class="badge ms-1" [ngClass]="badge.cls">{{ badge.label }}</span>
-                  </td>
-                  <td class="text-center">{{ data.obs_cart }}</td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="4"><span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span></td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </div>
-      </div>
-          </div>
-        </cdk-step>
         </ng-stepper>
       </div>
     </div>

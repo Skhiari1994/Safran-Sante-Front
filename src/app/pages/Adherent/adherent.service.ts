@@ -59,6 +59,10 @@ export class AdherentService {
   AddAdresse(data: any): Observable<any> {
     return this.http.post<any>(API_URL + "adherent/Personnel/addAdresse", data);
   }
+  deleteAdresse(soc: string, mat: string, num: number): Observable<any> {
+    const params = new HttpParams().set('soc', soc).set('mat', mat).set('num', String(num));
+    return this.http.delete<any>(API_URL + "adherent/Personnel/deleteAdresse", { params });
+  }
   countMat = (soc: String, mat: String): Observable<any> => {
     return this.http.get(API_URL + "adherent/Personnel/countMat/" + soc + "/" + mat);
   };

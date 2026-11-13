@@ -6,6 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 @Component({
   selector: 'app-prm-banque',
@@ -142,8 +143,9 @@ export class PrmBanqueComponent {
   supprimerBanque(row: any) {
     Swal.fire({
       title: "Supprimer cette banque ?",
-      html: `Code <b>${row.cod_banq}</b> – ${row.lib_banq ?? ""}`,
-      icon: "warning",
+      // même corbeille animée que la fenêtre de suppression des autres pages (à la place du point d'exclamation)
+      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+             <div class="mt-2">Code <b>${row.cod_banq}</b> – ${row.lib_banq ?? ""}</div>`,
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#6c757d",
@@ -159,12 +161,9 @@ export class PrmBanqueComponent {
             this.codBanq = null;
           }
           this.getBanque();
-          Swal.fire({ position: "top-end", icon: "success", title: "Banque supprimée avec succès !", showConfirmButton: false, timer: 2000 });
+          notifSucces("Banque supprimée avec succès !");
         },
-        error: (err) => {
-          const message = typeof err?.error === "string" && err.error ? err.error : "Suppression impossible";
-          Swal.fire({ icon: "error", title: "Suppression impossible", text: message });
-        },
+        error: (err) => notifErreur("Suppression impossible", err, "Suppression impossible"),
       });
     });
   }
@@ -172,16 +171,12 @@ export class PrmBanqueComponent {
   saveBanque() {
     // En modification, on conserve les champs non affichés (adresse, tél, ...)
     const banque = this.edit ? this.formBanque.value : { ...this.banqueEnEdition, ...this.formBanque.value };
-     this.serv.AddBanque(banque).subscribe((data) => {
-      console.log("data :", data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.getBanque()
+     this.serv.AddBanque(banque).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.getBanque();
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -200,28 +195,18 @@ export class PrmBanqueComponent {
       return;
     }
   
-    this.serv.AddAgence(agenceFormArray).subscribe((data) => {
-      console.log("Saved data:", data);
-  
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouté avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-  
-      const codBanq = agenceFormArray[0]?.cod_banq;
-  
-      if (codBanq) {
-        this.serv.getAgence(codBanq).subscribe((data) => {
-          console.log("Agence reloaded data:", data);
-          this.listAgence = data;
-          this.listAgenceFiltre = data;
-        });
-      } else {
-        console.warn("cod_banq is missing, cannot reload agences");
-      }
+    this.serv.AddAgence(agenceFormArray).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        const codBanq = agenceFormArray[0]?.cod_banq;
+        if (codBanq) {
+          this.serv.getAgence(codBanq).subscribe((data) => {
+            this.listAgence = data;
+            this.listAgenceFiltre = data;
+          });
+        }
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
   
@@ -334,12 +319,15 @@ export class PrmBanqueComponent {
       cod_agc: this.deleteId.cod_agc
     };
   console.log("agenceToDelete", this.deleteId )
-    this.serv.deleteAgence( agenceToDelete ).subscribe((data) => {
-      // Vous pouvez actualiser la liste après suppression
-      this.serv.getAgence(this.codBanq).subscribe((agences) => {
-        this.listAgence = agences;
-        this.listAgenceFiltre = agences;
-      });
+    this.serv.deleteAgence( agenceToDelete ).subscribe({
+      next: () => {
+        notifSucces("Agence supprimée avec succès !");
+        this.serv.getAgence(this.codBanq).subscribe((agences) => {
+          this.listAgence = agences;
+          this.listAgenceFiltre = agences;
+        });
+      },
+      error: (err) => notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE),
     });
   }
   

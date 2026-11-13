@@ -1,695 +1,497 @@
+<div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
   <app-breadcrumbs title="Consultation des bulletins cnam" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
-<br>
-<div class="col-md-12">
-  <div class="collapse show" id="paymentmethodCollapse">
-    <div class="card p-4 border shadow-none mb-0 mt-4">
-      <form action="javascript:void(0);" class="row g-3" [formGroup]="formBuletinSoin">
-        <div class="row">
-          <!-- Première colonne -->
-          <div class="col-md-6">
-            <div class="row g-3">
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Matricule</label>
-                <input type="text" class="form-control border-primary" placeholder="Matricule" [value]="matricule"
-                  disabled readonly />
-              </div>
-              <!--div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Num ass.</label>
-                <input type="text" class="form-control border-primary" placeholder="num assurance"
-                  formControlName="num_assur" disabled readonly />
-              </div-->
-              <div class="col-md-7">
-                <label for="billinginfo-firstName" class="form-label">Nom & Prénom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom & Prénom" [value]="nomPers"
-                  disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date saisie</label>
-                <input type="text" class="form-control border-primary" placeholder="Date saisie"
-                  formControlName="dat_saisie" disabled readonly />
-              </div>
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Code assurance</label>
-                <input type="text" class="form-control border-primary" placeholder="Code assurance"
-                  formControlName="cod_assur" disabled readonly />
-              </div>
-              <div class="col-md-7">
-                <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_assur"
-                  disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Id CNSS/CNRPS</label>
-                <input type="text" class="form-control border-primary" placeholder="Id CNSS/CNRPS" [value]="num_retr"
-                  disabled readonly />
-              </div>
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Fillière</label>
-                <input type="text" class="form-control border-primary" placeholder="Fillière" formControlName="cod_fil"
-                  disabled readonly />
-              </div>
-              <div class="col-md-7">
-                <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill" disabled
-                  readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="num_soin" class="form-label">N° soin</label>
-                <input id="num_soin" type="text" class="form-control border-primary"
-                       placeholder="N° soin" formControlName="num_soin" disabled readonly />
-              </div>
+
+<form action="javascript:void(0);" [formGroup]="formBuletinSoin" autocomplete="off">
+  <div class="row g-4 mt-0">
+
+    <!-- Adhérent -->
+    <div class="col-xl-6">
+      <div class="card h-100 mb-0">
+        <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-line" aria-hidden="true"></i></span>
+          </div>
+          <div>
+            <h5 class="card-title mb-0">Adhérent</h5>
+            <p class="text-muted fs-13 mb-0">Utilisez la recherche de la barre d'outils pour choisir un bulletin</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identité</h6>
+            </div>
+            <div class="col-md-3">
+              <label for="cc-mat" class="form-label">Matricule</label>
+              <input id="cc-mat" type="text" class="form-control" placeholder="Matricule" [value]="matricule" readonly />
+            </div>
+            <div class="col-md-6">
+              <label for="cc-nom" class="form-label">Nom et prénom</label>
+              <input id="cc-nom" type="text" class="form-control" placeholder="Nom et prénom" [value]="nomPers" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-datsaisie" class="form-label">Date saisie</label>
+              <input id="cc-datsaisie" type="text" class="form-control" placeholder="Date saisie" formControlName="dat_saisie" readonly />
+            </div>
+
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Assurance et filière</h6>
+            </div>
+            <div class="col-md-3">
+              <label for="cc-codass" class="form-label">Code assurance</label>
+              <input id="cc-codass" type="text" class="form-control" placeholder="Code assurance" formControlName="cod_assur" readonly />
+            </div>
+            <div class="col-md-6">
+              <label for="cc-libass" class="form-label">Libellé assurance</label>
+              <input id="cc-libass" type="text" class="form-control" placeholder="Libellé" [value]="lib_assur" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-cnrps" class="form-label">Id CNSS/CNRPS</label>
+              <input id="cc-cnrps" type="text" class="form-control" placeholder="Id CNSS/CNRPS" [value]="num_retr" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-fil" class="form-label">Filière</label>
+              <input id="cc-fil" type="text" class="form-control" placeholder="Filière" formControlName="cod_fil" readonly />
+            </div>
+            <div class="col-md-9">
+              <label for="cc-libfil" class="form-label">Libellé filière</label>
+              <input id="cc-libfil" type="text" class="form-control" placeholder="Libellé" [value]="lib_fill" readonly />
             </div>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- Ligne de séparation -->
-          <div class="col-md-1 d-flex align-items-stretch">
-            <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
+    <!-- Soin -->
+    <div class="col-xl-6">
+      <div class="card h-100 mb-0">
+        <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span>
           </div>
+          <div>
+            <h5 class="card-title mb-0">Soin</h5>
+            <p class="text-muted fs-13 mb-0">Prestataire, date, régime de remboursement et observation</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Bulletin</h6>
+            </div>
+            <div class="col-md-3">
+              <label for="cc-numsoin" class="form-label">N° soin</label>
+              <input id="cc-numsoin" type="text" class="form-control" placeholder="N° soin" formControlName="num_soin" readonly />
+            </div>
+            <div class="col-md-5">
+              <label for="cc-prest" class="form-label">Prestataire</label>
+              <input id="cc-prest" type="text" class="form-control" placeholder="Prestataire"
+                [value]="(numFam !== null && numFam !== undefined && numFam !== '')
+                  ? numFam + ' - ' + (nomAdherent || nomPers || '')
+                  : ''" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="cc-bord" class="form-label">Code bordereau</label>
+              <input id="cc-bord" type="text" class="form-control" placeholder="Code bordereau" formControlName="cod_bord" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-datsoin" class="form-label">Date soin</label>
+              <input id="cc-datsoin" type="text" class="form-control" placeholder="Date soin" formControlName="dat_soin" mask="00/00/0000" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-datnais" class="form-label">Date naissance</label>
+              <input id="cc-datnais" type="text" class="form-control" placeholder="Date naissance" mask="00/00/0000"
+                [value]="formatDateNaissance(datNais)" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-ans" class="form-label">Ans</label>
+              <input id="cc-ans" type="text" class="form-control" placeholder="Ans" [value]="ageAn" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="cc-mois" class="form-label">Mois</label>
+              <input id="cc-mois" type="text" class="form-control" placeholder="Mois" [value]="ageMois" readonly />
+            </div>
 
-          <!-- Deuxième colonne -->
-          <div class="col-md-5">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="billinginfo-firstName" class="form-label">Préstataire</label>
-                <input id="prestataire" type="text" class="form-control border-primary" placeholder="Préstataire"
-                  [value]="(numFam !== null && numFam !== undefined && numFam !== '')
-                   ? numFam + ' - ' + (nomAdherent || nomPers || '')
-                   : ''" disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date soin</label>
-                <input type="text" class="form-control border-primary" placeholder="Date soin"
-                  formControlName="dat_soin" mask="00/00/0000" (change)="controleDatSoin($event)" disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Code Bordereau</label>
-                <input type="text" class="form-control border-primary" placeholder="Code Bordereau"
-                  formControlName="cod_bord" disabled readonly />
-              </div>
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Remboursement</h6>
+            </div>
+            <div class="col-md-6">
+              <label for="cc-reg" class="form-label">Régime remboursement</label>
+              <select id="cc-reg" class="form-select champ-lecture-seule" data-plugin="choices"
+                formControlName="reg_remb" style="pointer-events: none;" tabindex="-1" aria-readonly="true">
+                <option value="">Sélectionner</option>
+                <option *ngFor="let i of listRegimeRemb" [value]="i.reg_remb">{{ i.lib_remb }}</option>
+              </select>
+            </div>
+            <div class="col-md-6" *ngIf="showMsgDatAccouch">
+              <label for="cc-accouch" class="form-label">Date prévue d'accouchement</label>
+              <input id="cc-accouch" type="text" class="form-control" placeholder="Date prévue d'accouchement" readonly
+                formControlName="dat_prev_accouch" mask="00/00/0000" />
+            </div>
 
+            <ng-container *ngIf="showMsgPriseCharge">
+              <div class="col-12 mt-4">
+                <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Prise en charge</h6>
+              </div>
               <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date naissance</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="Date naissance"
-                  [value]="formatDateNaissance(datNais)" disabled readonly />
-              </div>
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Ans</label>
-                <input type="text" class="form-control border-primary" placeholder="Ans" [value]="ageAn" disabled
-                  readonly />
-              </div>
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Mois</label>
-                <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" disabled
-                  readonly />
+                <label for="cc-pec" class="form-label">Num Pec</label>
+                <input id="cc-pec" type="text" class="form-control" placeholder="Num Pec" readonly [value]="PEC" />
               </div>
               <div class="col-md-5">
-                <label for="billinginfo-firstName" class="form-label">Régime remboursement</label>
-                <select class="form-select border-primary champ-lecture-seule" data-plugin="choices"
-                  formControlName="reg_remb" disabled readonly>
-                  <option value="">Sélectionner</option>
-                  <option *ngFor="let i of listRegimeRemb" [value]="i.reg_remb">{{i.lib_remb}}</option>
-                </select>
+                <label for="cc-etab" class="form-label">Établissement</label>
+                <input id="cc-etab" type="text" class="form-control" placeholder="Établissement" readonly [value]="etabliss" />
               </div>
+              <div class="col-md-4">
+                <label for="cc-datpec" class="form-label">Date pec</label>
+                <input id="cc-datpec" type="text" class="form-control" placeholder="Date pec" readonly [value]="datPec" />
+              </div>
+            </ng-container>
 
-              <div class="col-md-4" *ngIf="showMsgDatAccouch">
-                <label for="billinginfo-firstName" class="form-label">Date prévu accouchement</label>
-                <input type="text" class="form-control border-primary" placeholder="Date prévu accouchement" readonly
-                  formControlName="dat_prev_accouch" mask="00/00/0000" />
+            <ng-container *ngIf="showMsgMalad">
+              <div class="col-12 mt-4">
+                <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Maladie</h6>
               </div>
-              <div class="col-md-3" *ngIf="showMsgPriseCharge">
-                <label for="billinginfo-firstName" class="form-label">Num Pec</label>
-                <input type="text" class="form-control border-primary" placeholder="Num Pec" readonly [value]="PEC" />
+              <div class="col-md-3">
+                <label for="cc-malad" class="form-label">Code maladie</label>
+                <input id="cc-malad" type="text" class="form-control" placeholder="Code maladie" readonly [value]="Med" />
               </div>
-              <div class="col-md-5" *ngIf="showMsgPriseCharge">
-                <label for="billinginfo-firstName" class="form-label">Etablissement</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement" readonly
-                  [value]="etabliss" />
+              <div class="col-md-5">
+                <label for="cc-libmal" class="form-label">Libellé</label>
+                <input id="cc-libmal" type="text" class="form-control" placeholder="Libellé" readonly [value]="libMed" />
               </div>
-              <div class="col-md-4" *ngIf="showMsgPriseCharge">
-                <label for="billinginfo-firstName" class="form-label">Date pec</label>
-                <input type="text" class="form-control border-primary" placeholder="Date pec" readonly
-                  [value]="datPec" />
+              <div class="col-md-4">
+                <label for="cc-numdoss" class="form-label">Numéro dossier</label>
+                <input id="cc-numdoss" type="text" class="form-control" placeholder="Numéro dossier" readonly />
               </div>
-              <div class="col-md-3" *ngIf="showMsgMalad ">
-                <label for="billinginfo-firstName" class="form-label">Code maladie</label>
-                <input type="text" class="form-control border-primary" placeholder="Code maladie" readonly
-                  [value]="Med" />
-              </div>
-              <div class="col-md-5" *ngIf="showMsgMalad ">
-                <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" readonly
-                  [value]="libMed" />
-              </div>
-              <div class="col-md-4" *ngIf="showMsgMalad">
-                <label for="billinginfo-firstName" class="form-label">Numéro dossier</label>
-                <input type="text" class="form-control border-primary" placeholder="Numéro dossier" readonly />
-              </div>
+            </ng-container>
 
-              <div class="col-md-12">
-                <label class="form-label">Observation</label>
-                <input type="text" class="form-control border-primary" placeholder="Observation" disabled readonly
-                  formControlName="obs" />
-              </div>
-
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Observation</h6>
             </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="col-md-12">
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <form action="javascript:void(0);" class="row g-3">
-      <div class="row">
-        <!-- Première colonne -->
-        <div class="col-md-6">
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label">Solde CNAM</label>
-              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-                placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+            <div class="col-12">
+              <label for="cc-obs" class="form-label">Observation</label>
+              <input id="cc-obs" type="text" class="form-control" placeholder="Observation" readonly formControlName="obs" />
             </div>
-          </div>
-        </div>
-
-        <!-- Ligne de séparation -->
-        <div class="col-md-1 d-flex align-items-stretch">
-          <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
-        </div>
-
-        <!-- Deuxième colonne -->
-        <div class="col-md-5">
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label">Solde estimatif</label>
-              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-                placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="col-xxl-12">
-  <div class="card h-100"> <!-- Ajout de h-100 -->
-    <div class="card-body d-flex flex-column"> <!-- Ajout de flex-column -->
-      <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
-        <div class="col-12 mb-3">
-          <div class="border mb-3" role="tablist" aria-orientation="horizontal">
-            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs">
-              <li [ngbNavItem]="1">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Les visites</h5>
-                </a>
-                <ng-template ngbNavContent>
-                  <div class="container-fluid">
-                    <!-- Carte principale -->
-                    <div class="card h-100">
-
-
-                      <div class="card-body">
-                        <form [formGroup]="ligVisiteForm">
-                          <!-- Table avec défilement si plus de 5 lignes -->
-                          <div class="table-responsive"
-                            [ngStyle]="{'max-height': lignes.length > 3 ? '300px' : 'auto', 'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'}">
-                            <p-table [value]="ligVisiteForm.value?.visite || []"
-                              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                              <ng-template pTemplate="header">
-                                <tr class="bg-primary text-white">
-                                  <th>#</th>
-                                  <th style="width: 150px;">Date Acte</th>
-                                  <th style="width: 250px;">Visite</th>
-                                  <th style="width: 450px;">Libelle</th>
-                                  <th style="width: 150px;">Mnt Hr App</th>
-                                  <th style="width: 150px;">Net</th>
-                                  <th style="width: 250px;">Type etablis</th>
-                                  <th style="width: 200px;">Code</th>
-                                  <th style="width: 250px;">Etablissement</th>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                <tr>
-                                  <td>{{ rowIndex + 1 }}</td>
-                                  <td>{{ rowData.dat_act }}</td>
-                                  <td>{{ rowData.cod_visit }}</td>
-                                  <td>{{ libVisite[rowIndex] }}</td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_honor | number:'1.2-2'
-                                      }}</span></td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_net | number:'1.2-2'
-                                      }}</span></td>
-                                  <td>{{ rowData.prf_typ }}</td>
-                                  <td>{{ rowData.prf_cod }}</td>
-                                  <td>{{ etab_rsoc_visite[rowIndex] }}</td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="footer">
-                                <tr class="bg-light fw-bold">
-                                  <td colspan="4" class="text-end">Total :</td>
-                                  <td>{{ totalHonorairesVisite | number:'1.2-2' }}</td>
-                                  <td>{{ totalNetVisite | number:'1.2-2' }}</td>
-                                  <td colspan="3"></td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="emptymessage">
-                                <tr>
-                                  <td colspan="9"><span class="badge bg-danger-subtle text-danger badge-border">Aucune
-                                      donnée disponible !</span></td>
-                                </tr>
-                              </ng-template>
-                            </p-table>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </ng-template>
-              </li>
-              <li [ngbNavItem]="2">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Les actes</h5>
-                </a>
-                <ng-template ngbNavContent>
-                  <div class="container-fluid">
-                    <!-- Carte principale -->
-                    <div class="card h-100">
-
-
-                      <div class="card-body">
-                        <form [formGroup]="ligPretForm">
-                          <!-- Table avec défilement si plus de 5 lignes -->
-                          <div class="table-responsive"
-                            [ngStyle]="{'max-height': lignes.length > 3 ? '300px' : 'auto', 'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'}">
-                            <p-table [value]="ligPretForm.value?.lignes || []"
-                              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                              <ng-template pTemplate="header">
-                                <tr class="bg-primary text-white">
-                                  <th>#</th>
-                                  <th style="width: 150px;">Date Acte</th>
-                                  <th style="width: 250px;">Acte</th>
-                                  <th style="width: 450px;">Libelle</th>
-                                  <th style="width: 100px;">Unit</th>
-                                  <th style="width: 150px;">Honoraires</th>
-                                  <th style="width: 150px;">Net</th>
-                                  <th style="width: 100px;">Accord</th>
-                                  <th style="width: 100px;">Num Pec Act</th>
-                                  <th style="width: 250px;">Type etablis</th>
-                                  <th style="width: 200px;">Code</th>
-                                  <th style="width: 250px;">Etablissement</th>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                <tr>
-                                  <td>{{ rowIndex + 1 }}</td>
-                                  <td>{{ rowData.dat_act }}</td>
-                                  <td>{{ rowData.cod_act }}</td>
-                                  <td>{{ rowData.abrv_act }}</td>
-                                  <td>{{ rowData.indice }}</td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_honor | number:'1.2-2'
-                                      }}</span></td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_net | number:'1.2-2'
-                                      }}</span></td>
-                                  <td>{{ rowData.accord_act }}</td>
-                                  <td>{{ rowData.num_pec_act }}</td>
-                                  <td>{{ rowData.prf_typ }}</td>
-                                  <td>{{ rowData.prf_cod }}</td>
-                                  <td>{{ rowData.typ_prf }}</td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="footer">
-                                <tr class="bg-light fw-bold">
-                                  <td colspan="5" class="text-end">Total :</td>
-                                  <td>{{ totalHonoraires | number:'1.2-2' }}</td>
-                                  <td>{{ totalNet | number:'1.2-2' }}</td>
-                                  <td colspan="5"></td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="emptymessage">
-                                <tr>
-                                  <td colspan="12"><span class="badge bg-danger-subtle text-danger badge-border">Aucune
-                                      donnée disponible !</span></td>
-                                </tr>
-                              </ng-template>
-                            </p-table>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </ng-template>
-              </li>
-              <li [ngbNavItem]="3">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Pharmacies</h5>
-                </a>
-                <ng-template ngbNavContent>
-                  <div class="container-fluid">
-                    <!-- Carte principale -->
-                    <div class="card h-100">
-                      <div class="card-body">
-                        <form [formGroup]="ligPharForm">
-                          <div class="table-responsive"
-                            [ngStyle]="{'max-height': lignes.length > 3 ? '300px' : 'auto', 'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'}">
-                            <p-table [value]="ligPharForm.value?.phar || []"
-                              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                              <ng-template pTemplate="header">
-                                <tr class="bg-primary text-white">
-                                  <th>#</th>
-                                  <th style="width: 150px;">Date med</th>
-                                  <th style="width: 200px;">Med</th>
-                                  <th style="width: 250px;">Libelle</th>
-                                  <th style="width: 100px;">Unit</th>
-                                  <th style="width: 150px;">Honoraires</th>
-                                  <th style="width: 150px;">Net</th>
-                                  <th style="width: 100px;">Nbr j</th>
-                                  <th style="width: 100px;">Accord</th>
-                                  <th style="width: 100px;">Num Pec</th>
-                                  <th style="width: 250px;">Type etablis</th>
-                                  <th style="width: 200px;">Code</th>
-                                  <th style="width: 250px;">Etablissement</th>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                <tr>
-                                  <td>{{ rowIndex + 1 }}</td>
-                                  <td>{{ rowData.dat_act }}</td>
-                                  <td>{{ rowData.cod_med }}</td>
-                                  <td>{{ libMed[rowIndex] }}</td>
-                                  <td>{{ rowData.indice }}</td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_honor | number:'1.2-2'
-                                      }}</span></td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_net | number:'1.2-2'
-                                      }}</span></td>
-                                  <td>{{ rowData.nbr_j }}</td>
-                                  <td>{{ rowData.accord_med }}</td>
-                                  <td>{{ rowData.num_pec_med }}</td>
-                                  <td>{{ rowData.prf_typ }}</td>
-                                  <td>{{ rowData.prf_cod }}</td>
-                                  <td>{{ etab_rsoc_phar[rowIndex] }}</td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="footer">
-                                <tr class="bg-light fw-bold">
-                                  <td colspan="5" class="text-end">Total :</td>
-                                  <td>{{ totalHonorairesPhar | number:'1.2-2' }}</td>
-                                  <td>{{ totalNetPhar | number:'1.2-2' }}</td>
-                                  <td colspan="6"></td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="emptymessage">
-                                <tr>
-                                  <td colspan="13"><span class="badge bg-danger-subtle text-danger badge-border">Aucune
-                                      donnée disponible !</span></td>
-                                </tr>
-                              </ng-template>
-                            </p-table>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </ng-template>
-              </li>
-              <li [ngbNavItem]="4">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Les appareils</h5>
-                </a>
-                <ng-template ngbNavContent>
-                  <div class="container-fluid">
-                    <!-- Carte principale -->
-                    <div class="card h-100">
-                      <div class="card-body">
-                        <form [formGroup]="ligAppareilForm">
-                          <!-- Table avec défilement si plus de 5 lignes -->
-                          <div class="table-responsive"
-                            [ngStyle]="{'max-height': lignes.length > 3 ? '300px' : 'auto', 'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'}">
-                            <p-table [value]="ligAppareilForm.value?.appareil || []"
-                              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                              <ng-template pTemplate="header">
-                                <tr class="bg-primary text-white">
-                                  <th>#</th>
-                                  <th style="width: 150px;">Date app</th>
-                                  <th style="width: 250px;">Appareil</th>
-                                  <th style="width: 450px;">Libelle</th>
-                                  <th style="width: 150px;">Mnt Hr App</th>
-                                  <th style="width: 150px;">Net</th>
-                                  <th style="width: 100px;">Accord</th>
-                                  <th style="width: 100px;">Num Pec</th>
-                                  <th style="width: 250px;">Type etablis</th>
-                                  <th style="width: 200px;">Code</th>
-                                  <th style="width: 250px;">Etablissement</th>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                                <tr>
-                                  <td>{{ rowIndex + 1 }}</td>
-                                  <td>{{ rowData.dat_act }}</td>
-                                  <td>{{ rowData.cod_app }}</td>
-                                  <td>{{ appareilCode[rowIndex] }}</td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_honor | number:'1.2-2'
-                                      }}</span></td>
-                                  <td><span style="display:block;text-align:right">{{ rowData.mnt_net | number:'1.2-2'
-                                      }}</span></td>
-                                  <td>{{ rowData.accord_app }}</td>
-                                  <td>{{ rowData.num_pec_app }}</td>
-                                  <td>{{ rowData.prf_typ }}</td>
-                                  <td>{{ rowData.prf_cod }}</td>
-                                  <td>{{ etab_rsoc_appareil[rowIndex] }}</td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="footer">
-                                <tr class="bg-light fw-bold">
-                                  <td colspan="4" class="text-end">Total :</td>
-                                  <td>{{ totalHonorairesAppareil | number:'1.2-2' }}</td>
-                                  <td>{{ totalNetAppareil | number:'1.2-2' }}</td>
-                                  <td colspan="5"></td>
-                                </tr>
-                              </ng-template>
-                              <ng-template pTemplate="emptymessage">
-                                <tr>
-                                  <td colspan="11"><span class="badge bg-danger-subtle text-danger badge-border">Aucune
-                                      donnée disponible !</span></td>
-                                </tr>
-                              </ng-template>
-                            </p-table>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </ng-template>
-              </li>
-              <li [ngbNavItem]="5">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Consultation actes Mut</h5>
-                </a>
-                <ng-template ngbNavContent>
-                  <div class="container-fluid">
-                    <!-- Carte principale -->
-                    <div class="card h-100">
-
-                      <div class="card-body">
-                        <!-- Table avec défilement si plus de 5 lignes -->
-                        <div class="table-responsive"
-                          [ngStyle]="{'max-height': lignes.length > 3 ? '300px' : 'auto', 'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'}">
-                          <p-table [value]="ligBult"
-                            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                            <ng-template pTemplate="header">
-                              <tr class="bg-primary text-white">
-                                <th style="width: 5%;">#</th>
-                                <th style="width: 10%;">Date acte</th>
-                                <th style="width: 10%;">Act</th>
-                                <th style="width: 30%;">Libelle</th>
-                                <th style="width: 5%;">Unit</th>
-                                <th style="width: 20%;" class="text-end">Mnt Hr App</th>
-                                <th style="width: 20%;" class="text-end">Net</th>
-                              </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-rowData>
-                              <tr>
-                                <td>{{ rowData.num_lig }}</td>
-                                <td>{{ rowData.dat_act }}</td>
-                                <td>{{ rowData.abrv_act }}</td>
-                                <td>{{ rowData.lib_act }}</td>
-                                <td>{{ rowData.indice }}</td>
-                                <td><span style="display:block;text-align:right">{{ rowData.mnt_honor | number:'1.2-2'
-                                    }}</span></td>
-                                <td><span style="display:block;text-align:right">{{ rowData.mnt_net | number:'1.2-2'
-                                    }}</span></td>
-                              </tr>
-                            </ng-template>
-                            <ng-template pTemplate="footer">
-                              <tr class="bg-light fw-bold">
-                                <td colspan="5" class="text-end">Total :</td>
-                                <td><span style="display:block;text-align:right">{{ totalHonorairesLigBult |
-                                    number:'1.2-2' }}</span></td>
-                                <td><span style="display:block;text-align:right">{{ totalNetLigBult | number:'1.2-2'
-                                    }}</span></td>
-                              </tr>
-                            </ng-template>
-                            <ng-template pTemplate="emptymessage">
-                              <tr>
-                                <td colspan="7"><span class="badge bg-danger-subtle text-danger badge-border">Aucune
-                                    donnée disponible !</span></td>
-                              </tr>
-                            </ng-template>
-                          </p-table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </ng-template>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="tab-content text-muted mt-3 mt-lg-0">
-            <div [ngbNavOutlet]="CustomVertical"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</form>
 
-  <ng-template #deleteModel let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
-            <p class="text-muted mx-4 mb-0">
-              Etes vous sûr de supprimer ce type ?
-            </p>
-          </div>
+<!-- Soldes -->
+<div class="row g-4 mt-0">
+  <div class="col-md-6">
+    <div class="card mb-0">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-warning-subtle text-warning fs-4"><i class="ri-wallet-3-line" aria-hidden="true"></i></span>
         </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Fermer
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete(selectedIndex)"
-            (click)="modal.close('Close click')">
-            Oui ,supprimer!
-          </button>
+        <div class="flex-grow-1">
+          <label for="cc-solde" class="form-label text-muted fs-13 mb-1">Solde CNAM</label>
+          <input id="cc-solde" type="text" class="form-control montant-input text-end fw-semibold fs-5"
+            placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
         </div>
       </div>
     </div>
-    <!-- /.modal-content -->
-  </ng-template>
-
-  <ng-template #deleteModelMed let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
-            <p class="text-muted mx-4 mb-0">
-              Etes vous sûr de supprimer ce type ?
-            </p>
-          </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card mb-0">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-warning-subtle text-warning fs-4"><i class="ri-wallet-3-line" aria-hidden="true"></i></span>
         </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Fermer
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product"
-            (click)="ConfirmDeleteMed(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
-          </button>
+        <div class="flex-grow-1">
+          <label for="cc-estim" class="form-label text-muted fs-13 mb-1">Solde estimatif</label>
+          <input id="cc-estim" type="text" class="form-control montant-input text-end fw-semibold fs-5"
+            placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
         </div>
       </div>
     </div>
-    <!-- /.modal-content -->
-  </ng-template>
-  <ng-template #deleteModelVisit let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
-            <p class="text-muted mx-4 mb-0">
-              Etes vous sûr de supprimer ce type ?
-            </p>
-          </div>
-        </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Fermer
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product"
-            (click)="ConfirmDeleteVisit(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </ng-template>
-
-  <ng-template #deleteModelApp let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
-            <p class="text-muted mx-4 mb-0">
-              Etes vous sûr de supprimer ce type ?
-            </p>
-          </div>
-        </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Fermer
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product"
-            (click)="ConfirmDeleteApp(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </ng-template>
+  </div>
 </div>
+
+<!-- Visites, actes, pharmacies, appareils -->
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+    <div class="card-body">
+      <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs mb-3">
+
+        <li [ngbNavItem]="1">
+          <a ngbNavLink>Les visites</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="ligVisiteForm.value?.visite || []" [paginator]="(ligVisiteForm.value?.visite?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-light">
+                  <th>#</th>
+                  <th>Date acte</th>
+                  <th>Visite</th>
+                  <th>Libellé</th>
+                  <th class="text-end">Mnt Hr App</th>
+                  <th class="text-end">Net</th>
+                  <th>Type établis</th>
+                  <th>Code</th>
+                  <th>Établissement</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td>{{ rowIndex + 1 }}</td>
+                  <td>{{ rowData.dat_act }}</td>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_visit }}</span></td>
+                  <td class="fw-medium">{{ libVisite[rowIndex] }}</td>
+                  <td class="text-end">{{ rowData.mnt_honor | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ rowData.mnt_net | number:'1.2-2' }}</td>
+                  <td>{{ rowData.prf_typ == 1 ? 'Personne physique' : rowData.prf_typ == 2 ? 'Établissement' : rowData.prf_typ }}</td>
+                  <td>{{ rowData.prf_cod }}</td>
+                  <td>{{ etab_rsoc_visite[rowIndex] }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="bg-light fw-bold">
+                  <td colspan="4" class="text-end">Total :</td>
+                  <td class="text-end">{{ totalHonorairesVisite | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ totalNetVisite | number:'1.2-2' }}</td>
+                  <td colspan="3"></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="9" class="text-center text-muted py-5">
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucune visite
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+
+        <li [ngbNavItem]="2">
+          <a ngbNavLink>Les actes</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="ligPretForm.value?.lignes || []" [paginator]="(ligPretForm.value?.lignes?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-light">
+                  <th>#</th>
+                  <th>Date acte</th>
+                  <th>Acte</th>
+                  <th>Libellé</th>
+                  <th>Unit</th>
+                  <th class="text-end">Honoraires</th>
+                  <th class="text-end">Net</th>
+                  <th>Accord</th>
+                  <th>Num Pec Act</th>
+                  <th>Type établis</th>
+                  <th>Code</th>
+                  <th>Établissement</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td>{{ rowIndex + 1 }}</td>
+                  <td>{{ rowData.dat_act }}</td>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_act }}</span></td>
+                  <td class="fw-medium">{{ rowData.abrv_act }}</td>
+                  <td>{{ rowData.indice }}</td>
+                  <td class="text-end">{{ rowData.mnt_honor | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ rowData.mnt_net | number:'1.2-2' }}</td>
+                  <td>{{ rowData.accord_act }}</td>
+                  <td>{{ rowData.num_pec_act }}</td>
+                  <td>{{ rowData.prf_typ == 1 ? 'Personne physique' : rowData.prf_typ == 2 ? 'Établissement' : rowData.prf_typ }}</td>
+                  <td>{{ rowData.prf_cod }}</td>
+                  <td>{{ rowData.typ_prf }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="bg-light fw-bold">
+                  <td colspan="5" class="text-end">Total :</td>
+                  <td class="text-end">{{ totalHonoraires | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ totalNet | number:'1.2-2' }}</td>
+                  <td colspan="5"></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="12" class="text-center text-muted py-5">
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucun acte
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+
+        <li [ngbNavItem]="3">
+          <a ngbNavLink>Pharmacies</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="ligPharForm.value?.phar || []" [paginator]="(ligPharForm.value?.phar?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-light">
+                  <th>#</th>
+                  <th>Date méd.</th>
+                  <th>Méd.</th>
+                  <th>Libellé</th>
+                  <th>Unit</th>
+                  <th class="text-end">Honoraires</th>
+                  <th class="text-end">Net</th>
+                  <th>Nbr j</th>
+                  <th>Accord</th>
+                  <th>Num Pec</th>
+                  <th>Type établis</th>
+                  <th>Code</th>
+                  <th>Établissement</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td>{{ rowIndex + 1 }}</td>
+                  <td>{{ rowData.dat_act }}</td>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_med }}</span></td>
+                  <td class="fw-medium">{{ libMed[rowIndex] }}</td>
+                  <td>{{ rowData.indice }}</td>
+                  <td class="text-end">{{ rowData.mnt_honor | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ rowData.mnt_net | number:'1.2-2' }}</td>
+                  <td>{{ rowData.nbr_j }}</td>
+                  <td>{{ rowData.accord_med }}</td>
+                  <td>{{ rowData.num_pec_med }}</td>
+                  <td>{{ rowData.prf_typ == 1 ? 'Personne physique' : rowData.prf_typ == 2 ? 'Établissement' : rowData.prf_typ }}</td>
+                  <td>{{ rowData.prf_cod }}</td>
+                  <td>{{ etab_rsoc_phar[rowIndex] }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="bg-light fw-bold">
+                  <td colspan="5" class="text-end">Total :</td>
+                  <td class="text-end">{{ totalHonorairesPhar | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ totalNetPhar | number:'1.2-2' }}</td>
+                  <td colspan="6"></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="13" class="text-center text-muted py-5">
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucun médicament
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+
+        <li [ngbNavItem]="4">
+          <a ngbNavLink>Les appareils</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="ligAppareilForm.value?.appareil || []" [paginator]="(ligAppareilForm.value?.appareil?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-light">
+                  <th>#</th>
+                  <th>Date app.</th>
+                  <th>Appareil</th>
+                  <th>Libellé</th>
+                  <th class="text-end">Mnt Hr App</th>
+                  <th class="text-end">Net</th>
+                  <th>Accord</th>
+                  <th>Num Pec</th>
+                  <th>Type établis</th>
+                  <th>Code</th>
+                  <th>Établissement</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td>{{ rowIndex + 1 }}</td>
+                  <td>{{ rowData.dat_act }}</td>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_app }}</span></td>
+                  <td class="fw-medium">{{ appareilCode[rowIndex] }}</td>
+                  <td class="text-end">{{ rowData.mnt_honor | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ rowData.mnt_net | number:'1.2-2' }}</td>
+                  <td>{{ rowData.accord_app }}</td>
+                  <td>{{ rowData.num_pec_app }}</td>
+                  <td>{{ rowData.prf_typ == 1 ? 'Personne physique' : rowData.prf_typ == 2 ? 'Établissement' : rowData.prf_typ }}</td>
+                  <td>{{ rowData.prf_cod }}</td>
+                  <td>{{ etab_rsoc_appareil[rowIndex] }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="bg-light fw-bold">
+                  <td colspan="4" class="text-end">Total :</td>
+                  <td class="text-end">{{ totalHonorairesAppareil | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ totalNetAppareil | number:'1.2-2' }}</td>
+                  <td colspan="5"></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="11" class="text-center text-muted py-5">
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucun appareil
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+
+        <li [ngbNavItem]="5">
+          <a ngbNavLink>Consultation actes Mut</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="ligBult" [paginator]="(ligBult?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+                <tr class="table-light">
+                  <th>#</th>
+                  <th>Date acte</th>
+                  <th>Act</th>
+                  <th>Libellé</th>
+                  <th>Unit</th>
+                  <th class="text-end">Mnt Hr App</th>
+                  <th class="text-end">Net</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData>
+                <tr>
+                  <td>{{ rowData.num_lig }}</td>
+                  <td>{{ rowData.dat_act }}</td>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.abrv_act }}</span></td>
+                  <td class="fw-medium">{{ rowData.lib_act }}</td>
+                  <td>{{ rowData.indice }}</td>
+                  <td class="text-end">{{ rowData.mnt_honor | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ rowData.mnt_net | number:'1.2-2' }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="bg-light fw-bold">
+                  <td colspan="5" class="text-end">Total :</td>
+                  <td class="text-end">{{ totalHonorairesLigBult | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ totalNetLigBult | number:'1.2-2' }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-5">
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucun acte
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="CustomVertical"></div>
+    </div>
+  </div>
+</div>
+
 <div *ngIf="isSearch">
   <app-search-lov [listData]="listBultSoin" [columns]="columnsBultSoin" [filtreSexe]="true" (selectedValue)="search($event)">
   </app-search-lov>

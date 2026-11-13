@@ -126,7 +126,7 @@ searchz: any = {
   typ_aff: "",
   dat_ass: "",
   coef_cot: "",
-  obs_aff:"Obs"
+  obs_aff: ""
 };
 
 columnTitles: { [key: string]: string } = {

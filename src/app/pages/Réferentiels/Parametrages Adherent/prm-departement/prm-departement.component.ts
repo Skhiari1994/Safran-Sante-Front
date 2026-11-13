@@ -5,6 +5,7 @@ import { TokenStorage } from 'src/app/account/token-storage.service';
 import { PaginationService } from 'src/app/core/services/pagination.service';
  import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 @Component({
   selector: 'app-prm-departement',
@@ -81,16 +82,12 @@ export class PrmDepartementComponent {
 //////////////////////////////////////////////////////
   AddDepartement() {
     
-     this.serv.AddDepartement(this.formDepartement.value).subscribe((data) => {
-      console.log("data :", data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.getDepartement()
+     this.serv.AddDepartement(this.formDepartement.value).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.getDepartement();
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -146,14 +143,12 @@ export class PrmDepartementComponent {
 
     this.serv
     .deleteDep( this.deleteId.cod_lieu_geog)
-    .subscribe((data) => {
-      this.serv
-      .getDepartement()
-      .subscribe((data) => {
-        console.log("data", data);
-        this.listDepartement = data;
-        this.listDepartementFiltre=data
-      });
+    .subscribe({
+      next: () => {
+        this.getDepartement();
+        notifSucces(MSG_SUPPR);
+      },
+      error: (err) => notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE),
     });
   }
   // ConfirmDelete(){

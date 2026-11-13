@@ -473,7 +473,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
   }
   onSelectedAdherent(item: any) {
     console.log("onSelectedAdherent :", item)
-    this.nomAdherent = item.nom_PREN
+    this.nomAdherent = item.nom_pren ?? item.nom_PREN ?? ''
     this.formBuletinSoin.patchValue({
       num_fam: item.num_fam
     })
@@ -482,19 +482,46 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     })
 
 
-    this.serv.getSexe(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe((data: any) => {
-      this.sexe = data.sexe
-      this.parente = data.parente
-      this.serv.getActe(this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, this.parente, this.sexe).subscribe((data: any) => {
-        this.listActe = data
-
-        this.columnActe = [
-          { key: "abrv_act", label: "Abrv acte" },
-          { key: "lib_act", label: "Libelle" },
-
-        ];
-
-      })
+    this.listActe = []
+    this.serv.getSexe(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe({
+      next: (data: any) => {
+        this.sexe = data?.sexe ?? ''
+        this.parente = data?.parente ?? ''
+        const codFil = this.formBuletinSoin.get('cod_fil')?.value
+        const codAssur = this.formBuletinSoin.get('cod_assur')?.value
+        this.serv.getActe(codFil, codAssur, this.parente, this.sexe).subscribe({
+          next: (actes: any) => {
+            this.listActe = actes || []
+            this.columnActe = [
+              { key: "abrv_act", label: "Abrv acte" },
+              { key: "lib_act", label: "Libelle" },
+            ];
+            if (!this.listActe.length) {
+              Swal.fire({
+                icon: 'info',
+                title: 'Aucun acte',
+                text: `Aucun acte au barème pour la filière ${codFil}, l'assurance ${codAssur}, la parenté « ${this.parente || '-'} » et le sexe « ${this.sexe || '-'} ».`,
+              });
+            }
+          },
+          error: (err) => {
+            console.error('Chargement des actes impossible', err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: 'Impossible de charger la liste des actes.',
+            });
+          }
+        })
+      },
+      error: (err) => {
+        console.error('Lecture du sexe et de la parenté impossible', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de lire la parenté et le sexe du prestataire, la liste des actes n\'a pas pu être chargée.',
+        });
+      }
     })
 
 
@@ -522,7 +549,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
       console.log("listAdherent :", this.listAdherent)
       this.columnsAdherent = [
         { key: "num_fam", label: "Num fam" },
-        { key: "nom_PREN", label: "Nom & Prénom" },
+        { key: "nom_pren", label: "Nom & Prénom" },
 
       ];
     })

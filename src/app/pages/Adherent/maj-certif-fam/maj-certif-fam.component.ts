@@ -45,6 +45,7 @@ export class MajCertifFamComponent {
       mat_pers: [{ value: '', disabled: true }],
       cod_assur: [{ value: '', disabled: true }],
       nom_pers: [{ value: '', disabled: true }],
+      pren_pers: [{ value: '', disabled: true }],
       etat_act: [{ value: '', disabled: true }],
       dat_emb: [{ value: '', disabled: true }],
       cod_sit: [{ value: '', disabled: true }],

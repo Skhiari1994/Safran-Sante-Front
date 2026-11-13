@@ -5,6 +5,7 @@ import { TokenStorage } from 'src/app/account/token-storage.service';
 import { PaginationService } from 'src/app/core/services/pagination.service';
  import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 @Component({
   selector: 'app-prm-affectation',
@@ -42,16 +43,12 @@ p: number = 1; // Pagination pour le premier tableau
 
   AddAffectation() {
     
-     this.serv.AddAffectation(this.formAffectation.value).subscribe((data) => {
-      console.log("data :", data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.getAffectation()
+     this.serv.AddAffectation(this.formAffectation.value).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.getAffectation();
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -99,12 +96,12 @@ p: number = 1; // Pagination pour le premier tableau
     this.modalService.open(content, { centered: true });
   }
   ConfirmDelete(){
-    this.serv.delAffectation(this.deleteId.cod_affect).subscribe((data:any)=>{
-      this.serv
-      .getAffectation()
-      .subscribe((data) => {
-        this.listAffectation = data;
-      });
+    this.serv.delAffectation(this.deleteId.cod_affect).subscribe({
+      next: () => {
+        this.getAffectation();
+        notifSucces(MSG_SUPPR);
+      },
+      error: (err) => notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE),
     })
   }
   // ConfirmDelete(){

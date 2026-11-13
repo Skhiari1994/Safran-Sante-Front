@@ -157,8 +157,8 @@ export class ParamRefActComponent {
     this.formRefAct.get("lib_act")?.patchValue(data.lib_act);
     this.formRefAct.get("let_cod")?.patchValue(data.let_cod);
     this.formRefAct.get("cot_act")?.patchValue(data.cot_act);
-    this.formRefAct.get("act_prix")?.patchValue(Number(data.nat_act).toFixed(3));
-    this.formRefAct.get("nat_act")?.patchValue(data.cat_med);
+    this.formRefAct.get("act_prix")?.patchValue(Number(data.act_prix).toFixed(3));
+    this.formRefAct.get("nat_act")?.patchValue(data.nat_act);
     this.formRefAct.get("taux_act")?.patchValue(Number(data.taux_act).toFixed(3));
      this.formRefAct.get("abrv_act")?.patchValue(data.abrv_act); 
   }

@@ -1,29 +1,37 @@
 <div class="row" style="margin-top: 25px"></div>
 
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
-  <app-breadcrumbs
-    title="Calcul compléments des décomptes libres"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
+  <app-breadcrumbs title="Calcul compléments des décomptes libres" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
 
   <div class="row">
- 
 
     <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
+      <div class="card mt-4">
+        <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-calculator-line" aria-hidden="true"></i></span>
+          </div>
+          <div>
+            <h5 class="card-title mb-0">Bordereau des décomptes libres</h5>
+            <p class="text-muted fs-13 mb-0">Choisissez un bordereau, saisissez ses bulletins puis réglez-le</p>
+          </div>
+        </div>
+        <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
+          <div class="card-body">
             <div class="row g-3">
-              <div class="col-md-2">
-                <label for="codBord" class="form-label">Code bordereau</label>
+              <div class="col-12">
+                <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Bordereau</h6>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Code bordereau</label>
                 <app-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
                   [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriver($event)" readonly>
                 </app-lov>
               </div>
-              <div class="col-md-2">
+              <div class="col-md-3">
                 <label for="dateBord" class="form-label">Date</label>
-                <input type="text" id="dateBord" class="form-control border-primary" placeholder="jj/mm/aaaa"
-                  [value]="dateBord" readonly />
+                <input type="text" id="dateBord" class="form-control" placeholder="jj/mm/aaaa" [value]="dateBord" readonly />
               </div>
               <div class="col-md-2">
                 <label class="form-label">Assurance</label>
@@ -31,49 +39,55 @@
                   [selectedCode]="codeAssur" (selectedValue)="onSelectedValueAssur($event)">
                 </app-lov>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Libellé assurance</label>
-                <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
+              <div class="col-md-4">
+                <label for="libAssur" class="form-label">Libellé assurance</label>
+                <input type="text" id="libAssur" class="form-control" placeholder="Libellé" [value]="libAssur" readonly />
               </div>
 
+              <div class="col-12 mt-4">
+                <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Totaux</h6>
+              </div>
               <div class="col-md-3">
                 <label for="tot_remb" class="form-label">Total remboursé</label>
-                <input type="text" id="tot_remb" class="form-control border-primary text-end" placeholder="0.000"
-                  formControlName="tot_remb" />
+                <input type="text" id="tot_remb" class="form-control text-end" placeholder="0.000" formControlName="tot_remb" />
               </div>
               <div class="col-md-3">
                 <label for="nbr_bult" class="form-label">Nombre de bulletins</label>
-                <input type="text" id="nbr_bult" class="form-control border-primary" placeholder="Nombre de bulletins"
-                  formControlName="nbr_bult" />
+                <input type="text" id="nbr_bult" class="form-control" placeholder="Nombre de bulletins" formControlName="nbr_bult" />
               </div>
               <div class="col-md-3">
                 <label for="valid" class="form-label">Validité bordereau</label>
-                <select id="valid" class="form-select border-primary" formControlName="valid">
+                <select id="valid" class="form-select" formControlName="valid">
                   <option value="">Sélectionner</option>
                   <option value="O">Oui</option>
                   <option value="N">Non</option>
                 </select>
               </div>
-              <div class="col-md-3 d-flex align-items-end justify-content-md-end">
-                <button class="btn btn-success" type="button" (click)="regler_bord()">
-                  <i class="ri-check-double-line me-1 align-bottom"></i> Régler bordereau
-                </button>
-              </div>
             </div>
-          </form>
-        </div>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-primary" type="button" (click)="regler_bord()">
+              <i class="ri-check-double-line me-1 align-bottom" aria-hidden="true"></i>Régler le bordereau
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
     <div class="col-md-12" *ngIf="cod_bord">
-      <div class="card">
-        <div class="card-header page-card-header d-flex justify-content-between align-items-center mx-4 mt-4">
-          <div class="page-card-title">
-            <h5>Bulletins</h5>
-            <small>{{ lignes.length }} bulletin(s)</small>
+      <div class="card mt-4">
+        <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar-sm flex-shrink-0">
+              <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-file-list-3-line" aria-hidden="true"></i></span>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Bulletins</h5>
+              <p class="text-muted fs-13 mb-0">{{ lignes.length }} bulletin{{ lignes.length > 1 ? 's' : '' }}</p>
+            </div>
           </div>
-          <button class="btn btn-info add-btn" type="button" (click)="addLigne()">
-            <i class="ri-add-fill me-1 align-bottom"></i> Ajouter bulletin
+          <button class="btn btn-primary add-btn" type="button" (click)="addLigne()">
+            <i class="ri-add-line me-1 align-bottom" aria-hidden="true"></i>Ajouter un bulletin
           </button>
         </div>
         <div class="card-body">
@@ -86,8 +100,8 @@
                   'overflow-y': lignes.length > 3 ? 'scroll' : 'hidden'
                 }"
               >
-                <table class="table table-striped table-bordered w-100 bulletins-table">
-                  <thead class="bg-primary text-white">
+                <table class="table table-hover align-middle w-100 bulletins-table">
+                  <thead class="table-light">
                     <tr>
                       <th style="width: 60px">#</th>
                       <th style="width: 220px">Numéro Aff.</th>
@@ -225,24 +239,21 @@
       </div>
     </div>
   </div>
-</div>
 <div class="col-xxl-12" *ngIf="num_fam">
   <div class="card h-100"> <!-- Ajout de h-100 -->
     <div class="card-body d-flex flex-column"> <!-- Ajout de flex-column -->
       <div class="row flex-grow-1"> <!-- Permet au contenu de s'étirer -->
         <div class="col-12 mb-3">
-          <div class="border" role="tablist" aria-orientation="horizontal">
-            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs">
+          <div role="tablist" aria-orientation="horizontal">
+            <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs mb-3">
               <li [ngbNavItem]="1">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Les visites</h5>
-                </a>
+                <a ngbNavLink>Les visites</a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
-                    <div class="card h-100">
-                      <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-info add-btn" type="button" (click)="addLigneVisite()"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
+                    <div class="card h-100 border-0 shadow-none mb-0">
+                      <div class="d-flex justify-content-end gap-2 mb-3">
+                        <button class="btn btn-primary add-btn" type="button" (click)="addLigneVisite()"><i class="ri-add-line me-1 align-bottom" aria-hidden="true"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
                   
@@ -251,7 +262,7 @@
                           <!-- Table avec défilement si plus de 5 lignes -->
                           <div class="table-responsive" [ngStyle]="{'max-height': visite.length > 3 ? '300px' : 'auto', 'overflow-y': visite.length > 3 ? 'scroll' : 'hidden'}">
                             <table class="table table-striped table-bordered w-100" >
-                              <thead class="bg-primary text-white">
+                              <thead class="table-light">
                                 <tr>
                                   <th>#</th>
                                   <th style="width: 150px;">Date Acte</th>
@@ -305,7 +316,7 @@
                                 </td>
                                   <td><input class="form-control" type="text" [value]="etab_rsoc_visite[i]" readonly></td>
                                    <td>
-                                    <a class="remove-item-btn" title="Supprimer" (click)="confirm(i,deleteModelVisit,ligne.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" (click)="confirm(i,deleteModelVisit,ligne.value)" aria-label="Supprimer"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                                   </td>
                                 </tr>
                               </tbody>
@@ -329,16 +340,14 @@
                 </ng-template>
               </li>
               <li [ngbNavItem]="2">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Les actes</h5>
-                </a>
+                <a ngbNavLink>Les actes</a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
-                    <div class="card h-100">
+                    <div class="card h-100 border-0 shadow-none mb-0">
     
-                      <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-info add-btn" type="button" (click)="addActe()"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
+                      <div class="d-flex justify-content-end gap-2 mb-3">
+                        <button class="btn btn-primary add-btn" type="button" (click)="addActe()"><i class="ri-add-line me-1 align-bottom" aria-hidden="true"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
                       <div class="card-body">
@@ -346,7 +355,7 @@
                           <!-- Table avec défilement si plus de 5 lignes -->
                           <div class="table-responsive" [ngStyle]="{'max-height': acte.length > 3 ? '300px' : 'auto', 'overflow-y': acte.length > 3 ? 'scroll' : 'hidden'}">
                             <table class="table table-striped table-bordered w-100" >
-                              <thead class="bg-primary text-white">
+                              <thead class="table-light">
                                 <tr>
                                   <th>#</th>
                                   <th style="width: 150px;">Date Acte</th>
@@ -412,7 +421,7 @@
                                   ></app-lov></td>
                                   <td><input class="form-control" type="text" [value]="etab_rsoc[i]" readonly></td>
                                   <td>
-                                    <a class="remove-item-btn" title="Supprimer" (click)="confirm(i,deleteModel,act.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" (click)="confirm(i,deleteModel,act.value)" aria-label="Supprimer"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                                   </td>
                                 </tr>
                               </tbody>
@@ -436,15 +445,13 @@
                 </ng-template>
               </li>
               <li [ngbNavItem]="3">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Pharmacies</h5>
-                </a>
+                <a ngbNavLink>Pharmacies</a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
-                    <div class="card h-100">
-                      <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-info add-btn" type="button" (click)="addLignePhar(phar.length)"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
+                    <div class="card h-100 border-0 shadow-none mb-0">
+                      <div class="d-flex justify-content-end gap-2 mb-3">
+                        <button class="btn btn-primary add-btn" type="button" (click)="addLignePhar(phar.length)"><i class="ri-add-line me-1 align-bottom" aria-hidden="true"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
                   
@@ -452,7 +459,7 @@
                          <form [formGroup]="ligPharForm" >
                            <div class="table-responsive" [ngStyle]="{'max-height': phar.length > 3 ? '300px' : 'auto', 'overflow-y': phar.length > 3 ? 'scroll' : 'hidden'}">
                             <table class="table table-striped table-bordered w-100" >
-                              <thead class="bg-primary text-white">
+                              <thead class="table-light">
                                 <tr>
                                   <th>#</th>
                                   <th style="width: 150px;">Date med</th>
@@ -520,7 +527,7 @@
                                   ></app-lov></td>
                                   <td><input class="form-control" type="text" [value]="etab_rsoc_phar[i]" readonly></td>
                                    <td>
-                                    <a class="remove-item-btn" title="Supprimer" (click)="confirm(i,deleteModelMed,ligne.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" (click)="confirm(i,deleteModelMed,ligne.value)" aria-label="Supprimer"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                                   </td>
                                 </tr>
                               </tbody>
@@ -543,15 +550,13 @@
                 </ng-template>
               </li>
               <li [ngbNavItem]="4">
-                <a ngbNavLink>
-                  <h5 class="nav-titl m-0">Les appareils</h5>
-                </a>
+                <a ngbNavLink>Les appareils</a>
                 <ng-template ngbNavContent>
                   <div class="container-fluid">
                     <!-- Carte principale -->
-                    <div class="card h-100">
-                      <div class="card-header d-flex justify-content-end gap-2">
-                        <button class="btn btn-info add-btn" type="button" (click)="addLigneAppareil(appareil.length)"><i class="ri-add-fill me-1 align-bottom"></i> Ajouter ligne</button>
+                    <div class="card h-100 border-0 shadow-none mb-0">
+                      <div class="d-flex justify-content-end gap-2 mb-3">
+                        <button class="btn btn-primary add-btn" type="button" (click)="addLigneAppareil(appareil.length)"><i class="ri-add-line me-1 align-bottom" aria-hidden="true"></i> Ajouter ligne</button>
                         <!-- <button class="btn btn-success" type="submit" (click)="onSubmit()" [disabled]="ligPretForm.invalid">✅ Soumettre</button> -->
                       </div>
                   
@@ -560,7 +565,7 @@
                           <!-- Table avec défilement si plus de 5 lignes -->
                           <div class="table-responsive" [ngStyle]="{'max-height': appareil.length > 3 ? '300px' : 'auto', 'overflow-y': appareil.length > 3 ? 'scroll' : 'hidden'}">
                             <table class="table table-striped table-bordered w-100" >
-                              <thead class="bg-primary text-white">
+                              <thead class="table-light">
                                 <tr>
                                   <th>#</th>
                                   <th style="width: 150px;">Date app</th>
@@ -623,7 +628,7 @@
                                   ></app-lov></td>
                                   <td><input class="form-control" type="text" [value]="etab_rsoc_appareil[i]" readonly></td>
                                    <td>
-                                    <a class="remove-item-btn" title="Supprimer" (click)="confirm(i,deleteModelApp,ligne.value)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" (click)="confirm(i,deleteModelApp,ligne.value)" aria-label="Supprimer"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                                   </td>
                                 </tr>
                               </tbody>
@@ -679,7 +684,7 @@
             style="width: 100px; height: 100px"
           ></lord-icon>
           <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
+            <h4>Êtes-vous sûr ?</h4>
             <p class="text-muted mx-4 mb-0">
               Etes vous sûr de supprimer ce type ?
             </p>
@@ -695,7 +700,7 @@
             Fermer
           </button>
           <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
+            Oui, supprimer !
           </button>
         </div>
       </div>
@@ -724,7 +729,7 @@
             style="width: 100px; height: 100px"
           ></lord-icon>
           <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
+            <h4>Êtes-vous sûr ?</h4>
             <p class="text-muted mx-4 mb-0">
               Etes vous sûr de supprimer ce type ?
             </p>
@@ -740,7 +745,7 @@
             Fermer
           </button>
           <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteMed(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
+            Oui, supprimer !
           </button>
         </div>
       </div>
@@ -768,7 +773,7 @@
             style="width: 100px; height: 100px"
           ></lord-icon>
           <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
+            <h4>Êtes-vous sûr ?</h4>
             <p class="text-muted mx-4 mb-0">
               Etes vous sûr de supprimer ce type ?
             </p>
@@ -784,7 +789,7 @@
             Fermer
           </button>
           <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteVisit(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
+            Oui, supprimer !
           </button>
         </div>
       </div>
@@ -813,7 +818,7 @@
             style="width: 100px; height: 100px"
           ></lord-icon>
           <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Etes vous sûr ?</h4>
+            <h4>Êtes-vous sûr ?</h4>
             <p class="text-muted mx-4 mb-0">
               Etes vous sûr de supprimer ce type ?
             </p>
@@ -829,7 +834,7 @@
             Fermer
           </button>
           <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDeleteApp(selectedIndex)" (click)="modal.close('Close click')">
-            Oui ,supprimer!
+            Oui, supprimer !
           </button>
         </div>
       </div>
@@ -840,7 +845,7 @@
 
 
 <ng-template #content1 role="document" let-modal>
-  <div class="modal-header bg-info-subtle p-3">
+  <div class="modal-header border-bottom-dashed">
     <h5 class="modal-title" id="exampleModalLabel">
       {{ edit == true ? "Ajouter" : "Modifier" }} Saisie manuelle de bordereau
       CNAM

@@ -1,175 +1,200 @@
-<div class="row" style="margin-top: 25px"></div>
-<div class="row sticky-top" style="z-index: 1025; top: 121px">
-  <app-breadcrumbs
-    title="Actes médicaux"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
-
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Actes médicaux" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
 
-<div class="row">
+<div class="row mt-3">
   <div class="col-12">
-    <div class="d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-              <div class="page-card-title">
-                <h5>Liste des actes médicaux</h5>
-                <small>{{ listeActe?.length || 0 }} acte(s)</small>
-              </div>
-              <button
-                class="btn btn-info add-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#showModal"
-                (click)="openModalTab(content1)"
-              >
-                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter acte
-              </button>
-            </div>
-            <div class="card-body">
-              <div class="d-flex flex-wrap gap-2 mb-3">
-                <div *ngFor="let filiere of listTypeActe" class="badge bg-primary text-white px-3 py-2">
-                  {{ filiere.type_acte }} - {{ filiere.lib_type_acte }}
-                </div>
-              </div>
-              <div class="table-responsive">
-              <p-table [value]="listeActe" [paginator]="true" [rows]="12" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                <ng-template pTemplate="header">
-                  <tr class="table-primary">
-                    <th *ngFor="let column of ['type_act','abrv_act','lib_act','dat_acte','parente','ctr_duree','sexe','imput_plaf']">
-                      <div class="th-head">
-                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                      </div>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                    </th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-file-list-3-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Liste des actes médicaux</h5>
+            <p class="text-muted fs-13 mb-0">{{ listeActe?.length || 0 }} {{ (listeActe?.length || 0) > 1 ? 'actes' : 'acte' }}</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="openModalTab(content1)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un acte
+        </button>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Rappel des natures d'actes (codes utilisés dans la colonne « Type ») -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3" *ngIf="listTypeActe?.length">
+          <span class="text-muted fs-13 me-1">Types d'actes :</span>
+          <span *ngFor="let nature of listTypeActe" class="badge bg-primary-subtle text-primary fs-12 fw-medium px-2 py-1">
+            {{ nature.type_acte }} · {{ nature.lib_type_acte }}
+          </span>
+        </div>
+
+        <p-table [value]="listeActe" [paginator]="(listeActe?.length || 0) > 12" [rows]="12" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 8%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('type_act')" aria-label="Trier par type">
+                  Type<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 11%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('abrv_act')" aria-label="Trier par code">
+                  Code<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_act')" aria-label="Trier par libellé">
+                  Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 11%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('dat_acte')" aria-label="Trier par date">
+                  Date<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 10%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('parente')" aria-label="Trier par parenté">
+                  Parenté<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 11%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('ctr_duree')" aria-label="Trier par ctrl. durée">
+                  Ctrl. durée<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 9%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('sexe')" aria-label="Trier par sexe">
+                  Sexe<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 9%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('imput_plaf')" aria-label="Trier par plafond">
+                  Plafond<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" class="text-end" style="width: 100px;">Actions</th>
+            </tr>
             <tr>
-              <td class="text-center">{{ rowData.type_act }}</td>
-              <td class="text-center">{{ rowData.abrv_act }}</td>
-              <td class="text-center">{{ rowData.lib_act }}</td>
-              <td class="text-center">{{ rowData.dat_acte }}</td>
-              <td class="text-center">{{ rowData.parente == 'E' ? 'Enfant' : rowData.parente == 'C' ? 'Conjoint' : rowData.parente == 'P' ? 'Père' : rowData.parente == 'M' ? 'Mère' : rowData.parente == 'A' ? 'Adhérent' : '' }}</td>
-              <td class="text-center">{{ rowData.ctr_duree == 'O' ? 'Oui' : rowData.ctr_duree == 'N' ? 'Non' : '' }}</td>
-              <td class="text-center">{{ rowData.sexe == 'M' ? 'Masculin' : rowData.sexe == 'F' ? 'Féminin' : '' }}</td>
-              <td class="text-center">{{ rowData.imput_plaf == 'O' ? 'Oui' : rowData.imput_plaf == 'N' ? 'Non' : '' }}</td>
-              <td>
-                <ul class="list-inline hstack gap-2 mb-0">
-                  <li class="list-inline-item">
-                    <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowData, content1)">
-                      <i class="ri-pencil-fill align-bottom text-muted"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
-                      <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                    </a>
-                  </li>
-                </ul>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['type_act']" (input)="applyFilter()" aria-label="Filtrer par type" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['abrv_act']" (input)="applyFilter()" aria-label="Filtrer par code acte" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_act']" (input)="applyFilter()" aria-label="Filtrer par libellé" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['dat_acte']" (input)="applyFilter()" aria-label="Filtrer par date" />
+              </th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.type_act }}</span></td>
+              <td><span class="badge bg-light text-body border fs-12">{{ rowData.abrv_act }}</span></td>
+              <td class="fw-medium">{{ rowData.lib_act }}</td>
+              <td>{{ rowData.dat_acte }}</td>
+              <td>{{ rowData.parente == 'E' ? 'Enfant' : rowData.parente == 'C' ? 'Conjoint' : rowData.parente == 'P' ? 'Père' : rowData.parente == 'M' ? 'Mère' : rowData.parente == 'A' ? 'Adhérent' : '' }}</td>
+              <td><span *ngIf="rowData.ctr_duree == 'O' || rowData.ctr_duree == 'N'" class="badge fs-12" [ngClass]="rowData.ctr_duree == 'O' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">{{ rowData.ctr_duree == 'O' ? 'Oui' : 'Non' }}</span></td>
+              <td>{{ rowData.sexe == 'M' ? 'Masculin' : rowData.sexe == 'F' ? 'Féminin' : '' }}</td>
+              <td><span *ngIf="rowData.imput_plaf == 'O' || rowData.imput_plaf == 'N'" class="badge fs-12" [ngClass]="rowData.imput_plaf == 'O' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">{{ rowData.imput_plaf == 'O' ? 'Oui' : 'Non' }}</span></td>
+              <td class="text-end">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+            [attr.aria-label]="'Modifier ' + rowData.lib_act" (click)="editDataGet(rowData, content1)">
+            <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+            [attr.aria-label]="'Supprimer ' + rowData.lib_act" (click)="confirm(deleteModel, rowData)">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+          </button>
+        </div>
+      </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="9" class="text-center text-muted py-5">
+                <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                Aucun acte trouvé
               </td>
             </tr>
           </ng-template>
-              </p-table>
-              </div>
-            </div>
-          </div>
-        </div>
+        </p-table>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #content1 role="document" let-modal>
-  <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="exampleModalLabel">
-      {{ edit == true ? "Ajouter" : "Modifier" }} Acte
-    </h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="modal"
-      aria-label="Close"
-      id="close-modal"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-file-list-3-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter un acte' : 'Modifier l\'acte' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ edit ? 'Les champs marqués * sont obligatoires.' : 'Le code ne peut pas être modifié.' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
   </div>
+
   <form [formGroup]="formActe" class="tablelist-form" autocomplete="off">
     <div class="modal-body">
       <div class="row g-3">
-
- 
-        <div class="col-md-2">
-          <label for="billinginfo-phone" class="form-label">Type acte</label>
-          <app-lov
-            [listData]="listTypeActe"
-            [columns]="columnTypeActe"
-            codeField="type_acte"
-            [selectedCode]="typActe"
-            (selectedValue)="onSelectedValueTypeActe($event)"
-          >
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Acte</h6>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Type d'acte</label>
+          <app-lov [listData]="listTypeActe" [columns]="columnTypeActe" codeField="type_acte" [selectedCode]="typActe"
+            (selectedValue)="onSelectedValueTypeActe($event)">
           </app-lov>
         </div>
-
-        <div class="col-md-4">
-          <label for="billinginfo-firstName" class="form-label"
-            >Libellé type acte</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Libelle"
-            [value]="libTypeActe"
-            readonly
-          />
-        </div>
-        <div class="col-md-2">
-          <label for="billinginfo-firstName" class="form-label"
-            >Code acte</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer le code acte"
-            formControlName="abrv_act"
-          />
-        </div>
-        <div class="col-md-4">
-          <label for="billinginfo-firstName" class="form-label">Libellé acte</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer le libellé"
-            formControlName="lib_act"
-          />
+        <div class="col-md-9">
+          <label for="act-lib-type" class="form-label">Libellé du type d'acte</label>
+          <input id="act-lib-type" type="text" class="form-control" placeholder="Choisissez un type d'acte" [value]="libTypeActe" readonly />
         </div>
         <div class="col-md-3">
-          <label for="billinginfo-lastName" class="form-label"
-            >Date acte
-          </label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer date d'acte"
-            formControlName="dat_acte"
-            (input)="formatDate2($event)"
-            maxlength="10"
-
-          />
+          <label for="act-code" class="form-label">Code acte <span class="text-danger">*</span></label>
+          <input id="act-code" type="text" class="form-control" placeholder="Ex. C1" formControlName="abrv_act" [readonly]="!edit" />
+        </div>
+        <div class="col-md-6">
+          <label for="act-libelle" class="form-label">Libellé de l'acte <span class="text-danger">*</span></label>
+          <input id="act-libelle" type="text" class="form-control" placeholder="Ex. Consultation généraliste" formControlName="lib_act" />
         </div>
         <div class="col-md-3">
-          <label for="parente" class="form-label"
-            >Parenté</label
-          >
-          <select
-            id="parente"
-            class="form-select border-primary"
-            formControlName="parente"
-          >
+          <label for="act-date" class="form-label">Date de l'acte</label>
+          <input id="act-date" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_acte"
+            (input)="formatDate2($event)" maxlength="10" />
+        </div>
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Conditions</h6>
+        </div>
+        <div class="col-md-3">
+          <label for="act-parente" class="form-label">Parenté</label>
+          <select id="act-parente" class="form-select" formControlName="parente">
             <option value="">Sélectionner</option>
             <option value="E">Enfant</option>
             <option value="C">Conjoint</option>
@@ -178,125 +203,58 @@
             <option value="A">Adhérent</option>
           </select>
         </div>
-        <div class="col-md-2">
-          <label for="ctr_duree" class="form-label"
-            >Contrôle durée</label
-          >
-          <select
-            id="ctr_duree"
-            class="form-select border-primary"
-            formControlName="ctr_duree"
-          >
+        <div class="col-md-3">
+          <label for="act-ctr-duree" class="form-label">Contrôle durée</label>
+          <select id="act-ctr-duree" class="form-select" formControlName="ctr_duree">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
- 
           </select>
         </div>
-
-        <div class="col-md-2">
-          <label for="sexe" class="form-label"
-            >Sexe</label
-          >
-          <select
-            id="sexe"
-            class="form-select border-primary"
-            formControlName="sexe"
-          >
+        <div class="col-md-3">
+          <label for="act-sexe" class="form-label">Sexe</label>
+          <select id="act-sexe" class="form-select" formControlName="sexe">
             <option value="">Sélectionner</option>
             <option value="M">Masculin</option>
             <option value="F">Féminin</option>
- 
           </select>
         </div>
-        <div class="col-md-2">
-          <label for="imput_plaf" class="form-label"
-            >Imputation plafond</label
-          >
-          <select
-            id="imput_plaf"
-            class="form-select border-primary"
-            formControlName="imput_plaf"
-          >
+        <div class="col-md-3">
+          <label for="act-imput-plaf" class="form-label">Imputation plafond</label>
+          <select id="act-imput-plaf" class="form-select" formControlName="imput_plaf">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
- 
           </select>
         </div>
       </div>
     </div>
+
     <div class="modal-footer">
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-success"
-          data-bs-dismiss="modal"
-          (click)="saveTypeActe(); modal.close('Close click')"
-        >
-          Valider
-        </button>
-      </div>
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Close
-        </button>
-      </div>
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" [disabled]="!formActe.value.abrv_act || !formActe.value.lib_act"
+        (click)="saveTypeActe(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
     </div>
   </form>
 </ng-template>
 
 <ng-template #deleteModel let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="btn-close"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon
-          src="https://cdn.lordicon.com/gsqxdxog.json"
-          trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548"
-          style="width: 100px; height: 100px"
-        ></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Es-tu sûr ?</h4>
-          <p class="text-muted mx-4 mb-0">
-            Etes-vous sûr de vouloir supprimer ce type d'acte ?
-          </p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button
-          type="button"
-          class="btn w-sm btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Fermer
-        </button>
-        <button
-          type="button"
-          class="btn w-sm btn-danger"
-          id="delete-product"
-          (click)="ConfirmDelete()"
-          (click)="modal.close('Close click')"
-        >
-          Oui, supprimez-le !
-        </button>
-      </div>
+  <div class="modal-body text-center p-4">
+    <lord-icon
+      src="https://cdn.lordicon.com/gsqxdxog.json"
+      trigger="loop"
+      colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"
+    ></lord-icon>
+    <h4 class="mt-3">Supprimer cet acte ?</h4>
+    <p class="text-muted mb-0">L'acte <strong>{{ deleteId?.abrv_act }}</strong> · {{ deleteId?.lib_act }} sera supprimé définitivement.</p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')">
+        Oui, supprimer
+      </button>
     </div>
   </div>
 </ng-template>

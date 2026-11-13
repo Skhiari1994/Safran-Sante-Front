@@ -1,172 +1,166 @@
-
+<div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
-  <app-breadcrumbs
-    title="Validation des suspensions et renouvellements d'adhésion"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
+  <app-breadcrumbs title="Validation des suspensions et renouvellements d'adhésion"
+    [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
-<br>
-<div class="row">
-  <div class="col-12">
-    <div class="d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-              <div class="page-card-title">
-                <h5>Affiliations à valider</h5>
-                <small>{{ listAffilMutuelle?.length || 0 }} affiliation(s)</small>
-              </div>
-              <button
-                class="btn btn-success add-btn"
-                data-bs-toggle="modal"
-                (click)="executeValiderAff()"
-              >
-                <i class="ri-check-double-line me-1 align-bottom"></i> Valider les affiliations
-              </button>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-              <p-table [value]="listAffilMutuelle" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                <ng-template pTemplate="header">
-                  <tr class="table-primary">
-                    <th *ngFor="let column of ['mat_pers', 'nompren', 'dat_dem', 'typ_aff', 'dat_ass','coef_cot','etat_aff']">
-                      <div class="th-head">
-                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                      </div>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                    </th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </ng-template>
 
-                <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+
+    <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Affiliations à valider</h5>
+          <p class="text-muted fs-13 mb-0">
+            {{ listAffilMutuelle?.length || 0 }} affiliation{{ (listAffilMutuelle?.length || 0) > 1 ? 's' : '' }} en instance
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-success" [disabled]="!listAffilMutuelle?.length"
+        (click)="executeValiderAff()">
+        <i class="ri-check-double-line align-bottom me-1" aria-hidden="true"></i>Valider les affiliations
+      </button>
+    </div>
+
+    <div class="card-body">
+      <p-table [value]="listAffilMutuelle || []" [paginator]="(listAffilMutuelle?.length || 0) > 10" [rows]="10"
+        styleClass="p-datatable-sm modern-table">
+
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th *ngFor="let column of ['mat_pers', 'nompren', 'dat_dem', 'typ_aff', 'dat_ass', 'coef_cot', 'etat_aff']"
+              scope="col">
+              <button type="button"
+                class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                (click)="onSort(column)" [attr.aria-label]="'Trier par ' + columnTitles[column]">
+                {{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="text-end" style="width: 90px;">Actions</th>
+          </tr>
           <tr>
-            <td class="text-center">{{ data.mat_pers }}</td>
-            <td class="text-center">{{ data.nompren }}</td>
-            <td class="text-center">{{ data.dat_dem }}</td>
-            <td class="text-center">{{ data.typ_aff === 'A' ? 'Adhérent' : 'Suspension' }}</td>
-            <td class="text-center">{{ data.dat_ass }}</td>
-            <td class="text-center">{{ data.coef_cot | number: '1.2-2' }}</td>
-            <td class="text-center">{{ data.etat_aff === 'I' ? 'En instance' : data.etat_aff === 'V' ? 'Validée' : '' }}</td>
+            <th *ngFor="let column of ['mat_pers', 'nompren', 'dat_dem', 'typ_aff', 'dat_ass', 'coef_cot', 'etat_aff']"
+              class="py-2">
+              <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                [(ngModel)]="searchz[column]" (input)="applyFilter()"
+                [attr.aria-label]="'Filtrer par ' + columnTitles[column]" />
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+          <tr>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ data.mat_pers }}</span></td>
+            <td class="fw-medium">{{ data.nompren }}</td>
+            <td>{{ data.dat_dem }}</td>
             <td>
-              <ul class="list-inline hstack gap-2 mb-0">
-                <li class="list-inline-item">
-                  <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, data, content1)">
-                    <i class="ri-pencil-fill align-bottom text-muted"></i>
-                  </a>
-                </li>
-              </ul>
+              <span class="badge fs-12" [ngClass]="data.typ_aff === 'A' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
+                {{ data.typ_aff === 'A' ? 'Adhérent' : 'Suspension' }}
+              </span>
+            </td>
+            <td>{{ data.dat_ass }}</td>
+            <td>{{ data.coef_cot | number: '1.2-2' }}</td>
+            <td>
+              <span *ngIf="data.etat_aff === 'I'" class="badge bg-warning-subtle text-warning fs-12">En instance</span>
+              <span *ngIf="data.etat_aff === 'V'" class="badge bg-success-subtle text-success fs-12">Validée</span>
+            </td>
+            <td class="text-end">
+              <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                aria-label="Modifier l'affiliation" data-bs-toggle="modal"
+                (click)="editDataGet(rowIndex, data, content1)">
+                <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+              </button>
             </td>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8">
-              <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+            <td colspan="8" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucune affiliation à valider
             </td>
           </tr>
         </ng-template>
-              </p-table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </p-table>
     </div>
   </div>
 </div>
 
+<!-- Fenêtre : validation d'une affiliation -->
 <ng-template #content1 role="document" let-modal>
-    <div class="modal-header bg-info-subtle p-3">
-      <h5 class="modal-title" id="exampleModalLabel">Validation de l'affiliation</h5>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="close-modal"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">Validation de l'affiliation</h5>
+        <p class="text-muted fs-13 mb-0">Seul l'état de l'affiliation peut être modifié.</p>
+      </div>
     </div>
-    <form
-      [formGroup]="formAffilMutuelle"
-      class="tablelist-form"
-      autocomplete="off"
-    >
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Matricule</label>
-            <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" readonly />
-          </div>
-          <div class="col-md-8">
-            <label class="form-label">Nom et prénom</label>
-            <input type="text" class="form-control border-primary" placeholder="Nom et prénom" [value]="nomPers" readonly />
-          </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
 
-          <div class="col-md-4">
-            <label class="form-label">Date demande</label>
-            <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-              formControlName="dat_dem" appDateFormatter readonly />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Date d'effet</label>
-            <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-              formControlName="dat_ass" appDateFormatter readonly />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Coefficient</label>
-            <input type="text" class="form-control border-primary" placeholder="Coefficient" formControlName="coef_cot" readonly />
-          </div>
+  <form [formGroup]="formAffilMutuelle" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Adhérent et demande</h6>
+        </div>
+        <div class="col-md-4">
+          <label for="val-mat" class="form-label">Matricule</label>
+          <input id="val-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers" readonly />
+        </div>
+        <div class="col-md-8">
+          <label for="val-nom" class="form-label">Nom et prénom</label>
+          <input id="val-nom" type="text" class="form-control" placeholder="Nom et prénom" [value]="nomPers" readonly />
+        </div>
+        <div class="col-md-4">
+          <label for="val-dem" class="form-label">Date de demande</label>
+          <input id="val-dem" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            formControlName="dat_dem" appDateFormatter readonly />
+        </div>
+        <div class="col-md-4">
+          <label for="val-ass" class="form-label">Date d'effet</label>
+          <input id="val-ass" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            formControlName="dat_ass" appDateFormatter readonly />
+        </div>
+        <div class="col-md-4">
+          <label for="val-coef" class="form-label">Coefficient</label>
+          <input id="val-coef" type="text" class="form-control" placeholder="Coefficient" formControlName="coef_cot" readonly />
         </div>
 
-        <hr class="my-4" />
-
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label">Type adhésion</label>
-            <select class="form-select border-primary" formControlName="typ_aff" disabled>
-              <option value="">Sélectionner</option>
-              <option value="A">Adhéré</option>
-              <option value="S">Suspension</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Etat affiliation</label>
-            <select class="form-select border-primary" formControlName="etat_aff">
-              <option value="">Sélectionner</option>
-              <option value="I">En instance</option>
-              <option value="V">Validée</option>
-            </select>
-          </div>
+        <div class="col-12 mt-4">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Validation</h6>
         </div>
-      </div>
-
-      <div class="modal-footer">
-        <div class="hstack gap-2 justify-content-end">
-          <button
-            type="button"
-            class="btn btn-success"
-            data-bs-dismiss="modal"
-            (click)="validatelistCertifFam(); modal.close('Close click')"
-          >
-            Valider
-          </button>
+        <div class="col-md-6">
+          <label for="val-typ" class="form-label">Type d'adhésion</label>
+          <select id="val-typ" class="form-select" formControlName="typ_aff" disabled>
+            <option value="">Sélectionner</option>
+            <option value="A">Adhéré</option>
+            <option value="S">Suspension</option>
+          </select>
         </div>
-        <div class="hstack gap-2 justify-content-end">
-          <button
-            type="button"
-            class="btn btn-light"
-            data-bs-dismiss="modal"
-            (click)="modal.close('Close click')"
-          >
-            Fermer
-          </button>
+        <div class="col-md-6">
+          <label for="val-etat" class="form-label">État de l'affiliation</label>
+          <select id="val-etat" class="form-select" formControlName="etat_aff">
+            <option value="">Sélectionner</option>
+            <option value="I">En instance</option>
+            <option value="V">Validée</option>
+          </select>
         </div>
       </div>
-    </form>
-  </ng-template>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" (click)="validatelistCertifFam(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Valider
+      </button>
+    </div>
+  </form>
+</ng-template>

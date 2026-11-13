@@ -1,270 +1,273 @@
-<div class="d-flex justify-content-center mt-4">
-    <div class="col-md-10">
-        <div class="collapse show" id="paymentmethodCollapse">
-            <div class="card p-4 border shadow-none">
-                <div class="card-header page-card-header">
-                    <div class="page-card-title">
-                        <h5>Adhérent</h5>
-                        <small>Identité, situation et assurance</small>
-                    </div>
-                </div>
-                <!-- Search Form -->
-                <form action="javascript:void(0);" [formGroup]="formPersonnel">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Matricule</label>
-                            <input type="text" class="form-control border-primary" placeholder="Matricule"
-                                formControlName="mat_pers" disabled readonly />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Nom</label>
-                            <input type="text" class="form-control border-primary" placeholder="Nom"
-                                formControlName="nom_pers" disabled readonly />
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label">Prénom</label>
-                            <input type="text" class="form-control border-primary" placeholder="Prénom"
-                                formControlName="pren_pers" disabled readonly />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Etat</label>
-                            <select class="form-select border-primary" formControlName="etat_act" disabled readonly>
-                                <option value="">Sélectionner</option>
-                                <option value="A">ACTIF</option>
-                                <option value="B">Bloqué(e)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Date d'embauche</label>
-                            <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa"
-                                formControlName="dat_emb" mask="00/00/0000" disabled readonly />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Situation sociale</label>
-                            <select class="form-select border-primary" formControlName="cod_sit" disabled readonly>
-                                <option value="">Sélectionner</option>
-                                <option value="C">Célibataire</option>
-                                <option value="M">Marié(e)</option>
-                                <option value="D">Divorcé(e)</option>
-                                <option value="V">Voeuf(ve)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Nombre d'enfants</label>
-                            <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants"
-                                formControlName="nbr_enf" disabled readonly />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Code assurance</label>
-                            <input type="text" class="form-control border-primary" placeholder="Code"
-                                formControlName="cod_assur" disabled readonly />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Libellé assurance</label>
-                            <input type="text" class="form-control border-primary" placeholder="Libellé"
-                                [value]="libAssur" disabled readonly />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Numéro assurance</label>
-                            <input type="text" class="form-control border-primary" placeholder="Numéro assurance"
-                                formControlName="num_assur" disabled readonly />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Date assurance</label>
-                            <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa"
-                                formControlName="dat_ass" disabled readonly />
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Consultation des plafonds"></app-breadcrumbs>
 </div>
-<div class="d-flex justify-content-center mt-4">
-    <div class="col-md-10">
-        <div class="card p-4 border shadow-none">
-            <div class="card-header page-card-header">
-                <div class="page-card-title">
-                    <h5>Plafonds</h5>
-                    <small>Plafond mutuelle et plafond CNAM par année</small>
-                </div>
-            </div>
-            <div class="border mb-3" role="tablist" aria-orientation="horizontal">
-                <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs">
-                    <li [ngbNavItem]="1">
-                        <a ngbNavLink>
-                            <h5 class="nav-titl m-0">Plafond mutuelle</h5>
-                        </a>
-                        <ng-template ngbNavContent>
-                            <p-table [value]="filterRows(listPlafAssur, 'a_')" [paginator]="true" [rows]="10"
-                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                                <ng-template pTemplate="header">
-                                    <tr class="table-primary">
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort('annee_assur')"></i>
-                                                <span class="th-title" (click)="onSort('annee_assur')">Année</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('a_annee_assur')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['a_annee_assur']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['a_annee_assur']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort('nomPrest')"></i>
-                                                <span class="th-title" (click)="onSort('nomPrest')">Bénéficiaire</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('a_nomPrest')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['a_nomPrest']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['a_nomPrest']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort('cod_assur')"></i>
-                                                <span class="th-title" (click)="onSort('cod_assur')">Assurance</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('a_cod_assur')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['a_cod_assur']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['a_cod_assur']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort('libAssur')"></i>
-                                                <span class="th-title" (click)="onSort('libAssur')">Libellé</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('a_libAssur')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['a_libAssur']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['a_libAssur']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort('plafond')"></i>
-                                                <span class="th-title" (click)="onSort('plafond')">Plafond</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('a_plafond')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['a_plafond']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['a_plafond']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort('sold_plaf')"></i>
-                                                <span class="th-title" (click)="onSort('sold_plaf')">Consommé</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('a_sold_plaf')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['a_sold_plaf']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['a_sold_plaf']" placeholder="..." />
-                                        </th>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="body" let-rowData>
-                                    <tr>
-                                        <td class="text-center">{{ rowData.annee_assur }}</td>
-                                        <td class="text-center">{{ rowData.nomPrest }}</td>
-                                        <td class="text-center">{{ rowData.cod_assur }}</td>
-                                        <td class="text-center">{{ rowData.libAssur }}</td>
-                                        <td class="text-center">{{ rowData.plafond | number: '1.3-3' }}</td>
-                                        <td class="text-center">{{ rowData.sold_plaf | number: '1.3-3' }}</td>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="emptymessage">
-                                    <tr>
-                                        <td colspan="6" class="text-center">Aucun plafond</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
-                        </ng-template>
-                    </li>
-                    <li [ngbNavItem]="2">
-                        <a ngbNavLink>
-                            <h5 class="nav-titl m-0">Plafond CNAM</h5>
-                        </a>
-                        <ng-template ngbNavContent>
-                            <p-table [value]="filterRows(listPlafCnam, 'c_')" [paginator]="true" [rows]="10"
-                                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                                <ng-template pTemplate="header">
-                                    <tr class="table-primary">
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort2('annee_cnam')"></i>
-                                                <span class="th-title" (click)="onSort2('annee_cnam')">Année</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('c_annee_cnam')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['c_annee_cnam']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['c_annee_cnam']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort2('plafond')"></i>
-                                                <span class="th-title" (click)="onSort2('plafond')">Plafond</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('c_plafond')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['c_plafond']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['c_plafond']" placeholder="..." />
-                                        </th>
-                                        <th>
-                                            <div class="th-head">
-                                                <i class="ri-arrow-up-down-line th-sort"
-                                                    (click)="onSort2('sold_plaf')"></i>
-                                                <span class="th-title" (click)="onSort2('sold_plaf')">Consommé</span>
-                                                <i class="ri-search-line th-search"
-                                                    (click)="toggleFilter('c_sold_plaf')"></i>
-                                            </div>
-                                            <input *ngIf="showFilters['c_sold_plaf']" type="text"
-                                                class="form-control form-control-sm mt-2" style="width: 100%;"
-                                                [(ngModel)]="searchz['c_sold_plaf']" placeholder="..." />
-                                        </th>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="body" let-rowData>
-                                    <tr>
-                                        <td class="text-center">{{ rowData.annee_cnam }}</td>
-                                        <td class="text-center">{{ rowData.plafond | number: '1.3-3' }}</td>
-                                        <td class="text-center">{{ rowData.sold_plaf | number: '1.3-3' }}</td>
-                                    </tr>
-                                </ng-template>
-                                <ng-template pTemplate="emptymessage">
-                                    <tr>
-                                        <td colspan="3" class="text-center">Aucun plafond</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
-                        </ng-template>
-                    </li>
-                </ul>
-            </div>
-            <div class="tab-content text-muted">
-                <div [ngbNavOutlet]="CustomVertical"></div>
-            </div>
-        </div>
+
+<div class="col-xl-12">
+  <div class="card mt-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Adhérent</h5>
+        <p class="text-muted fs-13 mb-0">Identité, situation et assurance — utilisez la recherche de la barre d'outils pour choisir un adhérent</p>
+      </div>
     </div>
+
+    <form action="javascript:void(0);" [formGroup]="formPersonnel" autocomplete="off">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identité</h6>
+          </div>
+          <div class="col-md-3">
+            <label for="p-mat" class="form-label">Matricule</label>
+            <input id="p-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers" readonly />
+          </div>
+          <div class="col-md-4">
+            <label for="p-nom" class="form-label">Nom</label>
+            <input id="p-nom" type="text" class="form-control" placeholder="Nom" formControlName="nom_pers" readonly />
+          </div>
+          <div class="col-md-5">
+            <label for="p-pren" class="form-label">Prénom</label>
+            <input id="p-pren" type="text" class="form-control" placeholder="Prénom" formControlName="pren_pers" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-etat" class="form-label">État</label>
+            <select id="p-etat" class="form-select" formControlName="etat_act" style="pointer-events: none;" tabindex="-1" aria-readonly="true">
+              <option value="">—</option>
+              <option value="A">Actif</option>
+              <option value="B">Bloqué(e)</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="p-emb" class="form-label">Date d'embauche</label>
+            <input id="p-emb" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-sit" class="form-label">Situation sociale</label>
+            <select id="p-sit" class="form-select" formControlName="cod_sit" style="pointer-events: none;" tabindex="-1" aria-readonly="true">
+              <option value="">—</option>
+              <option value="C">Célibataire</option>
+              <option value="M">Marié(e)</option>
+              <option value="D">Divorcé(e)</option>
+              <option value="V">Veuf(ve)</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="p-enf" class="form-label">Nombre d'enfants</label>
+            <input id="p-enf" type="text" class="form-control" placeholder="Nombre d'enfants" formControlName="nbr_enf" readonly />
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Assurance</h6>
+          </div>
+          <div class="col-md-2">
+            <label for="p-codass" class="form-label">Code assurance</label>
+            <input id="p-codass" type="text" class="form-control" placeholder="Code" formControlName="cod_assur" readonly />
+          </div>
+          <div class="col-md-4">
+            <label for="p-libass" class="form-label">Libellé assurance</label>
+            <input id="p-libass" type="text" class="form-control" placeholder="Libellé" [value]="libAssur" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-numass" class="form-label">Numéro assurance</label>
+            <input id="p-numass" type="text" class="form-control" placeholder="Numéro assurance" formControlName="num_assur" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-datass" class="form-label">Date assurance</label>
+            <input id="p-datass" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_ass" readonly />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-wallet-3-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Plafonds</h5>
+        <p class="text-muted fs-13 mb-0">Plafond mutuelle et plafond CNAM par année</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <ul ngbNav #CustomVertical="ngbNav" [activeId]="1" class="nav nav-pills bult-tabs mb-3">
+        <li [ngbNavItem]="1">
+          <a ngbNavLink>Plafond mutuelle</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="filterRows(listPlafAssur, 'a_')" [paginator]="(listPlafAssur?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+              <tr class="table-light">
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort('annee_assur')" aria-label="Trier par Année">
+                    Année<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort('nomPrest')" aria-label="Trier par Bénéficiaire">
+                    Bénéficiaire<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort('cod_assur')" aria-label="Trier par Assurance">
+                    Assurance<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort('libAssur')" aria-label="Trier par Libellé">
+                    Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort('plafond')" aria-label="Trier par Plafond">
+                    Plafond<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort('sold_plaf')" aria-label="Trier par Consommé">
+                    Consommé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+              </tr>
+              <tr>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['a_annee_assur']" aria-label="Filtrer par Année" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['a_nomPrest']" aria-label="Filtrer par Bénéficiaire" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['a_cod_assur']" aria-label="Filtrer par Assurance" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['a_libAssur']" aria-label="Filtrer par Libellé" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['a_plafond']" aria-label="Filtrer par Plafond" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['a_sold_plaf']" aria-label="Filtrer par Consommé" />
+                </th>
+              </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.annee_assur }}</span></td>
+                  <td class="fw-medium">{{ rowData.nomPrest }}</td>
+                  <td>{{ rowData.cod_assur }}</td>
+                  <td>{{ rowData.libAssur }}</td>
+                  <td>{{ rowData.plafond | number: '1.3-3' }}</td>
+                  <td>{{ rowData.sold_plaf | number: '1.3-3' }}</td>
+                </tr>
+              </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucun plafond
+            </td>
+          </tr>
+        </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+          <a ngbNavLink>Plafond CNAM</a>
+          <ng-template ngbNavContent>
+            <p-table [value]="filterRows(listPlafCnam, 'c_')" [paginator]="(listPlafCnam?.length || 0) > 10" [rows]="10"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+              <tr class="table-light">
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('annee_cnam')" aria-label="Trier par Année">
+                    Année<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('plafond')" aria-label="Trier par Plafond">
+                    Plafond<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('sold_plaf')" aria-label="Trier par Consommé">
+                    Consommé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+              </tr>
+              <tr>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['c_annee_cnam']" aria-label="Filtrer par Année" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['c_plafond']" aria-label="Filtrer par Plafond" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['c_sold_plaf']" aria-label="Filtrer par Consommé" />
+                </th>
+              </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                  <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.annee_cnam }}</span></td>
+                  <td>{{ rowData.plafond | number: '1.3-3' }}</td>
+                  <td>{{ rowData.sold_plaf | number: '1.3-3' }}</td>
+                </tr>
+              </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucun plafond
+            </td>
+          </tr>
+        </ng-template>
+            </p-table>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="CustomVertical"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Section Recherche -->
 <div *ngIf="isSearch" class="d-flex justify-content-center">
-    <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
-    </app-search-lov>
+  <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
+  </app-search-lov>
 </div>
+

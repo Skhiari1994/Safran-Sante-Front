@@ -300,7 +300,7 @@ export class MajPecComponent {
       this.listFamille = data
       this.columnFamille = [
         { key: "num_fam", label: "Num fam" },
-        { key: "nom_PREN", label: "Nom" },
+        { key: "nom_pren", label: "Nom" },
       ];
     })
   }
@@ -320,8 +320,7 @@ export class MajPecComponent {
   onSelectedEtablis(selectedValue: any, index: number): void {
 
 
-    const selectedActe = this.listRefEtablis.find(etablis => etablis.etab_rsoc === selectedValue.etab_rsoc);
-    this.etab_rsoc[index] = selectedActe.etab_rsoc
+    this.etab_rsoc[index] = selectedValue.etab_rsoc ?? ''
     this.charge.at(index).patchValue({ prf_cod: selectedValue.prf_cod });
   }
   // Tri et filtres par colonne du tableau des prises en charge
@@ -357,18 +356,23 @@ export class MajPecComponent {
   openModalTab(content: any) {
     this.edit = true;
     this.editCarteIndex = null
+    // nouvelle saisie : une seule ligne vide (pas de reste d'une saisie précédente)
+    this.resetCharge()
 
-    //this.formCertif.reset()
     this.modalService.open(content, { size: "xl", centered: true });
   }
 
-  onSelectedValueFamille(item: any, index: number) {
-    console.log('item', item);
-    const selectedActe = this.listFamille.find(etablis => etablis.num_fam === item.num_fam);
-    console.log('selectedActe', selectedActe);
-    this.nom[index] = selectedActe.nom_PREN
-    this.charge.at(index).patchValue({ num_fam: item.num_fam });
+  // Remet le formulaire à une seule ligne vide
+  private resetCharge() {
+    this.charge.clear()
+    this.addDoss()
+    this.nom = []
+    this.etab_rsoc = []
+  }
 
+  onSelectedValueFamille(item: any, index: number) {
+    this.nom[index] = item.nom_pren ?? item.nom_PREN ?? ''
+    this.charge.at(index).patchValue({ num_fam: item.num_fam });
   }
 
   get charge(): FormArray {
@@ -431,19 +435,29 @@ export class MajPecComponent {
     }
 
     const payload = carteArray.value;
-    console.log("payload :", payload)
-    this.adherentServ.addPriseCharge(payload).subscribe((data: any) => {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouté avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
+    const modif = !this.edit
+    this.adherentServ.addPriseCharge(payload).subscribe({
+      next: () => {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: modif ? "Modifiée avec succès !" : "Ajoutée avec succès !",
+          showConfirmButton: false,
+          timer: 2000,
+        });
 
-      this.adherentServ.getPriseCharge(codSoc, matPers).subscribe((data: any) => {
-        this.listPriseCharge = data;
-      });
+        this.adherentServ.getPriseCharge(codSoc, matPers).subscribe((data: any) => {
+          this.listPriseCharge = data;
+        });
+      },
+      error: (err) => {
+        console.error("Enregistrement de la prise en charge impossible", err);
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "L'enregistrement de la prise en charge a échoué.",
+        });
+      }
     });
 
 
@@ -453,6 +467,14 @@ export class MajPecComponent {
   editDataGet(id: any, data: any, content: any) {
     console.log(data)
     this.edit = false;
+    // modification : une seule ligne, celle choisie, avec ses libellés
+    this.resetCharge()
+    this.nom[0] = data.nom ?? ''
+    this.etab_rsoc[0] = data.nomEtab ?? ''
+    if (data.prf_typ) {
+      // charge la liste des établissements du type pour que la loupe fonctionne
+      this.OnselectRefTyp({ target: { value: data.prf_typ } })
+    }
     this.modalService.open(content, { size: "xl", centered: true });
 
     (this.formPriseCharge.get("charge") as FormArray).controls[0]
@@ -501,13 +523,29 @@ export class MajPecComponent {
 
     this.adherentServ
       .deletePriseCharge(this.deleteId.cod_soc, this.deleteId.mat_pers, this.deleteId.num_pec)
-      .subscribe((data) => {
-        this.adherentServ
-          .getPriseCharge(this.deleteId.cod_soc, this.deleteId.mat_pers)
-          .subscribe((data) => {
-            console.log("data", data);
-            this.listPriseCharge = data;
+      .subscribe({
+        next: () => {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Supprimée avec succès !",
+            showConfirmButton: false,
+            timer: 2000,
           });
+          this.adherentServ
+            .getPriseCharge(this.deleteId.cod_soc, this.deleteId.mat_pers)
+            .subscribe((data) => {
+              this.listPriseCharge = data;
+            });
+        },
+        error: (err) => {
+          console.error("Suppression impossible", err);
+          Swal.fire({
+            icon: "error",
+            title: "Erreur",
+            text: "La suppression de la prise en charge a échoué.",
+          });
+        }
       });
   }
 }

@@ -1,139 +1,188 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
-<app-breadcrumbs
-title="Personnes physiques conventionnées"
-[breadcrumbItems]="breadCrumbItems"
-></app-breadcrumbs>
-<div class="col-md-12">
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <div class="card-header page-card-header">
-      <div class="page-card-title">
-        <h5>Identification de la personne physique</h5>
-        <small>Informations générales et conventionnement</small>
-      </div>
-    </div>
-    <form [formGroup]="formRefEtablis">
-      <div class="row g-3">
-        <div class="col-md-2">
-          <label class="form-label">Code</label>
-          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="prf_cod" readonly />
-        </div>
-        <div class="col-md-5">
-          <label class="form-label">Nom</label>
-          <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="etab_rsoc" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-5">
-          <label class="form-label">Prénom</label>
-          <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pr_rsoc" readonly />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Code activité</label>
-          <input type="text" class="form-control border-primary" placeholder="Code activité" formControlName="cod_activ" readonly />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Libellé activité</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libActiv" readonly />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Réf. convention</label>
-          <input type="text" class="form-control border-primary" placeholder="Réf. convention" formControlName="ref_conv_etat" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Date convention</label>
-          <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_conv_etab" mask="00/00/0000" #prtDatAcc [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Téléphone</label>
-          <input type="text" class="form-control border-primary" placeholder="Téléphone" formControlName="tel_etablis" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Fax</label>
-          <input type="text" class="form-control border-primary" placeholder="Fax" formControlName="fax_etablis" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Email</label>
-          <input type="text" class="form-control border-primary" placeholder="Email" formControlName="email_etablis" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">RIB</label>
-          <input type="text" class="form-control border-primary" placeholder="RIB" formControlName="rib_etab" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Méthode</label>
-          <input type="text" class="form-control border-primary" placeholder="Méthode" formControlName="met_etab" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Compte</label>
-          <input type="text" class="form-control border-primary" placeholder="Compte" formControlName="comp_etab" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Etat CNAM</label>
-          <select class="form-select border-primary" formControlName="etat_act_cnam" [attr.disabled]="canModify ? '' : null">
-            <option value="">Sélectionner</option>
-            <option value="A">ACTIF</option>
-            <option value="B">BLOQUE</option>
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Conventionnement</label>
-          <select class="form-select border-primary" formControlName="conv_etab" [attr.disabled]="canModify ? '' : null">
-            <option value="">Sélectionner</option>
-            <option value="O">CONVENTIONNÉ</option>
-            <option value="N">NON CONVENTIONNÉ</option>
-          </select>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Etat établissement</label>
-          <select class="form-select border-primary" formControlName="etat_act_mut" [attr.disabled]="canModify ? '' : null">
-            <option value="">Sélectionner</option>
-            <option value="A">ACTIF</option>
-            <option value="B">BLOQUE</option>
-          </select>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <div class="card-header page-card-header">
-      <div class="page-card-title">
-        <h5>Adresse</h5>
-        <small>Localisation de la personne</small>
-      </div>
-    </div>
-    <form [formGroup]="formRefEtablis">
-      <div class="row g-3">
-        <div class="col-md-2">
-          <label class="form-label">Code gouvernorat</label>
-          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_gouv" readonly />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Gouvernorat</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libGouv" readonly />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Code poste</label>
-          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_post" readonly />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Poste</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libPoste" readonly />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Adresse</label>
-          <input type="text" class="form-control border-primary" placeholder="Adresse" formControlName="adr_etablis" [attr.readonly]="canModify ? '' : null" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Adresse (arabe)</label>
-          <input type="text" class="form-control border-primary" placeholder="Adresse en arabe" formControlName="adr_etablis_a" [attr.readonly]="canModify ? '' : null" />
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div *ngIf="isSearch">
-    <app-search-lov [listData]="listRefEtablis" [columns]="columnsSearch"
-      (selectedValue)="search($event)"></app-search-lov>
-  </div>
+  <app-breadcrumbs title="Personnes physiques conventionnées" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
+
+<form [formGroup]="formRefEtablis" autocomplete="off">
+
+  <!-- Identification, activité, contact et convention -->
+  <div class="col-xl-12">
+    <div class="card mt-4">
+
+      <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+            <i class="ri-user-heart-line" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Identification de la personne physique</h5>
+          <p class="text-muted fs-13 mb-0">Informations générales et conventionnement.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-12">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identification</h6>
+          </div>
+          <div class="col-md-3 col-xl-2">
+            <label for="pp-code" class="form-label">Code</label>
+            <input id="pp-code" type="text" class="form-control" placeholder="Code" formControlName="prf_cod" readonly />
+          </div>
+          <div class="col-md-5 col-xl-5">
+            <label for="pp-nom" class="form-label">Nom</label>
+            <input id="pp-nom" type="text" class="form-control" placeholder="Nom" formControlName="etab_rsoc"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-4 col-xl-5">
+            <label for="pp-prenom" class="form-label">Prénom</label>
+            <input id="pp-prenom" type="text" class="form-control" placeholder="Prénom" formControlName="pr_rsoc" readonly />
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Activité et convention</h6>
+          </div>
+          <div class="col-md-3 col-xl-2">
+            <label for="pp-activ" class="form-label">Code activité</label>
+            <input id="pp-activ" type="text" class="form-control" placeholder="Code" formControlName="cod_activ" readonly />
+          </div>
+          <div class="col-md-9 col-xl-4">
+            <label for="pp-activ-lib" class="form-label">Libellé activité</label>
+            <input id="pp-activ-lib" type="text" class="form-control" placeholder="Libellé" [value]="libActiv" readonly />
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <label for="pp-ref-conv" class="form-label">Réf. convention</label>
+            <input id="pp-ref-conv" type="text" class="form-control" placeholder="Référence" formControlName="ref_conv_etat"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <label for="pp-dat-conv" class="form-label">Date convention</label>
+            <input id="pp-dat-conv" type="text" class="form-control" placeholder="jj/mm/aaaa"
+              formControlName="dat_conv_etab" mask="00/00/0000" #prtDatAcc [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-4">
+            <label for="pp-etat-cnam" class="form-label">État CNAM</label>
+            <select id="pp-etat-cnam" class="form-select" formControlName="etat_act_cnam"
+              [attr.disabled]="canModify ? '' : null">
+              <option value="">Sélectionner</option>
+              <option value="A">Actif</option>
+              <option value="B">Bloqué</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="pp-conv" class="form-label">Conventionnement</label>
+            <select id="pp-conv" class="form-select" formControlName="conv_etab" [attr.disabled]="canModify ? '' : null">
+              <option value="">Sélectionner</option>
+              <option value="O">Conventionné</option>
+              <option value="N">Non conventionné</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="pp-etat" class="form-label">État établissement</label>
+            <select id="pp-etat" class="form-select" formControlName="etat_act_mut"
+              [attr.disabled]="canModify ? '' : null">
+              <option value="">Sélectionner</option>
+              <option value="A">Actif</option>
+              <option value="B">Bloqué</option>
+            </select>
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Contact et coordonnées bancaires</h6>
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <label for="pp-tel" class="form-label">Téléphone</label>
+            <input id="pp-tel" type="text" class="form-control" placeholder="Téléphone" formControlName="tel_etablis"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-6 col-xl-3">
+            <label for="pp-fax" class="form-label">Fax</label>
+            <input id="pp-fax" type="text" class="form-control" placeholder="Fax" formControlName="fax_etablis"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-6 col-xl-6">
+            <label for="pp-email" class="form-label">E-mail</label>
+            <input id="pp-email" type="text" class="form-control" placeholder="E-mail" formControlName="email_etablis"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-6">
+            <label for="pp-rib" class="form-label">RIB</label>
+            <input id="pp-rib" type="text" class="form-control" placeholder="RIB" formControlName="rib_etab"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-3">
+            <label for="pp-met" class="form-label">Mode de règlement</label>
+            <input id="pp-met" type="text" class="form-control" placeholder="Mode de règlement" formControlName="met_etab"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-md-3">
+            <label for="pp-compte" class="form-label">Compte</label>
+            <input id="pp-compte" type="text" class="form-control" placeholder="Compte" formControlName="comp_etab"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adresse -->
+  <div class="col-xl-12">
+    <div class="card mt-4 mb-4">
+
+      <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+            <i class="ri-map-pin-2-line" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Adresse</h5>
+          <p class="text-muted fs-13 mb-0">Localisation de la personne.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-md-3 col-xl-2">
+            <label for="pp-cod-gouv" class="form-label">Code gouvernorat</label>
+            <input id="pp-cod-gouv" type="text" class="form-control" placeholder="Code" formControlName="cod_gouv" readonly />
+          </div>
+          <div class="col-md-9 col-xl-4">
+            <label for="pp-gouv" class="form-label">Gouvernorat</label>
+            <input id="pp-gouv" type="text" class="form-control" placeholder="Libellé" [value]="libGouv" readonly />
+          </div>
+          <div class="col-md-3 col-xl-2">
+            <label for="pp-cod-post" class="form-label">Code poste</label>
+            <input id="pp-cod-post" type="text" class="form-control" placeholder="Code" formControlName="cod_post" readonly />
+          </div>
+          <div class="col-md-9 col-xl-4">
+            <label for="pp-poste" class="form-label">Poste</label>
+            <input id="pp-poste" type="text" class="form-control" placeholder="Libellé" [value]="libPoste" readonly />
+          </div>
+
+          <div class="col-xl-6">
+            <label for="pp-adr" class="form-label">Adresse</label>
+            <input id="pp-adr" type="text" class="form-control" placeholder="Adresse" formControlName="adr_etablis"
+              [attr.readonly]="canModify ? '' : null" />
+          </div>
+          <div class="col-xl-6">
+            <label for="pp-adr-ar" class="form-label">Adresse en arabe</label>
+            <input id="pp-adr-ar" type="text" class="form-control" placeholder="العنوان" dir="rtl" lang="ar"
+              formControlName="adr_etablis_a" [attr.readonly]="canModify ? '' : null" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>
+
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listRefEtablis" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
 </div>

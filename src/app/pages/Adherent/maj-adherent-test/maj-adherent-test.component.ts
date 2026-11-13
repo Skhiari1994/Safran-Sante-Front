@@ -65,8 +65,8 @@ export class MajAdherentTestComponent {
   codTypDepart: string = "cod_typ_depart";
   codBanque: string = "cod_banq";
   codAgence: string = "cod_agc";
-  codPost: string = "cod_poste";
-  codGouv: string = "cod_gouv";
+  codPost: string = "";
+  codGouv: string = "";
   codNatP?: String = "";
   codLieuVal?: string;
   codAffectVal?: string;
@@ -1173,7 +1173,17 @@ export class MajAdherentTestComponent {
   //   });
   // }
 
+  /** Position, dans listAdresse, de l'adresse en cours de modification (null = nouvelle adresse). */
+  private adresseEnEdition: number | null = null;
+
   openModalAdd(targetModal: any): void {
+    // nouvelle adresse : on repart de champs vides (sinon la liste affichait « cod_gouv » ou l'adresse précédente)
+    this.edit = true;
+    this.adresseEnEdition = null;
+    this.codGouv = "";
+    this.codPost = "";
+    this.libGouv = "";
+    this.libPoste = "";
 
     this.modalService.open(targetModal, {
       windowClass: "my-class",
@@ -1578,26 +1588,66 @@ export class MajAdherentTestComponent {
   editAdresse(id: any, data: any, content: any) {
     console.log(data)
     this.edit = false;
+    this.adresseEnEdition = typeof id === "number" ? id : null;
+    // une adresse venant du serveur est en camelCase (codGouv…), celle saisie à l'écran en snake_case (cod_gouv…)
+    const v = (camel: string, snake: string) => data[camel] ?? data[snake];
     this.formAdrPers.patchValue({
-      cod_gouv: data.codGouv,
-      cod_poste: data.codPoste,
-      cod_soc: data.codSoc,
-      mat_pers: data.matPers,
-      num_adr: data.numAdr,
+      cod_gouv: v("codGouv", "cod_gouv"),
+      cod_poste: v("codPoste", "cod_poste"),
+      cod_soc: v("codSoc", "cod_soc"),
+      mat_pers: v("matPers", "mat_pers"),
+      num_adr: v("numAdr", "num_adr"),
       rue: data.rue,
-      tel_pers: data.telPers,
-      fax_pers: data.faxPers,
-      adr_courant: data.adrCourant,
-      rue_a: data.rueA,
+      tel_pers: v("telPers", "tel_pers"),
+      fax_pers: v("faxPers", "fax_pers"),
+      adr_courant: v("adrCourant", "adr_courant"),
+      rue_a: v("rueA", "rue_a"),
     })
-    this.codGouv = data.codGouv
-    this.adherentServ.getPoste(data.codGouv).subscribe((test: any) => {
-      this.codPost = data.codPoste
+    this.libGouv = data.libGouv ?? "";
+    this.libPoste = data.libPoste ?? "";
+    this.codGouv = v("codGouv", "cod_gouv") ?? "";
+    this.adherentServ.getPoste(this.codGouv).subscribe((test: any) => {
+      this.codPost = v("codPoste", "cod_poste") ?? "";
     })
 
 
     this.modalService.open(content, { size: 'xl' });
   }
+  /** Supprime une adresse : sur le serveur si elle y est déjà enregistrée, sinon seulement de la liste affichée. */
+  supprimerAdresse(adresse: any, index: number) {
+    Swal.fire({
+      title: "Supprimer cette adresse ?",
+      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+             <div class="mt-2">${adresse.libGouv ?? ""}${adresse.libPoste ? " – " + adresse.libPoste : ""}</div>`,
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      const retirer = () => {
+        this.listAdresse = this.listAdresse.filter((_, i) => i !== index);
+        Swal.fire({ position: "top-end", icon: "success", title: "Adresse supprimée avec succès !", showConfirmButton: false, timer: 2000 });
+      };
+
+      if (adresse.nonEnregistree) {
+        retirer();
+        return;
+      }
+      const soc = adresse.codSoc || this.tokenStorage.getUser()?.codSoc;
+      const mat = adresse.matPers || this.formAdherent.get("mat_pers")?.value;
+      this.adherentServ.deleteAdresse(soc, mat, adresse.numAdr).subscribe({
+        next: () => retirer(),
+        error: (err) => {
+          const message = typeof err?.error === "string" && err.error ? err.error : "La suppression a échoué.";
+          Swal.fire({ icon: "error", title: "Suppression impossible", text: message });
+        },
+      });
+    });
+  }
+
   openEditModal(content: any, index: number) {
 
     this.editIndex = index;
@@ -2101,8 +2151,23 @@ export class MajAdherentTestComponent {
     this.formAdrPers.get('mat_pers')?.patchValue(this.formAdherent.get('mat_pers')?.value);
     this.formAdrPers.get('cod_soc')?.patchValue(this.tokenStorage.getUser().codSoc);
 
-    // Push the form value as an object into the array
-    this.listAdresse.push(this.formAdrPers.value);
+    // L'adresse saisie rejoint la liste dans le même format (camelCase + libellés) que celles venant du serveur,
+    // pour s'afficher correctement et pouvoir être modifiée ; une adresse modifiée remplace l'ancienne.
+    const f = this.formAdrPers.value;
+    const ancienne = this.adresseEnEdition !== null ? this.listAdresse[this.adresseEnEdition] : null;
+    const adresse = {
+      // adresse pas encore envoyée au serveur : sa suppression ne concerne que l'écran
+      nonEnregistree: ancienne ? !!ancienne.nonEnregistree : true,
+      codGouv: f.cod_gouv, codPoste: f.cod_poste, codSoc: f.cod_soc, matPers: f.mat_pers, numAdr: f.num_adr,
+      rue: f.rue, telPers: f.tel_pers, faxPers: f.fax_pers, adrCourant: f.adr_courant, rueA: f.rue_a,
+      libGouv: this.libGouv, libPoste: this.libPoste,
+    };
+    if (this.adresseEnEdition !== null && this.listAdresse[this.adresseEnEdition]) {
+      this.listAdresse[this.adresseEnEdition] = adresse;
+    } else {
+      this.listAdresse.push(adresse);
+    }
+    this.listAdresse = [...this.listAdresse];
 
     console.log('listAdresse:', this.listAdresse);
   }

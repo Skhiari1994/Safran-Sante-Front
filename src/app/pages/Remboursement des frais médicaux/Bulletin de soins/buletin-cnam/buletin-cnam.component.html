@@ -1,211 +1,242 @@
+<div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
   <app-breadcrumbs title="Prise en charge bulletin de soin cnam" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
-<br>
-<div class="col-md-12">
 
-  <div class="collapse show" id="paymentmethodCollapse">
-    <div class="card p-4 border shadow-none mb-0 mt-4">
-      <form action="javascript:void(0);" class="row g-3" [formGroup]="formBuletinSoin">
-        <div class="row">
-          <!-- Première colonne -->
-          <div class="col-md-6">
-            <div class="row g-3">
-              <div class="col-md-3">
-                <label for="billinginfo-phone" class="form-label">Matricule</label>
-                <app-lov [listData]="listPersonnel" [columns]="columnsMat" codeField="mat_pers"
-                  [selectedCode]="matricule" (selectedValue)="onSelectedVMat($event)"></app-lov>
-              </div>
-              <!--div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Num ass.</label>
-                <input type="text" class="form-control border-primary" placeholder="num assurance"
-                  formControlName="num_assur" readonly />
-              </div-->
-              <div class="col-md-6">
-                <label for="billinginfo-firstName" class="form-label">Nom & Prénom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom" [value]="nomPers" readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date saisie</label>
-                <input type="text" class="form-control border-primary" placeholder="Date saisie"
-                  formControlName="dat_saisie" disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Code assurance</label>
-                <input type="text" class="form-control border-primary" placeholder="Code assurance" formControlName="cod_assur" disabled readonly />
-              </div>
-              <div class="col-md-6">
-                <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_assur" disabled readonly />
-              </div>
+<form action="javascript:void(0);" [formGroup]="formBuletinSoin" autocomplete="off">
+  <div class="row g-4 mt-0">
 
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Id CNRPS</label>
-                <input type="text" class="form-control border-primary" placeholder="Motif départ" [value]="num_retr" disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Fillière</label>
-                <input type="text" class="form-control border-primary" placeholder="Code assurance"
-                  formControlName="cod_fil" readonly />
-              </div>
-              <div class="col-md-9">
-                <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Libelle" [value]="lib_fill" disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-phone" class="form-label">Préstataire</label>
-                <app-lov [listData]="listAdherent" [columns]="columnsAdherent" codeField="num_fam"
-                  [selectedCode]="numFam" (selectedValue)="onSelectedAdherent($event)"></app-lov>
-              </div>
-              <div class="col-md-6">
-                <label for="billinginfo-firstName" class="form-label">Prénom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom adhérent" [value]="nomAdherent"
-                  disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label for="billinginfo-firstName" class="form-label">Date naissance</label>
-                <input type="text" class="form-control border-primary" placeholder="Date naissance" [value]="datNais" mask="00/00/0000"
-                  disabled readonly />
-              </div>
-            </div>
+    <!-- Adhérent et bénéficiaire -->
+    <div class="col-xl-6">
+      <div class="card h-100 mb-0">
+        <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-line" aria-hidden="true"></i></span>
           </div>
-
-          <!-- Ligne de séparation -->
-          <div class="col-md-1 d-flex align-items-stretch">
-            <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
-          </div>
-
-          <!-- Deuxième colonne -->
-          <div class="col-md-5">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label for="billinginfo-firstName" class="form-label">Date soin</label>
-                <input type="text" class="form-control border-primary" placeholder="Date soin"
-                  formControlName="dat_soin" mask="00/00/0000" />
-              </div>
-
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Ans</label>
-                <input type="text" class="form-control border-primary" placeholder="Ans" [value]="ageAn" disabled
-                  readonly />
-              </div>
-              <div class="col-md-2">
-                <label for="billinginfo-firstName" class="form-label">Mois</label>
-                <input type="text" class="form-control border-primary" placeholder="Mois" [value]="ageMois" disabled
-                  readonly />
-              </div>
-              <div class="col-md-2"></div>
-              <div class="col-md-4">
-                <label for="billinginfo-firstName" class="form-label">Régime remboursement</label>
-                <select class="form-select border-success" data-plugin="choices" formControlName="reg_remb"
-                  (change)="verif_mod_remb($event)">
-                  <option value="">Sélectionner</option>
-                  <option *ngFor="let i of listRegimeRemb" [value]="i.reg_remb">{{i.lib_remb}}</option>
-
-                </select>
-              </div>
-              <div class="col-md-4"></div>
-              <div class="col-md-4" *ngIf="showMsgDatAccouch">
-                <label for="billinginfo-firstName" class="form-label">Date prévu accouchement</label>
-                <input type="text" class="form-control border-primary" placeholder="Date prévu accouchement"
-                  formControlName="dat_prev_accouch" mask="00/00/0000" />
-              </div>
-
-              <div class="col-md-3" *ngIf="showMsgPriseCharge">
-                <label for="billinginfo-phone" class="form-label">Num Pec</label>
-                <app-lov [listData]="listPEC" [columns]="columnsPEC" codeField="num_pec" [selectedCode]="PEC"
-                  (selectedValue)="onSelectedPEC($event)"></app-lov>
-              </div>
-              <div class="col-md-5" *ngIf="showMsgPriseCharge">
-                <label for="billinginfo-firstName" class="form-label">Etablissement</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement" [value]="etabliss" />
-              </div>
-              <div class="col-md-4" *ngIf="showMsgPriseCharge">
-                <label for="billinginfo-firstName" class="form-label">Date pec</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement" [value]="datPec" />
-              </div>
-
-              <div class="col-md-3" *ngIf="showMsgMalad">
-                <label for="billinginfo-phone" class="form-label">Code maladie</label>
-                <app-lov [listData]="listMed || []" [columns]="columnsMed || []" codeField="cod_MED"
-                  [selectedCode]="Med" (selectedValue)="onSelectedMed($event)"></app-lov>
-              </div>
-              <div class="col-md-5" *ngIf="showMsgMalad ">
-                <label for="billinginfo-firstName" class="form-label">Libelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement" [value]="libMed" />
-              </div>
-              <div class="col-md-4" *ngIf="showMsgMalad">
-                <label for="billinginfo-firstName" class="form-label">Numéro dossier</label>
-                <input type="text" class="form-control border-primary" placeholder="Etablissement" />
-              </div>
-              <div class="col-md-12">
-                <label for="billinginfo-firstName" class="form-label">Obs</label>
-                <textarea class="form-control border-primary" placeholder="Observation"
-                  formControlName="obs"></textarea>
-              </div>
-            </div>
+          <div>
+            <h5 class="card-title mb-0">Adhérent et bénéficiaire</h5>
+            <p class="text-muted fs-13 mb-0">Choisissez le matricule puis le prestataire</p>
           </div>
         </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="col-md-12">
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <form action="javascript:void(0);" class="row g-3">
-      <div class="row">
-        <!-- Première colonne -->
-        <div class="col-md-6">
+        <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label">Solde CNAM</label>
-              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-                placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Adhérent</h6>
             </div>
-          </div>
-        </div>
-
-        <!-- Ligne de séparation -->
-        <div class="col-md-1 d-flex align-items-stretch">
-          <div class="vr" style="width: 2px; height: 100%; background-color: #1a1515; margin: auto;"></div>
-        </div>
-
-        <!-- Deuxième colonne -->
-        <div class="col-md-5">
-          <div class="row g-3">
             <div class="col-md-4">
-              <label class="form-label">Solde estimatif</label>
-              <input type="text" class="form-control border-warning montant-input text-end fw-semibold"
-                placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+              <label class="form-label">Matricule</label>
+              <app-lov [listData]="listPersonnel" [columns]="columnsMat" codeField="mat_pers"
+                [selectedCode]="matricule" (selectedValue)="onSelectedVMat($event)"></app-lov>
+            </div>
+            <div class="col-md-5">
+              <label for="bc-nom" class="form-label">Nom et prénom</label>
+              <input id="bc-nom" type="text" class="form-control" placeholder="Nom" [value]="nomPers" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="bc-datsaisie" class="form-label">Date saisie</label>
+              <input id="bc-datsaisie" type="text" class="form-control" placeholder="Date saisie"
+                formControlName="dat_saisie" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="bc-codass" class="form-label">Code assurance</label>
+              <input id="bc-codass" type="text" class="form-control" placeholder="Code assurance"
+                formControlName="cod_assur" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="bc-libass" class="form-label">Libellé assurance</label>
+              <input id="bc-libass" type="text" class="form-control" placeholder="Libellé" [value]="lib_assur" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="bc-cnrps" class="form-label">Id CNRPS</label>
+              <input id="bc-cnrps" type="text" class="form-control" placeholder="Id CNRPS" [value]="num_retr" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="bc-fil" class="form-label">Filière</label>
+              <input id="bc-fil" type="text" class="form-control" placeholder="Filière" formControlName="cod_fil" readonly />
+            </div>
+            <div class="col-md-8">
+              <label for="bc-libfil" class="form-label">Libellé filière</label>
+              <input id="bc-libfil" type="text" class="form-control" placeholder="Libellé" [value]="lib_fill" readonly />
+            </div>
+
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Prestataire</h6>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Prestataire</label>
+              <app-lov [listData]="listAdherent" [columns]="columnsAdherent" codeField="num_fam"
+                [selectedCode]="numFam" (selectedValue)="onSelectedAdherent($event)"></app-lov>
+            </div>
+            <div class="col-md-5">
+              <label for="bc-nomadh" class="form-label">Nom du prestataire</label>
+              <input id="bc-nomadh" type="text" class="form-control" placeholder="Nom du prestataire" [value]="nomAdherent" readonly />
+            </div>
+            <div class="col-md-3">
+              <label for="bc-datnais" class="form-label">Date naissance</label>
+              <input id="bc-datnais" type="text" class="form-control" placeholder="Date naissance" [value]="datNais" mask="00/00/0000" readonly />
             </div>
           </div>
         </div>
       </div>
-    </form>
+    </div>
+
+    <!-- Soin -->
+    <div class="col-xl-6">
+      <div class="card h-100 mb-0">
+        <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span>
+          </div>
+          <div>
+            <h5 class="card-title mb-0">Soin</h5>
+            <p class="text-muted fs-13 mb-0">Date, régime de remboursement et observation</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Bulletin</h6>
+            </div>
+            <div class="col-md-4">
+              <label for="bc-datsoin" class="form-label">Date soin</label>
+              <input id="bc-datsoin" type="text" class="form-control" placeholder="jj/mm/aaaa"
+                formControlName="dat_soin" mask="00/00/0000" />
+            </div>
+            <div class="col-md-2">
+              <label for="bc-ans" class="form-label">Ans</label>
+              <input id="bc-ans" type="text" class="form-control" placeholder="Ans" [value]="ageAn" disabled readonly />
+            </div>
+            <div class="col-md-2">
+              <label for="bc-mois" class="form-label">Mois</label>
+              <input id="bc-mois" type="text" class="form-control" placeholder="Mois" [value]="ageMois" disabled readonly />
+            </div>
+
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Remboursement</h6>
+            </div>
+            <div class="col-md-6">
+              <label for="bc-reg" class="form-label">Régime remboursement</label>
+              <select id="bc-reg" class="form-select" data-plugin="choices" formControlName="reg_remb"
+                (change)="verif_mod_remb($event)">
+                <option value="">Sélectionner</option>
+                <option *ngFor="let i of listRegimeRemb" [value]="i.reg_remb">{{ i.lib_remb }}</option>
+              </select>
+            </div>
+            <div class="col-md-6" *ngIf="showMsgDatAccouch">
+              <label for="bc-accouch" class="form-label">Date prévue d'accouchement</label>
+              <input id="bc-accouch" type="text" class="form-control" placeholder="jj/mm/aaaa"
+                formControlName="dat_prev_accouch" mask="00/00/0000" />
+            </div>
+
+            <ng-container *ngIf="showMsgPriseCharge">
+              <div class="col-12 mt-4">
+                <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Prise en charge</h6>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Num Pec</label>
+                <app-lov [listData]="listPEC" [columns]="columnsPEC" codeField="num_pec" [selectedCode]="PEC"
+                  (selectedValue)="onSelectedPEC($event)"></app-lov>
+              </div>
+              <div class="col-md-5">
+                <label for="bc-etab" class="form-label">Établissement</label>
+                <input id="bc-etab" type="text" class="form-control" placeholder="Établissement" [value]="etabliss" />
+              </div>
+              <div class="col-md-4">
+                <label for="bc-datpec" class="form-label">Date pec</label>
+                <input id="bc-datpec" type="text" class="form-control" placeholder="Date pec" [value]="datPec" />
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="showMsgMalad">
+              <div class="col-12 mt-4">
+                <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Maladie</h6>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Code maladie</label>
+                <app-lov [listData]="listMed || []" [columns]="columnsMed || []" codeField="cod_MED"
+                  [selectedCode]="Med" (selectedValue)="onSelectedMed($event)"></app-lov>
+              </div>
+              <div class="col-md-5">
+                <label for="bc-libmal" class="form-label">Libellé</label>
+                <input id="bc-libmal" type="text" class="form-control" placeholder="Libellé" [value]="libMed" />
+              </div>
+              <div class="col-md-4">
+                <label for="bc-numdoss" class="form-label">Numéro dossier</label>
+                <input id="bc-numdoss" type="text" class="form-control" placeholder="Numéro dossier" />
+              </div>
+            </ng-container>
+
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Observation</h6>
+            </div>
+            <div class="col-12">
+              <label for="bc-obs" class="form-label">Obs</label>
+              <textarea id="bc-obs" class="form-control" rows="2" placeholder="Observation" formControlName="obs"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Soldes -->
+<div class="row g-4 mt-0">
+  <div class="col-md-6">
+    <div class="card mb-0">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-warning-subtle text-warning fs-4"><i class="ri-wallet-3-line" aria-hidden="true"></i></span>
+        </div>
+        <div class="flex-grow-1">
+          <label for="bc-solde" class="form-label text-muted fs-13 mb-1">Solde CNAM</label>
+          <input id="bc-solde" type="text" class="form-control montant-input text-end fw-semibold fs-5"
+            placeholder="0.000" [value]="soldPlafond ?? ''" readonly />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card mb-0">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-warning-subtle text-warning fs-4"><i class="ri-wallet-3-line" aria-hidden="true"></i></span>
+        </div>
+        <div class="flex-grow-1">
+          <label for="bc-estim" class="form-label text-muted fs-13 mb-1">Solde estimatif</label>
+          <input id="bc-estim" type="text" class="form-control montant-input text-end fw-semibold fs-5"
+            placeholder="0.000" [value]="soldPlafondEstim ?? ''" readonly />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="col-xl-12">
-  <div class="card p-4 border shadow-none mb-0 mt-4">
+  <div class="card mt-4 mb-4">
+    <div class="card-body">
     <p-tabView>
       <p-tabPanel header="Les visites">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="page-card-title">
-            <h5>Saisie des visites</h5>
-            <small>{{ visite.length }} visite(s)</small>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar-sm flex-shrink-0">
+              <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-heart-line" aria-hidden="true"></i></span>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Saisie des visites</h5>
+              <p class="text-muted fs-13 mb-0">{{ visite.length }} visite{{ visite.length > 1 ? 's' : '' }}</p>
+            </div>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLigneVisite()"><i
-              class="ri-add-fill me-1 align-bottom"></i> Ajouter visite</button>
+          <button type="button" class="btn btn-primary add-btn" (click)="addLigneVisite()"><i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter visite</button>
         </div>
         <p-table #dtVisite [value]="visite.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
           [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} visites'"
           [rowsPerPageOptions]="[10,25,50]" editMode="row" dataKey="value.uniqueId" [style]="{width:'100%'}"
-          styleClass="p-datatable-gridlines p-datatable-striped modern-table" selectionMode="multiple"
+          styleClass="p-datatable-sm modern-table" selectionMode="multiple"
           [(selection)]="selectedVisites">
           <ng-template pTemplate="header">
-            <tr>
+            <tr class="table-light">
               <th style="text-align:center;width:50px"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
               <th style="text-align:center;width:50px">#</th>
               <th style="text-align:left;width:110px">Date Acte</th>
@@ -299,13 +330,9 @@
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
-                    (click)="startRowEditVisite(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
-                    (click)="closeRowEditVisite(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                  <a class="remove-item-btn" pTooltip="Supprimer"
-                    (click)="confirmVisit(ri, deleteModelVisit, rowData.value)"><i
-                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                  <button type="button" pInitEditableRow class="btn btn-icon btn-soft-primary" *ngIf="!editing" pTooltip="Modifier" aria-label="Modifier la ligne" (click)="startRowEditVisite(rowData)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-secondary" *ngIf="editing" pTooltip="Fermer la ligne" aria-label="Fermer la ligne" (click)="closeRowEditVisite(rowData)"><i class="ri-close-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" pTooltip="Supprimer" aria-label="Supprimer la ligne" (click)="confirmVisit(ri, deleteModelVisit, rowData.value)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                 </div>
               </td>
             </tr>
@@ -321,22 +348,26 @@
         </p-table>
       </p-tabPanel>
       <p-tabPanel header="Pharmacies">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="page-card-title">
-            <h5>Saisie des pharmacies</h5>
-            <small>{{ phar.length }} médicament(s)</small>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar-sm flex-shrink-0">
+              <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-capsule-line" aria-hidden="true"></i></span>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Saisie des pharmacies</h5>
+              <p class="text-muted fs-13 mb-0">{{ phar.length }} médicament{{ phar.length > 1 ? 's' : '' }}</p>
+            </div>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLignePhar(phar.length)"><i
-              class="ri-add-fill me-1 align-bottom"></i> Ajouter médicament</button>
+          <button type="button" class="btn btn-primary add-btn" (click)="addLignePhar(phar.length)"><i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter médicament</button>
         </div>
         <p-table #dtPhar [value]="phar.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
           [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} médicaments'"
           [rowsPerPageOptions]="[10,25,50]" editMode="row" dataKey="value.uniqueId" [style]="{width:'100%'}"
-          styleClass="p-datatable-gridlines p-datatable-striped modern-table" selectionMode="multiple"
+          styleClass="p-datatable-sm modern-table" selectionMode="multiple"
           [(selection)]="selectedPhar">
           <ng-template pTemplate="header">
-            <tr>
+            <tr class="table-light">
               <th style="text-align:center;width:50px"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
               <th style="text-align:center;width:50px">#</th>
               <th style="text-align:left;width:110px">Date med</th>
@@ -478,13 +509,9 @@
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
-                    (click)="startRowEditPhar(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
-                    (click)="closeRowEditPhar(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                  <a class="remove-item-btn" pTooltip="Supprimer"
-                    (click)="confirmMed(ri, deleteModelMed, rowData.value)"><i
-                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                  <button type="button" pInitEditableRow class="btn btn-icon btn-soft-primary" *ngIf="!editing" pTooltip="Modifier" aria-label="Modifier la ligne" (click)="startRowEditPhar(rowData)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-secondary" *ngIf="editing" pTooltip="Fermer la ligne" aria-label="Fermer la ligne" (click)="closeRowEditPhar(rowData)"><i class="ri-close-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" pTooltip="Supprimer" aria-label="Supprimer la ligne" (click)="confirmMed(ri, deleteModelMed, rowData.value)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                 </div>
               </td>
             </tr>
@@ -499,28 +526,32 @@
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="16" class="text-center">Aucun médicament saisi</td>
+              <td colspan="16" class="text-center text-muted py-5"><i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>Aucun médicament saisi</td>
             </tr>
           </ng-template>
         </p-table>
       </p-tabPanel>
       <p-tabPanel header="Les actes">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="page-card-title">
-            <h5>Saisie des actes</h5>
-            <small>{{ lignes.length }} acte(s)</small>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar-sm flex-shrink-0">
+              <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-stethoscope-line" aria-hidden="true"></i></span>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Saisie des actes</h5>
+              <p class="text-muted fs-13 mb-0">{{ lignes.length }} acte{{ lignes.length > 1 ? 's' : '' }}</p>
+            </div>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLigne(lignes.length)"><i
-              class="ri-add-fill me-1 align-bottom"></i> Ajouter acte</button>
+          <button type="button" class="btn btn-primary add-btn" (click)="addLigne(lignes.length)"><i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter acte</button>
         </div>
         <p-table #dtActes [value]="lignes.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
           [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} actes'"
           [rowsPerPageOptions]="[10,25,50]" editMode="row" dataKey="value.uniqueId" [scrollable]="false"
-          [style]="{width:'100%'}" styleClass="p-datatable-gridlines p-datatable-striped modern-table"
+          [style]="{width:'100%'}" styleClass="p-datatable-sm modern-table"
           selectionMode="multiple" [(selection)]="selectedActes">
           <ng-template pTemplate="header">
-            <tr>
+            <tr class="table-light">
               <th style="text-align: center; width: 50px; max-width: 50px;">
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
@@ -672,13 +703,9 @@
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
-                    (click)="startRowEditActes(rowData, ri)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
-                    (click)="closeRowEditActes(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                  <a class="remove-item-btn" *ngIf="lignes.length > 1" pTooltip="Supprimer"
-                    (click)="confirmAct(ri, deleteModel, rowData.value)"><i
-                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                  <button type="button" pInitEditableRow class="btn btn-icon btn-soft-primary" *ngIf="!editing" pTooltip="Modifier" aria-label="Modifier la ligne" (click)="startRowEditActes(rowData, ri)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-secondary" *ngIf="editing" pTooltip="Fermer la ligne" aria-label="Fermer la ligne" (click)="closeRowEditActes(rowData)"><i class="ri-close-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" *ngIf="lignes.length > 1" pTooltip="Supprimer" aria-label="Supprimer la ligne" (click)="confirmAct(ri, deleteModel, rowData.value)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                 </div>
               </td>
             </tr>
@@ -694,21 +721,25 @@
         </p-table>
       </p-tabPanel>
       <p-tabPanel header="Les appareils">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="page-card-title">
-            <h5>Saisie des appareils</h5>
-            <small>{{ appareil.length }} appareil(s)</small>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar-sm flex-shrink-0">
+              <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Saisie des appareils</h5>
+              <p class="text-muted fs-13 mb-0">{{ appareil.length }} appareil{{ appareil.length > 1 ? 's' : '' }}</p>
+            </div>
           </div>
-          <button type="button" class="btn btn-info add-btn" (click)="addLigneAppareil(appareil.length)"><i
-              class="ri-add-fill me-1 align-bottom"></i> Ajouter appareil</button>
+          <button type="button" class="btn btn-primary add-btn" (click)="addLigneAppareil(appareil.length)"><i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter appareil</button>
         </div>
         <p-table #dtApp [value]="appareil.controls" [rows]="10" [paginator]="true" [rowHover]="true"
           [showCurrentPageReport]="true"
           [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} appareils'"
           [rowsPerPageOptions]="[10,25,50]" editMode="row" dataKey="value.uniqueId" [style]="{width:'100%'}"
-          styleClass="p-datatable-gridlines p-datatable-striped modern-table">
+          styleClass="p-datatable-sm modern-table">
           <ng-template pTemplate="header">
-            <tr>
+            <tr class="table-light">
               <th style="text-align:center;width:50px"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
               <th style="text-align:center;width:50px">#</th>
               <th style="text-align:left;width:110px">Date app</th>
@@ -803,13 +834,9 @@
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-center gap-2">
-                  <a pInitEditableRow class="edit-item-btn" *ngIf="!editing" pTooltip="Modifier"
-                    (click)="startRowEditApp(rowData)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                  <a class="cancel-item-btn" *ngIf="editing" pTooltip="Fermer la ligne"
-                    (click)="closeRowEditApp(rowData)"><i class="ri-close-line align-bottom text-muted"></i></a>
-                  <a class="remove-item-btn" pTooltip="Supprimer"
-                    (click)="confirmApp(ri, deleteModelApp, rowData.value)"><i
-                      class="ri-delete-bin-fill align-bottom text-muted"></i></a>
+                  <button type="button" pInitEditableRow class="btn btn-icon btn-soft-primary" *ngIf="!editing" pTooltip="Modifier" aria-label="Modifier la ligne" (click)="startRowEditApp(rowData)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-secondary" *ngIf="editing" pTooltip="Fermer la ligne" aria-label="Fermer la ligne" (click)="closeRowEditApp(rowData)"><i class="ri-close-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" pTooltip="Supprimer" aria-label="Supprimer la ligne" (click)="confirmApp(ri, deleteModelApp, rowData.value)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                 </div>
               </td>
             </tr>
@@ -828,9 +855,9 @@
         <p-table [value]="ligBult" [rows]="10" [paginator]="true" [rowHover]="true" [showCurrentPageReport]="true"
           [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} actes'"
           [rowsPerPageOptions]="[10,25,50]" [style]="{width:'100%'}"
-          styleClass="p-datatable-gridlines p-datatable-striped modern-table">
+          styleClass="p-datatable-sm modern-table">
           <ng-template pTemplate="header">
-            <tr>
+            <tr class="table-light">
               <th style="text-align:center;width:50px">#</th>
               <th style="text-align:left;width:110px">Date acte</th>
               <th style="text-align:left;width:160px;min-width:160px">Act</th>
@@ -860,115 +887,107 @@
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7" class="text-center">Aucun acte</td>
+              <td colspan="7" class="text-center text-muted py-5"><i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>Aucun acte</td>
             </tr>
           </ng-template>
         </p-table>
       </p-tabPanel>
     </p-tabView>
+    </div>
   </div>
 </div>
+<!-- Fenêtre : suppression (acte) -->
 <ng-template #deleteModel let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-        (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Etes vous sûr ?</h4>
-          <p class="text-muted mx-4 mb-0">Etes vous sûr de supprimer cet acte ?</p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
-        <button type="button" class="btn w-sm btn-danger"
-          (click)="ConfirmDelete(selectedIndexAct); modal.close('Close click')">
-          Oui, supprimer!
-        </button>
-      </div>
-    </div>
+  <div class="modal-header border-0">
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
   </div>
-</ng-template>
-<ng-template #deleteModelMed let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-        (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Etes vous sûr ?</h4>
-          <p class="text-muted mx-4 mb-0">Etes vous sûr de supprimer ce médicament ?</p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
-        <button type="button" class="btn w-sm btn-danger"
-          (click)="ConfirmDeleteMed(selectedIndexMed); modal.close('Close click')">
-          Oui, supprimer!
-        </button>
+  <div class="modal-body pt-0">
+    <div class="text-center">
+      <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+        colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+      <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+        <h4>Êtes-vous sûr ?</h4>
+        <p class="text-muted mx-4 mb-0">Cet acte sera supprimé du bulletin.</p>
       </div>
     </div>
-  </div>
-</ng-template>
-<ng-template #deleteModelVisit let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-        (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Etes vous sûr ?</h4>
-          <p class="text-muted mx-4 mb-0">Etes vous sûr de supprimer cette visite ?</p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
-        <button type="button" class="btn w-sm btn-danger"
-          (click)="ConfirmDeleteVisit(selectedIndexVisit); modal.close('Close click')">
-          Oui, supprimer!
-        </button>
-      </div>
+    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+      <button type="button" class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
+      <button type="button" class="btn w-sm btn-danger" (click)="ConfirmDelete(selectedIndexAct); modal.close('Close click')">
+        Oui, supprimer !
+      </button>
     </div>
   </div>
 </ng-template>
 
-<ng-template #deleteModelApp let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-        (click)="modal.dismiss('Cross click')"></button>
+<!-- Fenêtre : suppression (médicament) -->
+<ng-template #deleteModelMed let-modal>
+  <div class="modal-header border-0">
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body pt-0">
+    <div class="text-center">
+      <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+        colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+      <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+        <h4>Êtes-vous sûr ?</h4>
+        <p class="text-muted mx-4 mb-0">Ce médicament sera supprimé du bulletin.</p>
+      </div>
     </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Etes vous sûr ?</h4>
-          <p class="text-muted mx-4 mb-0">Etes vous sûr de supprimer cet appareil ?</p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
-        <button type="button" class="btn w-sm btn-danger"
-          (click)="ConfirmDeleteApp(selectedIndexApp); modal.close('Close click')">
-          Oui, supprimer!
-        </button>
-      </div>
+    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+      <button type="button" class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
+      <button type="button" class="btn w-sm btn-danger" (click)="ConfirmDeleteMed(selectedIndexMed); modal.close('Close click')">
+        Oui, supprimer !
+      </button>
     </div>
   </div>
 </ng-template>
+
+<!-- Fenêtre : suppression (visite) -->
+<ng-template #deleteModelVisit let-modal>
+  <div class="modal-header border-0">
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body pt-0">
+    <div class="text-center">
+      <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+        colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+      <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+        <h4>Êtes-vous sûr ?</h4>
+        <p class="text-muted mx-4 mb-0">Cette visite sera supprimée du bulletin.</p>
+      </div>
+    </div>
+    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+      <button type="button" class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
+      <button type="button" class="btn w-sm btn-danger" (click)="ConfirmDeleteVisit(selectedIndexVisit); modal.close('Close click')">
+        Oui, supprimer !
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Fenêtre : suppression (appareil) -->
+<ng-template #deleteModelApp let-modal>
+  <div class="modal-header border-0">
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body pt-0">
+    <div class="text-center">
+      <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+        colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+      <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+        <h4>Êtes-vous sûr ?</h4>
+        <p class="text-muted mx-4 mb-0">Cet appareil sera supprimé du bulletin.</p>
+      </div>
+    </div>
+    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+      <button type="button" class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
+      <button type="button" class="btn w-sm btn-danger" (click)="ConfirmDeleteApp(selectedIndexApp); modal.close('Close click')">
+        Oui, supprimer !
+      </button>
+    </div>
+  </div>
+</ng-template>
+
 <div *ngIf="isSearch">
   <app-search-lov [listData]="listBultSoin" [columns]="columnsBultSoin" (selectedValue)="search($event)">
   </app-search-lov>

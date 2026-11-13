@@ -1,277 +1,332 @@
 <div class="row" style="margin-top: 25px"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px">
-<app-breadcrumbs
-title="Filières"
-[breadcrumbItems]="breadCrumbItems"
-></app-breadcrumbs>
-<div class="col-md-12">
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <div class="card-header page-card-header">
-      <div class="page-card-title">
-        <h5>Identification de la filière</h5>
-        <small>Code, libellés et options de la filière</small>
+  <app-breadcrumbs title="Filières" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+<!-- Filière : identification et options -->
+<div class="col-xl-12">
+  <div class="card mt-4">
+
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-node-tree" aria-hidden="true"></i>
+        </span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Identification de la filière</h5>
+        <p class="text-muted fs-13 mb-0">Code, libellés et options de la filière.</p>
       </div>
     </div>
-    <form [formGroup]="formRefFilliere">
-      <div class="row g-3">
-        <div class="col-md-2">
-          <label class="form-label">Code</label>
-          <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_fil" />
+
+    <div class="card-body">
+      <form class="row g-3" [formGroup]="formRefFilliere" autocomplete="off">
+
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identification</h6>
         </div>
-        <div class="col-md-5">
-          <label class="form-label">Libellé</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" formControlName="lib_fill" />
+        <div class="col-md-3 col-xl-2">
+          <label for="fil-code" class="form-label">Code</label>
+          <input id="fil-code" type="text" class="form-control" placeholder="Ex. 01" formControlName="cod_fil" />
         </div>
-        <div class="col-md-5">
-          <label class="form-label">Libellé en arabe</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé en arabe" formControlName="lib_fill_a" />
+        <div class="col-md-9 col-xl-5">
+          <label for="fil-libelle" class="form-label">Libellé</label>
+          <input id="fil-libelle" type="text" class="form-control" placeholder="Libellé de la filière"
+            formControlName="lib_fill" />
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Bulletin CNAM</label>
-          <select class="form-select border-primary" formControlName="bult_cnam">
+        <div class="col-xl-5">
+          <label for="fil-libelle-ar" class="form-label">Libellé en arabe</label>
+          <input id="fil-libelle-ar" type="text" class="form-control" placeholder="الاسم بالعربية" dir="rtl" lang="ar"
+            formControlName="lib_fill_a" />
+        </div>
+
+        <div class="col-12 mt-4">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Options</h6>
+        </div>
+        <div class="col-md-4 col-xl-2">
+          <label for="fil-bult-cnam" class="form-label">Bulletin CNAM</label>
+          <select id="fil-bult-cnam" class="form-select" formControlName="bult_cnam">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Bulletin mutuelle</label>
-          <select class="form-select border-primary" formControlName="bult_mut">
+        <div class="col-md-4 col-xl-2">
+          <label for="fil-bult-mut" class="form-label">Bulletin mutuelle</label>
+          <select id="fil-bult-mut" class="form-select" formControlName="bult_mut">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Médecin traitant</label>
-          <select class="form-select border-primary" formControlName="med_fam">
+        <div class="col-md-4 col-xl-2">
+          <label for="fil-med" class="form-label">Médecin traitant</label>
+          <select id="fil-med" class="form-select" formControlName="med_fam">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Code activité</label>
-          <app-lov [listData]="listActivEtablis" [columns]="columnEtablis"
-            codeField="cod_activ" [selectedCode]="codActiv"
+        <div class="col-md-4 col-xl-2">
+          <label class="form-label">Activité</label>
+          <app-lov [listData]="listActivEtablis" [columns]="columnEtablis" codeField="cod_activ" [selectedCode]="codActiv"
             (selectedValue)="onSelectedValueActiviteEtablis($event)">
           </app-lov>
         </div>
-        <div class="col-md-6">
-          <label class="form-label">Libellé activité</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" readonly [value]="libEtablis" />
+        <div class="col-md-8 col-xl-4">
+          <label for="fil-activ-lib" class="form-label">Libellé activité</label>
+          <input id="fil-activ-lib" type="text" class="form-control" placeholder="Libellé de l'activité" readonly
+            [value]="libEtablis" />
         </div>
-      </div>
-    </form>
-  </div>
 
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <div class="card-header page-card-header">
-      <div class="page-card-title">
-        <h5>Détails</h5>
-        <small>Montants, plafonnement et paramètres</small>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Détails : montants et paramètres -->
+<div class="col-xl-12">
+  <div class="card mt-4">
+
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-hand-coin-line" aria-hidden="true"></i>
+        </span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Détails</h5>
+        <p class="text-muted fs-13 mb-0">Montants, plafonnement et paramètres.</p>
       </div>
     </div>
-    <form [formGroup]="formRefFilliere">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <label class="form-label">Montant adhérent</label>
-          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_adher" appMontantMask />
+
+    <div class="card-body">
+      <form class="row g-3" [formGroup]="formRefFilliere" autocomplete="off">
+
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Montants remboursés</h6>
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Montant conjoint</label>
-          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_conj" appMontantMask />
+        <div class="col-md-4 col-xl">
+          <label for="fil-adher" class="form-label">Montant adhérent</label>
+          <input id="fil-adher" type="text" class="form-control montant-input" placeholder="0.000"
+            formControlName="mnt_adher" appMontantMask />
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Montant enfant</label>
-          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_enf" appMontantMask />
+        <div class="col-md-4 col-xl">
+          <label for="fil-conj" class="form-label">Montant conjoint</label>
+          <input id="fil-conj" type="text" class="form-control montant-input" placeholder="0.000"
+            formControlName="mnt_conj" appMontantMask />
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Montant père</label>
-          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_pere" appMontantMask />
+        <div class="col-md-4 col-xl">
+          <label for="fil-enf" class="form-label">Montant enfant</label>
+          <input id="fil-enf" type="text" class="form-control montant-input" placeholder="0.000"
+            formControlName="mnt_enf" appMontantMask />
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Montant mère</label>
-          <input type="text" class="form-control border-primary montant-input" placeholder="0.000" formControlName="mnt_mere" appMontantMask />
+        <div class="col-md-6 col-xl">
+          <label for="fil-pere" class="form-label">Montant père</label>
+          <input id="fil-pere" type="text" class="form-control montant-input" placeholder="0.000"
+            formControlName="mnt_pere" appMontantMask />
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Nombre de membres</label>
-          <input type="text" class="form-control border-primary" placeholder="Nombre de membres" formControlName="nbr_membre" />
+        <div class="col-md-6 col-xl">
+          <label for="fil-mere" class="form-label">Montant mère</label>
+          <input id="fil-mere" type="text" class="form-control montant-input" placeholder="0.000"
+            formControlName="mnt_mere" appMontantMask />
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Prorata PEC</label>
-          <select class="form-select border-primary" formControlName="prorat_pec">
+
+        <div class="col-12 mt-4">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Plafonnement et paramètre</h6>
+        </div>
+        <div class="col-md-4 col-xl-3">
+          <label for="fil-membres" class="form-label">Nombre de membres</label>
+          <input id="fil-membres" type="text" inputmode="numeric" class="form-control" placeholder="Ex. 4"
+            formControlName="nbr_membre" />
+        </div>
+        <div class="col-md-4 col-xl-3">
+          <label for="fil-prorat" class="form-label">Prorata PEC</label>
+          <select id="fil-prorat" class="form-select" formControlName="prorat_pec">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Plafonnement</label>
-          <select class="form-select border-primary" formControlName="typ_plafond">
+        <div class="col-md-4 col-xl-3">
+          <label for="fil-plafond" class="form-label">Plafonnement</label>
+          <select id="fil-plafond" class="form-select" formControlName="typ_plafond">
             <option value="">Sélectionner</option>
             <option value="P">Positif</option>
             <option value="N">Négatif</option>
           </select>
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Libellé paramètre</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé paramètre" formControlName="lib_param" />
+        <div class="col-xl-3 d-none d-xl-block"></div>
+        <div class="col-md-5 col-xl-4">
+          <label for="fil-param" class="form-label">Libellé paramètre</label>
+          <input id="fil-param" type="text" class="form-control" placeholder="Libellé du paramètre"
+            formControlName="lib_param" />
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Libellé paramètre (arabe)</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé en arabe" formControlName="lib_param_a" />
+        <div class="col-md-5 col-xl-4">
+          <label for="fil-param-ar" class="form-label">Libellé paramètre en arabe</label>
+          <input id="fil-param-ar" type="text" class="form-control" placeholder="الاسم بالعربية" dir="rtl" lang="ar"
+            formControlName="lib_param_a" />
         </div>
-        <div class="col-md-4">
-          <label class="form-label">Taux paramètre</label>
-          <input type="text" class="form-control border-primary" placeholder="Taux paramètre" formControlName="taux_param" />
+        <div class="col-md-2 col-xl-4">
+          <label for="fil-taux" class="form-label">Taux paramètre</label>
+          <input id="fil-taux" type="text" inputmode="decimal" class="form-control" placeholder="Ex. 80"
+            formControlName="taux_param" />
         </div>
-      </div>
-    </form>
-  </div>
 
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-      <div class="page-card-title">
-        <h5>Acte pharmacie</h5>
-        <small>{{ listRefFillAct?.length || 0 }} acte(s)</small>
-      </div>
-      <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
-        (click)="openModalTab(content1)">
-        <i class="ri-add-fill me-1 align-bottom"></i> Ajouter acte
-      </button>
+      </form>
     </div>
-    <p-table [value]="listRefFillAct" [paginator]="true" [rows]="4" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-      <ng-template pTemplate="header">
-        <tr class="table-primary">
-          <th *ngFor="let column of ['abrv_act', 'libActe', 'val_prix']">
-            <div class="th-head">
-              <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-              <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-              <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-            </div>
-            <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-          </th>
-          <th class="text-center">Action</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-        <tr>
-          <td class="text-center">{{ rowData.abrv_act }}</td>
-          <td class="text-center">{{ rowData.libActe }}</td>
-          <td class="text-center">{{ rowData.val_prix=='P'?'Prix Public':rowData.val_prix=='G'?'Prix Générique':rowData.val_prix=='C'?'Remb. Cnam':'' }}</td>
-          <td>
-            <ul class="list-inline hstack gap-2 mb-0">
-              <li class="list-inline-item">
-                <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-              </li>
-              <li class="list-inline-item me-0">
-                <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
-              </li>
-            </ul>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
   </div>
 </div>
+
+<!-- Acte pharmacie -->
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+
+    <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+            <i class="ri-capsule-line" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Acte pharmacie</h5>
+          <p class="text-muted fs-13 mb-0">
+            {{ listRefFillAct?.length || 0 }} acte{{ (listRefFillAct?.length || 0) > 1 ? 's' : '' }}
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="openModalTab(content1)">
+        <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un acte
+      </button>
+    </div>
+
+    <div class="card-body">
+      <p-table [value]="listRefFillAct || []" [paginator]="(listRefFillAct?.length || 0) > 8" [rows]="8"
+        styleClass="p-datatable-sm modern-table">
+
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th *ngFor="let column of ['abrv_act', 'libActe', 'val_prix']" scope="col">
+              <button type="button"
+                class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                (click)="onSort(column)" [attr.aria-label]="'Trier par ' + columnTitles[column]">
+                {{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+          </tr>
+          <tr>
+            <th *ngFor="let column of ['abrv_act', 'libActe']" class="py-2">
+              <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                [(ngModel)]="searchz[column]" (input)="applyFilter()"
+                [attr.aria-label]="'Filtrer par ' + columnTitles[column]" />
+            </th>
+            <th></th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.abrv_act }}</span></td>
+            <td class="fw-medium">{{ rowData.libActe }}</td>
+            <td>
+              <span *ngIf="rowData.val_prix == 'P'" class="badge bg-info-subtle text-info fs-12">Prix public</span>
+              <span *ngIf="rowData.val_prix == 'G'" class="badge bg-success-subtle text-success fs-12">Prix générique</span>
+              <span *ngIf="rowData.val_prix == 'C'" class="badge bg-warning-subtle text-warning fs-12">Remb. CNAM</span>
+            </td>
+            <td class="text-end">
+              <div class="hstack gap-2 justify-content-end">
+                <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                  [attr.aria-label]="'Modifier l\'acte ' + rowData.libActe" (click)="editDataGet(rowData, content1)">
+                  <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+                  [attr.aria-label]="'Supprimer l\'acte ' + rowData.libActe" (click)="confirm(deleteModel, rowData)">
+                  <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucun acte trouvé
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="isSearch">
-    <app-search-lov [listData]="listFilliere" [columns]="columnFilliere"
-        (selectedValue)="search($event)"></app-search-lov>
+  <app-search-lov [listData]="listFilliere" [columns]="columnFilliere" (selectedValue)="search($event)">
+  </app-search-lov>
 </div>
 
-
+<!-- Fenêtre : acte pharmacie -->
 <ng-template #content1 role="document" let-modal>
-    <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} acte pharmacie</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
-            (click)="modal.dismiss('Cross click')"></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-capsule-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit == true ? 'Ajouter un acte pharmacie' : 'Modifier l\'acte pharmacie' }}</h5>
+        <p class="text-muted fs-13 mb-0">Acte et valeur de prix retenue pour cette filière.</p>
+      </div>
     </div>
-    <form [formGroup]="formRefFilAct" class="tablelist-form" autocomplete="off">
-        <div class="modal-body">
-            <div class="row g-3">
- 
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
 
-
-                <div class="col-md-2">
-                    <label for="billinginfo-phone" class="form-label">Code</label>
-                    <app-lov [listData]="listActe" [columns]="columnActe" codeField="abrv_act" [selectedCode]="codActe"
-                        (selectedValue)="onSelectedValueActe($event)">
-                    </app-lov>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="billinginfo-phone" class="form-label">Libellé</label>
-                    <input type="text" class="form-control border-primary" placeholder="Libellé"
-                        [value]="libAct" />
-                </div>
-
-
-                <div class="col-md-3">
-                    <label for="country" class="form-label">Valeur prix</label>
-                    <select class="form-select border-primary" formControlName="val_prix">
-                        <option value="">Sélectionner</option>
-                        <option value="P">Prix Public</option>
-                        <option value="G">Prix Générique</option>
-                        <option value="C">Remb. Cnam</option>
-                    </select>
-                </div>
-            </div>
+  <form [formGroup]="formRefFilAct" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Acte</label>
+          <app-lov [listData]="listActe" [columns]="columnActe" codeField="abrv_act" [selectedCode]="codActe"
+            (selectedValue)="onSelectedValueActe($event)">
+          </app-lov>
         </div>
-        <div class="modal-footer">
-            <div class="hstack gap-2 justify-content-end">
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                    (click)="saveRefFilAct(); modal.close('Close click')">
-                    Valider
-                </button>
-            </div>
-            <div class="hstack gap-2 justify-content-end">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal"
-                    (click)="modal.close('Close click')">
-                    Fermer
-                </button>
-            </div>
+        <div class="col-md-5">
+          <label for="acte-libelle" class="form-label">Libellé</label>
+          <input id="acte-libelle" type="text" class="form-control" placeholder="Libellé de l'acte" [value]="libAct" readonly />
         </div>
-    </form>
+        <div class="col-md-4">
+          <label for="acte-prix" class="form-label">Valeur de prix</label>
+          <select id="acte-prix" class="form-select" formControlName="val_prix">
+            <option value="">Sélectionner</option>
+            <option value="P">Prix public</option>
+            <option value="G">Prix générique</option>
+            <option value="C">Remb. CNAM</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" (click)="saveRefFilAct(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
+    </div>
+  </form>
 </ng-template>
 
+<!-- Suppression d'un acte -->
 <ng-template #deleteModel let-modal>
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-                (click)="modal.dismiss('Cross click')"></button>
-        </div>
-        <div class="modal-body">
-            <div class="mt-2 text-center">
-              <lord-icon
-                src="https://cdn.lordicon.com/gsqxdxog.json"
-                trigger="loop"
-                colors="primary:#f7b84b,secondary:#f06548"
-                style="width: 100px; height: 100px"
-              ></lord-icon>
-              <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                <h4>Êtes-vous sûr ?</h4>
-              <p class="text-muted mx-4 mb-0">
-                Êtes-vous sûr de vouloir supprimer  ?
-              </p>
-              </div>
-            </div>
-            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-              <button
-                type="button"
-                class="btn w-sm btn-light"
-                data-bs-dismiss="modal"
-                (click)="modal.close('Close click')"
-              >
-                Fermer
-              </button>
-              <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
-                Oui, Supprimer!
-              </button>
-            </div>
-          </div>
+  <div class="modal-body text-center p-4">
+    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"></lord-icon>
+    <h4 class="mt-3">Supprimer cet acte ?</h4>
+    <p class="text-muted mb-0">L'acte <strong>{{ deleteId?.abrv_act }}</strong> · {{ deleteId?.libActe }} sera retiré de cette filière.</p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product"
+        (click)="ConfirmDelete(); modal.close('Close click')">Oui, supprimer</button>
     </div>
-    <!-- /.modal-content -->
+  </div>
 </ng-template>

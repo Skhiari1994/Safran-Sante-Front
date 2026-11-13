@@ -119,8 +119,8 @@ export class ConsultationSoinComponent implements OnInit {
     const numFamStr = b?.num_fam !== undefined && b?.num_fam !== null ? String(b.num_fam).trim() : '';
     if (this.listAdherents && this.listAdherents.length > 0) {
       const found = this.listAdherents.find(a => String(a.num_fam).trim() === numFamStr);
-      if (found?.nom_PREN) {
-        return found.nom_PREN;
+      if (found?.nom_pren ?? found?.nom_PREN) {
+        return found.nom_pren ?? found.nom_PREN;
       }
     }
     if (numFamStr === '0' || numFamStr === '') {

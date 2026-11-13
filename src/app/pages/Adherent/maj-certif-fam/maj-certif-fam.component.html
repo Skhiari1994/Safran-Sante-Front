@@ -1,444 +1,313 @@
+<div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
   <app-breadcrumbs title="Prise en charge des certificats de scolarité enfants"
     [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
-<div class="row">
-  <div class="col-xl-10">
 
-    <div class="container d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
-            <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent">
-              <div class="col-md-3">
-                <label class="form-label">Matricule</label>
-                <input type="text" class="form-control border-primary" placeholder="Matricule"
-                  formControlName="mat_pers" disabled readonly />
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Nom</label>
-                <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers"
-                  disabled readonly />
-              </div>
-              <div class="col-md-5">
-                <label class="form-label">Prénom</label>
-                <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pren_pers"
-                  disabled readonly />
-              </div>
+<!-- Adhérent (lecture seule) -->
+<div class="col-xl-12">
+  <div class="card mt-4">
 
-              <div class="col-md-3">
-                <label class="form-label">Etat</label>
-                <select title="Etat" class="form-select border-primary" formControlName="etat_act" disabled readonly>
-                  <option value="">Sélectionner</option>
-                  <option value="A">Actif</option>
-                  <option value="B">Bloqué</option>
-                  <option value="I">En Instance</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Date d'embauche</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_emb" appDateFormatter disabled readonly />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Situation sociale</label>
-                <select title="Situation sociale" class="form-select border-primary" formControlName="cod_sit" disabled readonly>
-                  <option value="">Sélectionner</option>
-                  <option value="C">Célibataire</option>
-                  <option value="M">Marié(e)</option>
-                  <option value="D">Divorcé(e)</option>
-                  <option value="V">Voeuf(ve)</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Nombre d'enfants</label>
-                <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants"
-                  formControlName="nbr_enf" disabled readonly />
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Numéro d'affiliation mutuelle</label>
-                <input type="text" class="form-control border-primary" placeholder="Num affiliation mutuelle"
-                  formControlName="num_assur" disabled readonly />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Date d'effet</label>
-                <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
-                  formControlName="dat_ass" appDateFormatter disabled readonly />
-              </div>
-            </form>
-          </div>
-        </div>
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-3-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Adhérent</h5>
+        <p class="text-muted fs-13 mb-0">Recherchez un adhérent avec la loupe de la barre d'outils.</p>
       </div>
     </div>
 
+    <div class="card-body">
+      <form action="javascript:void(0);" class="row g-3" [formGroup]="formAdherent" autocomplete="off">
+
+        <div class="col-md-3">
+          <label for="cf-mat" class="form-label">Matricule</label>
+          <input id="cf-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers" />
+        </div>
+        <div class="col-md-4">
+          <label for="cf-nom" class="form-label">Nom</label>
+          <input id="cf-nom" type="text" class="form-control" placeholder="Nom" formControlName="nom_pers" />
+        </div>
+        <div class="col-md-5">
+          <label for="cf-prenom" class="form-label">Prénom</label>
+          <input id="cf-prenom" type="text" class="form-control" placeholder="Prénom" formControlName="pren_pers" />
+        </div>
+
+        <div class="col-md-3">
+          <label for="cf-etat" class="form-label">État</label>
+          <select id="cf-etat" class="form-select" formControlName="etat_act">
+            <option value="">Sélectionner</option>
+            <option value="A">Actif</option>
+            <option value="B">Bloqué</option>
+            <option value="I">En instance</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="cf-emb" class="form-label">Date d'embauche</label>
+          <input id="cf-emb" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            formControlName="dat_emb" appDateFormatter />
+        </div>
+        <div class="col-md-3">
+          <label for="cf-sit" class="form-label">Situation sociale</label>
+          <select id="cf-sit" class="form-select" formControlName="cod_sit">
+            <option value="">Sélectionner</option>
+            <option value="C">Célibataire</option>
+            <option value="M">Marié(e)</option>
+            <option value="D">Divorcé(e)</option>
+            <option value="V">Veuf(ve)</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="cf-nbr-enf" class="form-label">Nombre d'enfants</label>
+          <input id="cf-nbr-enf" type="text" class="form-control" placeholder="Nombre d'enfants" formControlName="nbr_enf" />
+        </div>
+
+        <div class="col-md-6">
+          <label for="cf-assur" class="form-label">N° d'affiliation mutuelle</label>
+          <input id="cf-assur" type="text" class="form-control" placeholder="N° d'affiliation mutuelle"
+            formControlName="num_assur" />
+        </div>
+        <div class="col-md-6">
+          <label for="cf-ass" class="form-label">Date d'effet</label>
+          <input id="cf-ass" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
+            formControlName="dat_ass" appDateFormatter />
+        </div>
+      </form>
+    </div>
   </div>
-
-  <div class="col-xl-10">
-
-    <div class="container d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
-
-            <div class="card-body">
-              <div class="table-responsive table-card mb-2">
-                <table class="table w-100 align-middle">
-                  <thead>
-                    <!-- Ligne des champs de recherche -->
-
-                    <tr class="bg-light">
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('num_fam')"></i>
-                          <span class="th-title" (click)="onSort('num_fam')">Numéro</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_num_fam')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_num_fam']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['e_num_fam']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('nom_pren')"></i>
-                          <span class="th-title" (click)="onSort('nom_pren')">Nom & Prénom</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_nom_pren')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_nom_pren']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['e_nom_pren']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('dat_naiss')"></i>
-                          <span class="th-title" (click)="onSort('dat_naiss')">Date naissance</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_dat_naiss')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_dat_naiss']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['e_dat_naiss']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('cod_activite')"></i>
-                          <span class="th-title" (click)="onSort('cod_activite')">Code activité</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_cod_activite')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_cod_activite']" type="text"
-                          class="form-control form-control-sm mt-2" style="width: 100%"
-                          [(ngModel)]="searchz['e_cod_activite']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('lib_activite')"></i>
-                          <span class="th-title" (click)="onSort('lib_activite')">Libellé</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_lib_activite')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_lib_activite']" type="text"
-                          class="form-control form-control-sm mt-2" style="width: 100%"
-                          [(ngModel)]="searchz['e_lib_activite']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('Pec')"></i>
-                          <span class="th-title" (click)="onSort('Pec')">Pec</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_Pec')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_Pec']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['e_Pec']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('dat_pec')"></i>
-                          <span class="th-title" (click)="onSort('dat_pec')">Date Pec</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_dat_pec')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_dat_pec']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['e_dat_pec']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort('dat_dece')"></i>
-                          <span class="th-title" (click)="onSort('dat_dece')">Date décès</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('e_dat_dece')"></i>
-                        </div>
-                        <input *ngIf="showFilters['e_dat_dece']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['e_dat_dece']" placeholder="..." />
-                      </th>
-                    </tr>
-                    <!-- Ligne des libellés -->
-                  </thead>
-
-                  <tbody>
-                    <tr
-                      *ngFor="let data of filterList(listEnfants, 'e_') | paginate : { itemsPerPage: 2, currentPage: p }; let i = index"
-                      [ngClass]="{ 'table-active': selectedRow === i }" (click)="getCertifEnf(data)">
-
-                      <td class="text-center">{{ data.num_fam }}</td>
-                      <td class="text-center">{{ data.nom_pren }}</td>
-                      <td class="text-center">{{ data.dat_naiss }}</td>
-                      <td class="text-center">{{ data.cod_activite }}</td>
-                      <td class="text-center">{{ data.lib_activite }}</td>
-                      <td class="text-center">{{ data.Pec }}</td>
-                      <td class="text-center">{{ data.dat_pec }}</td>
-                      <td class="text-center">{{ data.dat_dece }}</td>
-                    </tr>
-                  </tbody>
-
-                </table>
-              </div>
-            </div>
-            <div class="d-flex justify-content-end mt-3">
-              <!-- Pagination -->
-              <pagination-controls (pageChange)="p = $event"></pagination-controls>
-              <!-- End Pagination -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col-xl-10">
-
-    <div class="container d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow-none mb-0 mt-4">
-
-            <div class="card-header">
-              <div class="d-flex align-items-center flex-wrap gap-9">
-                <div class="flex-grow-1"></div>
-
-                <div class="flex-shrink-0">
-                  <div class="hstack text-nowrap gap-2" ngbDropdown>
-                    <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
-                      (click)="openModalTab(content1)">
-                      <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Certif
-                    </button>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive table-card mb-2">
-                <table class="table w-100 align-middle">
-                  <thead>
-                    <!-- Ligne des champs de recherche -->
-
-                    <tr class="bg-light">
-                      <th scope="col">
-                        <div class="form-check">
-                          <input title="Séléctionner" class="form-check-input" type="checkbox" id="checkAll" value="option" />
-                        </div>
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSortCertif('dat_certif')"></i>
-                          <span class="th-title" (click)="onSortCertif('dat_certif')">Date certificat</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('c_dat_certif')"></i>
-                        </div>
-                        <input *ngIf="showFilters['c_dat_certif']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['c_dat_certif']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSortCertif('annee_certif')"></i>
-                          <span class="th-title" (click)="onSortCertif('annee_certif')">Année certificat</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('c_annee_certif')"></i>
-                        </div>
-                        <input *ngIf="showFilters['c_annee_certif']" type="text"
-                          class="form-control form-control-sm mt-2" style="width: 100%"
-                          [(ngModel)]="searchz['c_annee_certif']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSortCertif('annee_scol')"></i>
-                          <span class="th-title" (click)="onSortCertif('annee_scol')">Année scolaire</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('c_annee_scol')"></i>
-                        </div>
-                        <input *ngIf="showFilters['c_annee_scol']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['c_annee_scol']" placeholder="..." />
-                      </th>
-                      <th>
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSortCertif('obs')"></i>
-                          <span class="th-title" (click)="onSortCertif('obs')">Observation</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter('c_obs')"></i>
-                        </div>
-                        <input *ngIf="showFilters['c_obs']" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%" [(ngModel)]="searchz['c_obs']" placeholder="..." />
-                      </th>
-                      <th class="text-center">Action</th>
-                    </tr>
-                    <!-- Ligne des libellés -->
-                  </thead>
-
-                  <tbody
-                    *ngFor="let data of filterList(listCertifFam, 'c_') | paginate : { itemsPerPage: 2, currentPage: pCertif }; let i = index">
-
-                    <tr id="c_{{ data._id }}">
-                      <th scope="row">
-                        <div class="form-check">
-                          <input title="Séléctionner" class="form-check-input" type="checkbox" name="checkAll" value="{{ data._id }}" />
-                        </div>
-                      </th>
-                      <td class="text-center">{{ data.dat_certif }}</td>
-
-                      <td class="text-center">{{ data.annee_certif }}</td>
-                      <td class="text-center">{{ data.annee_scol }}</td>
-                      <td class="text-center">{{ data.obs }}</td>
-
-
-                      <td>
-                        <ul class="list-inline hstack gap-2 mb-0">
-                          <li class="list-inline-item" ngbTooltip="Edit" placement="top">
-                            <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(i, data, content1)"><i
-                                class="ri-pencil-fill align-bottom text-muted"></i></a>
-                          </li>
-                          <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
-                            <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, data)">
-                              <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end mt-3">
-              <!-- Pagination -->
-              <pagination-controls (pageChange)="pCertif = $event"></pagination-controls>
-              <!-- End Pagination -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div *ngIf="isSearch">
-    <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
-    </app-search-lov>
-  </div>
-  <ng-template #content1 role="document" let-modal>
-    <div class="modal-header bg-info-subtle p-3">
-      <h5 class="modal-title" id="exampleModalLabel">Ajouter certificat</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
-        (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <form [formGroup]="formCertif" class="tablelist-form" autocomplete="off">
-      <div formArrayName="CertifFam" class="scrollable-container">
-        <div *ngFor="let certif of CertifFam.controls; let i = index" [formGroupName]="i" class="row g-3">
-          <div class="modal-body">
-            <div class="row g-3">
-
-
-              <div class="col-lg-3">
-                <div>
-                  <label for="owner-field" class="form-label">
-                    Date certif
-                  </label>
-                  <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" required
-                    appDateFormatter mask="00/00/0000" formControlName="dat_certif" [ngClass]="{
-                          'is-invalid': submitted && form['dat_certif'].errors
-                        }" />
-                  @if(submitted && form['dat_certif'].errors){
-                  <div class="invalid-feedback" align="left">
-                    @if(form['dat_certif'].errors['required']){
-                    <div>Date dat_certif is required</div>
-                    }
-                  </div>
-                  }
-                </div>
-              </div>
-
-
-
-
-              <div class="col-lg-3">
-                <div>
-                  <label for="industry_type-field" class="form-label">Année certificat</label>
-                  <input type="text" class="form-control border-primary" placeholder="Année du certificat"
-                    formControlName="annee_certif" />
-                </div>
-              </div>
-
-              <div class="col-lg-3">
-                <div>
-                  <label for="industry_type-field" class="form-label">Année scolaire</label>
-                  <input type="text" class="form-control border-primary" placeholder="Année scolaire"
-                    formControlName="annee_scol" />
-                </div>
-              </div>
-              <div class="col-lg-12">
-                <div>
-                  <label for="industry_type-field" class="form-label">Observation</label>
-                  <textarea type="text" class="form-control border-primary" placeholder="Observation"
-                    formControlName="obs"></textarea>
-                </div>
-              </div>
-
-            </div>
-          </div>
-          <div class="hstack gap-2 justify-content-center" *ngIf="edit">
-            <button type="button" class="btn btn-success" id="add-btn" (click)="addCertifFam()">
-              Ajouter certificat
-            </button>
-            <button type="button" class="btn btn-info" (click)="removeEnfant(i)">
-              Annuler
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="hstack gap-2 justify-content-end">
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-            (click)="validatelistCertifFam(); modal.close('Close click')">
-            Valider
-          </button>
-        </div>
-        <div class="hstack gap-2 justify-content-end">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Close
-          </button>
-        </div>
-      </div>
-    </form>
-  </ng-template>
-  <!-- removeItemModal -->
-  <ng-template #deleteModel let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Are you sure ?</h4>
-            <p class="text-muted mx-4 mb-0">
-              Are you sure you want to remove this address ?
-            </p>
-          </div>
-        </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-            Close
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()"
-            (click)="modal.close('Close click')">
-            Yes, Delete It!
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </ng-template>
 </div>
+
+<!-- Enfants : un clic sur une ligne affiche ses certificats -->
+<div class="col-xl-12">
+  <div class="card mt-4">
+
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-parent-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Enfants</h5>
+        <p class="text-muted fs-13 mb-0">
+          {{ listEnfants?.length || 0 }} enfant{{ (listEnfants?.length || 0) > 1 ? 's' : '' }}
+          · cliquez sur un enfant pour afficher ses certificats
+        </p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <p-table [value]="filterList(listEnfants, 'e_')" [paginator]="(listEnfants?.length || 0) > 6" [rows]="6"
+        styleClass="p-datatable-sm modern-table">
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th *ngFor="let col of [
+                { k: 'num_fam', t: 'Numéro' }, { k: 'nom_pren', t: 'Nom et prénom' }, { k: 'dat_naiss', t: 'Date de naissance' },
+                { k: 'cod_activite', t: 'Activité' }, { k: 'lib_activite', t: 'Libellé activité' }, { k: 'Pec', t: 'PEC' },
+                { k: 'dat_pec', t: 'Date PEC' }, { k: 'dat_dece', t: 'Date de décès' }]" scope="col">
+              <span class="d-inline-flex align-items-center gap-1 text-nowrap">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1"
+                  (click)="onSort(col.k)" [attr.aria-label]="'Trier par ' + col.t">
+                  {{ col.t }}<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-link p-0 text-muted" (click)="toggleFilter('e_' + col.k)"
+                  [attr.aria-label]="'Filtrer par ' + col.t">
+                  <i class="ri-search-line fs-14" aria-hidden="true"></i>
+                </button>
+              </span>
+              <input *ngIf="showFilters['e_' + col.k]" type="search" class="form-control form-control-sm mt-2"
+                [(ngModel)]="searchz['e_' + col.k]" placeholder="Filtrer…" [attr.aria-label]="'Filtrer par ' + col.t" />
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-data>
+          <tr style="cursor: pointer;" tabindex="0" (click)="getCertifEnf(data)" (keydown.enter)="getCertifEnf(data)"
+            [class.table-active]="CertifFam.controls[0]?.value?.num_fam == data.num_fam">
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ data.num_fam }}</span></td>
+            <td class="fw-medium">{{ data.nom_pren }}</td>
+            <td>{{ data.dat_naiss }}</td>
+            <td>{{ data.cod_activite }}</td>
+            <td>{{ data.lib_activite }}</td>
+            <td>{{ data.Pec }}</td>
+            <td>{{ data.dat_pec }}</td>
+            <td>{{ data.dat_dece }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucun enfant à afficher
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- Certificats de l'enfant choisi -->
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+
+    <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-file-list-3-line" aria-hidden="true"></i></span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Certificats de scolarité</h5>
+          <p class="text-muted fs-13 mb-0">
+            {{ CertifFam.controls[0]?.value?.num_fam
+              ? (listCertifFam?.length || 0) + ' certificat' + ((listCertifFam?.length || 0) > 1 ? 's' : '') + ' · enfant n° ' + CertifFam.controls[0]?.value?.num_fam
+              : 'Choisissez un enfant dans le tableau ci-dessus' }}
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#showModal"
+        [disabled]="!CertifFam.controls[0]?.value?.num_fam" (click)="openModalTab(content1)">
+        <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un certificat
+      </button>
+    </div>
+
+    <div class="card-body">
+      <p-table [value]="filterList(listCertifFam, 'c_')" [paginator]="(listCertifFam?.length || 0) > 6" [rows]="6"
+        styleClass="p-datatable-sm modern-table">
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th *ngFor="let col of [
+                { k: 'dat_certif', t: 'Date du certificat' }, { k: 'annee_certif', t: 'Année du certificat' },
+                { k: 'annee_scol', t: 'Année scolaire' }, { k: 'obs', t: 'Observation' }]" scope="col">
+              <span class="d-inline-flex align-items-center gap-1 text-nowrap">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1"
+                  (click)="onSortCertif(col.k)" [attr.aria-label]="'Trier par ' + col.t">
+                  {{ col.t }}<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-link p-0 text-muted" (click)="toggleFilter('c_' + col.k)"
+                  [attr.aria-label]="'Filtrer par ' + col.t">
+                  <i class="ri-search-line fs-14" aria-hidden="true"></i>
+                </button>
+              </span>
+              <input *ngIf="showFilters['c_' + col.k]" type="search" class="form-control form-control-sm mt-2"
+                [(ngModel)]="searchz['c_' + col.k]" placeholder="Filtrer…" [attr.aria-label]="'Filtrer par ' + col.t" />
+            </th>
+            <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ data.dat_certif }}</td>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ data.annee_certif }}</span></td>
+            <td>{{ data.annee_scol }}</td>
+            <td>{{ data.obs }}</td>
+            <td class="text-end">
+              <div class="hstack gap-2 justify-content-end">
+                <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                  aria-label="Modifier le certificat" data-bs-toggle="modal" (click)="editDataGet(rowIndex, data, content1)">
+                  <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+                  aria-label="Supprimer le certificat" data-bs-toggle="modal" (click)="confirm(deleteModel, data)">
+                  <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucun certificat à afficher
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>
+
+<!-- Fenêtre : certificat -->
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-file-list-3-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter un certificat' : 'Modifier le certificat' }}</h5>
+        <p class="text-muted fs-13 mb-0">Certificat de scolarité de l'enfant.</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <form [formGroup]="formCertif" class="tablelist-form" autocomplete="off">
+    <div formArrayName="CertifFam" class="modal-body scrollable-container">
+      <div *ngFor="let certif of CertifFam.controls; let i = index" [formGroupName]="i"
+        [ngClass]="{ 'rounded border bg-white p-3 mb-3': edit }">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label [attr.for]="'cert-date-' + i" class="form-label">Date du certificat</label>
+            <input [attr.id]="'cert-date-' + i" type="text" class="form-control" placeholder="jj/mm/aaaa" required
+              appDateFormatter mask="00/00/0000" formControlName="dat_certif" />
+          </div>
+          <div class="col-md-4">
+            <label [attr.for]="'cert-annee-' + i" class="form-label">Année du certificat</label>
+            <input [attr.id]="'cert-annee-' + i" type="text" inputmode="numeric" class="form-control"
+              placeholder="Ex. 2025" formControlName="annee_certif" />
+          </div>
+          <div class="col-md-4">
+            <label [attr.for]="'cert-scol-' + i" class="form-label">Année scolaire</label>
+            <input [attr.id]="'cert-scol-' + i" type="text" class="form-control" placeholder="Ex. 2025/2026"
+              formControlName="annee_scol" />
+          </div>
+          <div class="col-12">
+            <label [attr.for]="'cert-obs-' + i" class="form-label">Observation</label>
+            <textarea [attr.id]="'cert-obs-' + i" rows="2" class="form-control" placeholder="Observation"
+              formControlName="obs"></textarea>
+          </div>
+        </div>
+
+        <div class="hstack gap-2 justify-content-end mt-3" *ngIf="edit">
+          <button type="button" class="btn btn-sm btn-soft-success" id="add-btn" (click)="addCertifFam()">
+            <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un certificat
+          </button>
+          <button type="button" class="btn btn-sm btn-soft-secondary" (click)="removeEnfant(i)">
+            <i class="ri-close-line align-bottom me-1" aria-hidden="true"></i>Retirer cette ligne
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" (click)="validatelistCertifFam(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Valider
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Suppression d'un certificat -->
+<ng-template #deleteModel let-modal>
+  <div class="modal-body text-center p-4">
+    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"></lord-icon>
+    <h4 class="mt-3">Supprimer ce certificat ?</h4>
+    <p class="text-muted mb-0">
+      Le certificat <strong>{{ deleteId?.annee_certif }}</strong> · année scolaire {{ deleteId?.annee_scol }} sera supprimé définitivement.
+    </p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product"
+        (click)="ConfirmDelete(); modal.close('Close click')">Oui, supprimer</button>
+    </div>
+  </div>
+</ng-template>

@@ -14,3 +14,27 @@
   min-width: 100px;
   height: 38px;
 }
+
+/* zone de saisie de la réclamation : large, lisible, qui s'agrandit avec le texte */
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td textarea.reclam-input {
+  min-width: 280px;
+  width: 100%;
+  min-height: 4.25rem;
+  max-height: 10rem;
+  padding: 0.5rem 0.75rem;
+  line-height: 1.4;
+  text-align: left;
+  resize: vertical;
+  field-sizing: content;      /* s'adapte au contenu (navigateurs récents) */
+  overflow-y: auto;
+}
+
+:host ::ng-deep .modern-table textarea.reclam-input.is-valid {
+  background-image: none;     /* pas d'icône qui recouvre le texte */
+  padding-right: 0.75rem;
+  border-color: var(--vz-success, #0ab39c);
+}
+
+:host ::ng-deep .modern-table textarea.reclam-input::placeholder {
+  color: #6b7280;             /* contraste suffisant sur fond blanc */
+}

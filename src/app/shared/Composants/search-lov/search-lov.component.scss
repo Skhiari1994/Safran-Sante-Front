@@ -127,22 +127,137 @@
 @import '../lov-modal';
 
 /* ligne du filtre rapide : libellé à gauche, sélecteur à largeur confortable, séparée des champs */
+/* ---------- Barre de recherche unique + bouton « Filtres » ---------- */
+.lov-searchbar {
+  display: flex;
+  align-items: stretch;
+  gap: 0.625rem;
+}
+
+.lov-search-main {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 0.875rem;
+    transform: translateY(-50%);
+    font-size: 1.125rem;
+    color: #8a93a2;
+    pointer-events: none;
+  }
+
+  .form-control {
+    height: 44px;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    font-size: 0.9375rem;
+    background: #fff;
+    border-color: #d5dae3;
+    border-radius: 10px;
+
+    &:focus {
+      border-color: var(--vz-primary, #405189);
+      box-shadow: 0 0 0 3px rgba(64, 81, 137, 0.15);
+    }
+  }
+}
+
+.lov-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+
+  i { font-size: 1.125rem; line-height: 1; }
+
+  &:hover { background: rgba(33, 37, 41, 0.08); color: #212529; }
+  &:focus-visible { outline: 2px solid var(--vz-primary, #405189); outline-offset: 1px; }
+}
+
+.lov-filtres-btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 44px;
+  padding: 0 0.875rem;
+  border: 1px solid #d5dae3;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  i { font-size: 1.125rem; line-height: 1; }
+
+  &:hover { background: #f1f4f9; }
+  &:focus-visible { outline: 2px solid var(--vz-primary, #405189); outline-offset: 1px; }
+
+  &.active {
+    border-color: var(--vz-primary, #405189);
+    color: var(--vz-primary, #405189);
+    background: #eef1f9;
+  }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+
+.lov-filtres-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--vz-primary, #405189);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.lov-filtres-chevron {
+  transition: transform 0.2s ease;
+  &.ouvert { transform: rotate(180deg); }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+
 .lov-quick {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px dashed var(--vz-border-color, #dfe3e8);
+  margin-top: 0.875rem;
+
+  /* un trait sépare le Sexe des champs de colonne quand ceux-ci sont ouverts */
+  &.lov-quick--sep {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--vz-border-color, #dfe3e8);
+  }
 
   .lov-quick-label {
     margin: 0;
   }
 
-  .lov-segmented {
-    flex: 0 1 440px;
-    width: auto;
+  .lov-sexe {
+    flex: 0 1 460px;
     min-width: 300px;
   }
 }
@@ -219,4 +334,111 @@
 .lov-seg.active .lov-seg-count {
   color: var(--vz-primary, #405189);
   background: rgba(64, 81, 137, 0.12);
+}
+
+/* ---------- Filtre Sexe : pastilles d'icônes colorées (bleu = masculin, rose = féminin) ---------- */
+.lov-sexe {
+  --sx-all: #405189;      --sx-all-soft: #e7eaf4;
+  --sx-m: #2563eb;        --sx-m-soft: #e3edff;   --sx-m-ink: #1d4ed8;
+  --sx-f: #d81b60;        --sx-f-soft: #fde6ef;   --sx-f-ink: #b4134f;
+}
+
+.lov-sexe .lov-segmented {
+  height: 40px;
+}
+
+/* pastille ronde de l'icône : teintée au repos, pleine (icône blanche) quand l'option est choisie */
+.lov-seg-ico {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.lov-seg-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* au repos : pastille blanche cerclée de la teinte de l'option, pour bien ressortir sur le fond gris */
+.lov-seg--all .lov-seg-ico { background: #fff; color: var(--sx-all); box-shadow: 0 0 0 1.5px #c9cfe6; }
+.lov-seg--m   .lov-seg-ico { background: #fff; color: var(--sx-m);   box-shadow: 0 0 0 1.5px #b9d0fb; }
+.lov-seg--f   .lov-seg-ico { background: #fff; color: var(--sx-f);   box-shadow: 0 0 0 1.5px #f6b9d0; }
+
+.lov-seg--all.active { color: var(--sx-all); box-shadow: 0 0 0 1.5px var(--sx-all) inset, 0 2px 6px rgba(64, 81, 137, 0.18); }
+.lov-seg--m.active   { color: var(--sx-m-ink); box-shadow: 0 0 0 1.5px var(--sx-m) inset, 0 2px 6px rgba(37, 99, 235, 0.20); }
+.lov-seg--f.active   { color: var(--sx-f-ink); box-shadow: 0 0 0 1.5px var(--sx-f) inset, 0 2px 6px rgba(216, 27, 96, 0.20); }
+
+.lov-seg--all.active .lov-seg-ico { background: var(--sx-all); color: #fff; box-shadow: none; }
+.lov-seg--m.active   .lov-seg-ico { background: var(--sx-m);   color: #fff; box-shadow: none; }
+.lov-seg--f.active   .lov-seg-ico { background: var(--sx-f);   color: #fff; box-shadow: none; }
+
+.lov-seg--all.active .lov-seg-count { color: var(--sx-all);   background: var(--sx-all-soft); }
+.lov-seg--m.active   .lov-seg-count { color: var(--sx-m-ink); background: var(--sx-m-soft); }
+.lov-seg--f.active   .lov-seg-count { color: var(--sx-f-ink); background: var(--sx-f-soft); }
+
+/* ---------- Barre de répartition hommes / femmes ---------- */
+.lov-prop {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+.lov-prop-bar {
+  flex: 1 1 auto;
+  display: flex;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e9edf3;
+}
+
+.lov-prop-m,
+.lov-prop-f {
+  height: 100%;
+  transition: width 0.3s ease, opacity 0.2s ease;
+}
+
+.lov-prop-m { background: var(--sx-m, #2563eb); }
+.lov-prop-f { background: var(--sx-f, #d81b60); }
+
+/* quand on filtre sur un sexe, l'autre part s'estompe */
+.lov-prop-m.dim,
+.lov-prop-f.dim { opacity: 0.25; }
+
+.lov-prop-txt {
+  flex: none;
+  font-size: 0.75rem;
+  color: #5b6270;
+  white-space: nowrap;
+
+  b { font-weight: 600; }
+  .m { color: #1d4ed8; }
+  .f { color: #b4134f; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lov-prop-m,
+  .lov-prop-f { transition: none; }
+}
+
+/* au survol d'une option non choisie, l'icône se renforce un peu */
+.lov-seg:hover:not(.active) .lov-seg-ico { transform: scale(1.08); }
+
+/* anneau de focus clavier à la couleur de l'option */
+.lov-seg--m:focus-visible { outline-color: var(--sx-m); }
+.lov-seg--f:focus-visible { outline-color: var(--sx-f); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lov-seg-ico { transition: none; }
+  .lov-seg:hover:not(.active) .lov-seg-ico { transform: none; }
 }

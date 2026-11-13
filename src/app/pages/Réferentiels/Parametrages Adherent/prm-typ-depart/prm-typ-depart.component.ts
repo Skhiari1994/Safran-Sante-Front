@@ -5,6 +5,7 @@ import { TokenStorage } from 'src/app/account/token-storage.service';
 import { PaginationService } from 'src/app/core/services/pagination.service';
  import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 @Component({
   selector: 'app-prm-typ-depart',
@@ -80,16 +81,12 @@ p: number = 1; // Pagination pour le premier tableau
 //////////////////////////////////////////////////////
   AddTypeDepart() {
     
-     this.serv.AddTypeDepart(this.formTypDepart.value).subscribe((data) => {
-      console.log("data :", data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.getTypeDepart()
+     this.serv.AddTypeDepart(this.formTypDepart.value).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.getTypeDepart();
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -141,15 +138,12 @@ p: number = 1; // Pagination pour le premier tableau
   }
   ConfirmDelete(){
     
-    this.serv.deleTypeDepart(this.deleteId.cod_typ_depart).subscribe((data:any)=>{
-      this.serv
-      .getTypeDepart()
-      .subscribe((data) => {
-        console.log("data", data);
-        this.listTypDepart = data;
-        this.listTypDepartFiltre=data
-      });
-
+    this.serv.deleTypeDepart(this.deleteId.cod_typ_depart).subscribe({
+      next: () => {
+        this.getTypeDepart();
+        notifSucces(MSG_SUPPR);
+      },
+      error: (err) => notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE),
     })
   }
   formatDate(dateString: any): string {

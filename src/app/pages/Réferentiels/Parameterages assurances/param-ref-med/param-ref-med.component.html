@@ -1,275 +1,242 @@
-<div class="row" style="margin-top: 25px"></div>
-<div class="row sticky-top" style="z-index: 1025; top: 121px">
-<app-breadcrumbs
-title="Médicaments"
-[breadcrumbItems]="breadCrumbItems"
-></app-breadcrumbs>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Médicaments" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
 
-<div class="row">
+<div class="row mt-3">
   <div class="col-12">
-    <div class="d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-              <div class="page-card-title">
-                <h5>Liste des médicaments</h5>
-                <small>{{ listRefMed?.length || 0 }} médicament(s)</small>
-              </div>
-              <button
-                class="btn btn-info add-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#showModal"
-                (click)="openModalTab(content1)"
-              >
-                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter médicament
-              </button>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-              <p-table [value]="listRefMed" [paginator]="true" [rows]="12" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                <ng-template pTemplate="header">
-                  <tr class="table-primary">
-                    <th *ngFor="let column of ['cod_med', 'lib_med', 'mdc_prix', 'med_prix', 'prix_remb', 'cat_med', 'ap','rb', 'abrv_act']">
-                      <div class="th-head">
-                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                      </div>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                    </th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-          <tr>
-            <td class="text-center">{{ rowData.cod_med }}</td>
-            <td class="text-center">{{ rowData.lib_med }}</td>
-            <td class="text-center">{{ rowData.mdc_prix | number: '1.2-3'}}</td>
-            <td class="text-center">{{ rowData.med_prix | number: '1.2-3'}} </td>
-            <td class="text-center">{{ rowData.prix_remb | number: '1.2-3'}} </td>
-            <td class="text-center">{{ rowData.cat_med }}</td>
-            <td class="text-center">{{ rowData.ap }}</td>
-            <td class="text-center">{{ rowData.rb }}</td>
-            <td class="text-center">{{ rowData.abrv_act }}</td>
-            <td>
-              <ul class="list-inline hstack gap-2 mb-0">
-                <li class="list-inline-item">
-                  <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content1)">
-                    <i class="ri-pencil-fill align-bottom text-muted"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
-                    <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                  </a>
-                </li>
-              </ul>
-            </td>
-          </tr>
-        </ng-template>
-              </p-table>
-              </div>
-            </div>
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-capsule-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Liste des médicaments</h5>
+            <p class="text-muted fs-13 mb-0">{{ listRefMed?.length || 0 }} {{ (listRefMed?.length || 0) > 1 ? 'médicaments' : 'médicament' }}</p>
           </div>
         </div>
+        <button type="button" class="btn btn-primary" (click)="openModalTab(content1)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un médicament
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p-table [value]="listRefMed" [paginator]="(listRefMed?.length || 0) > 12" [rows]="12" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 10%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cod_med')" aria-label="Trier par code">
+                  Code<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_med')" aria-label="Trier par libellé">
+                  Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 9%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('mdc_prix')" aria-label="Trier par mdc">
+                  MDC<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 9%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('med_prix')" aria-label="Trier par med">
+                  MED<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 9%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('prix_remb')" aria-label="Trier par remb.">
+                  Remb.<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 10%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cat_med')" aria-label="Trier par catégorie">
+                  Catégorie<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 6%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('ap')" aria-label="Trier par ap">
+                  AP<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 6%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('rb')" aria-label="Trier par rb">
+                  RB<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 9%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('abrv_act')" aria-label="Trier par acte">
+                  Acte<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" class="text-end" style="width: 100px;">Actions</th>
+            </tr>
+            <tr>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cod_med']" (input)="applyFilter()" aria-label="Filtrer par code" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_med']" (input)="applyFilter()" aria-label="Filtrer par libellé" />
+              </th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cat_med']" (input)="applyFilter()" aria-label="Filtrer par catégorie" />
+              </th>
+              <th></th>
+              <th></th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['abrv_act']" (input)="applyFilter()" aria-label="Filtrer par acte" />
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_med }}</span></td>
+              <td class="fw-medium">{{ rowData.lib_med }}</td>
+              <td>{{ rowData.mdc_prix | number:'1.2-3' }}</td>
+              <td>{{ rowData.med_prix | number:'1.2-3' }}</td>
+              <td>{{ rowData.prix_remb | number:'1.2-3' }}</td>
+              <td>{{ rowData.cat_med }}</td>
+              <td>{{ rowData.ap }}</td>
+              <td>{{ rowData.rb }}</td>
+              <td><span class="badge bg-light text-body border fs-12">{{ rowData.abrv_act }}</span></td>
+              <td class="text-end">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+            [attr.aria-label]="'Modifier ' + rowData.lib_med" (click)="editDataGet(rowData, content1)">
+            <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+            [attr.aria-label]="'Supprimer ' + rowData.lib_med" (click)="confirm(deleteModel, rowData)">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+          </button>
+        </div>
+      </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10" class="text-center text-muted py-5">
+                <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                Aucun médicament trouvé
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #content1 role="document" let-modal>
-  <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} médicament</h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="modal"
-      aria-label="Close"
-      id="close-modal"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-capsule-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter un médicament' : 'Modifier le médicament' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ edit ? 'Les champs marqués * sont obligatoires.' : 'Le code ne peut pas être modifié.' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
   </div>
-  <form
-    [formGroup]="formRefMed"
-    class="tablelist-form"
-    autocomplete="off"
-  >
+
+  <form [formGroup]="formRefMed" class="tablelist-form" autocomplete="off">
     <div class="modal-body">
       <div class="row g-3">
-        <div class="col-md-2">
-          <label for="billinginfo-firstName" class="form-label"
-            >Code med</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer le code"
-            formControlName="cod_med"
-             
-          />      
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identification</h6>
+        </div>
+        <div class="col-md-3">
+          <label for="med-code" class="form-label">Code <span class="text-danger">*</span></label>
+          <input id="med-code" type="text" class="form-control" placeholder="Ex. M100" formControlName="cod_med" [readonly]="!edit" />
+        </div>
+        <div class="col-md-9">
+          <label for="med-libelle" class="form-label">Libellé <span class="text-danger">*</span></label>
+          <input id="med-libelle" type="text" class="form-control" placeholder="Ex. Paracétamol 500 mg" formControlName="lib_med" />
+        </div>
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Prix</h6>
         </div>
         <div class="col-md-4">
-          <label for="billinginfo-firstName" class="form-label">Libellé</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer le libellé"
-            formControlName="lib_med"
-             
-          />
+          <label for="med-mdc" class="form-label">Prix MDC</label>
+          <input id="med-mdc" type="text" class="form-control" placeholder="0.000" formControlName="mdc_prix" appMontantMask />
         </div>
-        <div class="col-md-2">
-          <label for="mdc_prix" class="form-label">Prix MDC</label>
-          <input
-            type="text"
-            class="form-control border-primary montant-input"
-            placeholder="0.000"
-            formControlName="mdc_prix"
-            appMontantMask
-          />
+        <div class="col-md-4">
+          <label for="med-med" class="form-label">Prix MED</label>
+          <input id="med-med" type="text" class="form-control" placeholder="0.000" formControlName="med_prix" appMontantMask />
         </div>
-         
-        <div class="col-md-2">
-          <label for="med_prix" class="form-label">Prix MED</label>
-          <input
-            type="text"
-            class="form-control border-primary montant-input"
-            placeholder="0.000"
-            formControlName="med_prix"
-            appMontantMask
-           />
+        <div class="col-md-4">
+          <label for="med-remb" class="form-label">Prix remboursé</label>
+          <input id="med-remb" type="text" class="form-control" placeholder="0.000" formControlName="prix_remb" appMontantMask />
         </div>
-
-    
-        <div class="col-md-2">
-          <label for="billinginfo-lastName" class="form-label"
-            >Prix remboursé</label>
-          <input
-            type="text"
-            class="form-control border-primary montant-input"
-            placeholder="0.000"
-            formControlName="prix_remb"
-            appMontantMask
-             
-          />
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Classification</h6>
         </div>
         <div class="col-md-3">
-          <label for="billinginfo-phone" class="form-label"
-            >Catégorie</label
-          >
-          <input
-            type="text"
-            class="form-control border-primary"
-             placeholder="Entrer la catégorie"
-            formControlName="cat_med"
-            
-           />
+          <label for="med-cat" class="form-label">Catégorie</label>
+          <input id="med-cat" type="text" class="form-control" placeholder="Ex. A" formControlName="cat_med" />
         </div>
         <div class="col-md-3">
-            <label for="billinginfo-phone" class="form-label"
-              >AP</label
-            >
-            <input
-              type="text"
-              class="form-control border-primary"
-               placeholder="AP"
-              formControlName="ap"
-               
-             />
-          </div>
-          <div class="col-md-3">
-            <label for="billinginfo-phone" class="form-label"
-              >RB</label
-            >
-            <input
-              type="text"
-              class="form-control border-primary"
-               placeholder="RB"
-              formControlName="rb"
-               
-             />
-          </div>
+          <label for="med-ap" class="form-label">AP</label>
+          <input id="med-ap" type="text" class="form-control" placeholder="AP" formControlName="ap" />
+        </div>
         <div class="col-md-3">
-          <label for="billinginfo-phone" class="form-label">Acte</label>
-          <app-lov
-            [listData]="listActe"
-            [columns]="columnActe"
-            codeField="abrv_act"
-            [selectedCode]="codActe"
-            (selectedValue)="onSelectedValueActe($event)"
-          >
+          <label for="med-rb" class="form-label">RB</label>
+          <input id="med-rb" type="text" class="form-control" placeholder="RB" formControlName="rb" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Acte</label>
+          <app-lov [listData]="listActe" [columns]="columnActe" codeField="abrv_act" [selectedCode]="codActe"
+            (selectedValue)="onSelectedValueActe($event)">
           </app-lov>
         </div>
-        </div>
-        </div>
-        <div class="modal-footer">
-            <div class="hstack gap-2 justify-content-end">
-              <button
-                type="button"
-                class="btn btn-success"
-                data-bs-dismiss="modal"
-                (click)="saveRefMed(); modal.close('Close click')"
-              >
-                Valider
-              </button>
-            </div>
-            <div class="hstack gap-2 justify-content-end">
-              <button
-                type="button"
-                class="btn btn-light"
-                data-bs-dismiss="modal"
-                (click)="modal.close('Close click')"
-              >
-                Fermer
-              </button>
-            </div>
-          </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" [disabled]="!formRefMed.value.cod_med || !formRefMed.value.lib_med"
+        (click)="saveRefMed(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
+    </div>
   </form>
 </ng-template>
 
 <ng-template #deleteModel let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="btn-close"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon
-          src="https://cdn.lordicon.com/gsqxdxog.json"
-          trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548"
-          style="width: 100px; height: 100px"
-        ></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Êtes-vous sûr ?</h4>
-        <p class="text-muted mx-4 mb-0">
-          Êtes-vous sûr de vouloir supprimer  ?
-        </p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button
-          type="button"
-          class="btn w-sm btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Fermer
-        </button>
-        <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
-          Oui, Supprimer!
-        </button>
-      </div>
+  <div class="modal-body text-center p-4">
+    <lord-icon
+      src="https://cdn.lordicon.com/gsqxdxog.json"
+      trigger="loop"
+      colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"
+    ></lord-icon>
+    <h4 class="mt-3">Supprimer ce médicament ?</h4>
+    <p class="text-muted mb-0">Le médicament <strong>{{ deleteId?.cod_med }}</strong> · {{ deleteId?.lib_med }} sera supprimé définitivement.</p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')">
+        Oui, supprimer
+      </button>
     </div>
   </div>
-  <!-- /.modal-content -->
 </ng-template>

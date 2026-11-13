@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 
 @Component({
   selector: 'app-prm-nationalite',
@@ -95,16 +96,13 @@ export class PrmNationaliteComponent {
     console.log("this.formAffilMutuelle.value :", this.formNationalite.value);
     this.serv
       .AddNationalite(this.formNationalite.value)
-      .subscribe((data) => {
-        console.log("data :", data);
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Ajouter avec succès !",
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        this.getNationalite();
+      .subscribe({
+        next: () => {
+          // ici edit === true signifie « modification »
+          notifSucces(this.edit ? MSG_MODIF : MSG_AJOUT);
+          this.getNationalite();
+        },
+        error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
       });
   }
 
@@ -158,10 +156,16 @@ confirm(content: any, id: any) {
 
 deleteNationalite(){
   console.log("ok",this.deleteId)
-  this.serv.deleteNationalite(this.deleteId).subscribe((data:any)=>{
-    
-    this.getNationalite()
-    this.modalService.dismissAll(); 
+  this.serv.deleteNationalite(this.deleteId).subscribe({
+    next: () => {
+      this.getNationalite();
+      this.modalService.dismissAll();
+      notifSucces(MSG_SUPPR);
+    },
+    error: (err) => {
+      this.modalService.dismissAll();
+      notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE);
+    },
   })
 }
 }

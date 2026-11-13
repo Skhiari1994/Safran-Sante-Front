@@ -1,287 +1,315 @@
-<div class="row" style="margin-top: 25px">
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
   <app-breadcrumbs title="Gouvernorats et postes" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
 
-  <br>
-  <div class="row">
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
 
+    <!-- Gouvernorats : un clic sur une ligne affiche ses postes -->
+    <div class="card">
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-map-pin-2-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Gouvernorats</h5>
+            <p class="text-muted fs-13 mb-0">{{ listGouv?.length || 0 }} {{ (listGouv?.length || 0) > 1 ? 'gouvernorats' : 'gouvernorat' }}</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="openModalTab(content)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un gouvernorat
+        </button>
+      </div>
 
-    <div class="col-xl-10">
-      <div class="container d-flex justify-content-center align-items-center">
-        <div class="col-md-12">
-          <div class="collapse show" id="paymentmethodCollapse">
-            <div class="card p-4 border shadow mb-4">
-              <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-                <div class="page-card-title">
-                  <h5>Liste des gouvernorats</h5>
-                  <small>{{ listGouv?.length || 0 }} gouvernorat(s)</small>
-                </div>
-                <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
-                  (click)="openModalTab(content)">
-                  <i class="ri-add-fill me-1 align-bottom"></i> Ajouter gouvernorat
+      <div class="card-body">
+        <p-table [value]="listGouv" [paginator]="(listGouv?.length || 0) > 10" [rows]="10" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 16%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cod_gouv')" aria-label="Trier par code">
+                  Code<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
                 </button>
-              </div>
-              <div class="card-body">
-                <p-table [value]="listGouv" [paginator]="true" [rows]="10"
-                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                  <ng-template pTemplate="header">
-                    <tr class="table-primary">
-                      <th *ngFor="let column of ['cod_gouv', 'lib_gouv', 'lib_gouv_a']">
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                          <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                        </div>
-                        <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()"
-                          placeholder="..." />
-                      </th>
-                      <th>Actions</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                    <tr [ngClass]="{ 'table-active': selectedRow === rowIndex }" (click)="getPoste(rowData, rowIndex)">
-                      <td class="text-center">{{ rowData.cod_gouv }}</td>
-                      <td class="text-center">{{ rowData.lib_gouv }}</td>
-                      <td class="text-center">{{ rowData.lib_gouv_a }}</td>
-                      <td>
-                        <ul class="list-inline hstack gap-2 mb-0">
-                          <li class="list-inline-item">
-                            <a class="edit-item-btn" (click)="$event.stopPropagation(); editGouv(rowData, content)"><i
-                                class="ri-pencil-fill align-bottom text-muted"></i></a>
-                          </li>
-                          <li class="list-inline-item me-0" ngbTooltip="Supprimer" placement="top">
-                            <a class="remove-item-btn" (click)="$event.stopPropagation(); supprimerGouv(rowData)">
-                              <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-xl-10">
-      <div class="container d-flex justify-content-center align-items-center">
-        <div class="col-md-12">
-          <div class="collapse show" id="paymentmethodCollapse">
-            <div class="card p-4 border shadow mb-4">
-              <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-                <div class="page-card-title">
-                  <h5>Liste des postes</h5>
-                  <small>{{ listPoste?.length || 0 }} poste(s)</small>
-                </div>
-                <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
-                  (click)="openModalTab(content1)">
-                  <i class="ri-add-fill me-1 align-bottom"></i> Ajouter Poste
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_gouv')" aria-label="Trier par libellé">
+                  Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
                 </button>
-              </div>
-              <div class="card-body">
-                <p-table [value]="listPoste" [paginator]="true" [rows]="10"
-                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                  <ng-template pTemplate="header">
-                    <tr class="table-primary">
-                      <th *ngFor="let column of ['cod_gouv', 'cod_poste','lib_post', 'lib_poste_a']">
-                        <div class="th-head">
-                          <i class="ri-arrow-up-down-line th-sort" (click)="onSort2(column)"></i>
-                          <span class="th-title" (click)="onSort2(column)">{{ columnTitles2[column] || column }}</span>
-                          <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                        </div>
-                        <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2"
-                          style="width: 100%;" [(ngModel)]="searchz2[column]" (input)="applyFilter2()"
-                          placeholder="..." />
-                      </th>
-                      <th>Actions</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                    <tr>
-                      <td class="text-center">{{ rowData.cod_gouv }}</td>
-                      <td class="text-center">{{ rowData.cod_poste }}</td>
-                      <td class="text-center">{{ rowData.lib_post }}</td>
-                      <td class="text-center">{{ rowData.lib_poste_a }}</td>
-                      <td>
-                        <ul class="list-inline hstack gap-2 mb-0">
-                          <li class="list-inline-item">
-                            <a class="edit-item-btn" data-bs-toggle="modal"
-                              (click)="editDataGet(rowIndex, rowData, content1)"><i
-                                class="ri-pencil-fill align-bottom text-muted"></i></a>
-                          </li>
-                          <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
-                            <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
-                              <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </div>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_gouv_a')" aria-label="Trier par libellé arabe">
+                  Libellé arabe<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+            </tr>
+            <tr>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cod_gouv']" (input)="applyFilter()" aria-label="Filtrer par code" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_gouv']" (input)="applyFilter()" aria-label="Filtrer par libellé" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_gouv_a']" (input)="applyFilter()" aria-label="Filtrer par libellé arabe" />
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
 
-            </div>
-          </div>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr [class.table-active]="selectedRow === rowIndex" style="cursor: pointer;" tabindex="0"
+              (click)="getPoste(rowData, rowIndex)" (keydown.enter)="getPoste(rowData, rowIndex)">
+              <td><i *ngIf="selectedRow === rowIndex" class="ri-arrow-right-s-fill text-primary align-middle" aria-hidden="true"></i><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_gouv }}</span></td>
+              <td class="fw-medium">{{ rowData.lib_gouv }}</td>
+              <td><span *ngIf="rowData.lib_gouv_a; else sansArabe" dir="rtl" lang="ar">{{ rowData.lib_gouv_a }}</span><ng-template #sansArabe><span class="text-muted">—</span></ng-template></td>
+              <td class="text-end">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+            [attr.aria-label]="'Modifier ' + rowData.lib_gouv" (click)="$event.stopPropagation(); editGouv(rowData, content)">
+            <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+            [attr.aria-label]="'Supprimer ' + rowData.lib_gouv" (click)="$event.stopPropagation(); supprimerGouv(rowData)">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+          </button>
         </div>
+      </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-muted py-5">
+                <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                Aucun gouvernorat trouvé
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </div>
 
+    <!-- Postes du gouvernorat sélectionné -->
+    <div class="card">
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-mail-send-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Postes</h5>
+            <p class="text-muted fs-13 mb-0">{{ selectedRow === null ? 'Sélectionnez un gouvernorat pour afficher ses postes' : (listPoste?.length || 0) + ' ' + ((listPoste?.length || 0) > 1 ? 'postes' : 'poste') }}</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="openModalTab(content1)" [disabled]="selectedRow === null">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un poste
+        </button>
+      </div>
 
-    <div *ngIf="isSearch">
-      <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
-      </app-search-lov>
+      <div class="card-body">
+        <p-table [value]="listPoste" [paginator]="(listPoste?.length || 0) > 10" [rows]="10" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 12%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort2('cod_gouv')" aria-label="Trier par gouv.">
+                  Gouv.<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 16%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort2('cod_poste')" aria-label="Trier par code poste">
+                  Code poste<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort2('lib_post')" aria-label="Trier par libellé">
+                  Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort2('lib_poste_a')" aria-label="Trier par libellé arabe">
+                  Libellé arabe<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+            </tr>
+            <tr>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz2['cod_gouv']" (input)="applyFilter2()" aria-label="Filtrer par gouv." />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz2['cod_poste']" (input)="applyFilter2()" aria-label="Filtrer par code poste" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz2['lib_post']" (input)="applyFilter2()" aria-label="Filtrer par libellé" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz2['lib_poste_a']" (input)="applyFilter2()" aria-label="Filtrer par libellé arabe" />
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_gouv }}</span></td>
+              <td>{{ rowData.cod_poste }}</td>
+              <td class="fw-medium">{{ rowData.lib_post }}</td>
+              <td><span *ngIf="rowData.lib_poste_a; else sansArabe" dir="rtl" lang="ar">{{ rowData.lib_poste_a }}</span><ng-template #sansArabe><span class="text-muted">—</span></ng-template></td>
+              <td class="text-end">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+            [attr.aria-label]="'Modifier ' + rowData.lib_post" (click)="editDataGet(rowIndex, rowData, content1)">
+            <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+            [attr.aria-label]="'Supprimer ' + rowData.lib_post" (click)="confirm(deleteModel, rowData)">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+          </button>
+        </div>
+      </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center text-muted py-5">
+                <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                {{ selectedRow === null ? 'Sélectionnez un gouvernorat pour afficher ses postes' : 'Aucun poste trouvé' }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
     </div>
-    <ng-template #content role="document" let-modal>
-      <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} gouvernorat</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <form [formGroup]="formGouv" class="tablelist-form" autocomplete="off">
-
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-lg-2">
-              <div>
-                <label for="industry_type-field" class="form-label">Code gouv</label>
-                <input type="text" class="form-control border-warning" placeholder="Enter code gouv"
-                  formControlName="cod_gouv" [readonly]="!edit" />
-              </div>
-            </div>
-
-            <div class="col-lg-5">
-              <div>
-                <label for="industry_type-field" class="form-label">Libelle gouv</label>
-                <input type="text" class="form-control border-warning" placeholder="Enter Libelle"
-                  formControlName="lib_gouv" />
-              </div>
-            </div>
-            <div class="col-lg-5">
-              <div>
-                <label for="industry_type-field" class="form-label">Libelle en arabe</label>
-                <input type="text" class="form-control border-warning" placeholder="Enter Libelle en arabe"
-                  formControlName="lib_gouv_a" />
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <div class="hstack gap-2 justify-content-end">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-              (click)="saveGouv(); modal.close('Close click')">
-              Valider
-            </button>
-          </div>
-          <br>
-          <div class="hstack gap-2 justify-content-end">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-              Close
-            </button>
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <ng-template #content1 role="document" let-modal>
-      <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} poste</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
-          (click)="modal.dismiss('Cross click')"></button>
-      </div>
-      <form [formGroup]="formPoste" class="tablelist-form" autocomplete="off">
-        <div formArrayName="poste" class="scrollable-container">
-          <div *ngFor="let certif of Poste.controls; let i = index" [formGroupName]="i" class="row g-3">
-            <div class="modal-body">
-              <div class="row g-3">
-
-                <div class="col-lg-2">
-                  <div>
-                    <label for="industry_type-field" class="form-label">Code poste</label>
-                    <input type="text" class="form-control border-warning" placeholder="Enter code poste"
-                      formControlName="cod_poste" />
-                  </div>
-                </div>
-
-                <div class="col-lg-5">
-                  <div>
-                    <label for="industry_type-field" class="form-label">Libelle poste</label>
-                    <input type="text" class="form-control border-warning" placeholder="Enter Libelle"
-                      formControlName="lib_post" />
-                  </div>
-                </div>
-                <div class="col-lg-5">
-                  <div>
-                    <label for="industry_type-field" class="form-label">Libelle en arabe</label>
-                    <input type="text" class="form-control border-warning" placeholder="Enter Libelle en arabe"
-                      formControlName="lib_poste_a" />
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="hstack gap-2 justify-content-center" *ngIf="edit">
-              <button type="button" class="btn btn-success" id="add-btn" (click)="addPoste()">
-                Ajouter poste
-              </button>
-              <button type="button" class="btn btn-info" (click)="removeEnfant(i)">
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <div class="hstack gap-2 justify-content-end">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-              (click)="savePoste(); modal.close('Close click')">
-              Valider
-            </button>
-          </div>
-          <br>
-          <div class="hstack gap-2 justify-content-end">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="modal.close('Close click')">
-              Close
-            </button>
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <!-- removeItemModal -->
-    <ng-template #deleteModel let-modal>
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer" id="btn-close"
-            (click)="modal.dismiss('Cross click')"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mt-2 text-center">
-            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-              colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-            <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-              <h4>Êtes-vous sûr ?</h4>
-              <p class="text-muted mx-4 mb-0">
-                Êtes-vous sûr de vouloir supprimer ce poste ?
-              </p>
-            </div>
-          </div>
-          <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-            <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal"
-              (click)="modal.close('Close click')">
-              Fermer
-            </button>
-            <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()"
-              (click)="modal.close('Close click')">
-              Oui, Supprimer !
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </ng-template>
 
   </div>
+</div>
+
+<div *ngIf="isSearch">
+  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  </app-search-lov>
+</div>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-map-pin-2-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter un gouvernorat' : 'Modifier le gouvernorat' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ edit ? 'Les champs marqués * sont obligatoires.' : 'Le code ne peut pas être modifié.' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <form [formGroup]="formGouv" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="gouv-code" class="form-label">Code <span class="text-danger">*</span></label>
+          <input id="gouv-code" type="text" class="form-control" placeholder="Ex. 10" formControlName="cod_gouv" [readonly]="!edit" />
+        </div>
+        <div class="col-md-5">
+          <label for="gouv-libelle" class="form-label">Libellé <span class="text-danger">*</span></label>
+          <input id="gouv-libelle" type="text" class="form-control" placeholder="Ex. Tunis" formControlName="lib_gouv" />
+        </div>
+        <div class="col-md-4">
+          <label for="gouv-libelle-ar" class="form-label">Libellé en arabe</label>
+          <input id="gouv-libelle-ar" type="text" class="form-control" placeholder="مثال : تونس" formControlName="lib_gouv_a" dir="rtl" lang="ar" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" [disabled]="!formGouv.value.cod_gouv || !formGouv.value.lib_gouv"
+        (click)="saveGouv(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #content1 role="document" let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-mail-send-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter un poste' : 'Modifier le poste' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ edit ? 'Les champs marqués * sont obligatoires.' : 'Le code ne peut pas être modifié.' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <form [formGroup]="formPoste" class="tablelist-form" autocomplete="off">
+    <div formArrayName="poste" class="modal-body scrollable-container">
+      <div *ngFor="let ligne of Poste.controls; let i = index" [formGroupName]="i"
+        [ngClass]="{ 'rounded border p-3 mb-3': edit }">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label [attr.for]="'pst-code-' + i" class="form-label">Code <span class="text-danger">*</span></label>
+            <input [attr.id]="'pst-code-' + i" type="text" class="form-control" placeholder="Ex. 10" formControlName="cod_poste" [readonly]="!edit" />
+          </div>
+          <div class="col-md-5">
+            <label [attr.for]="'pst-libelle-' + i" class="form-label">Libellé <span class="text-danger">*</span></label>
+            <input [attr.id]="'pst-libelle-' + i" type="text" class="form-control" placeholder="Ex. Tunis Centre" formControlName="lib_post" />
+          </div>
+          <div class="col-md-4">
+            <label [attr.for]="'pst-libelle-ar-' + i" class="form-label">Libellé en arabe</label>
+            <input [attr.id]="'pst-libelle-ar-' + i" type="text" class="form-control" placeholder="مثال : تونس المركز" formControlName="lib_poste_a" dir="rtl" lang="ar" />
+          </div>
+        </div>
+        <div class="hstack gap-2 justify-content-end mt-3" *ngIf="edit">
+          <button type="button" class="btn btn-sm btn-soft-success" (click)="addPoste()">
+            <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter poste
+          </button>
+          <button type="button" class="btn btn-sm btn-soft-secondary" (click)="removeEnfant(i)">
+            <i class="ri-close-line align-bottom me-1" aria-hidden="true"></i>Retirer cette ligne
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" [disabled]="!Poste.value[0]?.cod_poste || !Poste.value[0]?.lib_post"
+        (click)="savePoste(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteModel let-modal>
+  <div class="modal-body text-center p-4">
+    <lord-icon
+      src="https://cdn.lordicon.com/gsqxdxog.json"
+      trigger="loop"
+      colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"
+    ></lord-icon>
+    <h4 class="mt-3">Supprimer ce poste ?</h4>
+    <p class="text-muted mb-0">Le poste <strong>{{ deleteId?.cod_poste }}</strong> · {{ deleteId?.lib_post }} sera supprimé définitivement.</p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')">
+        Oui, supprimer
+      </button>
+    </div>
+  </div>
+</ng-template>

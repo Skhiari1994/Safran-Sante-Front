@@ -1,314 +1,261 @@
+<div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
-  <app-breadcrumbs
-    title="Renouvellement d'une adhésion"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
+  <app-breadcrumbs title="Renouvellement d'une adhésion" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
-<br>
-<div class="row">
-  <div class="col-xl-10">
-    <div class="container d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-              <div class="page-card-title">
-                <h5>Liste des renouvellements d'adhésion</h5>
-                <small>{{ listAffilMutuelle?.length || 0 }} affiliation(s)</small>
-              </div>
-              <button
-                class="btn btn-info add-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#showModal"
-                (click)="openModalTab(content1)"
-              >
-                <i class="ri-add-fill me-1 align-bottom"></i> Renouveler adhésion
-              </button>
-            </div>
-            <div class="card-body">
-              <p-table [value]="listAffilMutuelle" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                <ng-template pTemplate="header">
-                  <tr class="table-primary">
-                    <th *ngFor="let column of ['dat_dem', 'num_assur', 'typ_aff', 'dat_ass', 'coef_cot', 'obs_aff']">
-                      <div class="th-head">
-                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                      </div>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                    </th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </ng-template>
 
-                <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+
+    <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-refresh-line" aria-hidden="true"></i></span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Liste des renouvellements d'adhésion</h5>
+          <p class="text-muted fs-13 mb-0">
+            {{ listAffilMutuelle?.length || 0 }} affiliation{{ (listAffilMutuelle?.length || 0) > 1 ? 's' : '' }}
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#showModal"
+        (click)="openModalTab(content1)">
+        <i class="ri-refresh-line align-bottom me-1" aria-hidden="true"></i>Renouveler une adhésion
+      </button>
+    </div>
+
+    <div class="card-body">
+      <p-table [value]="listAffilMutuelle || []" [paginator]="(listAffilMutuelle?.length || 0) > 10" [rows]="10"
+        styleClass="p-datatable-sm modern-table">
+
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th *ngFor="let column of ['dat_dem', 'num_assur', 'typ_aff', 'dat_ass', 'coef_cot', 'obs_aff']" scope="col">
+              <button type="button"
+                class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                (click)="onSort(column)" [attr.aria-label]="'Trier par ' + columnTitles[column]">
+                {{ columnTitles[column] || column }}<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+          </tr>
           <tr>
-            <td class="text-center">{{ data.dat_dem }}</td>
-            <td class="text-center">{{ data.num_assur }}</td>
-            <td class="text-center">{{ data.typ_aff === 'A' ? 'Adhérent' : 'Suspension' }}</td>
-            <td class="text-center">{{ data.dat_ass }}</td>
-            <td class="text-center">{{ data.coef_cot | number: '1.2-2' }}</td>
-            <td class="text-center">{{ data.obs_aff }}</td>
+            <th *ngFor="let column of ['dat_dem', 'num_assur', 'typ_aff', 'dat_ass', 'coef_cot', 'obs_aff']" class="py-2">
+              <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                [(ngModel)]="searchz[column]" (input)="applyFilter()"
+                [attr.aria-label]="'Filtrer par ' + columnTitles[column]" />
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ data.dat_dem }}</td>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ data.num_assur }}</span></td>
             <td>
-              <ul class="list-inline hstack gap-2 mb-0">
-                <li class="list-inline-item">
-                  <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, data, content1)">
-                    <i class="ri-pencil-fill align-bottom text-muted"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, data)">
-                    <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                  </a>
-                </li>
-              </ul>
+              <span class="badge fs-12" [ngClass]="data.typ_aff === 'A' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
+                {{ data.typ_aff === 'A' ? 'Adhérent' : 'Suspension' }}
+              </span>
+            </td>
+            <td>{{ data.dat_ass }}</td>
+            <td>{{ data.coef_cot | number: '1.2-2' }}</td>
+            <td>{{ data.obs_aff }}</td>
+            <td class="text-end">
+              <div class="hstack gap-2 justify-content-end">
+                <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                  aria-label="Modifier l'affiliation" data-bs-toggle="modal"
+                  (click)="editDataGet(rowIndex, data, content1)">
+                  <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+                  aria-label="Supprimer l'affiliation" data-bs-toggle="modal" (click)="confirm(deleteModel, data)">
+                  <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                </button>
+              </div>
             </td>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="7">
-              <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
+            <td colspan="7" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucune affiliation trouvée
             </td>
           </tr>
         </ng-template>
-              </p-table>
-            </div>
-          </div>
-        </div>
-      </div>
+      </p-table>
     </div>
   </div>
 </div>
 
+<!-- Fenêtre : affiliation -->
 <ng-template #content1 role="document" let-modal>
-  <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="exampleModalLabel">Renouvellement d'adhésion</h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="modal"
-      aria-label="Close"
-      id="close-modal"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-refresh-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">Renouvellement d'adhésion</h5>
+        <p class="text-muted fs-13 mb-0">Choisissez l'adhérent, puis renseignez l'affiliation.</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
   </div>
-  <form
-    [formGroup]="formAffilMutuelle"
-    class="tablelist-form"
-    autocomplete="off"
-  >
+
+  <form [formGroup]="formAffilMutuelle" class="tablelist-form" autocomplete="off">
     <div class="modal-body">
-      <!-- Adhérent -->
       <div class="row g-3">
+
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Adhérent</h6>
+        </div>
         <div class="col-md-3">
           <label class="form-label">Matricule</label>
-          <app-lov
-            [listData]="listPersonnel"
-            [columns]="columnsSearch"
-            codeField="mat_pers"
-            [selectedCode]="matPersVal"
-            (selectedValue)="onSelectedValuePers($event)"
-          >
+          <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="matPersVal"
+            (selectedValue)="onSelectedValuePers($event)">
           </app-lov>
         </div>
         <div class="col-md-4">
-          <label class="form-label">Nom</label>
-          <input type="text" class="form-control border-primary" placeholder="Nom" [value]="nomPers" readonly />
+          <label for="aff-nom" class="form-label">Nom</label>
+          <input id="aff-nom" type="text" class="form-control" placeholder="Nom" [value]="nomPers" readonly />
         </div>
         <div class="col-md-5">
-          <label class="form-label">Prénom</label>
-          <input type="text" class="form-control border-primary" placeholder="Prénom" [value]="prenPers" readonly />
+          <label for="aff-prenom" class="form-label">Prénom</label>
+          <input id="aff-prenom" type="text" class="form-control" placeholder="Prénom" [value]="prenPers" readonly />
         </div>
 
         <div class="col-md-4">
-          <label class="form-label">Corps</label>
-          <select class="form-select border-primary" formControlName="corps">
+          <label for="aff-corps" class="form-label">Corps</label>
+          <select id="aff-corps" class="form-select" formControlName="corps">
             <option value="">Sélectionner</option>
             <option value="C">Cadre commun</option>
             <option value="S">Sécurité</option>
-            <option value="M">Mediateur administratif</option>
+            <option value="M">Médiateur administratif</option>
             <option value="H">HCCAF</option>
             <option value="I">ITES</option>
-            <option value="P">Minéstère d'intérieur</option>
+            <option value="P">Ministère de l'intérieur</option>
             <option value="D">Divers</option>
           </select>
         </div>
         <div class="col-md-4">
-          <label class="form-label">Cin</label>
-          <input type="text" class="form-control border-primary" placeholder="CIN" [value]="cin" mask="00000000" readonly />
+          <label for="aff-cin" class="form-label">CIN</label>
+          <input id="aff-cin" type="text" class="form-control" placeholder="CIN" [value]="cin" mask="00000000" readonly />
         </div>
         <div class="col-md-4">
-          <label class="form-label">Date d'embauche</label>
-          <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+          <label for="aff-emb" class="form-label">Date d'embauche</label>
+          <input id="aff-emb" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
             [value]="datEmb" appDateFormatter readonly />
         </div>
 
         <div class="col-md-3">
           <label class="form-label">Code position</label>
-          <app-lov
-            [listData]="listAffectation"
-            [columns]="columnAffect"
-            codeField="cod_affect"
-            [selectedCode]="codAffectVal"
-            (selectedValue)="onSelectedValueAffect($event)"
-          >
+          <app-lov [listData]="listAffectation" [columns]="columnAffect" codeField="cod_affect"
+            [selectedCode]="codAffectVal" (selectedValue)="onSelectedValueAffect($event)">
           </app-lov>
         </div>
         <div class="col-md-9">
-          <label class="form-label">Libellé position administrative</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé position" [value]="libAffect" readonly />
+          <label for="aff-pos-lib" class="form-label">Libellé position administrative</label>
+          <input id="aff-pos-lib" type="text" class="form-control" placeholder="Libellé position" [value]="libAffect" readonly />
         </div>
 
         <div class="col-md-3">
           <label class="form-label">Code motif de départ</label>
-          <app-lov
-            [listData]="listTypeDepart"
-            [columns]="columnsTypDepart"
-            codeField="cod_typ_depart"
-            [selectedCode]="codTypDepartVal"
-            (selectedValue)="onSelectedValueTypDepart($event)"
-          >
+          <app-lov [listData]="listTypeDepart" [columns]="columnsTypDepart" codeField="cod_typ_depart"
+            [selectedCode]="codTypDepartVal" (selectedValue)="onSelectedValueTypDepart($event)">
           </app-lov>
         </div>
         <div class="col-md-9">
-          <label class="form-label">Libellé de motif de départ</label>
-          <input type="text" class="form-control border-primary" placeholder="Motif de départ" [value]="libTypDepart" readonly />
+          <label for="aff-dep-lib" class="form-label">Libellé du motif de départ</label>
+          <input id="aff-dep-lib" type="text" class="form-control" placeholder="Motif de départ" [value]="libTypDepart" readonly />
         </div>
 
         <div class="col-md-4">
-          <label class="form-label">Etat</label>
-          <select class="form-select border-primary" [value]="etatAct" disabled>
+          <label for="aff-etat" class="form-label">État</label>
+          <select id="aff-etat" class="form-select" [value]="etatAct" disabled>
             <option value="">Sélectionner</option>
             <option value="A">Actif</option>
             <option value="B">Bloqué</option>
-            <option value="I">En Instance</option>
+            <option value="I">En instance</option>
           </select>
         </div>
         <div class="col-md-4">
-          <label class="form-label">Situation sociale</label>
-          <select class="form-select border-primary" [value]="codSit" disabled>
+          <label for="aff-sit" class="form-label">Situation sociale</label>
+          <select id="aff-sit" class="form-select" [value]="codSit" disabled>
             <option value="">Sélectionner</option>
             <option value="C">Célibataire</option>
             <option value="M">Marié(e)</option>
             <option value="D">Divorcé(e)</option>
-            <option value="V">Voeuf(ve)</option>
+            <option value="V">Veuf(ve)</option>
           </select>
         </div>
         <div class="col-md-4">
-          <label class="form-label">Nombre d'enfants</label>
-          <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants" [value]="nbrEnf" readonly />
+          <label for="aff-enf" class="form-label">Nombre d'enfants</label>
+          <input id="aff-enf" type="text" class="form-control" placeholder="Nombre d'enfants" [value]="nbrEnf" readonly />
         </div>
-      </div>
 
-      <hr class="my-4" />
-
-      <!-- Affiliation -->
-      <div class="row g-3">
+        <div class="col-12 mt-4">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Affiliation</h6>
+        </div>
         <div class="col-md-4">
-          <label class="form-label">Date demande</label>
-          <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+          <label for="aff-dat-dem" class="form-label">Date de demande</label>
+          <input id="aff-dat-dem" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
             formControlName="dat_dem" appDateFormatter />
         </div>
         <div class="col-md-4">
-          <label class="form-label">Date d'effet</label>
-          <input type="text" class="form-control border-primary" mask="00/00/0000" placeholder="jj/mm/aaaa"
+          <label for="aff-dat-ass" class="form-label">Date d'effet</label>
+          <input id="aff-dat-ass" type="text" class="form-control" mask="00/00/0000" placeholder="jj/mm/aaaa"
             formControlName="dat_ass" appDateFormatter />
         </div>
         <div class="col-md-4">
-          <label class="form-label">Numéro assurance</label>
-          <input type="text" class="form-control border-primary" placeholder="Num affiliation mutuelle" formControlName="num_assur" />
+          <label for="aff-num" class="form-label">N° d'assurance</label>
+          <input id="aff-num" type="text" class="form-control" placeholder="N° d'affiliation mutuelle" formControlName="num_assur" />
         </div>
         <div class="col-md-6">
-          <label class="form-label">Type adhésion</label>
-          <select class="form-select border-primary" formControlName="typ_aff">
+          <label for="aff-typ" class="form-label">Type d'adhésion</label>
+          <select id="aff-typ" class="form-select" formControlName="typ_aff">
             <option value="">Sélectionner</option>
             <option value="A">Adhéré</option>
             <option value="S">Suspension</option>
           </select>
         </div>
         <div class="col-md-6">
-          <label class="form-label">Etat affiliation</label>
-          <select class="form-select border-primary" formControlName="etat_aff">
+          <label for="aff-etat-aff" class="form-label">État de l'affiliation</label>
+          <select id="aff-etat-aff" class="form-select" formControlName="etat_aff">
             <option value="">Sélectionner</option>
             <option value="I">En instance</option>
             <option value="V">Validée</option>
           </select>
         </div>
-        <div class="col-md-12">
-          <label class="form-label">Observation</label>
-          <textarea class="form-control border-primary" rows="2" placeholder="Observation" formControlName="obs_aff"></textarea>
+        <div class="col-12">
+          <label for="aff-obs" class="form-label">Observation</label>
+          <textarea id="aff-obs" class="form-control" rows="2" placeholder="Observation" formControlName="obs_aff"></textarea>
         </div>
       </div>
     </div>
 
     <div class="modal-footer">
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-success"
-          data-bs-dismiss="modal"
-          (click)="validatelistCertifFam(); modal.close('Close click')"
-        >
-          Valider
-        </button>
-      </div>
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Fermer
-        </button>
-      </div>
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" (click)="validatelistCertifFam(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Valider
+      </button>
     </div>
   </form>
 </ng-template>
 
+<!-- Suppression d'une affiliation -->
 <ng-template #deleteModel let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="btn-close"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon
-          src="https://cdn.lordicon.com/gsqxdxog.json"
-          trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548"
-          style="width: 100px; height: 100px"
-        ></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Are you sure ?</h4>
-          <p class="text-muted mx-4 mb-0">
-            Are you sure you want to remove this address ?
-          </p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button
-          type="button"
-          class="btn w-sm btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Close
-        </button>
-        <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
-          Yes, Delete It!
-        </button>
-      </div>
+  <div class="modal-body text-center p-4">
+    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"></lord-icon>
+    <h4 class="mt-3">Supprimer cette affiliation ?</h4>
+    <p class="text-muted mb-0">
+      L'affiliation du matricule <strong>{{ deleteId?.mat_pers }}</strong> (effet {{ deleteId?.dat_ass }}) sera supprimée définitivement.
+    </p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product"
+        (click)="ConfirmDelete(); modal.close('Close click')">Oui, supprimer</button>
     </div>
   </div>
-  <!-- /.modal-content -->
 </ng-template>

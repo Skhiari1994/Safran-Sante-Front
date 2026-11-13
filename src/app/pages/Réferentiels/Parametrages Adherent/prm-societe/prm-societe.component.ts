@@ -5,6 +5,7 @@ import { TokenStorage } from 'src/app/account/token-storage.service';
 import { PaginationService } from 'src/app/core/services/pagination.service';
  import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 @Component({
   selector: 'app-prm-societe',
@@ -91,16 +92,12 @@ export class PrmSocieteComponent {
 //////////////////////////////////////////////////////
   AddSociete() {
     
-     this.serv.AddSociete(this.formSociete.value).subscribe((data) => {
-      console.log("data :", data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ajouter avec succès !",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      this.getSociete()
+     this.serv.AddSociete(this.formSociete.value).subscribe({
+      next: () => {
+        notifSucces(this.edit ? MSG_AJOUT : MSG_MODIF);
+        this.getSociete();
+      },
+      error: (err) => notifErreur("Enregistrement impossible", err, "L'enregistrement a échoué."),
     });
   }
  
@@ -150,7 +147,30 @@ export class PrmSocieteComponent {
   }
   selectedRow: number | null = null;
 
-  
+  /** Suppression : le serveur refuse si le code société est lié à d'autres données. */
+  supprimerSociete(row: any) {
+    Swal.fire({
+      title: "Supprimer cette société ?",
+      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+             <div class="mt-2">Code <b>${row.cod_soc}</b> – ${row.lib_soc ?? ""}</div>`,
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      this.serv.deleteSociete(row.cod_soc).subscribe({
+        next: () => {
+          this.getSociete();
+          notifSucces("Société supprimée avec succès !");
+        },
+        error: (err) => notifErreur("Suppression impossible", err, "Suppression impossible"),
+      });
+    });
+  }
+
+
   deleteId: any;
   confirm(content: any, id: any) {
     console.log("annee:",id)

@@ -1,180 +1,115 @@
-<div class="row" style="margin-top: 25px"></div>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Contrôle bordereau CNAM" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
 
-<div class="row sticky-top" style="z-index: 1025; top: 121px">
-  <app-breadcrumbs
-    title="Controle bordereau CNAM"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
-
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <form
-            [formGroup]="BordEnvoiForm"
-            class="tablelist-form"
-            autocomplete="off"
-          >
-            <div class="row mb-4">
-              <div class="col-sm-4 col-md-2">
-                <label for="codBord" class="form-label">Code bordereau</label>
-                <app-lov
-                  [listData]="AllBordEnvoi"
-                  [columns]="columnBordEnvoi"
-                  codeField="cod_bord"
-                  [selectedCode]="codBord"
-                  (selectedValue)="onSelectedValueBordEnvoi($event)"
-                >
-                </app-lov>
-              </div>
-
-              <div class="col-sm-4 col-md-2">
-                <label for="dateBord" class="form-label">Date</label>
-                <input
-                  type="text"
-                  id="dateBord"
-                  class="form-control border-primary"
-                  placeholder="Date"
-                  [value]="dateBord"
-                  readonly
-                />
-              </div>
-
-              <div class="col-sm-4 col-md-2">
-                <label for="lib_assurance" class="form-label">Assurance</label>
-                <input
-                  type="text"
-                  id="lib_assurance"
-                  class="form-control border-primary"
-                  placeholder="Assurance"
-                  formControlName="lib_assurance"
-                />
-              </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Remb.</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary text-end"
-                  placeholder="Tot. Remb."
-                  formControlName="tot_net"
-                />
-              </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="tot_remb" class="form-label">Tot. Hono.</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary text-end"
-                  placeholder="Tot. Hono.."
-                  formControlName="tot_honor"
-                />
-              </div>
-
-              <div class="col-sm-4 col-md-1">
-                <label for="nbr_bult" class="form-label"
-                  >Nbre. Bulletin</label
-                >
-                <input
-                  type="text"
-                  id="nbr_bult"
-                  class="form-control border-primary text-end"
-                  placeholder="Nombre de Bulletin"
-                  formControlName="nbr_bult"
-                />
-              </div>
-
-              <div class="col-sm-4 col-md-auto">
-                <label for="tot_remb" class="form-label">Date début</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary"
-                  placeholder="Date début"
-                  style="width: 150px"
-                  formControlName="dat_deb"
-                />
-              </div>
-              <div class="col-sm-4 col-md-auto">
-                <label for="tot_remb" class="form-label">Date fin</label>
-                <input
-                  type="text"
-                  id="tot_remb"
-                  class="form-control border-primary "
-                  placeholder="Date fin"
-                  style="width: 150px"
-                  formControlName="dat_fin"
-                />
-              </div>
-
-               
- 
-            </div>
-          </form>
-        </div>
+<div class="col-xl-12">
+  <div class="card mt-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-shield-check-line" aria-hidden="true"></i></span>
       </div>
-
-      <div class="card">
-        <div class="card-body">
-          <div class="table-card mb-2">
-            <p-table
-              #dt
-              [value]="bordArriver"
-              [rows]="12"
-              [paginator]="true"
-              [rowHover]="true"
-              [showCurrentPageReport]="true"
-              [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} lignes'"
-              [rowsPerPageOptions]="[10,25,50]"
-              dataKey="mat_pers"
-              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table"
-            >
-              <ng-template pTemplate="header">
-                <tr>
-                  <th *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','nom_pers','dat_saisie','dat_soin','solde','tot_honor','tot_net']"
-                      [pSortableColumn]="column"
-                      [ngStyle]="{textAlign: (column === 'solde' || column === 'tot_honor' || column === 'tot_net') ? 'right' : 'left'}">
-                      {{ columnTitles[column] || column }}
-                      <p-sortIcon [field]="column"></p-sortIcon>
-                  </th>
-                </tr>
-              </ng-template>
-
-              <ng-template pTemplate="body" let-rowData>
-                <tr>
-                  <td>{{ rowData.mat_pers }}</td>
-                  <td>{{ rowData.nom_complet_pers }}</td>
-                  <td>{{ rowData.cod_fil }}</td>
-                  <td>{{ rowData.num_fam }}</td>
-                  <td>{{ rowData.nom_pers }}</td>
-                  <td>{{ rowData.dat_saisie }}</td>
-                  <td>{{ rowData.dat_soin }}</td>
-                  <td>
-                    <span style="display:block;text-align:right">{{ rowData.solde | number: '1.3-3' }}</span>
-                  </td>
-                  <td>
-                    <span style="display:block;text-align:right">{{ rowData.tot_honor | number: '1.3-3' }}</span>
-                  </td>
-                  <td>
-                    <span style="display:block;text-align:right">{{ rowData.tot_net | number: '1.3-3' }}</span>
-                  </td>
-                </tr>
-              </ng-template>
-
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="10">
-                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
+      <div>
+        <h5 class="card-title mb-0">Bordereau à contrôler</h5>
+        <p class="text-muted fs-13 mb-0">Choisissez un bordereau pour afficher ses bulletins</p>
+      </div>
+    </div>
+    <form [formGroup]="BordEnvoiForm" class="tablelist-form" autocomplete="off">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12 ">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Bordereau</h6>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Code bordereau</label>
+            <app-lov [listData]="AllBordEnvoi" [columns]="columnBordEnvoi" codeField="cod_bord"
+              [selectedCode]="codBord" (selectedValue)="onSelectedValueBordEnvoi($event)">
+            </app-lov>
+          </div>
+          <div class="col-md-3">
+            <label for="dateBord" class="form-label">Date</label>
+            <input type="text" id="dateBord" class="form-control" placeholder="Date" [value]="dateBord" readonly />
+          </div>
+          <div class="col-md-6">
+            <label for="lib_assurance" class="form-label">Assurance</label>
+            <input type="text" id="lib_assurance" class="form-control" placeholder="Assurance" formControlName="lib_assurance" />
+          </div>
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Totaux et période</h6>
+          </div>
+          <div class="col-md-2">
+            <label for="tot_net" class="form-label">Tot. remb.</label>
+            <input type="text" id="tot_net" class="form-control text-end" placeholder="0.000" formControlName="tot_net" />
+          </div>
+          <div class="col-md-2">
+            <label for="tot_honor" class="form-label">Tot. hono.</label>
+            <input type="text" id="tot_honor" class="form-control text-end" placeholder="0.000" formControlName="tot_honor" />
+          </div>
+          <div class="col-md-2">
+            <label for="nbr_bult" class="form-label">Nbre bulletins</label>
+            <input type="text" id="nbr_bult" class="form-control text-end" placeholder="0" formControlName="nbr_bult" />
+          </div>
+          <div class="col-md-3">
+            <label for="dat_deb" class="form-label">Date début</label>
+            <input type="text" id="dat_deb" class="form-control" placeholder="Date début" formControlName="dat_deb" />
+          </div>
+          <div class="col-md-3">
+            <label for="dat_fin" class="form-label">Date fin</label>
+            <input type="text" id="dat_fin" class="form-control" placeholder="Date fin" formControlName="dat_fin" />
           </div>
         </div>
       </div>
+    </form>
+  </div>
+
+  <div class="card mt-4 mb-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-file-list-3-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Bulletins du bordereau</h5>
+        <p class="text-muted fs-13 mb-0">{{ bordArriver.length }} ligne{{ bordArriver.length > 1 ? 's' : '' }}</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <p-table #dt [value]="bordArriver" [rows]="12" [paginator]="bordArriver.length > 12" [rowHover]="true"
+        [showCurrentPageReport]="true"
+        [currentPageReportTemplate]="'Affichage {first} à {last} sur {totalRecords} lignes'"
+        [rowsPerPageOptions]="[10,25,50]" dataKey="mat_pers" styleClass="p-datatable-sm modern-table">
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th *ngFor="let column of ['mat_pers','nom_complet_pers','cod_fil','num_fam','nom_pers','dat_saisie','dat_soin','solde','tot_honor','tot_net']"
+              [pSortableColumn]="column" scope="col"
+              [ngClass]="{'text-end': ['solde','tot_honor','tot_net'].includes(column)}">
+              {{ columnTitles[column] || column }}
+              <p-sortIcon [field]="column"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.mat_pers }}</span></td>
+            <td class="fw-medium">{{ rowData.nom_complet_pers }}</td>
+            <td>{{ rowData.cod_fil }}</td>
+            <td>{{ rowData.num_fam }}</td>
+            <td>{{ rowData.nom_pers }}</td>
+            <td>{{ rowData.dat_saisie }}</td>
+            <td>{{ rowData.dat_soin }}</td>
+            <td class="text-end">{{ rowData.solde | number: '1.3-3' }}</td>
+            <td class="text-end">{{ rowData.tot_honor | number: '1.3-3' }}</td>
+            <td class="text-end">{{ rowData.tot_net | number: '1.3-3' }}</td>
+          </tr>
+        </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="10" class="text-center text-muted py-5">
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    Aucun bulletin dans ce bordereau
+                  </td>
+                </tr>
+              </ng-template>
+      </p-table>
     </div>
   </div>
 </div>
-

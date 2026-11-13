@@ -57,8 +57,53 @@ export class SearchLovComponent implements OnChanges {
     return 'col-12 col-sm-6 col-lg-3';
   }
 
+  /** Recherche unique : chaque mot saisi doit se retrouver dans au moins une colonne (ET entre les mots). */
+  rechercheGlobale = '';
+  /** Les champs de filtre par colonne sont repliés : on les ouvre avec le bouton « Filtres ». */
+  filtresOuverts = false;
+
+  /** Nombre de champs de colonne remplis (pastille du bouton « Filtres »). */
+  get nbFiltresColonnes(): number {
+    return Object.values(this.searchQueries).filter(q => !!q && q.trim() !== '').length;
+  }
+
+  /** « Rechercher par matricule, nom, prénom… » d'après les colonnes réellement affichées. */
+  get placeholderRecherche(): string {
+    const noms = this.visibleColumns.slice(0, 4).map(c => String(c.label ?? '').toLowerCase()).filter(Boolean);
+    return noms.length ? `Rechercher par ${noms.join(', ')}…` : 'Rechercher…';
+  }
+
   hasQuery(): boolean {
-    return Object.values(this.searchQueries).some(q => !!q && q.trim() !== '') || this.sexeFiltre !== '';
+    return this.nbFiltresColonnes > 0 || this.rechercheGlobale.trim() !== '' || this.sexeFiltre !== '';
+  }
+
+  /** Saisie dans la barre unique : légère attente pour ne pas filtrer 40 000 lignes à chaque lettre. */
+  onSearchGlobal(): void {
+    this.searchSubject.next(this.rechercheGlobale);
+  }
+
+  effacerRechercheGlobale(): void {
+    this.rechercheGlobale = '';
+    this.filterData();
+  }
+
+  /** Entrée dans la barre : s'il ne reste qu'un résultat, on le choisit directement. */
+  entrerRecherche(modal: any): void {
+    if (this.filteredData.length === 1) {
+      this.selectItem(this.filteredData[0]);
+      modal.close();
+    }
+  }
+
+  /** Un ou plusieurs mots de la barre unique retrouvés dans une des colonnes visibles de la ligne. */
+  private correspondRechercheGlobale(item: any, mots: string[]): boolean {
+    return mots.every(mot =>
+      this.visibleColumns.some(col => {
+        const brut = item[col.key];
+        const valeur = col.key === 'dat_nais' ? this.formatDateValue(brut) : brut;
+        return lovMatch(col.key, valeur, mot);
+      })
+    );
   }
 
   /** Effectifs affichés à côté de chaque option du filtre Sexe (calculés à l'ouverture sur toute la liste). */
@@ -73,6 +118,22 @@ export class SearchLovComponent implements OnChanges {
       else if (s === 'F') c.F++;
     }
     this.comptesSexe = c;
+  }
+
+  /** Part des hommes dans la barre de répartition (sur les seules personnes dont le sexe est connu). */
+  get pctM(): number {
+    const connus = this.comptesSexe.M + this.comptesSexe.F;
+    return connus ? Math.round((this.comptesSexe.M * 100) / connus) : 0;
+  }
+
+  get pctF(): number {
+    const connus = this.comptesSexe.M + this.comptesSexe.F;
+    return connus ? 100 - this.pctM : 0;
+  }
+
+  /** Texte lu par les lecteurs d'écran pour la barre de répartition. */
+  get libelleRepartition(): string {
+    return `${this.pctM} % d'hommes, ${this.pctF} % de femmes`;
   }
 
   /** Choix du filtre Sexe : un clic sur le même bouton ne le retire pas, « Tous » sert à ça. */
@@ -132,6 +193,8 @@ export class SearchLovComponent implements OnChanges {
     this.isModalOpen = true;
     // Clear search queries and show all data when modal opens
     this.searchQueries = {};
+    this.rechercheGlobale = '';
+    this.filtresOuverts = false;
     this.sexeFiltre = '';
     if (this.filtreSexe) this.compterSexes();
     this.filteredData = [...this.listData]; // Show all data immediately
@@ -160,8 +223,10 @@ export class SearchLovComponent implements OnChanges {
     }
 
     // Filter data based on search queries
+    const mots = this.rechercheGlobale.toLowerCase().split(/\s+/).filter(Boolean);
     this.filteredData = this.listData.filter(item =>
       (!this.sexeFiltre || String(item?.sexe ?? '').trim().toUpperCase() === this.sexeFiltre) &&
+      (!mots.length || this.correspondRechercheGlobale(item, mots)) &&
       this.columns.every(col => {
         const query = this.searchQueries[col.key]?.toLowerCase() || '';
         if (!query) return true; // No query for this column means include the item
@@ -180,6 +245,7 @@ export class SearchLovComponent implements OnChanges {
   // Show all data (clear search)
   showAll() {
     this.searchQueries = {}; // Reset all search queries
+    this.rechercheGlobale = '';
     this.sexeFiltre = '';
     this.filteredData = this.listData; // Show all data
   }
@@ -195,6 +261,8 @@ export class SearchLovComponent implements OnChanges {
   openModal(content: any) {
     // Clear search queries and show all data when modal opens
     this.searchQueries = {};
+    this.rechercheGlobale = '';
+    this.filtresOuverts = false;
     this.sexeFiltre = '';
     if (this.filtreSexe) this.compterSexes();
     this.filteredData = [...this.listData]; // Show all data immediately

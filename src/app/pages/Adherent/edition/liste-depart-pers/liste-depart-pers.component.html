@@ -1,92 +1,72 @@
-<div class="col-md-12 d-flex justify-content-center">
-    <div style="width: 70%;"> <!-- Largeur du conteneur -->
-      <div class="collapse show" id="paymentmethodCollapse">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-          <form
-            action="javascript:void(0);"
-            class="row g-3"
-            [formGroup]="formAdherent"
-          >
-            <div class="row">
-              <div class="col-md-12">
-                <!-- Bloc 1 -->
-                <div class="row">
-                    <div class="row mt-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Date début</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              formControlName="dat_deb"
-                              mask="00/00/0000"
-                            />
-                          </div>
-                          <div class="col-md-3"></div>
-                          <div class="col-md-3">
-                            <label class="form-label">Date fin</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              formControlName="dat_fin"
-                              mask="00/00/0000"
-                            />
-                          </div>
-                      </div>
-                  
-                  <div class="col-md-2">
-                    <label class="form-label">Matricule début</label>
-                    <app-lov
-                      [listData]="personnelList"
-                      [columns]="columnsSearch"
-                      codeField="mat_pers"
-                      [selectedCode]="formAdherent.get('mat_pers')?.value"
-                      (selectedValue)="onSelectedVMat($event)"
-                    ></app-lov>
-                  </div>
-           
-                  <div class="col-md-5">
-                    <label class="form-label">Nom</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="nom_deb"
-                      readonly
-                    />
-                  </div>
-                </div>
-  
-                <!-- Bloc 2 -->
-                <div class="row mt-3">
-                  <div class="col-md-2">
-                    <label class="form-label">Matricule fin</label>
-                    <app-lov
-                      [listData]="personnelList"
-                      [columns]="columnsSearch"
-                      codeField="mat_pers"
-                      [selectedCode]="formAdherent.get('mat_pers2')?.value"
-                      (selectedValue)="onSelectedVMat2($event)"
-                    ></app-lov>
-                  </div>
-           
-                  <div class="col-md-5">
-                    <label class="form-label">Nom</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="nom_fin"
-                      readonly
-                    />
-                  </div>
-                </div>
-           
-               
- 
-              
-              </div>
-            </div>
-          </form>
-        </div>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Départs et réintégrations"></app-breadcrumbs>
+</div>
+
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-logout-box-r-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Départs et réintégrations</h5>
+        <p class="text-muted fs-13 mb-0">Édition des départs et des réintégrations selon la période et la plage de matricules</p>
       </div>
     </div>
+
+    <form action="javascript:void(0);" [formGroup]="formAdherent" autocomplete="off">
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-12 ">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Période</h6>
+          </div>
+          <div class="col-md-3">
+            <label for="dat-deb" class="form-label">Date début</label>
+            <input id="dat-deb" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_deb" mask="00/00/0000" />
+          </div>
+          <div class="col-md-3">
+            <label for="dat-fin" class="form-label">Date fin</label>
+            <input id="dat-fin" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_fin" mask="00/00/0000" />
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Plage de matricules</h6>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Matricule début</label>
+                <app-lov [listData]="personnelList" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="formAdherent.get('mat_pers_deb')?.value" (selectedValue)="onSelectedVMat($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="nom-deb" class="form-label">Nom et prénom</label>
+                <input id="nom-deb" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_deb" readonly />
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Matricule fin</label>
+                <app-lov [listData]="personnelList" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="formAdherent.get('mat_pers_fin')?.value" (selectedValue)="onSelectedVMat2($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="nom-fin" class="form-label">Nom et prénom</label>
+                <input id="nom-fin" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_fin" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer text-muted fs-13 d-flex align-items-center gap-2">
+        <i class="ri-printer-line fs-16" aria-hidden="true"></i>
+        Renseignez les critères puis lancez l'impression depuis la barre d'outils pour générer le PDF.
+      </div>
+    </form>
   </div>
-  
+</div>

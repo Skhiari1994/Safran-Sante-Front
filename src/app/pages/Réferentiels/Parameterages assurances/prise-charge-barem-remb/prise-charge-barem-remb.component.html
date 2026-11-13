@@ -1,192 +1,217 @@
-<div class="row" style="margin-top: 25px"></div>
-<div class="row sticky-top" style="z-index: 1025; top: 121px">
-  <app-breadcrumbs
-    title="Prise en charge du barème de remboursement"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
-
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Prise en charge du barème de remboursement" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
 
-<div class="row">
+<div class="row mt-3">
   <div class="col-12">
-    <div class="d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-              <div class="page-card-title">
-                <h5>Liste des barèmes de remboursement</h5>
-                <small>{{ listeBareme?.length || 0 }} barème(s)</small>
-              </div>
-              <button
-                class="btn btn-info add-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#showModal"
-                (click)="openModalTab(content1)"
-              >
-                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter barème
-              </button>
-            </div>
-            <div class="card-body">
-              <div class="d-flex flex-wrap gap-2 mb-3">
-                <div *ngFor="let filiere of ListeFiliere" class="badge bg-primary text-white px-3 py-2">
-                  {{ filiere.cod_fil }} - {{ filiere.lib_fill }}
-                </div>
-              </div>
-              <div class="table-responsive">
-              <p-table [value]="listeBareme" [paginator]="true" [rows]="11" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                <ng-template pTemplate="header">
-                  <tr class="table-primary">
-                    <th *ngFor="let column of ['cod_fil','abrv_act','lib_act','a_indice','mtt_acte','dat_acte','taux_act','plafonne','plafond','verif_piece','nat_act','verif_vign','plafon_prest']">
-                      <div class="th-head">
-                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                      </div>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                    </th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-percent-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Liste des barèmes de remboursement</h5>
+            <p class="text-muted fs-13 mb-0">{{ listeBareme?.length || 0 }} {{ (listeBareme?.length || 0) > 1 ? 'barèmes' : 'barème' }}</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="openModalTab(content1)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un barème
+        </button>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Rappel des filières -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3" *ngIf="ListeFiliere?.length">
+          <span class="text-muted fs-13 me-1">Filières :</span>
+          <span *ngFor="let filiere of ListeFiliere" class="badge bg-primary-subtle text-primary fs-12 fw-medium px-2 py-1">
+            {{ filiere.cod_fil }} · {{ filiere.lib_fill }}
+          </span>
+        </div>
+
+        <p-table [value]="listeBareme" [paginator]="(listeBareme?.length || 0) > 11" [rows]="11" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 8%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cod_fil')" aria-label="Trier par filière">
+                  Filière<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 8%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cod_assur')" aria-label="Trier par assur.">
+                  Assur.<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('abrv_act')" aria-label="Trier par acte">
+                  Acte<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 10%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('dat_acte')" aria-label="Trier par date">
+                  Date<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 15%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('mtt_acte')" aria-label="Trier par remboursement">
+                  Remboursement<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 8%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('plafond')" aria-label="Trier par plafond">
+                  Plafond<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" style="width: 17%;">Contrôles</th>
+              <th scope="col" class="text-end" style="width: 110px;">Actions</th>
+            </tr>
             <tr>
-              <td class="text-center">{{ rowData.cod_fil }}</td>
-              <td class="text-center">{{ rowData.abrv_act }}</td>
-              <td class="text-center">{{ rowData.lib_act }}</td>
-              <td class="text-center">{{ rowData.a_indice == 'O' ? 'Oui' : rowData.a_indice == 'N' ? 'Non' : '' }}</td>
-              <td class="text-center">{{ rowData.mtt_acte | number:'1.3-3' }}</td>
-              <td class="text-center">{{ rowData.dat_acte }}</td>
-              <td class="text-center">{{ rowData.taux_act }}</td>
-              <td class="text-center">{{ rowData.plafonne == 'O' ? 'Oui' : rowData.plafonne == 'N' ? 'Non' : '' }}</td>
-              <td class="text-center">{{ rowData.plafond }}</td>
-              <td class="text-center">{{ rowData.verif_piece == 'O' ? 'Oui' : rowData.verif_piece == 'N' ? 'Non' : '' }}</td>
-              <td class="text-center">{{ rowData.nat_act == 'M' ? 'Montant' : rowData.nat_act == 'T' ? 'Taux' : '' }}</td>
-              <td class="text-center">{{ rowData.verif_vign == 'O' ? 'Oui' : rowData.verif_vign == 'N' ? 'Non' : '' }}</td>
-              <td class="text-center">{{ rowData.plafon_prest == 'O' ? 'Oui' : rowData.plafon_prest == 'N' ? 'Non' : '' }}</td>
-              <td>
-                <ul class="list-inline hstack gap-2 mb-0">
-                  <li class="list-inline-item">
-                    <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowData, content1)">
-                      <i class="ri-pencil-fill align-bottom text-muted"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
-                      <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                    </a>
-                  </li>
-                </ul>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cod_fil']" (input)="applyFilter()" aria-label="Filtrer par filière" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cod_assur']" (input)="applyFilter()" aria-label="Filtrer par assurance" />
+              </th>
+              <th class="py-2">
+                <div class="d-flex gap-1">
+                  <input type="search" class="form-control form-control-sm" placeholder="Code" style="max-width: 90px;"
+                    [(ngModel)]="searchz['abrv_act']" (input)="applyFilter()" aria-label="Filtrer par code acte" />
+                  <input type="search" class="form-control form-control-sm" placeholder="Libellé"
+                    [(ngModel)]="searchz['lib_act']" (input)="applyFilter()" aria-label="Filtrer par libellé de l'acte" />
+                </div>
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['dat_acte']" (input)="applyFilter()" aria-label="Filtrer par date" />
+              </th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_fil }}</span></td>
+              <td><span class="badge bg-light text-body border fs-12">{{ rowData.cod_assur }}</span></td>
+              <td><div class="d-flex align-items-center gap-2"><span class="badge bg-light text-body border fs-12 flex-shrink-0">{{ rowData.abrv_act }}</span><span class="fw-medium">{{ rowData.lib_act }}</span></div></td>
+              <td>{{ rowData.dat_acte }}</td>
+              <td><ng-container [ngSwitch]="rowData.nat_act">
+                  <ng-container *ngSwitchCase="'M'"><span class="badge bg-warning-subtle text-warning me-1">Montant</span>{{ rowData.mtt_acte | number:'1.3-3' }}</ng-container>
+                  <ng-container *ngSwitchCase="'T'"><span class="badge bg-info-subtle text-info me-1">Taux</span>{{ rowData.taux_act }}</ng-container>
+                  <span *ngSwitchDefault class="text-muted">—</span>
+                </ng-container></td>
+              <td><span *ngIf="rowData.plafonne == 'O'; else sansPlafond">{{ rowData.plafond }}</span><ng-template #sansPlafond><span class="text-muted">{{ rowData.plafonne == 'N' ? 'Non' : '—' }}</span></ng-template></td>
+              <td><div class="d-flex flex-wrap gap-1">
+                  <span *ngIf="rowData.a_indice == 'O'" class="badge bg-primary-subtle text-primary">Indice</span>
+                  <span *ngIf="rowData.verif_vign == 'O'" class="badge bg-primary-subtle text-primary">Vignette</span>
+                  <span *ngIf="rowData.verif_piece == 'O'" class="badge bg-primary-subtle text-primary">Pièces</span>
+                  <span *ngIf="rowData.plafon_prest == 'O'" class="badge bg-primary-subtle text-primary">Plafond/prest.</span>
+                  <span *ngIf="rowData.a_indice != 'O' && rowData.verif_vign != 'O' && rowData.verif_piece != 'O' && rowData.plafon_prest != 'O'" class="text-muted">—</span>
+                </div></td>
+              <td class="text-end">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+            [attr.aria-label]="'Modifier ' + rowData.lib_act" (click)="editDataGet(rowData, content1)">
+            <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+            [attr.aria-label]="'Supprimer ' + rowData.lib_act" (click)="confirm(deleteModel, rowData)">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+          </button>
+        </div>
+      </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="8" class="text-center text-muted py-5">
+                <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                Aucun barème trouvé
               </td>
             </tr>
           </ng-template>
-              </p-table>
-              </div>
-            </div>
-          </div>
-        </div>
+        </p-table>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #content1 role="document" let-modal>
-  <div class="modal-header bg-info-subtle p-3">
-    <h5 class="modal-title" id="exampleModalLabel">
-      {{ edit == true ? "Ajouter" : "Modifier" }} Barème de remboursement
-    </h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="modal"
-      aria-label="Close"
-      id="close-modal"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-percent-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter un barème' : 'Modifier le barème' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ edit ? 'Les champs marqués * sont obligatoires.' : 'La filière, l\'assurance et l\'acte ne peuvent pas être modifiés.' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
   </div>
+
   <form [formGroup]="formBareme" class="tablelist-form" autocomplete="off">
     <div class="modal-body">
-      <!-- Identification : filière / assurance / acte -->
       <div class="row g-3">
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identification</h6>
+        </div>
         <div class="col-md-3">
           <label class="form-label">Filière</label>
-          <app-lov
-            [listData]="ListeFiliere"
-            [columns]="columnFiliere"
-            codeField="cod_fil"
-            [selectedCode]="codeFiliere"
-            (selectedValue)="onSelectedValueFiliere($event)"
-          >
+          <app-lov [disabled]="!edit" [listData]="ListeFiliere" [columns]="columnFiliere" codeField="cod_fil" [selectedCode]="codeFiliere"
+            (selectedValue)="onSelectedValueFiliere($event)">
           </app-lov>
         </div>
         <div class="col-md-3">
-          <label class="form-label">Libellé filière</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libFiliere" readonly />
+          <label for="bar-lib-fil" class="form-label">Libellé filière</label>
+          <input id="bar-lib-fil" type="text" class="form-control" placeholder="Libellé" [value]="libFiliere" readonly />
         </div>
         <div class="col-md-3">
           <label class="form-label">Assurance</label>
-          <app-lov
-            [listData]="ListeAssurance"
-            [columns]="columnAssuranc"
-            codeField="cod_assur"
-            [selectedCode]="codeAssur"
-            (selectedValue)="onSelectedValueAssur($event)"
-          >
+          <app-lov [disabled]="!edit" [listData]="ListeAssurance" [columns]="columnAssuranc" codeField="cod_assur" [selectedCode]="codeAssur"
+            (selectedValue)="onSelectedValueAssur($event)">
           </app-lov>
         </div>
         <div class="col-md-3">
-          <label class="form-label">Libellé assurance</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
+          <label for="bar-lib-assur" class="form-label">Libellé assurance</label>
+          <input id="bar-lib-assur" type="text" class="form-control" placeholder="Libellé" [value]="libAssur" readonly />
         </div>
-
         <div class="col-md-3">
           <label class="form-label">Acte</label>
-          <app-lov
-            [listData]="ListeActe"
-            [columns]="columnActe"
-            codeField="abrv_act"
-            [selectedCode]="codeActe"
-            (selectedValue)="onSelectedValueActe($event)"
-          >
+          <app-lov [disabled]="!edit" [listData]="ListeActe" [columns]="columnActe" codeField="abrv_act" [selectedCode]="codeActe"
+            (selectedValue)="onSelectedValueActe($event)">
           </app-lov>
         </div>
         <div class="col-md-3">
-          <label class="form-label">Libellé acte</label>
-          <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libActe" readonly />
+          <label for="bar-lib-acte" class="form-label">Libellé acte</label>
+          <input id="bar-lib-acte" type="text" class="form-control" placeholder="Libellé" [value]="libActe" readonly />
         </div>
         <div class="col-md-3">
-          <label class="form-label">Date acte</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="jj/mm/aaaa"
-            formControlName="dat_acte"
-            (input)="formatDate2($event)"
-            maxlength="10"
-          />
+          <label for="bar-date" class="form-label">Date de l'acte</label>
+          <input id="bar-date" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_acte"
+            (input)="formatDate2($event)" maxlength="10" />
         </div>
         <div class="col-md-3">
-          <label class="form-label">Durée d'acte</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer la durée"
-            formControlName="duree_act"
-          />
+          <label for="bar-duree" class="form-label">Durée d'acte</label>
+          <input id="bar-duree" type="text" class="form-control" placeholder="Ex. 30" formControlName="duree_act" />
         </div>
-      </div>
-
-      <hr class="my-4" />
-
-      <!-- Remboursement : nature / montant ou taux / plafond -->
-      <div class="row g-3">
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Remboursement</h6>
+        </div>
         <div class="col-md-3">
-          <label class="form-label">Nature d'acte</label>
-          <select
-            id="nat_act"
-            class="form-select border-primary"
-            formControlName="nat_act"
-            (change)="onNatureChange($event.target.value)"
-          >
+          <label for="nat_act" class="form-label">Nature d'acte</label>
+          <select id="nat_act" class="form-select" formControlName="nat_act" (change)="onNatureChange($event.target.value)">
             <option value="">Sélectionner</option>
             <option value="M">Montant</option>
             <option value="T">Taux</option>
@@ -194,53 +219,29 @@
         </div>
         <div class="col-md-3">
           <div [hidden]="selectedNature !== 'T'">
-            <label class="form-label">Taux d'acte</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer le taux"
-              formControlName="taux_act"
-            />
+            <label for="bar-taux" class="form-label">Taux d'acte</label>
+            <input id="bar-taux" type="text" class="form-control" placeholder="Ex. 80" formControlName="taux_act" />
           </div>
           <div [hidden]="selectedNature !== 'M'">
-            <label class="form-label">Montant d'acte</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer le montant"
-              formControlName="mtt_acte"
-              appMontantMask
-            />
+            <label for="bar-montant" class="form-label">Montant d'acte</label>
+            <input id="bar-montant" type="text" class="form-control" placeholder="Ex. 25.000" formControlName="mtt_acte" appMontantMask />
           </div>
         </div>
         <div class="col-md-3">
-          <label class="form-label">Plafonné</label>
-          <select
-            id="plafonne"
-            class="form-select border-primary"
-            formControlName="plafonne"
-            (change)="onNatureplafond($event.target.value)"
-          >
+          <label for="plafonne" class="form-label">Plafonné</label>
+          <select id="plafonne" class="form-select" formControlName="plafonne" (change)="onNatureplafond($event.target.value)">
             <option value="">Sélectionner</option>
             <option value="O">Oui</option>
             <option value="N">Non</option>
           </select>
         </div>
         <div class="col-md-3" [hidden]="selectedPlafond !== 'O'">
-          <label class="form-label">Plafond</label>
-          <input
-            type="text"
-            class="form-control border-primary"
-            placeholder="Entrer le plafond"
-            formControlName="plafond"
-          />
+          <label for="bar-plafond" class="form-label">Plafond</label>
+          <input id="bar-plafond" type="text" class="form-control" placeholder="Ex. 500" formControlName="plafond" />
         </div>
-      </div>
-
-      <hr class="my-4" />
-
-      <!-- Options -->
-      <div class="row g-3">
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Contrôles</h6>
+        </div>
         <div class="col-md-3">
           <div class="form-check form-switch">
             <input type="checkbox" class="form-check-input" id="chk_a_indice" role="switch" [checked]="formBareme.get('a_indice')?.value"
@@ -252,98 +253,51 @@
           <div class="form-check form-switch">
             <input type="checkbox" class="form-check-input" id="chk_verif_vign" role="switch" [checked]="formBareme.get('verif_vign')?.value"
               (change)="formBareme.get('verif_vign')?.setValue($event.target.checked)">
-            <label class="form-check-label" for="chk_verif_vign">Vérifier vignette</label>
+            <label class="form-check-label" for="chk_verif_vign">Vérifier la vignette</label>
           </div>
         </div>
         <div class="col-md-3">
           <div class="form-check form-switch">
             <input type="checkbox" class="form-check-input" id="chk_verif_piece" role="switch" [checked]="formBareme.get('verif_piece')?.value"
               (change)="formBareme.get('verif_piece')?.setValue($event.target.checked)">
-            <label class="form-check-label" for="chk_verif_piece">Vérifier pièces</label>
+            <label class="form-check-label" for="chk_verif_piece">Vérifier les pièces</label>
           </div>
         </div>
         <div class="col-md-3">
           <div class="form-check form-switch">
             <input type="checkbox" class="form-check-input" id="chk_plafon_prest" role="switch" [checked]="formBareme.get('plafon_prest')?.value"
               (change)="formBareme.get('plafon_prest')?.setValue($event.target.checked)">
-            <label class="form-check-label" for="chk_plafon_prest">Plafond/Prestataire</label>
+            <label class="form-check-label" for="chk_plafon_prest">Plafond par prestataire</label>
           </div>
         </div>
       </div>
     </div>
 
     <div class="modal-footer">
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-success"
-          data-bs-dismiss="modal"
-          (click)="AddBaremeRemb(); modal.close('Close click')"
-        >
-          Valider
-        </button>
-      </div>
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Fermer
-        </button>
-      </div>
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" [disabled]="!formBareme.value.cod_fil || !formBareme.value.abrv_act || !formBareme.value.cod_assur"
+        (click)="AddBaremeRemb(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
     </div>
   </form>
 </ng-template>
-  
+
 <ng-template #deleteModel let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="btn-close"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <div class="mt-2 text-center">
-        <lord-icon
-          src="https://cdn.lordicon.com/gsqxdxog.json"
-          trigger="loop"
-          colors="primary:#f7b84b,secondary:#f06548"
-          style="width: 100px; height: 100px"
-        ></lord-icon>
-        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-          <h4>Es-tu sûr ?</h4>
-          <p class="text-muted mx-4 mb-0">
-            Etes-vous sûr de vouloir supprimer ce barème de remboursement?
-          </p>
-        </div>
-      </div>
-      <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-        <button
-          type="button"
-          class="btn w-sm btn-light"
-          data-bs-dismiss="modal"
-          (click)="modal.close('Close click')"
-        >
-          Fermer
-        </button>
-        <button
-          type="button"
-          class="btn w-sm btn-danger"
-          id="delete-product"
-          (click)="ConfirmDelete()"
-          (click)="modal.close('Close click')"
-        >
-          Oui, supprimez-le !
-        </button>
-      </div>
+  <div class="modal-body text-center p-4">
+    <lord-icon
+      src="https://cdn.lordicon.com/gsqxdxog.json"
+      trigger="loop"
+      colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"
+    ></lord-icon>
+    <h4 class="mt-3">Supprimer ce barème ?</h4>
+    <p class="text-muted mb-0">Le barème <strong>{{ deleteId?.cod_fil }}</strong> · {{ deleteId?.abrv_act }} · assurance {{ deleteId?.cod_assur }} sera supprimé définitivement.</p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')">
+        Oui, supprimer
+      </button>
     </div>
   </div>
 </ng-template>
- 

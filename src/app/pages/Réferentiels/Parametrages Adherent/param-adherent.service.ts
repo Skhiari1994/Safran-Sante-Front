@@ -56,6 +56,9 @@ export class ParamAdherentService {
   AddSociete(data: any): Observable<any> {
     return this.http.post<any>(API_URL+ "referentiel/paramAdherent/addSociete", data);
   }
+  deleteSociete(codSoc: string): Observable<any> {
+    return this.http.delete<any>(API_URL+ "referentiel/paramAdherent/deleteSociete/" + encodeURIComponent(codSoc));
+  }
   getSociete = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL+ "referentiel/paramAdherent/getSociete");
   };

@@ -1,55 +1,72 @@
-<div class="col-md-12 d-flex justify-content-center">
-  <div class="col-xl-8 col-lg-10 col-12">
-    <div class="collapse show" id="paymentmethodCollapse">
-      <div class="card p-4 border shadow-none mb-0 mt-4">
-        <div class="card-header page-card-header">
-          <div class="page-card-title">
-            <h5>Initialisation des plafonds</h5>
-            <small>Calcul des plafonds pour une année et une plage de matricules</small>
-          </div>
-        </div>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Initialisation annuelle des plafonds CNAM"></app-breadcrumbs>
+</div>
 
-        <form action="javascript:void(0);" [formGroup]="formAdherent">
-          <div class="row g-3">
-            <!-- Année -->
-            <div class="col-md-3">
-              <label class="form-label">Année</label>
-              <input type="text" class="form-control border-primary" placeholder="aaaa" formControlName="annee" mask="0000" />
-            </div>
-            <div class="col-12"><hr class="my-1" /></div>
-
-            <!-- Matricule début -->
-            <div class="col-md-3">
-              <label class="form-label">Matricule début</label>
-              <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
-                [selectedCode]="formAdherent.get('mat_pers_deb')?.value"
-                (selectedValue)="onSelectedVMat($event)"></app-lov>
-            </div>
-            <div class="col-md-9">
-              <label class="form-label">Nom matricule début</label>
-              <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_deb" readonly />
-            </div>
-
-            <!-- Matricule fin -->
-            <div class="col-md-3">
-              <label class="form-label">Matricule fin</label>
-              <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
-                [selectedCode]="formAdherent.get('mat_pers_fin')?.value"
-                (selectedValue)="onSelectedVMatFin($event)"></app-lov>
-            </div>
-            <div class="col-md-9">
-              <label class="form-label">Nom matricule fin</label>
-              <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_fin" readonly />
-            </div>
-
-            <div class="col-12 d-flex justify-content-end mt-3">
-              <button class="btn btn-success" (click)="calculePlafond()" [disabled]="formAdherent.invalid">
-                <i class="ri-calculator-line me-1 align-bottom"></i> Calculer
-              </button>
-            </div>
-          </div>
-        </form>
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-calculator-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Initialisation des plafonds</h5>
+        <p class="text-muted fs-13 mb-0">Calcul des plafonds pour une année et une plage de matricules</p>
       </div>
     </div>
+
+    <form action="javascript:void(0);" [formGroup]="formAdherent" autocomplete="off">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Année</h6>
+          </div>
+          <div class="col-md-3">
+            <label for="ip-annee" class="form-label">Année</label>
+            <input id="ip-annee" type="text" class="form-control" placeholder="aaaa" formControlName="annee" mask="0000" />
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Plage de matricules</h6>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Matricule début</label>
+                <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="formAdherent.get('mat_pers_deb')?.value" (selectedValue)="onSelectedVMat($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="ip-nom-deb" class="form-label">Nom et prénom</label>
+                <input id="ip-nom-deb" type="text" class="form-control" placeholder="Nom" formControlName="nom_deb" readonly />
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Matricule fin</label>
+                <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="formAdherent.get('mat_pers_fin')?.value" (selectedValue)="onSelectedVMatFin($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="ip-nom-fin" class="form-label">Nom et prénom</label>
+                <input id="ip-nom-fin" type="text" class="form-control" placeholder="Nom" formControlName="nom_fin" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <span class="text-muted fs-13 d-flex align-items-center gap-2">
+          <i class="ri-information-line fs-16" aria-hidden="true"></i>
+          Le calcul met à jour le plafond CNAM, le plafond mutuelle et la prise en charge des enfants.
+        </span>
+        <button type="button" class="btn btn-success" (click)="calculePlafond()" [disabled]="formAdherent.invalid">
+          <i class="ri-calculator-line align-bottom me-1" aria-hidden="true"></i>Calculer les plafonds
+        </button>
+      </div>
+    </form>
   </div>
 </div>

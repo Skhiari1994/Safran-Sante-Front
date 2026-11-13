@@ -1,110 +1,88 @@
-<div class="col-md-12 d-flex justify-content-center">
-    <div style="width: 70%;"> <!-- Largeur du conteneur -->
-      <div class="collapse show" id="paymentmethodCollapse">
-        <div class="card p-4 border shadow-none mb-0 mt-4">
-          <form
-            action="javascript:void(0);"
-            class="row g-3"
-            [formGroup]="formAdherent"
-          >
-            <div class="row">
-              <div class="col-md-12">
-                <!-- Bloc 1 -->
-                <div class="row">
-                  <div class="row mt-3">
-                    <!-- Champ Mois -->
- 
-                  </div>
-                  
-                  <div class="col-md-2">
-                    <label class="form-label">Matricule début</label>
-                    <app-lov
-                      [listData]="personnelList"
-                      [columns]="columnsSearch"
-                      codeField="mat_pers"
-                      [selectedCode]="formAdherent.get('mat_pers')?.value"
-                      (selectedValue)="onSelectedVMat($event)"
-                    ></app-lov>
-                  </div>
-           
-                  <div class="col-md-5">
-                    <label class="form-label">Nom</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="nom_deb"
-                      readonly
-                    />
-                  </div>
-                </div>
-  
-                <!-- Bloc 2 -->
-                <div class="row mt-3">
-                  <div class="col-md-2">
-                    <label class="form-label">Matricule fin</label>
-                    <app-lov
-                      [listData]="personnelList"
-                      [columns]="columnsSearch"
-                      codeField="mat_pers"
-                      [selectedCode]="formAdherent.get('mat_pers2')?.value"
-                      (selectedValue)="onSelectedVMat2($event)"
-                    ></app-lov>
-                  </div>
-           
-                  <div class="col-md-5">
-                    <label class="form-label">Nom</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="nom_fin"
-                      readonly
-                    />
-                  </div>
-                </div>
-           
-                
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Liste des cartes par adhérent"></app-breadcrumbs>
+</div>
 
-                  <div class="row mt-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Etat carte</label>
-                        <select
-                          class="form-select border-success"
-                          formControlName="etat_cart">
-                           <option value="C"> Courante</option>
-                          <option value="N"> Non Courante</option> 
-                        </select>
-                      </div>
-
-                      <div class="col-md-3">
-                        <label class="form-label">Perdu</label>
-                        <select
-                          class="form-select border-success"
-                          formControlName="perdu"
-                          
-                        >
-                           <option value="O"> Oui</option>
-                          <option value="N"> Non</option>
-                        </select>
-                      </div>
-                      <div class="col-md-3">
-                        <label class="form-label">Nature carte</label>
-                        <select
-                          class="form-select border-success"
-                          formControlName="nat_carte"
-                          
-                        >
-                           <option value="S"> Carte soins</option>
-                          <option value="M"> Carte militaire</option>
-                        </select>
-                      </div>
-
-                  </div>
-                  
-              </div>
-            </div>
-          </form>
-        </div>
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-bank-card-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Liste des cartes par adhérent</h5>
+        <p class="text-muted fs-13 mb-0">Édition des cartes de chaque adhérent selon la plage, l'état et la nature de la carte</p>
       </div>
     </div>
+
+    <form action="javascript:void(0);" [formGroup]="formAdherent" autocomplete="off">
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-12 ">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Plage de matricules</h6>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Matricule début</label>
+                <app-lov [listData]="personnelList" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="formAdherent.get('mat_pers_deb')?.value" (selectedValue)="onSelectedVMat($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="nom-deb" class="form-label">Nom et prénom</label>
+                <input id="nom-deb" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_deb" readonly />
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Matricule fin</label>
+                <app-lov [listData]="personnelList" [columns]="columnsSearch" codeField="mat_pers"
+                  [selectedCode]="formAdherent.get('mat_pers_fin')?.value" (selectedValue)="onSelectedVMat2($event)"></app-lov>
+              </div>
+              <div class="col-md-8">
+                <label for="nom-fin" class="form-label">Nom et prénom</label>
+                <input id="nom-fin" type="text" class="form-control" placeholder="Nom et prénom" formControlName="nom_fin" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Carte</h6>
+          </div>
+          <div class="col-md-3">
+            <label for="etat-cart" class="form-label">État de la carte</label>
+            <select id="etat-cart" class="form-select" formControlName="etat_cart">
+              <option value="">Tous</option>
+              <option value="C">Courante</option>
+              <option value="N">Non courante</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="perdu" class="form-label">Perdue</label>
+            <select id="perdu" class="form-select" formControlName="perdu">
+              <option value="">Tous</option>
+              <option value="O">Oui</option>
+              <option value="N">Non</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="nat-carte" class="form-label">Nature de la carte</label>
+            <select id="nat-carte" class="form-select" formControlName="nat_carte">
+              <option value="">Tous</option>
+              <option value="S">Carte soins</option>
+              <option value="M">Carte militaire</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer text-muted fs-13 d-flex align-items-center gap-2">
+        <i class="ri-printer-line fs-16" aria-hidden="true"></i>
+        Renseignez les critères puis lancez l'impression depuis la barre d'outils pour générer le PDF.
+      </div>
+    </form>
   </div>
-  
+</div>

@@ -141,6 +141,7 @@ export class MajAffiliationComponent {
 
     // Load initial data
     this.getPersonnels()
+    this.loadFilieres()
     //this.getRemb()
     //this.getPrimeRetr()
   }
@@ -202,31 +203,71 @@ export class MajAffiliationComponent {
     return dateString;
   }
 
-  onSelectedValueFil(item: any) {
-    const enfantsArray = this.formAffilPers.get('affil') as FormArray;
-    const selectedFormGroup = enfantsArray.at(0) as FormGroup;
+  // Groupe vide pour une ligne d'affiliation
+  private newAffilGroup(): FormGroup {
+    return this.fb.group({
+      cod_soc: [''],
+      mat_pers: [''],
+      cod_fil: [''],
+      courant: [''],
+      annee_aff: [''],
+      prf_typ: [''],
+      prf_cod: [''],
+    });
+  }
 
-    if (selectedFormGroup) {
-      this.adherentServ.getRefEtablis().subscribe((data: any) => {
-        this.listRefEtablis = data
-        this.columnRefEtablis = [
-          { key: "prf_cod", label: "Code" },
-          { key: "nom", label: "Nom" }
-        ]
-      })
-
-      if (selectedFormGroup.get('cod_fil')) {
-        selectedFormGroup.patchValue({
-          cod_fil: item.cod_fil,
+  // Liste des filières et des établissements (chargées dès l'ouverture de la page)
+  loadFilieres() {
+    this.adherentServ.getRefFilliere().subscribe({
+      next: (data) => {
+        this.listFil = data
+        this.columnFil = [
+          { key: "cod_fil", label: "Code" },
+          { key: "lib_fill", label: "Libelle" },
+        ];
+      },
+      error: (err) => {
+        console.error("Chargement des filières impossible", err);
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "Impossible de charger la liste des filières.",
         });
-        this.libFill = item.lib_fill
-        console.log("selectedFormGroup", selectedFormGroup);
-        console.log(`Patched values: num_fam = ${item.cod_fil}, libNom = ${item.nom_pren}`);
-      } else {
-        console.error(`num_fam control is missing in the FormGroup at index `);
       }
+    })
+  }
+
+  loadEtablissements() {
+    this.adherentServ.getRefEtablis().subscribe((data: any) => {
+      this.listRefEtablis = data
+      this.columnRefEtablis = [
+        { key: "prf_cod", label: "Code" },
+        { key: "nom", label: "Nom" }
+      ]
+    })
+  }
+
+  // Libellés affichés dans la fenêtre, déduits du code de chaque ligne
+  libFiliere(code: any): string {
+    const f = (this.listFil || []).find(x => String(x.cod_fil) === String(code));
+    return f?.lib_fill ?? '';
+  }
+
+  libEtablis(code: any): string {
+    const e = (this.listRefEtablis || []).find(x => String(x.prf_cod) === String(code));
+    return e?.nom ?? '';
+  }
+
+  onSelectedValueFil(item: any, index: number = 0) {
+    const selectedFormGroup = this.affil.at(index) as FormGroup;
+    if (!selectedFormGroup) return;
+
+    selectedFormGroup.patchValue({ cod_fil: item.cod_fil });
+    this.libFill = item.lib_fill
+    if (Number(item.cod_fil) === 2) {
+      if (!this.listRefEtablis?.length) this.loadEtablissements();
     } else {
-      console.error(`FormGroup is missing at index `);
+      selectedFormGroup.patchValue({ prf_typ: '', prf_cod: '' });
     }
   }
 
@@ -286,20 +327,12 @@ export class MajAffiliationComponent {
       this.listPersAffil = data
       console.log("this.listBenef", this.listPersAffil)
     })
-
-    this.adherentServ.getRefFilliere().subscribe((data) => {
-      this.listFil = data
-      this.columnFil = [
-        { key: "cod_fil", label: "Code" },
-        { key: "lib_fill", label: "Libelle" },
-      ];
-    })
+    this.loadFilieres()
   }
 
-  onSelectRefEtablis(item: any) {
-    console.log("item :", item);
+  onSelectRefEtablis(item: any, index: number = 0) {
     this.libRef = item.nom
-    this.formAffilPers.patchValue({
+    this.affil.at(index)?.patchValue({
       prf_typ: item.prf_typ,
       prf_cod: item.prf_cod,
     });
@@ -327,6 +360,12 @@ export class MajAffiliationComponent {
   openModalTab(content: any) {
     this.edit = true;
     this.editCarteIndex = null
+    // nouvelle saisie : une seule ligne vide (pas de reste d'une saisie précédente)
+    this.affil.clear()
+    this.affil.push(this.newAffilGroup())
+    this.libFill = ''
+    this.libRef = ''
+    if (!this.listFil?.length) this.loadFilieres()
     this.modalService.open(content, { size: "xl", centered: true });
   }
 
@@ -422,6 +461,11 @@ export class MajAffiliationComponent {
   editDataGet(id: any, data: any, content: any) {
     console.log(data)
     this.edit = false;
+    // modification : une seule ligne, celle choisie
+    this.affil.clear()
+    this.affil.push(this.newAffilGroup())
+    if (!this.listFil?.length) this.loadFilieres()
+    if (Number(data.cod_fil) === 2 && !this.listRefEtablis?.length) this.loadEtablissements()
     this.modalService.open(content, { size: "xl", centered: true });
 
     (this.formAffilPers.get("affil") as FormArray).controls[0]

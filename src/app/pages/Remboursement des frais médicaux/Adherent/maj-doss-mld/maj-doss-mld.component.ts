@@ -197,7 +197,7 @@ export class MajDossMldComponent {
         selectedFormGroup.patchValue({
           num_fam: item.num_fam,
         });
-        this.nom = item.nom_PREN
+        this.nom = item.nom_pren ?? item.nom_PREN ?? ''
 
         console.log("selectedFormGroup", selectedFormGroup);
 
@@ -282,7 +282,7 @@ export class MajDossMldComponent {
       this.listFamille = data
       this.columnFamille = [
         { key: "num_fam", label: "Num fam" },
-        { key: "nom_PREN", label: "Nom" },
+        { key: "nom_pren", label: "Nom" },
       ];
     })
   }
@@ -321,6 +321,10 @@ export class MajDossMldComponent {
   openModalTab(content: any) {
     this.edit = true;
     this.editCarteIndex = null
+    // nouvelle saisie : on repart de libellés et de champs vides
+    this.nom = ''
+    this.libMalad = ''
+    this.doss.at(0)?.patchValue({ cod_malad: '', num_fam: '', dat_doss_mld: '', etat_dos_mld: '' })
 
     //this.formCertif.reset()
     this.modalService.open(content, { size: "xl", centered: true });
@@ -432,6 +436,9 @@ export class MajDossMldComponent {
   editDataGet(id: any, data: any, content: any) {
     console.log(data)
     this.edit = false;
+    // libellés affichés dans la fenêtre (propres à la ligne choisie)
+    this.nom = (data.num_fam === 0 || data.num_fam === '0') ? 'Adhérent' : (data.nom ?? '')
+    this.libMalad = data.libMalad ?? ''
     this.modalService.open(content, { size: "xl", centered: true });
 
     (this.formDossMalad.get("doss") as FormArray).controls[0]

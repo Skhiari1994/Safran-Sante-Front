@@ -1,158 +1,163 @@
 <div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
-  <app-breadcrumbs title="Préparation Bordereau CNAM sur support" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+  <app-breadcrumbs title="Préparation bordereau CNAM sur support" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
 
-
+<!-- Bordereau : identification, assurance, période, puis préparation du fichier -->
 <div class="col-xl-12" *ngIf="rowActiveT">
+  <div class="card mt-4">
 
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <form class="row g-3" [formGroup]="bordEnvoiForm">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-folder-open-line" aria-hidden="true"></i>
+        </span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Bordereau</h5>
+        <p class="text-muted fs-13 mb-0">Choisissez un code bordereau, puis préparez le fichier à envoyer à la CNAM.</p>
+      </div>
+    </div>
 
-      <!-- Row 1: Code bodereau,  Date bord -->
-      <div class="col-md-6">
-        <div class="col-md-4">
+    <div class="card-body">
+      <form class="row g-3" [formGroup]="bordEnvoiForm">
 
-          <label for="billinginfo-nom" class="form-label">Code bodereau</label>
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identification</h6>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Code bordereau</label>
           <app-lov [listData]="listCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="codBord"
             (selectedValue)="onSelectedValueCodBord($event)">
           </app-lov>
-
-
         </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="col-md-6">
-          <label for="billinginfo-prenom" class="form-label">Date bord </label>
-          <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_bord"
-            appDateFormatter />
+        <div class="col-md-3">
+          <label for="bord-date" class="form-label">Date du bordereau</label>
+          <input id="bord-date" type="text" class="form-control" placeholder="jj/mm/aaaa" mask="00/00/0000"
+            formControlName="dat_bord" appDateFormatter />
+        </div>
+        <div class="col-md-2">
+          <label for="bord-assur" class="form-label">Code assurance</label>
+          <input id="bord-assur" type="text" class="form-control" formControlName="cod_assur" readonly />
+        </div>
+        <div class="col-md-4">
+          <label for="bord-assur-lib" class="form-label">Libellé assurance</label>
+          <input id="bord-assur-lib" type="text" class="form-control" formControlName="lib_assur" readonly />
         </div>
 
-
-      </div>
-
-
-      <div class="col-md-2">
-        <label for="billinginfo-phone" class="form-label">Code Ass/Mut</label>
-
-        <input type="text" class="form-control border-primary" placeholder="Code Ass/Mut" formControlName="cod_assur"
-          readonly />
-      </div>
-      <div class="col-md-7">
-        <label for="billinginfo-phone" class="form-label">Libellé don</label>
-        <input type="text" class="form-control border-primary" placeholder="Libellé" formControlName="lib_assur"
-          readonly />
-      </div>
-      <div class="col-md-6">
-        <div class="col-md-6">
-          <label for="billinginfo-phone" class="form-label">Date Début</label>
-
-          <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_deb"
+        <div class="col-12 mt-4">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Période et contenu</h6>
+        </div>
+        <div class="col-md-3">
+          <label for="bord-debut" class="form-label">Date de début</label>
+          <input id="bord-debut" type="text" class="form-control" mask="00/00/0000" formControlName="dat_deb"
             appDateFormatter readonly />
         </div>
-      </div>
-
-      <div class="col-md-6">
-
-
-        <div class="col-md-6">
-          <label for="billinginfo-phone" class="form-label">Date Fin</label>
-
-          <input type="text" class="form-control border-warning" mask="00/00/0000" formControlName="dat_fin"
+        <div class="col-md-3">
+          <label for="bord-fin" class="form-label">Date de fin</label>
+          <input id="bord-fin" type="text" class="form-control" mask="00/00/0000" formControlName="dat_fin"
             appDateFormatter readonly />
         </div>
-
-      </div>
-
-
-      <!-- Row 3 :  -->
-      <div class="col-md-4">
-        <div class="col-md-6">
-          <label for="billinginfo-phone" class="form-label">Nbr Bulletins</label>
-          <input type="text" class="form-control border-primary" placeholder="N° Virement" formControlName="nbr_bult"
-            readonly />
+        <div class="col-md-3">
+          <label for="bord-nbr" class="form-label">Nombre de bulletins</label>
+          <input id="bord-nbr" type="text" class="form-control" formControlName="nbr_bult" readonly />
         </div>
-      </div>
 
-      <div class="col-md-6">
+      </form>
 
-        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="generateFile()">Préparation du
-          fichier</button>
+      <!-- Résultat de la préparation (message renvoyé par le serveur) -->
+      <div *ngIf="message" class="alert mb-0 mt-4" role="status"
+        [ngClass]="message.startsWith('Error') ? 'alert-danger' : 'alert-success'">
+        {{ message }}
       </div>
-      <div class="col-md-6" *ngIf="bool==true">
-        <button class="btn btn-secondary" (click)="downloadFile()">
-          <i class="ri-download-line me-1"></i> Télécharger
-        </button>
-      </div>
-    </form>
+    </div>
+
+    <!-- Actions : préparer le fichier, puis le télécharger -->
+    <div class="card-footer border-top-dashed d-flex flex-wrap align-items-center justify-content-end gap-3">
+      <span class="text-muted fs-13 me-auto" *ngIf="!codBord">Choisissez d'abord un code bordereau.</span>
+      <span class="text-muted fs-13 me-auto" *ngIf="codBord && bool != true">
+        Préparez le fichier pour pouvoir le télécharger.
+      </span>
+      <button type="button" class="btn btn-primary" [disabled]="!codBord" (click)="generateFile()">
+        <i class="ri-file-settings-line align-bottom me-1" aria-hidden="true"></i>Préparation du fichier
+      </button>
+      <button type="button" class="btn btn-secondary" *ngIf="bool == true" (click)="downloadFile()">
+        <i class="ri-download-line align-bottom me-1" aria-hidden="true"></i>Télécharger
+      </button>
+    </div>
   </div>
 </div>
 
-
+<!-- Bulletins du bordereau -->
 <div class="col-xl-12">
-  <div class="card p-4 border shadow-none mb-0 mt-4">
-    <h5 class="mb-1 text-primary mb-3">Bulletins</h5>
+  <div class="card mt-4 mb-4">
 
-    <div class="card-header">
-      <div class="d-flex align-items-center flex-wrap gap-9">
-        <div class="flex-grow-1"></div>
-
-
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-file-list-3-line" aria-hidden="true"></i>
+        </span>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <div class="table-card">
-          <p-table [value]="listBord" [paginator]="true" [rows]="12"
-            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-            <ng-template pTemplate="header">
-              <tr>
-                <th
-                  *ngFor="let column of ['mat_pers', 'nom_complet_pers', 'cod_fil', 'num_fam', 'nom_adherent', 'dat_saisie', 'dat_soin', 'sold', 'mnt_honor', 'mnt_tot']"
-                  [pSortableColumn]="column"
-                  [ngStyle]="{textAlign: (column === 'mnt_honor' || column === 'mnt_tot') ? 'right' : 'left'}">
-                  {{ columnTitles[column] || column }}
-                  <p-sortIcon [field]="column"></p-sortIcon>
-                </th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowData>
-              <tr>
-                <td>{{ rowData.mat_pers }}</td>
-                <td>{{ rowData.nom_complet_pers }}</td>
-                <td>{{ rowData.cod_fil }}</td>
-                <td>{{ rowData.num_fam }}</td>
-                <td>{{ rowData.nom_adherent }}</td>
-                <td>{{ rowData.dat_saisie }}</td>
-                <td>{{ rowData.dat_soin }}</td>
-                <td><span style="display:block;text-align:right">{{ rowData.sold | number: '1.3-3' }}</span></td>
-                <td><span style="display:block;text-align:right">{{ rowData.mnt_honor | number: '1.3-3' }}</span></td>
-                <td><span style="display:block;text-align:right">{{ rowData.mnt_tot | number: '1.3-3' }}</span></td>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="footer">
-              <tr class="table-secondary fw-bold">
-                <td colspan="8" class="text-end">Totaux :</td>
-                <td><span style="display:block;text-align:right">{{ getTotalHonor() | number: '1.3-3' }}</span></td>
-                <td><span style="display:block;text-align:right">{{ getTotalTot() | number: '1.3-3' }}</span></td>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="10">
-                  <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
+      <div>
+        <h5 class="card-title mb-0">Bulletins</h5>
+        <p class="text-muted fs-13 mb-0">
+          {{ listBord?.length || 0 }} bulletin{{ (listBord?.length || 0) > 1 ? 's' : '' }}
+        </p>
       </div>
     </div>
 
+    <div class="card-body">
+      <p-table [value]="listBord" [paginator]="(listBord?.length || 0) > 12" [rows]="12"
+        styleClass="p-datatable-sm modern-table">
+        <ng-template pTemplate="header">
+          <tr class="table-light">
+            <th
+              *ngFor="let col of [
+                { k: 'mat_pers', t: 'Matricule' }, { k: 'nom_complet_pers', t: 'Adhérent' },
+                { k: 'cod_fil', t: 'Filière' }, { k: 'num_fam', t: 'N° prest.' },
+                { k: 'nom_adherent', t: 'Bénéficiaire' }, { k: 'dat_saisie', t: 'Date saisie' },
+                { k: 'dat_soin', t: 'Date soin' }, { k: 'sold', t: 'Solde' },
+                { k: 'mnt_honor', t: 'Honoraires' }, { k: 'mnt_tot', t: 'Net' }]"
+              [pSortableColumn]="col.k" scope="col"
+              [ngClass]="{ 'text-end': col.k === 'sold' || col.k === 'mnt_honor' || col.k === 'mnt_tot' }">
+              {{ col.t }}
+              <p-sortIcon [field]="col.k"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.mat_pers }}</span></td>
+            <td class="fw-medium">{{ rowData.nom_complet_pers }}</td>
+            <td>{{ rowData.cod_fil }}</td>
+            <td>{{ rowData.num_fam }}</td>
+            <td>{{ rowData.nom_adherent }}</td>
+            <td>{{ rowData.dat_saisie }}</td>
+            <td>{{ rowData.dat_soin }}</td>
+            <td class="text-end">{{ rowData.sold | number: '1.3-3' }}</td>
+            <td class="text-end">{{ rowData.mnt_honor | number: '1.3-3' }}</td>
+            <td class="text-end">{{ rowData.mnt_tot | number: '1.3-3' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr class="table-light fw-bold">
+            <td colspan="8" class="text-end">Totaux</td>
+            <td class="text-end">{{ getTotalHonor() | number: '1.3-3' }}</td>
+            <td class="text-end">{{ getTotalTot() | number: '1.3-3' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="10" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucun bulletin à afficher
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 </div>
-<br>
 
 <!-- end row -->
 <div *ngIf="isSearch">
@@ -172,7 +177,7 @@
         <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
           <h4>Êtes-vous sûr(e) ?</h4>
           <p class="text-muted mx-4 mb-0">
-            Voulez-vous vraiment supprimer cette bulletin ? ?
+            Voulez-vous vraiment supprimer ce bulletin ?
           </p>
         </div>
       </div>

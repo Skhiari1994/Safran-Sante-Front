@@ -1,337 +1,405 @@
-<div class="d-flex justify-content-center mt-4">
-    <div class="col-md-10">
-        <div class="collapse show" id="paymentmethodCollapse">
-            <div class="card p-4 border shadow-none">
-                <div class="card-header page-card-header">
-                    <div class="page-card-title">
-                        <h5>Adhérent</h5>
-                        <small>Identité, situation et assurance</small>
-                    </div>
-                </div>
-                <!-- Search Form -->
-                <form action="javascript:void(0);" [formGroup]="formPersonnel">
-                    <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Matricule</label>
-                        <input type="text" class="form-control border-primary" placeholder="Matricule" formControlName="mat_pers" readonly />
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Nom</label>
-                        <input type="text" class="form-control border-primary" placeholder="Nom" formControlName="nom_pers" readonly />
-                    </div>
-                    <div class="col-md-5">
-                        <label class="form-label">Prénom</label>
-                        <input type="text" class="form-control border-primary" placeholder="Prénom" formControlName="pren_pers" readonly />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Etat</label>
-                        <select class="form-select border-primary" formControlName="etat_act">
-                            <option value="">Sélectionner</option>
-                            <option value="A">ACTIF</option>
-                            <option value="B">Bloqué(e)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Date d'embauche</label>
-                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" readonly />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Situation sociale</label>
-                        <select class="form-select border-primary" formControlName="cod_sit">
-                            <option value="">Sélectionner</option>
-                            <option value="C">Célibataire</option>
-                            <option value="M">Marié(e)</option>
-                            <option value="D">Divorcé(e)</option>
-                            <option value="V">Voeuf(ve)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Nombre d'enfants</label>
-                        <input type="text" class="form-control border-primary" placeholder="Nombre d'enfants" formControlName="nbr_enf" readonly />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Code assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="Code" formControlName="cod_assur" readonly />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Libellé assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="Libellé" [value]="libAssur" readonly />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Numéro assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="Numéro assurance" formControlName="num_assur" readonly />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Date assurance</label>
-                        <input type="text" class="form-control border-primary" placeholder="jj/mm/aaaa" formControlName="dat_ass" readonly />
-                    </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Prises en charge maladie"></app-breadcrumbs>
 </div>
-<div class="d-flex justify-content-center">
-    <div class="col-12 px-3">
-        <div class="card p-4 border shadow-none mt-4 mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-                <div class="page-card-title">
-                    <h5>Liste des prises en charge maladie</h5>
-                    <small>{{ listPriseCharge?.length || 0 }} prise(s) en charge</small>
-                </div>
-                <button class="btn btn-info add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
-                    (click)="openModalTab(content1)">
-                    <i class="ri-add-fill me-1 align-bottom"></i> Ajouter prise en charge
-                </button>
-            </div>
-            <div class="table-responsive table-card">
-                <p-table [value]="filterRows(listPriseCharge)" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                    <ng-template pTemplate="header">
-                        <tr class="table-primary">
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('num_pec')"></i>
-                                    <span class="th-title" (click)="onSort2('num_pec')">Num pec</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('num_pec')"></i>
-                                </div>
-                                <input *ngIf="showFilters['num_pec']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['num_pec']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('dat_pec')"></i>
-                                    <span class="th-title" (click)="onSort2('dat_pec')">Date pec</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('dat_pec')"></i>
-                                </div>
-                                <input *ngIf="showFilters['dat_pec']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['dat_pec']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('num_fam')"></i>
-                                    <span class="th-title" (click)="onSort2('num_fam')">Num fam</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('num_fam')"></i>
-                                </div>
-                                <input *ngIf="showFilters['num_fam']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['num_fam']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('nom')"></i>
-                                    <span class="th-title" (click)="onSort2('nom')">Nom</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('nom')"></i>
-                                </div>
-                                <input *ngIf="showFilters['nom']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['nom']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('typ_etablis')"></i>
-                                    <span class="th-title" (click)="onSort2('typ_etablis')">Type établis</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('typ_etablis')"></i>
-                                </div>
-                                <input *ngIf="showFilters['typ_etablis']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['typ_etablis']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('prf_cod')"></i>
-                                    <span class="th-title" (click)="onSort2('prf_cod')">Code</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('prf_cod')"></i>
-                                </div>
-                                <input *ngIf="showFilters['prf_cod']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['prf_cod']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('nomEtab')"></i>
-                                    <span class="th-title" (click)="onSort2('nomEtab')">Etablissement</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('nomEtab')"></i>
-                                </div>
-                                <input *ngIf="showFilters['nomEtab']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['nomEtab']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('dat_eff')"></i>
-                                    <span class="th-title" (click)="onSort2('dat_eff')">Date effet</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('dat_eff')"></i>
-                                </div>
-                                <input *ngIf="showFilters['dat_eff']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['dat_eff']" placeholder="..." />
-                            </th>
-                            <th>
-                                <div class="th-head">
-                                    <i class="ri-arrow-up-down-line th-sort" (click)="onSort2('etat_pec')"></i>
-                                    <span class="th-title" (click)="onSort2('etat_pec')">Etat</span>
-                                    <i class="ri-search-line th-search" (click)="toggleFilter('etat_pec')"></i>
-                                </div>
-                                <input *ngIf="showFilters['etat_pec']" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz['etat_pec']" placeholder="..." />
-                            </th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                        <tr>
-                            <td class="text-center">{{ rowData.num_pec }}</td>
-                            <td class="text-center">{{ rowData.dat_pec }}</td>
-                            <td class="text-center">{{ rowData.num_fam }}</td>
-                            <td class="text-center">{{ rowData.nom }}</td>
-                            <td class="text-center">{{ rowData.prf_typ == 1 ? 'Personne phy' : 'Etablissement' }}</td>
-                            <td class="text-center">{{ rowData.prf_cod }}</td>
-                            <td class="text-center">{{ rowData.nomEtab }}</td>
-                            <td class="text-center">{{ rowData.dat_eff }}</td>
-                            <td class="text-center">{{ rowData.etat_pec == 'I' ? 'En Instance' : rowData.etat_pec == 'V' ? 'Validée' : 'Refusée' }}</td>
-                            <td>
-                                <ul class="list-inline hstack gap-2 mb-0">
-                                    <li class="list-inline-item">
-                                        <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet(rowIndex, rowData, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                                    </li>
-                                    <li class="list-inline-item me-0" ngbTooltip="Delete" placement="top">
-                                        <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="emptymessage">
-                        <tr>
-                            <td colspan="10" class="text-center">Aucune prise en charge</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-        </div>
+
+<div class="col-xl-12">
+  <div class="card mt-4">
+    <div class="card-header border-bottom-dashed d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-line" aria-hidden="true"></i></span>
+      </div>
+      <div>
+        <h5 class="card-title mb-0">Adhérent</h5>
+        <p class="text-muted fs-13 mb-0">Identité, situation et assurance — utilisez la recherche de la barre d'outils pour choisir un adhérent</p>
+      </div>
     </div>
+
+    <form action="javascript:void(0);" [formGroup]="formPersonnel" autocomplete="off">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identité</h6>
+          </div>
+          <div class="col-md-3">
+            <label for="p-mat" class="form-label">Matricule</label>
+            <input id="p-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers" readonly />
+          </div>
+          <div class="col-md-4">
+            <label for="p-nom" class="form-label">Nom</label>
+            <input id="p-nom" type="text" class="form-control" placeholder="Nom" formControlName="nom_pers" readonly />
+          </div>
+          <div class="col-md-5">
+            <label for="p-pren" class="form-label">Prénom</label>
+            <input id="p-pren" type="text" class="form-control" placeholder="Prénom" formControlName="pren_pers" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-etat" class="form-label">État</label>
+            <select id="p-etat" class="form-select" formControlName="etat_act" style="pointer-events: none;" tabindex="-1" aria-readonly="true">
+              <option value="">—</option>
+              <option value="A">Actif</option>
+              <option value="B">Bloqué(e)</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="p-emb" class="form-label">Date d'embauche</label>
+            <input id="p-emb" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_emb" mask="00/00/0000" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-sit" class="form-label">Situation sociale</label>
+            <select id="p-sit" class="form-select" formControlName="cod_sit" style="pointer-events: none;" tabindex="-1" aria-readonly="true">
+              <option value="">—</option>
+              <option value="C">Célibataire</option>
+              <option value="M">Marié(e)</option>
+              <option value="D">Divorcé(e)</option>
+              <option value="V">Veuf(ve)</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="p-enf" class="form-label">Nombre d'enfants</label>
+            <input id="p-enf" type="text" class="form-control" placeholder="Nombre d'enfants" formControlName="nbr_enf" readonly />
+          </div>
+
+          <div class="col-12 mt-4">
+            <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Assurance</h6>
+          </div>
+          <div class="col-md-2">
+            <label for="p-codass" class="form-label">Code assurance</label>
+            <input id="p-codass" type="text" class="form-control" placeholder="Code" formControlName="cod_assur" readonly />
+          </div>
+          <div class="col-md-4">
+            <label for="p-libass" class="form-label">Libellé assurance</label>
+            <input id="p-libass" type="text" class="form-control" placeholder="Libellé" [value]="libAssur" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-numass" class="form-label">Numéro assurance</label>
+            <input id="p-numass" type="text" class="form-control" placeholder="Numéro assurance" formControlName="num_assur" readonly />
+          </div>
+          <div class="col-md-3">
+            <label for="p-datass" class="form-label">Date assurance</label>
+            <input id="p-datass" type="text" class="form-control" placeholder="jj/mm/aaaa" formControlName="dat_ass" readonly />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="col-xl-12">
+  <div class="card mt-4 mb-4">
+    <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">Liste des prises en charge maladie</h5>
+          <p class="text-muted fs-13 mb-0">
+            {{ listPriseCharge?.length || 0 }} prise{{ (listPriseCharge?.length || 0) > 1 ? 's' : '' }} en charge
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#showModal"
+        (click)="openModalTab(content1)">
+        <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter une prise en charge
+      </button>
+    </div>
+
+    <div class="card-body">
+      <p-table [value]="filterRows(listPriseCharge)" [paginator]="(listPriseCharge?.length || 0) > 10" [rows]="10"
+        styleClass="p-datatable-sm modern-table">
+        <ng-template pTemplate="header">
+              <tr class="table-light">
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('num_pec')" aria-label="Trier par Num pec">
+                    Num pec<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('dat_pec')" aria-label="Trier par Date pec">
+                    Date pec<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('num_fam')" aria-label="Trier par Num fam">
+                    Num fam<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('nom')" aria-label="Trier par Nom">
+                    Nom<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('typ_etablis')" aria-label="Trier par Type établis">
+                    Type établis<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('prf_cod')" aria-label="Trier par Code">
+                    Code<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('nomEtab')" aria-label="Trier par Établissement">
+                    Établissement<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('dat_eff')" aria-label="Trier par Date effet">
+                    Date effet<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button"
+                    class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort2('etat_pec')" aria-label="Trier par État">
+                    État<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col" class="text-end" style="width: 90px;">Actions</th>
+              </tr>
+              <tr>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['num_pec']" aria-label="Filtrer par Num pec" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['dat_pec']" aria-label="Filtrer par Date pec" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['num_fam']" aria-label="Filtrer par Num fam" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['nom']" aria-label="Filtrer par Nom" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['typ_etablis']" aria-label="Filtrer par Type établis" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['prf_cod']" aria-label="Filtrer par Code" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['nomEtab']" aria-label="Filtrer par Établissement" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['dat_eff']" aria-label="Filtrer par Date effet" />
+                </th>
+                <th class="py-2">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz['etat_pec']" aria-label="Filtrer par État" />
+                </th>
+                <th></th>
+              </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+          <tr>
+            <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.num_pec }}</span></td>
+            <td>{{ rowData.dat_pec }}</td>
+            <td>{{ rowData.num_fam }}</td>
+            <td class="fw-medium">{{ rowData.nom }}</td>
+            <td>
+              <span class="badge fs-12" [ngClass]="rowData.prf_typ == 1 ? 'bg-info-subtle text-info' : 'bg-secondary-subtle text-secondary'">
+                {{ rowData.prf_typ == 1 ? 'Personne physique' : 'Établissement' }}
+              </span>
+            </td>
+            <td>{{ rowData.prf_cod }}</td>
+            <td>{{ rowData.nomEtab }}</td>
+            <td>{{ rowData.dat_eff }}</td>
+            <td>
+              <span *ngIf="rowData.etat_pec == 'I'" class="badge bg-warning-subtle text-warning fs-12">En instance</span>
+              <span *ngIf="rowData.etat_pec == 'V'" class="badge bg-success-subtle text-success fs-12">Validée</span>
+              <span *ngIf="rowData.etat_pec != 'I' && rowData.etat_pec != 'V'" class="badge bg-danger-subtle text-danger fs-12">Refusée</span>
+            </td>
+            <td class="text-end text-nowrap">
+              <button type="button" class="btn btn-icon btn-soft-primary me-1" title="Modifier" aria-label="Modifier la prise en charge"
+                data-bs-toggle="modal" (click)="editDataGet(rowIndex, rowData, content1)">
+                <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" aria-label="Supprimer la prise en charge"
+                data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)">
+                <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="10" class="text-center text-muted py-5">
+              <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+              Aucune prise en charge
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </div>
 
 <!-- Section Recherche -->
 <div *ngIf="isSearch" class="d-flex justify-content-center">
-    <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
-    </app-search-lov>
+  <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
+  </app-search-lov>
 </div>
 
-
+<!-- Fenêtre : prise en charge -->
 <ng-template #content1 role="document" let-modal>
-    <div class="modal-header bg-info-subtle p-3">
-        <h5 class="modal-title" id="exampleModalLabel">{{ edit ? 'Ajouter' : 'Modifier' }} prise en charge</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"
-            (click)="modal.dismiss('Cross click')"></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter' : 'Modifier' }} une prise en charge</h5>
+        <p class="text-muted fs-13 mb-0">Bénéficiaire, établissement, montant et état</p>
+      </div>
     </div>
-    <form [formGroup]="formPriseCharge" class="tablelist-form" autocomplete="off">
-        <div formArrayName="charge" class="scrollable-container">
-            <div *ngFor="let certif of charge.controls; let i = index" [formGroupName]="i" class="row g-3">
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Num pec</label>
-                            <input type="text" class="form-control border-primary" placeholder="Num pec"
-                                formControlName="num_pec" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Date pec</label>
-                            <input type="text" class="form-control border-primary" mask="00/00/0000"
-                                formControlName="dat_pec" placeholder="jj/mm/aaaa" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Numéro famille</label>
-                            <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam"
-                                [selectedCode]="certif.get('num_fam')?.value"
-                                (selectedValue)="onSelectedValueFamille($event, i)">
-                            </app-lov>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Nom</label>
-                            <input type="text" class="form-control border-primary" placeholder="Nom"
-                                [value]="nom?.[i] || ''" readonly />
-                        </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="formPriseCharge" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div formArrayName="charge" class="scrollable-container">
+        <div *ngFor="let certif of charge.controls; let i = index" [formGroupName]="i"
+          [ngClass]="charge.controls.length > 1 ? 'border rounded p-3 mb-3' : ''">
+          <div class="row g-3">
 
-                        <div class="col-md-3">
-                            <label class="form-label">Type établissement</label>
-                            <select class="form-select border-primary" formControlName="prf_typ"
-                                (change)="OnselectRefTyp($event)">
-                                <option value="">Sélectionner</option>
-                                <option value="1">Personne Physique</option>
-                                <option value="2">Etablissement</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Code établissement</label>
-                            <app-lov [listData]="listRefEtablis" [columns]="columnRefEtablis" codeField="prf_cod"
-                                [selectedCode]="certif.get('prf_cod')?.value"
-                                (selectedValue)="onSelectedEtablis($event, i)"></app-lov>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Libellé établissement</label>
-                            <input class="form-control border-primary" type="text" placeholder="Libellé" [value]="etab_rsoc?.[i] || ''"
-                                readonly>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Montant pec</label>
-                            <input type="text" class="form-control border-primary montant-input" appMontantMask
-                                formControlName="mnt_pec" placeholder="0.000" />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Date effet</label>
-                            <input type="text" class="form-control border-primary" mask="00/00/0000"
-                                formControlName="dat_eff" placeholder="jj/mm/aaaa" />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Etat</label>
-                            <select class="form-select border-primary" formControlName="etat_pec">
-                                <option value="">Sélectionner</option>
-                                <option value="I">En instance</option>
-                                <option value="V">Validée</option>
-                                <option value="R">Refusée</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Boutons d'ajout/suppression -->
-                <div class="hstack gap-2 justify-content-center" *ngIf="edit">
-                    <button type="button" class="btn btn-success" (click)="addDoss()">Ajouter prise en charge</button>
-                    <button type="button" class="btn btn-info" (click)="removeDoss(i)">Annuler</button>
-                </div>
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Prise en charge</h6>
             </div>
-        </div>
-
-        <!-- Footer modal -->
-        <div class="modal-footer">
-            <div class="hstack gap-2 justify-content-end">
-                <button type="button" class="btn btn-success" (click)="saveDossAPCI(); modal.close('Close click')">
-                    Valider
-                </button>
-                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">
-                    Fermer
-                </button>
+            <div class="col-md-6">
+              <label class="form-label">Num pec</label>
+              <input type="text" class="form-control" placeholder="Num pec" formControlName="num_pec" />
             </div>
-        </div>
-    </form>
+            <div class="col-md-6">
+              <label class="form-label">Date pec</label>
+              <input type="text" class="form-control" mask="00/00/0000" formControlName="dat_pec" placeholder="jj/mm/aaaa" />
+            </div>
 
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Bénéficiaire</h6>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Numéro famille</label>
+              <app-lov [listData]="listFamille" [columns]="columnFamille" codeField="num_fam"
+                [selectedCode]="certif.get('num_fam')?.value" (selectedValue)="onSelectedValueFamille($event, i)">
+              </app-lov>
+            </div>
+            <div class="col-md-9">
+              <label class="form-label">Nom</label>
+              <input type="text" class="form-control" placeholder="Nom" [value]="nom?.[i] || ''" readonly />
+            </div>
+
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Établissement</h6>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Type établissement</label>
+              <select class="form-select" formControlName="prf_typ" (change)="OnselectRefTyp($event)">
+                <option value="">Sélectionner</option>
+                <option value="1">Personne physique</option>
+                <option value="2">Établissement</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Code établissement</label>
+              <app-lov [listData]="listRefEtablis" [columns]="columnRefEtablis" codeField="prf_cod"
+                [selectedCode]="certif.get('prf_cod')?.value" (selectedValue)="onSelectedEtablis($event, i)"></app-lov>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Libellé établissement</label>
+              <input class="form-control" type="text" placeholder="Libellé" [value]="etab_rsoc?.[i] || ''" readonly />
+            </div>
+
+            <div class="col-12 mt-4">
+              <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Montant, date et état</h6>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Montant pec</label>
+              <input type="text" class="form-control montant-input" appMontantMask formControlName="mnt_pec" placeholder="0.000" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Date effet</label>
+              <input type="text" class="form-control" mask="00/00/0000" formControlName="dat_eff" placeholder="jj/mm/aaaa" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">État</label>
+              <select class="form-select" formControlName="etat_pec">
+                <option value="">Sélectionner</option>
+                <option value="I">En instance</option>
+                <option value="V">Validée</option>
+                <option value="R">Refusée</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-3" *ngIf="edit && charge.controls.length > 1">
+            <button type="button" class="btn btn-soft-danger btn-sm" (click)="removeDoss(i)">
+              <i class="ri-close-line align-bottom me-1" aria-hidden="true"></i>Retirer cette ligne
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="edit" class="text-center mt-3">
+        <button type="button" class="btn btn-soft-primary" (click)="addDoss()">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter une autre prise en charge
+        </button>
+      </div>
+    </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+    <button type="button" class="btn btn-success" (click)="saveDossAPCI(); modal.close('Close click')">
+      <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Valider
+    </button>
+  </div>
+  </form>
 </ng-template>
 
+<!-- Fenêtre : suppression -->
 <ng-template #deleteModel let-modal>
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close"
-                (click)="modal.dismiss('Cross click')"></button>
-        </div>
-        <div class="modal-body">
-            <div class="mt-2 text-center">
-                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                    colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-                <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                    <h4>Êtes-vous sûr ?</h4>
-                    <p class="text-muted mx-4 mb-0">
-                        Êtes-vous sûr de vouloir supprimer ce dossier ?
-                    </p>
-                </div>
-            </div>
-            <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal"
-                    (click)="modal.close('Close click')">
-                    Fermer
-                </button>
-                <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()"
-                    (click)="modal.close('Close click')">
-                    Oui, Supprimer!
-                </button>
-            </div>
-        </div>
+  <div class="modal-header border-0">
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body pt-0">
+    <div class="text-center">
+      <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+        colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
+      <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+        <h4>Êtes-vous sûr ?</h4>
+        <p class="text-muted mx-4 mb-0">
+          La prise en charge n° <b>{{ deleteId?.num_pec }}</b> de <b>{{ deleteId?.nom }}</b> sera supprimée.
+        </p>
+      </div>
     </div>
-    <!-- /.modal-content -->
+    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+      <button type="button" class="btn w-sm btn-light" (click)="modal.close('Close click')">Fermer</button>
+      <button type="button" class="btn w-sm btn-danger" (click)="ConfirmDelete(); modal.close('Close click')">
+        Oui, supprimer !
+      </button>
+    </div>
+  </div>
 </ng-template>

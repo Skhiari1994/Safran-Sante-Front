@@ -62,6 +62,8 @@ export class ReclameAdherentComponent {
     lib_remb: "Regime de remb",
     tot_remb: "Total CNAM",
     tot_mut: "Tot Mut",
+    solde: "Solde",
+    reclamation: "Réclamation",
     reg_adh: "Reg Adh"
   };
 

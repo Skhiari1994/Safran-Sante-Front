@@ -1,198 +1,156 @@
-<div class="row" style="margin-top: 25px"></div>
-<div class="row sticky-top" style="z-index: 1025; top: 121px">
-  <app-breadcrumbs
-    title="Activités établissement"
-    [breadcrumbItems]="breadCrumbItems"
-  ></app-breadcrumbs>
-
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs title="Activités établissement" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
 
-<div class="row">
-  <div class="col-xl-10">
-    <div class="container d-flex justify-content-center align-items-center">
-      <div class="col-md-12">
-        <div class="collapse show" id="paymentmethodCollapse">
-          <div class="card p-4 border shadow mb-4">
-            <div class="card-header page-card-header d-flex justify-content-between align-items-center">
-              <div class="page-card-title">
-                <h5>Liste des activités établissement</h5>
-                <small>{{ listActiviteEtablis?.length || 0 }} activité(s)</small>
-              </div>
-              <button
-                class="btn btn-info add-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#showModal"
-                (click)="openModalTab(content1)"
-              >
-                <i class="ri-add-fill me-1 align-bottom"></i> Ajouter activité
-              </button>
-            </div>
-            <div class="card-body">
-              <p-table [value]="listActiviteEtablis" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped modern-table">
-                <ng-template pTemplate="header">
-                  <tr class="table-primary">
-                    <th *ngFor="let column of ['cod_activ', 'lib_activite', 'lib_activite_a']">
-                      <div class="th-head">
-                        <i class="ri-arrow-up-down-line th-sort" (click)="onSort(column)"></i>
-                        <span class="th-title" (click)="onSort(column)">{{ columnTitles[column] || column }}</span>
-                        <i class="ri-search-line th-search" (click)="toggleFilter(column)"></i>
-                      </div>
-                      <input *ngIf="showFilters[column]" type="text" class="form-control form-control-sm mt-2" style="width: 100%;" [(ngModel)]="searchz[column]" (input)="applyFilter()" placeholder="..." />
-                    </th>
-                    <th class="text-center">Action</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-                  <tr>
-                    <td class="text-center">{{ rowData.cod_activ }}</td>
-                    <td class="text-center">{{ rowData.lib_activite }}</td>
-                    <td class="text-center">{{ rowData.lib_activite_a }}</td>
-                    <td>
-                      <ul class="list-inline hstack gap-2 mb-0">
-                        <li class="list-inline-item">
-                          <a class="edit-item-btn" data-bs-toggle="modal" (click)="editDataGet( rowData, content1)"><i class="ri-pencil-fill align-bottom text-muted"></i></a>
-                        </li>
-                        <li class="list-inline-item me-0">
-                          <a class="remove-item-btn" data-bs-toggle="modal" (click)="confirm(deleteModel, rowData)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </div>
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-hospital-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Liste des activités établissement</h5>
+            <p class="text-muted fs-13 mb-0">{{ listActiviteEtablis?.length || 0 }} {{ (listActiviteEtablis?.length || 0) > 1 ? 'activités' : 'activité' }}</p>
           </div>
         </div>
+        <button type="button" class="btn btn-primary" (click)="openModalTab(content1)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter une activité
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p-table [value]="listActiviteEtablis" [paginator]="(listActiviteEtablis?.length || 0) > 10" [rows]="10" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 14%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cod_activ')" aria-label="Trier par code">
+                  Code<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_activite')" aria-label="Trier par libellé">
+                  Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_activite_a')" aria-label="Trier par libellé arabe">
+                  Libellé arabe<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+            </tr>
+            <tr>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cod_activ']" (input)="applyFilter()" aria-label="Filtrer par code" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_activite']" (input)="applyFilter()" aria-label="Filtrer par libellé" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_activite_a']" (input)="applyFilter()" aria-label="Filtrer par libellé arabe" />
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_activ }}</span></td>
+              <td class="fw-medium">{{ rowData.lib_activite }}</td>
+              <td><span *ngIf="rowData.lib_activite_a; else sansArabe" dir="rtl" lang="ar">{{ rowData.lib_activite_a }}</span><ng-template #sansArabe><span class="text-muted">—</span></ng-template></td>
+              <td class="text-end">
+        <div class="hstack gap-2 justify-content-end">
+          <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+            [attr.aria-label]="'Modifier ' + rowData.lib_activite" (click)="editDataGet(rowData, content1)">
+            <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+            [attr.aria-label]="'Supprimer ' + rowData.lib_activite" (click)="confirm(deleteModel, rowData)">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+          </button>
+        </div>
+      </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-muted py-5">
+                <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                Aucune activité trouvée
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #content1 role="document" let-modal>
-    <div class="modal-header bg-info-subtle p-3">
-      <h5 class="modal-title" id="exampleModalLabel">{{edit==true?'Ajouter':'Modifier'}} activité établissement</h5>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-        id="close-modal"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
-    </div>
-    <form
-      [formGroup]="formActiviteEtabliss"
-      class="tablelist-form"
-      autocomplete="off"
-    >
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-2">
-            <label for="billinginfo-firstName" class="form-label"
-              >Code activité</label
-            >
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer le code"
-              formControlName="cod_activ"
-               
-            />      
-          </div>
-          <div class="col-md-4">
-            <label for="billinginfo-firstName" class="form-label">Libellé</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer le libellé"
-              formControlName="lib_activite"
-               
-            />
-          </div>
-          <div class="col-md-4">
-            <label for="billinginfo-lastName" class="form-label">Libellé en arabe</label>
-            <input
-              type="text"
-              class="form-control border-primary"
-              placeholder="Entrer le libellé en arabe"
-              formControlName="lib_activite_a"
-               
-            />
-          </div>
-         
-          </div>
-          </div>
-          <div class="modal-footer">
-              <div class="hstack gap-2 justify-content-end">
-                <button
-                  type="button"
-                  class="btn btn-success"
-                  data-bs-dismiss="modal"
-                  (click)="createOrUpdateActiviteEtabliss(); modal.close('Close click')"
-                >
-                  Valider
-                </button>
-              </div>
-              <div class="hstack gap-2 justify-content-end">
-                <button
-                  type="button"
-                  class="btn btn-light"
-                  data-bs-dismiss="modal"
-                  (click)="modal.close('Close click')"
-                >
-                  Fermer
-                </button>
-              </div>
-            </div>
-    </form>
-  </ng-template>
-  
-  <ng-template #deleteModel let-modal>
-    <div class="modal-content">
-      <div class="modal-header">
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-          id="btn-close"
-          (click)="modal.dismiss('Cross click')"
-        ></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-hospital-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ edit ? 'Ajouter une activité' : 'Modifier l\'activité' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ edit ? 'Les champs marqués * sont obligatoires.' : 'Le code ne peut pas être modifié.' }}</p>
       </div>
-      <div class="modal-body">
-        <div class="mt-2 text-center">
-          <lord-icon
-            src="https://cdn.lordicon.com/gsqxdxog.json"
-            trigger="loop"
-            colors="primary:#f7b84b,secondary:#f06548"
-            style="width: 100px; height: 100px"
-          ></lord-icon>
-          <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-            <h4>Es-tu sûr ?</h4>
-            <p class="text-muted mx-4 mb-0">
-                Etes-vous sûr de vouloir supprimer ce type d'activité établissement ?
-            </p>
-          </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <form [formGroup]="formActiviteEtabliss" class="tablelist-form" autocomplete="off">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="acte-code" class="form-label">Code <span class="text-danger">*</span></label>
+          <input id="acte-code" type="text" class="form-control" placeholder="Ex. 10" formControlName="cod_activ" [readonly]="!edit" />
         </div>
-        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-          <button
-            type="button"
-            class="btn w-sm btn-light"
-            data-bs-dismiss="modal"
-            (click)="modal.close('Close click')"
-          >
-            Fermer
-          </button>
-          <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="ConfirmDelete()" (click)="modal.close('Close click')">
-            Oui, supprimez-le !
-          </button>
+        <div class="col-md-8">
+          <label for="acte-libelle" class="form-label">Libellé <span class="text-danger">*</span></label>
+          <input id="acte-libelle" type="text" class="form-control" placeholder="Ex. Clinique" formControlName="lib_activite" />
+        </div>
+        <div class="col-12">
+          <label for="acte-libelle-ar" class="form-label">Libellé en arabe</label>
+          <input id="acte-libelle-ar" type="text" class="form-control" placeholder="مثال : مصحة" formControlName="lib_activite_a" dir="rtl" lang="ar" />
         </div>
       </div>
     </div>
-    <!-- /.modal-content -->
-  </ng-template>
-  
- 
-  
- 
- 
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-success" [disabled]="!formActiviteEtabliss.value.cod_activ || !formActiviteEtabliss.value.lib_activite"
+        (click)="createOrUpdateActiviteEtabliss(); modal.close('Close click')">
+        <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteModel let-modal>
+  <div class="modal-body text-center p-4">
+    <lord-icon
+      src="https://cdn.lordicon.com/gsqxdxog.json"
+      trigger="loop"
+      colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"
+    ></lord-icon>
+    <h4 class="mt-3">Supprimer cette activité ?</h4>
+    <p class="text-muted mb-0">L'activité <strong>{{ deleteId?.cod_activ }}</strong> · {{ deleteId?.lib_activite }} sera supprimée définitivement.</p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')">
+        Oui, supprimer
+      </button>
+    </div>
+  </div>
+</ng-template>

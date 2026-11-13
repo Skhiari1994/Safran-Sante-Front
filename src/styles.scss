@@ -808,3 +808,29 @@ input[placeholder*="dd/mm" i]:not([readonly]):not(:disabled) {
   background: #f3f6f9 !important;
   color: #405189 !important;
 }
+
+/* ===== Pagination : la liste « lignes par page » s'ouvre toujours vers le bas, sans recouvrir le tableau ===== */
+.p-paginator .p-dropdown .p-overlay {
+  top: 100% !important;
+  bottom: auto !important;
+  left: 0 !important;
+  margin-top: 4px;
+  min-width: 100%;
+}
+
+.p-paginator .p-dropdown-panel {
+  transform-origin: top !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.p-paginator .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  min-height: 34px;
+  justify-content: center;
+}
+
+/* Un conteneur défilant ne doit pas couper la liste ouverte sous la pagination */
+.table-responsive:has(.p-paginator),
+.p-datatable-wrapper + .p-paginator,
+.p-datatable:has(.p-paginator) {
+  overflow: visible;
+}
