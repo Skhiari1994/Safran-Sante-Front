@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { LovComponent } from 'src/app/shared/Composants/lov/lov.component';
-
+import { DatePipe } from '@angular/common';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { BulletinSoinService } from '../bulletin-soin.service';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -109,7 +109,7 @@ export class BuletinCNAMComponent {
 
 
   constructor(private token: TokenStorageService, private serv: BulletinSoinService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal,
-    public service: PaginationService, private cdr: ChangeDetectorRef, private carteCnamAlert: CarteCnamAlertService) {
+    public service: PaginationService, private cdr: ChangeDetectorRef, private carteCnamAlert: CarteCnamAlertService, private datePipe: DatePipe) {
     this.formBuletinSoin = this.fb.group({
       cod_soc: [this.token.getUser().codSoc],
       mat_pers: [''],
@@ -871,7 +871,6 @@ export class BuletinCNAMComponent {
       return;
     }
 
-    console.log("onSelectedAdherent :", item);
     this.nomAdherent = item.nom_pren;
     this.formBuletinSoin.patchValue({
       num_fam: item.num_fam
@@ -879,7 +878,8 @@ export class BuletinCNAMComponent {
 
     this.serv.getDatNais(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe(
       (data: any) => {
-        this.datNais = data?.dat_nais || '';
+        //this.datNais = data?.dat_nais || '';
+        this.datNais = this.datePipe.transform(data?.dat_nais, 'dd/MM/yyyy') || '';
       },
       error => {
         console.error('Error loading date naissance:', error);
