@@ -356,7 +356,8 @@ this.rowActiveT=false
               this.tokenStorage.getUser().codSoc,
               row.mat_pers,
               row.num_fam,
-              row.dat_soin
+              row.dat_soin,
+              row.num_soin
             ).pipe(
               map((data) => ({
                 ...row, // Keep existing properties
@@ -614,17 +615,12 @@ onSelectedValueTypDepart(item: any) {
           tot_net: bord.tot_net || ''
         });
 
-        
-
-
-
-
         this.codAssur=bord.cod_assur;
 
-        this.envoiServ.findBultEnvoiByCodBord(
+        this.envoiServ.findBultEnvoiBySocAssurBord(
           this.tokenStorage.getUser().codSoc,
-          bord.cod_bord,
-          bord.cod_assur
+          bord.cod_assur,
+          bord.cod_bord
         ).subscribe((data) => {
           const normalized = (data || []).map((row: any) => ({
             ...row,
@@ -639,7 +635,8 @@ onSelectedValueTypDepart(item: any) {
                 this.tokenStorage.getUser().codSoc,
                 row.mat_pers,
                 row.num_fam,
-                row.dat_soin
+                row.dat_soin,
+                row.num_soin
               ).pipe(
                 map((data) => ({
                   ...row,
@@ -861,10 +858,10 @@ fetchLigCotis(codSoc: string,matPers: string, datDeb: string, datFin: string): v
             text: 'Le bulletin a été supprimé avec succès.',
             confirmButtonText: 'OK'
           });
-          this.envoiServ.findBultEnvoiByCodBord(
+          this.envoiServ.findBultEnvoiBySocAssurBord(
             this.tokenStorage.getUser().codSoc,
-            this.codBord,
-            this.codAssur
+            this.codAssur,
+            this.codBord
           ).subscribe((data) => {
             const normalized = (data || []).map((row: any) => ({
               ...row,
@@ -879,7 +876,8 @@ fetchLigCotis(codSoc: string,matPers: string, datDeb: string, datFin: string): v
                   this.tokenStorage.getUser().codSoc,
                   row.mat_pers,
                   row.num_fam,
-                  row.dat_soin
+                  row.dat_soin,
+                  row.num_soin
                 ).pipe(
                   map((data) => ({
                     ...row,
@@ -991,10 +989,10 @@ fetchLigCotis(codSoc: string,matPers: string, datDeb: string, datFin: string): v
               Swal.fire('Enregistré !', 'Vos changements ont été enregistrés.', 'success');
   
               // Fetch updated list after saving
-              this.envoiServ.findBultEnvoiByCodBord(
+              this.envoiServ.findBultEnvoiBySocAssurBord(
                 this.tokenStorage.getUser().codSoc,
-                this.codBord,
-                this.codAssur
+                this.codAssur,
+                this.codBord
               ).subscribe(
                 (data) => {
                   const normalized = (data || []).map((row: any) => ({
@@ -1011,7 +1009,8 @@ fetchLigCotis(codSoc: string,matPers: string, datDeb: string, datFin: string): v
                         this.tokenStorage.getUser().codSoc,
                         row.mat_pers,
                         row.num_fam,
-                        row.dat_soin
+                        row.dat_soin,
+                        row.num_soin
                       ).pipe(
                         map((apiData) => ({
                           ...row, // Keep existing properties

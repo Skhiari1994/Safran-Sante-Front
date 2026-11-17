@@ -485,7 +485,7 @@ export class SaisieEnvoiBordCnamComponent implements OnInit, HasUnsavedChanges {
       this.BordEnvoiForm.patchValue({ tot_remb: 0 });
     }
 
-    this.envoiServ.findBultEnvoiByCodBord(codSoc, codBord, codAssur).subscribe({
+    this.envoiServ.findBultEnvoiBySocAssurBord(codSoc, codAssur, codBord).subscribe({
       next: (bulletinsEnvoi: any[]) => {
         if (bulletinsEnvoi && bulletinsEnvoi.length > 0) {
           console.log(`✅ Loading from BULT_SOIN (isArrived: ${isArrived})`);

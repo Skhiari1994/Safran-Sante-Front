@@ -522,11 +522,12 @@ CreationBord() {
         const net = bulletin.mnt_tot ?? 0;
 
         return this.envoiServ.processBulletins(
-          codBord,
-          bulletin.mat_pers,
           this.tokenStorage.getUser().codSoc,
-          formatToISO(bulletin.dat_soin),
+          bulletin.mat_pers,
           bulletin.num_fam,
+          formatToISO(bulletin.dat_soin),
+          bulletin.num_soin,
+          codBord,
           ordBult++,
           honor,
           net
@@ -960,7 +961,8 @@ fetchLigCotis(codSoc: string,matPers: string, datDeb: string, datFin: string): v
                 this.tokenStorage.getUser().codSoc,
                 row.mat_pers,
                 row.num_fam,
-                row.dat_soin
+                row.dat_soin,
+                row.num_soin
               ).pipe(
                 map((data) => ({
                   ...row, // Keep existing properties
@@ -1091,7 +1093,8 @@ fetchLigCotis(codSoc: string,matPers: string, datDeb: string, datFin: string): v
                         this.tokenStorage.getUser().codSoc,
                         row.mat_pers,
                         row.num_fam,
-                        row.dat_soin
+                        row.dat_soin,
+                        row.num_soin
                       ).pipe(
                         map((apiData) => ({
                           ...row, // Keep existing properties

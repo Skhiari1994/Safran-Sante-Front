@@ -1,6 +1,6 @@
 <div class="row" style="margin-top: 25px;"></div>
 <div class="row sticky-top" style="z-index: 1025; top: 121px;">
-  <app-breadcrumbs title="Préparation bordereau CNAM" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+  <app-breadcrumbs title="Préparation/consultation bordereau CNAM" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 </div>
 
 <!-- Bordereau existant : consultation, impression, suppression -->
@@ -17,32 +17,22 @@
 
     <div class="card-body">
       <form class="row g-3" [formGroup]="bordEnvoiForm">
-        <div class="col-12">
-          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Identification</h6>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label class="form-label">Code bordereau</label>
           <app-lov [listData]="listCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="bordEnvoiForm.get('cod_bord')?.value"
             (selectedValue)="search($event)">
           </app-lov>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="bord-date" class="form-label">Date du bordereau</label>
           <input id="bord-date" type="text" class="form-control" placeholder="jj/mm/aaaa" mask="00/00/0000" formControlName="dat_bord" appDateFormatter />
         </div>
-        <div class="col-md-2">
-          <label for="bord-assur" class="form-label">Code assurance</label>
-          <input id="bord-assur" type="text" class="form-control" formControlName="cod_assur" readonly />
-        </div>
-        <div class="col-md-4">
-          <label for="bord-assur-lib" class="form-label">Libellé assurance</label>
+        <div class="col-md-5">
+          <label for="bord-assur-lib" class="form-label">Assurance</label>
           <input id="bord-assur-lib" type="text" class="form-control" formControlName="lib_assur" readonly />
         </div>
-        <div class="col-12 mt-4">
-          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Contenu du bordereau</h6>
-        </div>
         <div class="col-md-3">
-          <label for="bord-nbr" class="form-label">Nombre de bulletins</label>
+          <label for="bord-nbr" class="form-label">Nombre des bulletins</label>
           <input id="bord-nbr" type="text" class="form-control" formControlName="nbr_bult" readonly />
         </div>
       </form>
@@ -79,11 +69,11 @@
 
     <div class="card-body">
       <form action="javascript:void(0);" class="row g-3" [formGroup]="bordEnvoiConsForm">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="new-debut" class="form-label">Date de début</label>
           <input id="new-debut" type="text" class="form-control" placeholder="jj/mm/aaaa" mask="00/00/0000" formControlName="dat_deb" appDateFormatter />
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="new-fin" class="form-label">Date de fin</label>
           <input id="new-fin" type="text" class="form-control" placeholder="jj/mm/aaaa" mask="00/00/0000" formControlName="dat_fin" appDateFormatter />
         </div>
@@ -93,7 +83,7 @@
             (selectedValue)="onSelectedValueCodAssur($event)">
           </app-lov>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label for="new-assur-lib" class="form-label">Libellé assurance</label>
           <input id="new-assur-lib" type="text" class="form-control" formControlName="lib_assur" readonly />
         </div>
@@ -134,12 +124,13 @@
             <th
               *ngFor="let col of [
                 { k: 'mat_pers', t: 'Matricule' },
-                { k: 'nom_prenom', t: 'Adhérent' },
+                { k: 'nom_complet_pers', t: 'Adhérent' },
                 { k: 'cod_fil', t: 'Filière' },
                 { k: 'num_fam', t: 'N° prest.' },
-                { k: 'nom', t: 'Bénéficiaire' },
+                { k: 'nom_adherent', t: 'Bénéficiaire' },
                 { k: 'dat_saisie', t: 'Date saisie' },
                 { k: 'dat_soin', t: 'Date soin' },
+                { k: 'num_soin', t: 'N° soin' },
                 { k: 'sold', t: 'Solde' },
                 { k: 'mnt_honor', t: 'Honoraires' },
                 { k: 'mnt_tot', t: 'CNAM' },
@@ -156,12 +147,13 @@
         <ng-template pTemplate="body" let-rowData>
           <tr>
             <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.mat_pers }}</span></td>
-            <td>{{ rowData.nom_prenom }}</td>
+            <td>{{ rowData.nom_complet_pers }}</td>
             <td>{{ rowData.cod_fil }}</td>
             <td>{{ rowData.num_fam }}</td>
-            <td>{{ rowData.nom }}</td>
+            <td>{{ rowData.nom_adherent }}</td>
             <td>{{ rowData.dat_saisie }}</td>
             <td>{{ rowData.dat_soin }}</td>
+            <td>{{ rowData.num_soin }}</td>
             <td>{{ rowData.sold }}</td>
             <td class="text-end">{{ rowData.mnt_honor | number : '1.3-3' }}</td>
             <td class="text-end">{{ rowData.mnt_tot | number : '1.3-3' }}</td>
@@ -177,7 +169,7 @@
         </ng-template>
         <ng-template pTemplate="footer">
           <tr class="table-light fw-bold">
-            <td colspan="8" class="text-end">Totaux</td>
+            <td colspan="9" class="text-end">Totaux</td>
             <td class="text-end">{{ getTotalHonor() | number: '1.3-3' }}</td>
             <td class="text-end">{{ getTotalTot() | number: '1.3-3' }}</td>
             <td class="text-end">{{ getTotalTotMut() | number: '1.3-3' }}</td>

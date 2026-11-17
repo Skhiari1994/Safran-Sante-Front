@@ -387,7 +387,7 @@ export class SaisieManuBordCnamComponent {
         // Assuming item has cod_assur, if not take from form
         const codAssur = item.cod_assur || this.BordEnvoiForm.value.cod_assur;
 
-        this.envoiServ.findBultEnvoiByCodBord(codSoc, item.cod_bord, codAssur).pipe(
+        this.envoiServ.findBultEnvoiBySocAssurBord(codSoc, codAssur, item.cod_bord).pipe(
           finalize(() => {
             this.isLoading = false;
             this.isProcessingSearch = false;

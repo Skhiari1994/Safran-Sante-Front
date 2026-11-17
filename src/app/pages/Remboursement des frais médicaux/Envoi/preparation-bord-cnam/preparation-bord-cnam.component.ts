@@ -138,10 +138,10 @@ export class PreparationBordCnamComponent {
 
   columnTitles: { [key: string]: string } = {
     mat_pers: "Matricule",
-    nom_prenom: "Nom et prénom",  // ✅ Correct
+    nom_complet_pers: "Nom et prénom",  // ✅ Correct
     cod_fil: "Fill",
     num_fam: "Prést",
-    nom: "Nom",  // ✅ Correct
+    nom_adherent: "Nom",  // ✅ Correct
     dat_saisie: "Date saisie",
     dat_soin: "Date Soin",
     sold: "Solde",
@@ -150,13 +150,11 @@ export class PreparationBordCnamComponent {
     mnt_tot_mut: "Totale Mut",
     choix: "Choix"
   };
-  constructor(private changeDetector: ChangeDetectorRef, private tokenStorage: TokenStorage, public service: PaginationService, private adherentServ: AdherentService, private envoiServ: EnvoiServiceService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
 
-
-
-
+  constructor(private tokenStorage: TokenStorage, public service: PaginationService, private adherentServ: AdherentService, private envoiServ: EnvoiServiceService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
 
   }
+
   ngOnInit() {
     // Initialize arrays to prevent forEach errors
     const today = new Date();
@@ -166,7 +164,6 @@ export class PreparationBordCnamComponent {
     this.sysdate = `${dd}/${mm}/${yyyy}`;
 
     this.bordEnvoiForm = this.fb.group({
-
       cod_bord: [''],
       dat_bord: [this.sysdate],
       cod_assur: [''],
@@ -186,21 +183,14 @@ export class PreparationBordCnamComponent {
     });
 
 
-
-
-
     this.saveService.canSave$.subscribe((canSave) => {
       this.save = canSave;
       if (this.save) {
         // this.submit();
-        //   this.onSubmit()
+        // this.onSubmit()
       }
     });
 
-    /*  this.formCotisMutPersForm.valueChanges.subscribe(() => {
-      // this.isDisabled = this.formCotisMutPersForm.pristine;
-       this.saveService.setDisabled(this.isDisabled);
-     }); */
 
     ///////////////////////////save
     this.saveService.registerSaveCallback(() => this.saveUpdates());
@@ -212,9 +202,6 @@ export class PreparationBordCnamComponent {
 
     this.saveService.isSearch$.subscribe((canSearch) => {
       this.isSearch = canSearch
-
-      console.log("is search valid", canSearch)
-
     })
 
     this.getCodBord()
@@ -235,14 +222,12 @@ export class PreparationBordCnamComponent {
       { key: "dat_bord", label: "Date Bord" },
     ];
 
-    this.envoiServ.getCodBord('01').subscribe((data) => {
-      console.log("getCodBord", data);
+    this.envoiServ.getCodBord(this.tokenStorage.getUser().codSoc).subscribe((data) => {
       this.listCodBord = data;
     });
   }
 
   onSelectedValueCodAssur(item: any) {
-    console.log("item:", item);
     this.rowActiveT = false;
     this.codAssur = item.cod_assur;
 
@@ -253,8 +238,6 @@ export class PreparationBordCnamComponent {
     const datDeb = this.formatDate(this.bordEnvoiConsForm.get("dat_deb")?.value);
     const datFin = this.formatDate(this.bordEnvoiConsForm.get("dat_fin")?.value);
 
-    console.log("datDeb:", datDeb, "datFin:", datFin);
-
     this.envoiServ.consultationBultSoin(
       this.tokenStorage.getUser().codSoc,
       item.cod_assur,
@@ -262,7 +245,6 @@ export class PreparationBordCnamComponent {
       datFin
     ).subscribe({
       next: (data) => {
-        console.log("Initial data from consultationBultSoin:", data);
 
         // Clear previous data
         this.listBordValid = [];
@@ -270,7 +252,6 @@ export class PreparationBordCnamComponent {
 
         if (!data || data.length === 0) {
           this.listBord = [];
-          console.warn("No data returned from consultationBultSoin");
           return;
         }
 
@@ -283,7 +264,8 @@ export class PreparationBordCnamComponent {
               this.tokenStorage.getUser().codSoc,
               row.mat_pers,
               row.num_fam,
-              row.dat_soin
+              row.dat_soin,
+              row.num_soin
             ).pipe(
               map((apiData) => ({
                 ...row, // Keep all existing properties
@@ -309,7 +291,6 @@ export class PreparationBordCnamComponent {
         ).subscribe({
           next: (updatedList) => {
             this.listBord = updatedList;
-            console.log('Updated list with calculated totals:', this.listBord);
 
             // Build the valid bulletins list
             this.listBordValid = this.listBord.filter((row: any) => row.choix === 'O');
@@ -326,8 +307,6 @@ export class PreparationBordCnamComponent {
               pMatPers: row.mat_pers
             }));
 
-            console.log('Valid bulletins:', this.listBordValid);
-            console.log('Request data list:', this.listBordBultS);
           },
           error: (error) => {
             console.error('Error in forkJoin:', error);
@@ -341,16 +320,16 @@ export class PreparationBordCnamComponent {
       }
     });
   }
+
+
+
   updateChoix(data: any) {
-    console.log(`Updated choix for ${data.mat_pers}:`, data.choix);
-    console.log("data list  :", this.listBord)
     this.saveService.setDisabled(true)
   }
 
 
   getCodAssur() {
     this.envoiServ.getAssur().subscribe((data) => {
-      console.log("getAssur", data);
       this.listCodAssur = data;
       this.columnsAssur = [
         { key: "cod_assur", label: "Code Assurance" },
@@ -436,8 +415,6 @@ export class PreparationBordCnamComponent {
     const datDeb = formatToFR(datDebRaw);
     const datFin = formatToFR(datFinRaw);
 
-    console.log('➡ Generation Debug:', { datDebRaw, datFinRaw, datDeb, datFin, codAssur: this.codAssur });
-
     const totHonor = this.getTotalHonor();
     const totNet = this.getTotalTot();
 
@@ -452,26 +429,25 @@ export class PreparationBordCnamComponent {
     ).subscribe({
       next: (codBord) => {
         this.codBordBs = codBord;
-        console.log('✔ Code Bord généré :', codBord);
-
         let ordBult = 1;
+
         const calls = selectedBults.map((bulletin: any) => {
-          console.log('🔄 Processing bulletin:', bulletin.mat_pers, 'datSoin (ISO):', formatToISO(bulletin.dat_soin));
           return this.envoiServ.processBulletins(
-            codBord,
-            bulletin.mat_pers,
-            this.tokenStorage.getUser().codSoc,
-            formatToISO(bulletin.dat_soin),  // Handle LocalDate object
-            bulletin.num_fam,
-            ordBult++,
-            bulletin.mnt_honor,
-            bulletin.mnt_tot
+            this.tokenStorage.getUser().codSoc, // 1 -- codSoc
+            bulletin.mat_pers, // 2 -- matPers
+            bulletin.num_fam, // 3 -- numFam
+            formatToISO(bulletin.dat_soin),  // 4 -- datSoin // Handle LocalDate object
+            bulletin.num_soin, // 5 -- numSoin
+            codBord, // 6 -- codBord
+            ordBult++, // 7 -- ordBult
+            bulletin.mnt_honor, // 8 -- mntHonor
+            bulletin.mnt_tot // 9 -- mntTot
           );
         });
 
+
         forkJoin(calls).subscribe({
           next: (results) => {
-            console.log('✅ Tous les bulletins traités avec succès:', results);
             Swal.fire({
               title: 'Succès !',
               text: `Traitement de ${nbrBult} bulletin(s) terminé.`,
@@ -487,15 +463,15 @@ export class PreparationBordCnamComponent {
             this.bordEnvoiForm.patchValue({ cod_bord: codBord });
             this.getCodBord();
 
-            this.envoiServ.findBultEnvoiByCodBord(
+            this.envoiServ.findBultEnvoiBySocAssurBord(
               this.tokenStorage.getUser().codSoc,
-              codBord,
-              this.codAssur
+              this.codAssur,
+              codBord
             ).subscribe((data) => {
               const normalized = (data || []).map((row: any) => ({
                 ...row,
-                nom_prenom: row.nom_prenom ?? row.nom_complet_pers ?? row.nom_prenom,
-                nom: row.nom ?? row.nom_adherent ?? row.nom
+                nom_complet_pers: row.nom_complet_pers,
+                nom_adherent: row.nom_adherent
               }));
               this.listBord = normalized;
 
@@ -505,7 +481,8 @@ export class PreparationBordCnamComponent {
                     this.tokenStorage.getUser().codSoc,
                     row.mat_pers,
                     row.num_fam,
-                    row.dat_soin
+                    row.dat_soin,
+                    row.num_soin
                   ).pipe(
                     map((apiData) => ({
                       ...row,
@@ -585,7 +562,6 @@ export class PreparationBordCnamComponent {
         this.imageURL;
     };
     reader.readAsDataURL(this.file);
-    console.log("file", this.file);
   }
 
   onSelectedValueAffect(item: any) {
@@ -618,7 +594,6 @@ export class PreparationBordCnamComponent {
       if (result.isConfirmed) {
         this.envoiServ.callDeletBord(this.tokenStorage.getUser().codSoc, this.codBord).subscribe(
           (data) => {
-            console.log("Bordereau supprimé :", data);
             this.getCodBord()
             this.bordEnvoiForm.reset()
             Swal.fire('Supprimé !', 'Le bordereau a été supprimé avec succès.', 'success');
@@ -698,13 +673,12 @@ export class PreparationBordCnamComponent {
   search(item: any) {
     this.rowActive = false;
     this.saveService.setAdded(false);
-    console.log("this.rowActive", this.rowActive);
 
     if (!item || !item.cod_bord) {
       this.codBord = '';
       this.bordEnvoiForm.patchValue({
-        cod_bord: '',
-        dat_bord: this.sysdate
+      cod_bord: '',
+      dat_bord: this.sysdate
       });
       this.listBord = [];
       return;
@@ -739,13 +713,12 @@ export class PreparationBordCnamComponent {
           });
           this.codAssur = bord.cod_assur;
 
-          this.envoiServ.findBultEnvoiByCodBord(
+          this.envoiServ.findBultEnvoiBySocAssurBord(
             this.tokenStorage.getUser().codSoc,
-            bord.cod_bord,
-            bord.cod_assur
+            bord.cod_assur,
+            bord.cod_bord
           ).subscribe({
             next: (data) => {
-              console.log("data from findBultEnvoiByCodBord:", data);
 
               if (!data || data.length === 0) {
                 this.listBord = [];
@@ -760,7 +733,8 @@ export class PreparationBordCnamComponent {
                     this.tokenStorage.getUser().codSoc,
                     row.mat_pers,
                     row.num_fam,
-                    row.dat_soin
+                    row.dat_soin,
+                    row.num_soin
                   ).pipe(
                     map((apiData) => ({
                       ...row,
@@ -786,7 +760,6 @@ export class PreparationBordCnamComponent {
               ).subscribe({
                 next: (updatedList) => {
                   this.listBord = updatedList;
-                  console.log('Updated list with calculated totals:', this.listBord);
                 },
                 error: (error) => {
                   console.error('Error in forkJoin:', error);
@@ -822,7 +795,6 @@ export class PreparationBordCnamComponent {
   getAffectation() {
     this.adherentServ.getAffectation().subscribe((data) => {
       this.listAffectation = data;
-      console.log("affectation", data)
       this.columnAffect = [
         { key: "cod_affect", label: "Code" },
         { key: "lib_affect", label: "Libelle" },
@@ -928,7 +900,6 @@ export class PreparationBordCnamComponent {
   };
 
   applyFilter() {
-    console.log('this.filteredDataRows :', this.filteredDataRows)
     this.filteredDataRows = this.dataRows.filter((row) => {
       return Object.keys(this.searchz).every((key) => {
         const searchValue = this.searchz[key]?.toString().toLowerCase();
@@ -976,13 +947,11 @@ export class PreparationBordCnamComponent {
   deleteId: any;
 
   confirm(content: any, id: any) {
-    console.log("ID to delete:", id);
     this.deleteId = id; // Store the ID for deletion confirmation
     this.modalService.open(content, { centered: true });
   }
   ConfirmDelete() {
     if (!this.deleteId) {
-      console.log("deleteId is null");
       return; // If deleteId is null, exit the function
     }
 
@@ -993,13 +962,10 @@ export class PreparationBordCnamComponent {
       dat_soin: this.deleteId.dat_soin
     };
 
-    console.log(this.deleteId, "Suppression du bulletin");
 
     this.envoiServ.deletBultin(data).subscribe({
       next: (response) => {
-        console.log("Réponse du serveur:", response);
         if (response.message) {
-          console.log(response.message); // "Item deleted successfully"
           // Display success message
           Swal.fire({
             icon: 'success',
@@ -1007,9 +973,9 @@ export class PreparationBordCnamComponent {
             text: 'Le bulletin a été supprimé avec succès.',
             confirmButtonText: 'OK'
           });
+
           this.envoiServ.getBsoinBordCnam(this.tokenStorage.getUser().codSoc, this.codBord, this.codAssur).subscribe((data) => {
 
-            console.log("data table ", data)
             this.listBord = data
 
             forkJoin(
@@ -1018,7 +984,8 @@ export class PreparationBordCnamComponent {
                   this.tokenStorage.getUser().codSoc,
                   row.mat_pers,
                   row.num_fam,
-                  row.dat_soin
+                  row.dat_soin,
+                  row.num_soin
                 ).pipe(
                   map((data) => ({
                     ...row, // Keep existing properties
@@ -1038,8 +1005,6 @@ export class PreparationBordCnamComponent {
             });
           })
 
-
-
         }
 
         // Update the list after successful deletion
@@ -1049,9 +1014,6 @@ export class PreparationBordCnamComponent {
           item.num_fam !== this.deleteId.num_fam ||
           item.dat_soin !== this.deleteId.dat_soin
         );
-        console.log("Bulletin supprimé et liste mise à jour avec succès");
-
-
 
         // Close the modal
         this.modalService.dismissAll();
@@ -1074,11 +1036,6 @@ export class PreparationBordCnamComponent {
   }
 
 
-  onSelectedValueCodBord(item: any) {
-
-  }
-
-
   onCheckboxChange(): void {
     this.saveService.setDisabled(true);
     const totalRows: number = this.listDem.length;
@@ -1089,20 +1046,19 @@ export class PreparationBordCnamComponent {
     // Update selected rows list
     this.selectedRows = this.listDem.filter((row: any) => row.state);
 
-    console.log("Updated Selected Rows:", this.selectedRows);
   }
+
   deleteInd() {
     this.listDem = this.listDem.filter((row: any) => !this.selectedRows.includes(row));
-    console.log("list after delete:", this.listDem);
   }
 
   checkUncheckAll(event: any): void {
     const isChecked: boolean = event.target.checked;
-
     this.listDem.forEach((row: any) => {
       row.state = isChecked;
     });
   }
+
   getTotalHonor(): number {
     return this.listBord ? this.listBord.reduce((sum: any, item: { mnt_honor: any; }) => sum + (item.mnt_honor || 0), 0) : 0;
   }
@@ -1134,13 +1090,11 @@ export class PreparationBordCnamComponent {
           envoi: item.choix  // Ensure it's included
         }));
 
-        console.log("Formatted list before sending:", this.listBord);
 
         // Send the transformed list
         this.envoiServ.updateBultinCnam(formattedList).subscribe(
           (data: any) => {
             if (data && data.length > 0) {
-              console.log("Données enregistrées :", data);
               Swal.fire('Enregistré !', 'Vos changements ont été enregistrés.', 'success');
 
               // Fetch updated list after saving
@@ -1150,7 +1104,6 @@ export class PreparationBordCnamComponent {
                 this.codAssur
               ).subscribe(
                 (data) => {
-                  console.log("Data received for table update:", data);
                   this.listBord = data;
 
                   // Compute totals for each row
@@ -1160,7 +1113,8 @@ export class PreparationBordCnamComponent {
                         this.tokenStorage.getUser().codSoc,
                         row.mat_pers,
                         row.num_fam,
-                        row.dat_soin
+                        row.dat_soin,
+                        row.num_soin
                       ).pipe(
                         map((apiData) => ({
                           ...row, // Keep existing properties
@@ -1179,7 +1133,6 @@ export class PreparationBordCnamComponent {
                   ).subscribe(
                     (updatedList) => {
                       this.listBord = updatedList; // Update the list with computed values
-                      console.log('Updated list with calculated totals:', this.listBord);
                     },
                     (error) => {
                       console.error('Erreur dans le traitement des totaux:', error);
@@ -1209,8 +1162,6 @@ export class PreparationBordCnamComponent {
       }
     });
   }
-
-
 
 
 }

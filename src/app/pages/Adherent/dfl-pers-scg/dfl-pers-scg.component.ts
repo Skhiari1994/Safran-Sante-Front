@@ -105,7 +105,6 @@ export class DFlPersScgComponent {
     });
   }
 
-
   getAllPersonnel() {
     this.adherentServ.getAllPersonnel('01').subscribe((data) => {
       console.log("personnel ", data);
@@ -122,6 +121,7 @@ export class DFlPersScgComponent {
   onSelectedValue(item: any) {
     this.nom = item.lib_affect
   }
+  
   nomPren: string = ''
   tel: any
   onSelectedValuePers(item: any) {

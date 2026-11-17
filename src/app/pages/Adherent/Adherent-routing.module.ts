@@ -2,7 +2,6 @@ import { RenouvellementAdhesionComponent } from './renouvellement-adhesion/renou
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router'; 
 import { MajAdherentComponent } from './maj-adherent/maj-adherent.component';
-import { MajAdhrerentMouadhComponent } from './maj-adhrerent-mouadh/maj-adhrerent-mouadh.component';
 import { MajAdherentTestComponent } from './maj-adherent-test/maj-adherent-test.component';
 import { ValidAdherentComponent } from './valid-adherent/valid-adherent.component';
 import { MajCertifFamComponent } from './maj-certif-fam/maj-certif-fam.component';
@@ -42,11 +41,7 @@ const routes: Routes = [
     component: MajAdherentTestComponent,/* 
     canActivate:[PagesGuard],
     data: { action: 'Adherent/MajAdherent1' } */
-  },  
-  {
-    path: "MajAdherentMouadh",
-    component: MajAdhrerentMouadhComponent
-  },  
+  },   
   {
     path: "ValidAdherent",
     component: ValidAdherentComponent
@@ -74,15 +69,11 @@ const routes: Routes = [
   {
     path: "SaisieDecisionReinteg",
     component: MajReintegrationPersComponent
-  } ,
+  },
   {
     path: "ValDepartReinteg",
     component: ValDepartReintegrationPersComponent
-  }   ,     
-  {
-    path: "MajAdherentMouadh",
-    component: MajAdhrerentMouadhComponent
-  },
+  },     
   {
     path: "Edition",
     component: EditionAdhesionMutuelleComponent

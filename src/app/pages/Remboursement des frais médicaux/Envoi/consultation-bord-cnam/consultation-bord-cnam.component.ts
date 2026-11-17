@@ -257,7 +257,8 @@ export class ConsultationBordCnamComponent {
               this.tokenStorage.getUser().codSoc,
               row.mat_pers,
               row.num_fam,
-              row.dat_soin
+              row.dat_soin,
+              row.num_soin
             ).pipe(
               map((data) => ({
                 ...row, // Keep existing properties
@@ -582,7 +583,8 @@ export class ConsultationBordCnamComponent {
                 this.tokenStorage.getUser().codSoc,
                 row.mat_pers,
                 row.num_fam,
-                row.dat_soin
+                row.dat_soin,
+                row.num_soin
               ).pipe(
                 map((data) => ({
                   ...row, // Keep existing properties
@@ -819,7 +821,8 @@ export class ConsultationBordCnamComponent {
                   this.tokenStorage.getUser().codSoc,
                   row.mat_pers,
                   row.num_fam,
-                  row.dat_soin
+                  row.dat_soin,
+                  row.num_soin
                 ).pipe(
                   map((data) => ({
                     ...row, // Keep existing properties
@@ -950,7 +953,8 @@ export class ConsultationBordCnamComponent {
                         this.tokenStorage.getUser().codSoc,
                         row.mat_pers,
                         row.num_fam,
-                        row.dat_soin
+                        row.dat_soin,
+                        row.num_soin
                       ).pipe(
                         map((apiData) => ({
                           ...row, // Keep existing properties

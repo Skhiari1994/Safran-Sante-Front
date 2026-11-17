@@ -14,11 +14,11 @@ import { defineElement } from 'lord-icon-element';
 import lottie from 'lottie-web';
 
 // Component pages
- import { SharedModule } from '../../shared/shared.module';
- 
-import { DatePipe } from '@angular/common'; 
-import { NgxPaginationModule } from 'ngx-pagination'; 
-import { TranslateModule } from '@ngx-translate/core'; 
+import { SharedModule } from '../../shared/shared.module';
+
+import { DatePipe } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { TranslateModule } from '@ngx-translate/core';
 import { ExtraspagesModule } from '../extrapages/extraspages.module';
 import { LovComponent } from 'src/app/extraspages/lov/lov.component';
 import { AdherentRoutingModule } from './Adherent-routing.module';
@@ -29,7 +29,6 @@ import { CdkStepperModule } from '@angular/cdk/stepper';
 import { NgStepperModule } from 'angular-ng-stepper';
 import { DateFormatterDirective } from './date-formatter.directive';
 import { TableModule } from 'primeng/table';
-import { MajAdhrerentMouadhComponent } from './maj-adhrerent-mouadh/maj-adhrerent-mouadh.component';
 import { MajAdherentTestComponent } from './maj-adherent-test/maj-adherent-test.component';
 import { ValidAdherentComponent } from './valid-adherent/valid-adherent.component';
 import { MajCertifFamComponent } from './maj-certif-fam/maj-certif-fam.component';
@@ -50,40 +49,38 @@ import { ValDepartReintegrationPersComponent } from './val-depart-reintegration-
 import { EditionAdhesionMutuelleComponent } from './edition/edition-adhesion-mutuelle/edition-adhesion-mutuelle.component';
 import { TransCreditMutComponent } from './trans-credit-mut/trans-credit-mut.component';
 import { DFlPersScgComponent } from './dfl-pers-scg/dfl-pers-scg.component';
-      
+
 @NgModule({
   declarations: [
- 
     MajAdherentComponent,
-       DateFormatterDirective,MajAdhrerentMouadhComponent ,
-     MajAdhrerentMouadhComponent,
-     MajAdherentTestComponent,
-     ValidAdherentComponent,
-     MajCertifFamComponent,
-     SuspAdhesionMutComponent,
-     RenouvellementAdhesionComponent,
-     ValidationSuspEtValidAdherentComponent,
-     MajDepartPersComponent,
-     MajReintegrationPersComponent,
-     ValDepartReintegrationPersComponent,
-     EditionAdhesionMutuelleComponent,
-     TransCreditMutComponent,
-     DFlPersScgComponent, 
-       ListeAdherentComponent,
-     ListeAdherentEnfantComponent,
-     MembreFamilleAdherentComponent,
-     ListCarteAdherentComponent,
-     ListCarteComponent,
-     FichePersComponent,
-     ListAdhesionSuspenduComponent,
-     ListeDepartPersComponent
-   ],
+    DateFormatterDirective,
+    MajAdherentTestComponent,
+    ValidAdherentComponent,
+    MajCertifFamComponent,
+    SuspAdhesionMutComponent,
+    RenouvellementAdhesionComponent,
+    ValidationSuspEtValidAdherentComponent,
+    MajDepartPersComponent,
+    MajReintegrationPersComponent,
+    ValDepartReintegrationPersComponent,
+    EditionAdhesionMutuelleComponent,
+    TransCreditMutComponent,
+    DFlPersScgComponent,
+    ListeAdherentComponent,
+    ListeAdherentEnfantComponent,
+    MembreFamilleAdherentComponent,
+    ListCarteAdherentComponent,
+    ListCarteComponent,
+    FichePersComponent,
+    ListAdhesionSuspenduComponent,
+    ListeDepartPersComponent
+  ],
 
   imports: [
     CommonModule,
     TranslateModule,
     FormsModule,
-     ReactiveFormsModule,
+    ReactiveFormsModule,
     NgbPaginationModule,
     NgbTypeaheadModule,
     NgbTooltipModule,
@@ -92,34 +89,33 @@ import { DFlPersScgComponent } from './dfl-pers-scg/dfl-pers-scg.component';
     FlatpickrModule,
     NgSelectModule,
     AdherentRoutingModule,
-   SharedModule,
-   NgxPaginationModule,
-   ExtraspagesModule,
-   NgbPaginationModule,
-   NgbTypeaheadModule,
-   NgbDropdownModule,
-   NgbNavModule,
-   NgbAccordionModule,
-   NgbRatingModule,
-   NgbTooltipModule,
-   NgxSliderModule,
-   NgxMaskDirective, 
-   NgxMaskPipe,
-   NgxSliderModule,
+    SharedModule,
+    NgxPaginationModule,
+    ExtraspagesModule,
+    NgbPaginationModule,
+    NgbTypeaheadModule,
+    NgbDropdownModule,
+    NgbNavModule,
+    NgbAccordionModule,
+    NgbRatingModule,
+    NgbTooltipModule,
+    NgxSliderModule,
+    NgxMaskDirective,
+    NgxMaskPipe,
+    NgxSliderModule,
     CdkStepperModule,
-   NgStepperModule,
-   TableModule,
+    NgStepperModule,
+    TableModule,
   ],
-  // exports: [
-  //   DateFormatterDirective, // Exportez-la si vous voulez l'utiliser dans d'autres modules
-  // ],
   providers: [
-    DatePipe,provideNgxMask(),
+    DatePipe, provideNgxMask(),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+
 export class AdherentModule {
   constructor() {
     defineElement(lottie.loadAnimation);
   }
+  
 }

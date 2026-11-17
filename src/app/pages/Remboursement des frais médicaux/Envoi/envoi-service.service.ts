@@ -52,8 +52,9 @@ export class EnvoiServiceService {
     return this.http.get<any[]>(API_URL + "Remb/BordEnvoi/getBsoinBordMut?codSoc=" + codSoc + "&codBord=" + codBord + "&codAssur=" + codAssur);
   };
 
-  findBultEnvoiByCodBord = (codSoc: any, codBord: any, codAssur: any): Observable<any[]> => {
-    return this.http.get<any[]>(API_URL + "Remb/Remboursement/BultArriverByCodBord3?cod_bord=" + codBord);
+  findBultEnvoiBySocAssurBord = (codSoc: any, codAssur: any, codBord: any): Observable<any[]> => {
+    let params = new HttpParams().set('codSoc', codSoc).set('codAssur', codAssur).set('codBord', codBord);
+    return this.http.get<any[]>(API_URL + "Remb/Remboursement/BultEnvoiSocAssurBord", { params });
   };
 
 
@@ -107,8 +108,6 @@ export class EnvoiServiceService {
       params = params.set('datFin', datFin);
     }
 
-    console.log('params:', params.toString());
-
     return this.http.post(
       API_URL + `Remb/BordEnvoi/generateCodeBordMut`,
       null,
@@ -141,7 +140,6 @@ export class EnvoiServiceService {
       params = params.set('datFin', datFin);
     }
 
-    console.log('params:', params.toString());
 
     return this.http.post(
       API_URL + `Remb/BordEnvoi/generateCodeBord`,
@@ -152,21 +150,23 @@ export class EnvoiServiceService {
 
 
   processBulletins(
-    codBord: string,
-    matPers: string,
     codSoc: string,
-    datSoin: string,    // Format 'yyyy-MM-dd'
+    matPers: string,
     numFam: number,
+    datSoin: string,    // Format 'yyyy-MM-dd'
+    numSoin: number,
+    codBord: string,
     ordBult: number,
     totHonor: number,
     totNet: number
   ): Observable<string> {
     let params = new HttpParams()
-      .set('codBord', codBord)
-      .set('matPers', matPers)
       .set('codSoc', codSoc)
-      .set('datSoin', datSoin)
+      .set('matPers', matPers)
       .set('numFam', numFam.toString())
+      .set('datSoin', datSoin)
+      .set('numSoin', numSoin.toString())
+      .set('codBord', codBord)
       .set('ordBult', ordBult.toString())
       .set('totHonor', totHonor.toString())
       .set('totNet', totNet.toString());
@@ -200,8 +200,6 @@ export class EnvoiServiceService {
       .set('pCodBord', pCodBord)
       .set('vNbrBult', vNbrBult.toString());
 
-    console.log('Sending params:', params.toString());
-
     // Make the POST request
     return this.http.post(API_URL + `Remb/BordEnvoi/modifProc`, null, { params });
   }
@@ -212,8 +210,6 @@ export class EnvoiServiceService {
     const params = new HttpParams()
       .set('codAssur', codAssur)
       .set('codSoc', codSoc)
-
-    console.log('params:', params.toString());
 
     return this.http.post(API_URL + `Remb/BordEnvoi/generateCodeBord`, null, { params });
   }
@@ -240,8 +236,6 @@ export class EnvoiServiceService {
       .set('datDeb', datDeb)
       .set('datFin', datFin);
 
-    console.log('Sending params:', params.toString());
-
     // Make the POST request and return the observable
     return this.http.post(API_URL + `Remb/BordEnvoi/createBord`, null, { params });
   }
@@ -250,10 +244,9 @@ export class EnvoiServiceService {
   totauCnam(
     pCodSoc: string,
     pMatPers: string,
-    pNumFam: Number,
+    pNumFam: number,
     pDatSoin: string,
-
-
+    pNumSoin : number
   ): Observable<any> {
     // Create HttpParams
     const params = new HttpParams()
@@ -261,9 +254,7 @@ export class EnvoiServiceService {
       .set('pMatPers', pMatPers)
       .set('pNumFam', pNumFam.toString())
       .set('pDatSoin', pDatSoin)
-
-
-    console.log('params:', params);
+      .set('pNumSoin', pNumSoin)
 
     // Make the POST request with params as part of the options
     return this.http.post(API_URL + `Remb/BordEnvoi/totauCnam`, null, { params });

@@ -136,7 +136,7 @@ export class SaisieBordArriverComponent implements OnInit, OnDestroy {
 
         this.isReadOnly = (event.valid === 'V' || event.valid_bord === 'V');
 
-        this.envoiServ.findBultEnvoiByCodBord(this.token.getUser().codSoc, event.cod_bord, event.cod_assur).pipe(
+        this.envoiServ.findBultEnvoiBySocAssurBord(this.token.getUser().codSoc, event.cod_assur, event.cod_bord).pipe(
             finalize(() => this.isLoading = false)
         ).subscribe(data => {
             this.populateBulletins(data);
