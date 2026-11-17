@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { getFirebaseBackend } from '../../authUtils';
 import { User } from 'src/app/store/Authentication/auth.models';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { GlobalComponent } from "../../global-component";
 import { Store } from '@ngrx/store';
@@ -77,6 +77,27 @@ export class AuthenticationService {
             catchError((error: any) => {
                 const errorMessage = 'Login failed'; // Customize the error message as needed
                 return throwError(error);
+            })
+        );
+    }
+
+    /**
+     * Renouvelle le jeton (court, 7 min côté serveur) d'un utilisateur actif. Le nouveau jeton remplace l'ancien
+     * dans le stockage ; un jeton déjà expiré donne un 401 (le ErrorInterceptor déconnecte alors l'utilisateur).
+     */
+    renouvelerJeton(): Observable<{ token: string }> {
+        return this.http.post<{ token: string }>(API_URL + 'api/auth/refresh', {}).pipe(
+            tap(reponse => {
+                if (reponse?.token) {
+                    const ancien = localStorage.getItem('token');
+                    localStorage.setItem('token', reponse.token);
+                    // l'alerte « carte CNAM » est mémorisée par jeton (une fois par connexion) : on suit le renouvellement
+                    try {
+                        if (ancien && sessionStorage.getItem('carteCnamAlerte') === ancien) {
+                            sessionStorage.setItem('carteCnamAlerte', reponse.token);
+                        }
+                    } catch { /* stockage indisponible */ }
+                }
             })
         );
     }

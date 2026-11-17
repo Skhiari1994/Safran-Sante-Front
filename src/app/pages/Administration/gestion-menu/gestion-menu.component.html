@@ -1,204 +1,176 @@
-<div class="container-fluid">
-  <app-page-title title="Gestion des modules" [breadcrumbItems]="breadCrumbItems">
-  </app-page-title>
-  <div class="row g-3">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
-            <div class="page-card-title">
-              <h5>Modules</h5>
-              <small>{{ getRows(table1).length }} module(s) · cliquez sur une ligne pour afficher ses sous-modules</small>
-            </div>
-            <button type="button" class="btn btn-info add-btn" (click)="addRowModule()">
-              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter une ligne
-            </button>
-          </div>
-          <div [formGroup]="table1" class="table-responsive table-card" [style.max-height.px]="getRows(table1).length > 6 ? 420 : null" style="overflow-y: auto">
-            <table class="table table-bordered align-middle text-center mb-0 menu-table">
-              <thead>
-                <tr class="table-primary"><th style="width:35%">Libellé du module</th><th style="width:25%">Route</th><th style="width:15%">Statut</th><th style="width:10%">Rang</th><th style="width:15%">Action</th></tr>
-              </thead>
-              <tbody formArrayName="rows">
-                <tr *ngFor="let row of getRows(table1).controls; let rowIndex = index" [formGroup]="row" [class.table-active]="selectedSumId !== null && row.get('sum_id')?.value === selectedSumId" (click)="onRowClick(row.get('sum_id')?.value, row.get('sum_name')?.value)">
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Libellé" formControlName="sum_name"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Route" formControlName="sum_rout"></td>
-                  <td>
-                    <select class="form-select border-primary" formControlName="sum_status">
-                      <option value="">Sélectionner</option>
-                      <option value="O">Oui</option>
-                      <option value="N">Non</option>
-                    </select>
-                  </td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Rang" formControlName="sum_rank"></td>
-                  <td>
-                    <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
-                      <li class="list-inline-item"><a class="save-item-btn" title="Enregistrer" (click)="saveRow(table1, rowIndex)"><i class="ri-save-3-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item"><a class="edit-item-btn" title="Modifier" (click)="editRow(table1, rowIndex)"><i class="ri-pencil-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item me-0"><a class="remove-item-btn" title="Supprimer" (click)="removeRow(table1, rowIndex)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a></li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr *ngIf="!getRows(table1).length">
-                  <td colspan="5" class="text-center">
-                    <span class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs icon="ri-apps-2-line" title="Gestion Menu" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
 
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
-            <div class="page-card-title">
-              <h5>Sous-modules : niveau 1</h5>
-              <small>{{ getRows(table2).length }} ligne(s)<ng-container *ngIf="selectedSumId !== null"> · Module : <b>{{ selectedModuleName }}</b></ng-container></small>
-            </div>
-            <button type="button" class="btn btn-info add-btn" (click)="addRowNiv(table2, createTable2Row.bind(this), 1)">
-              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter une ligne
-            </button>
-          </div>
-          <div [formGroup]="table2" class="table-responsive table-card" [style.max-height.px]="getRows(table2).length > 6 ? 420 : null" style="overflow-y: auto">
-            <table class="table table-bordered align-middle text-center mb-0 menu-table">
-              <thead>
-                <tr class="table-primary"><th style="width:10%">Evt id</th><th style="width:35%">Libellé</th><th style="width:25%">Action</th><th style="width:10%">Rang</th><th style="width:10%">Statut</th><th style="width:10%">Action</th></tr>
-              </thead>
-              <tbody formArrayName="rows">
-                <tr *ngFor="let row of getRows(table2).controls; let rowIndex = index" [formGroup]="row" [class.table-active]="selectedEvtId !== null && row.get('evt_id')?.value === selectedEvtId" (click)="onRowClickNiv1(row.get('evt_id')?.value, row.get('evt_name')?.value)">
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Id" formControlName="evt_id"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Libellé" formControlName="evt_name"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Action" formControlName="evt_action"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Rang" formControlName="evt_rank"></td>
-                  <td>
-                    <select class="form-select border-primary" formControlName="evt_maint">
-                      <option value="">Sélectionner</option>
-                      <option value="O">Oui</option>
-                      <option value="N">Non</option>
-                    </select>
-                  </td>
-                  <td>
-                    <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
-                      <li class="list-inline-item"><a class="save-item-btn" title="Enregistrer" (click)="saveRowNiv1(table2, rowIndex)"><i class="ri-save-3-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item"><a class="edit-item-btn" title="Modifier" (click)="editRow(table2, rowIndex)"><i class="ri-pencil-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item me-0"><a class="remove-item-btn" title="Supprimer" (click)="removeRowEvt(table2, rowIndex)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a></li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr *ngIf="!getRows(table2).length">
-                  <td colspan="6" class="text-center">
-                    <span *ngIf="selectedSumId !== null" class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span><span *ngIf="selectedSumId === null" class="badge bg-info-subtle text-info badge-border">Sélectionnez un module pour afficher ses sous-modules</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
-            <div class="page-card-title">
-              <h5>Sous-modules : niveau 2</h5>
-              <small>{{ getRows(table3).length }} ligne(s)<ng-container *ngIf="selectedEvtId !== null"> · Sous-module : <b>{{ selectedNiv1Name }}</b></ng-container></small>
-            </div>
-            <button type="button" class="btn btn-info add-btn" (click)="addRowNiv(table3, createTable3Row.bind(this), 2)">
-              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter une ligne
-            </button>
-          </div>
-          <div [formGroup]="table3" class="table-responsive table-card" [style.max-height.px]="getRows(table3).length > 6 ? 420 : null" style="overflow-y: auto">
-            <table class="table table-bordered align-middle text-center mb-0 menu-table">
-              <thead>
-                <tr class="table-primary"><th style="width:10%">Evt id</th><th style="width:35%">Libellé</th><th style="width:25%">Action</th><th style="width:10%">Rang</th><th style="width:10%">Statut</th><th style="width:10%">Action</th></tr>
-              </thead>
-              <tbody formArrayName="rows">
-                <tr *ngFor="let row of getRows(table3).controls; let rowIndex = index" [formGroup]="row" [class.table-active]="selectedEvtId2 !== null && row.get('evt_id')?.value === selectedEvtId2" (click)="onRowClickNiv2(row.get('evt_id')?.value, row.get('evt_name')?.value)">
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Id" formControlName="evt_id"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Libellé" formControlName="evt_name"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Action" formControlName="evt_action"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Rang" formControlName="evt_rank"></td>
-                  <td>
-                    <select class="form-select border-primary" formControlName="evt_maint">
-                      <option value="">Sélectionner</option>
-                      <option value="O">Oui</option>
-                      <option value="N">Non</option>
-                    </select>
-                  </td>
-                  <td>
-                    <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
-                      <li class="list-inline-item"><a class="save-item-btn" title="Enregistrer" (click)="saveRowNiv2(table3, rowIndex)"><i class="ri-save-3-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item"><a class="edit-item-btn" title="Modifier" (click)="editRow(table3, rowIndex)"><i class="ri-pencil-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item me-0"><a class="remove-item-btn" title="Supprimer" (click)="removeRowEvt(table3, rowIndex)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a></li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr *ngIf="!getRows(table3).length">
-                  <td colspan="6" class="text-center">
-                    <span *ngIf="selectedEvtId !== null" class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span><span *ngIf="selectedEvtId === null" class="badge bg-info-subtle text-info badge-border">Sélectionnez un sous-module de niveau 1</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="card-header page-card-header d-flex justify-content-between align-items-center mb-3">
-            <div class="page-card-title">
-              <h5>Sous-modules : niveau 3</h5>
-              <small>{{ getRows(table4).length }} ligne(s)<ng-container *ngIf="selectedEvtId2 !== null"> · Sous-module : <b>{{ selectedNiv2Name }}</b></ng-container></small>
-            </div>
-            <button type="button" class="btn btn-info add-btn" (click)="addRowNiv(table4, createTable4Row.bind(this), 3)">
-              <i class="ri-add-fill me-1 align-bottom"></i> Ajouter une ligne
-            </button>
-          </div>
-          <div [formGroup]="table4" class="table-responsive table-card" [style.max-height.px]="getRows(table4).length > 6 ? 420 : null" style="overflow-y: auto">
-            <table class="table table-bordered align-middle text-center mb-0 menu-table">
-              <thead>
-                <tr class="table-primary"><th style="width:10%">Evt id</th><th style="width:35%">Libellé</th><th style="width:25%">Action</th><th style="width:10%">Rang</th><th style="width:10%">Statut</th><th style="width:10%">Action</th></tr>
-              </thead>
-              <tbody formArrayName="rows">
-                <tr *ngFor="let row of getRows(table4).controls; let rowIndex = index" [formGroup]="row">
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Id" formControlName="evt_id"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Libellé" formControlName="evt_name"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Action" formControlName="evt_action"></td>
-                  <td><input type="text" class="form-control border-primary text-center" placeholder="Rang" formControlName="evt_rank"></td>
-                  <td>
-                    <select class="form-select border-primary" formControlName="evt_maint">
-                      <option value="">Sélectionner</option>
-                      <option value="O">Oui</option>
-                      <option value="N">Non</option>
-                    </select>
-                  </td>
-                  <td>
-                    <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
-                      <li class="list-inline-item"><a class="save-item-btn" title="Enregistrer" (click)="saveRowNiv3(table4, rowIndex)"><i class="ri-save-3-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item"><a class="edit-item-btn" title="Modifier" (click)="editRow(table4, rowIndex)"><i class="ri-pencil-fill align-bottom text-muted"></i></a></li>
-                      <li class="list-inline-item me-0"><a class="remove-item-btn" title="Supprimer" (click)="removeRowEvt(table4, rowIndex)"><i class="ri-delete-bin-fill align-bottom text-muted"></i></a></li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr *ngIf="!getRows(table4).length">
-                  <td colspan="6" class="text-center">
-                    <span *ngIf="selectedEvtId2 !== null" class="badge bg-danger-subtle text-danger badge-border">Aucune donnée disponible !</span><span *ngIf="selectedEvtId2 === null" class="badge bg-info-subtle text-info badge-border">Sélectionnez un sous-module de niveau 2</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+<!-- Rappel de la règle d'affichage d'une page dans le menu -->
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="alert alert-info border-0 mb-0 d-flex align-items-center gap-2 flex-wrap" role="note">
+      <i class="ri-information-line fs-5" aria-hidden="true"></i>
+      <span>
+        Une page n'apparaît dans le menu que si elle a une <b>Action</b> (la route) et un <b>Statut « Oui »</b>.
+        Cliquez sur une ligne pour afficher ses sous-modules.
+      </span>
     </div>
   </div>
 </div>
+
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
+
+    <!-- Niveau 0 : modules -->
+    <div class="card">
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+              <i class="ri-apps-2-line" aria-hidden="true"></i>
+            </span>
+          </div>
+          <div>
+            <h5 class="card-title mb-0">Modules</h5>
+            <p class="text-muted fs-13 mb-0">{{ getRows(table1).length }} module{{ getRows(table1).length > 1 ? 's' : '' }}</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="addRowModule()">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un module
+        </button>
+      </div>
+      <div class="card-body">
+        <div [formGroup]="table1" class="table-responsive menu-scroll" [class.menu-scroll--max]="getRows(table1).length > 6">
+          <table class="table table-sm align-middle mb-0 menu-table">
+            <thead>
+              <tr class="table-light">
+                <th scope="col" style="width: 33%;">Libellé du module</th>
+                <th scope="col" style="width: 25%;">Route</th>
+                <th scope="col" style="width: 14%;">Statut</th>
+                <th scope="col" style="width: 10%;">Rang</th>
+                <th scope="col" class="text-end" style="width: 18%;">Actions</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="rows">
+              <tr *ngFor="let row of getRows(table1).controls; let rowIndex = index" [formGroup]="row"
+                class="menu-row" [class.menu-row--selected]="selectedSumId !== null && row.get('sum_id')?.value === selectedSumId"
+                (click)="onRowClick(row.get('sum_id')?.value, row.get('sum_name')?.value)">
+                <td><input type="text" class="form-control form-control-sm" placeholder="Libellé" formControlName="sum_name" aria-label="Libellé du module"></td>
+                <td><input type="text" class="form-control form-control-sm" placeholder="Route" formControlName="sum_rout" aria-label="Route"></td>
+                <td>
+                  <select *ngIf="row.enabled; else statutModule" class="form-select form-select-sm" formControlName="sum_status" aria-label="Statut">
+                    <option value="">Sélectionner</option>
+                    <option value="O">Oui</option>
+                    <option value="N">Non</option>
+                  </select>
+                  <ng-template #statutModule>
+                    <span class="badge fs-12" [ngClass]="row.get('sum_status')?.value === 'O' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ row.get('sum_status')?.value === 'O' ? 'Oui' : (row.get('sum_status')?.value === 'N' ? 'Non' : '—') }}
+                    </span>
+                  </ng-template>
+                </td>
+                <td><input type="text" class="form-control form-control-sm" placeholder="Rang" formControlName="sum_rank" aria-label="Rang"></td>
+                <td class="text-end">
+                  <div class="hstack gap-2 justify-content-end">
+                    <button *ngIf="row.enabled" type="button" class="btn btn-icon btn-soft-success" title="Enregistrer" aria-label="Enregistrer le module"
+                      (click)="$event.stopPropagation(); saveRow(table1, rowIndex)"><i class="ri-save-3-line fs-16" aria-hidden="true"></i></button>
+                    <button *ngIf="!row.enabled" type="button" class="btn btn-icon btn-soft-primary" title="Modifier" aria-label="Modifier le module"
+                      (click)="$event.stopPropagation(); editRow(table1, rowIndex)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" aria-label="Supprimer le module"
+                      (click)="$event.stopPropagation(); removeRow(table1, rowIndex)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="!getRows(table1).length">
+                <td colspan="5" class="text-center text-muted py-4">
+                  <i class="ri-inbox-line fs-2 d-block mb-1" aria-hidden="true"></i>Aucun module
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Niveaux 1, 2 et 3 : même tableau, seuls le parent et les actions changent -->
+    <ng-container *ngTemplateOutlet="niveauCard; context: { n: 1, table: table2, titre: 'Sous-modules : niveau 1', parent: selectedSumId !== null ? selectedModuleName : null, parentLabel: 'Module', hint: 'Sélectionnez un module pour afficher ses sous-modules', ico: 'ri-node-tree', tone: 'info' }"></ng-container>
+    <ng-container *ngTemplateOutlet="niveauCard; context: { n: 2, table: table3, titre: 'Sous-modules : niveau 2', parent: selectedEvtId !== null ? selectedNiv1Name : null, parentLabel: 'Sous-module', hint: 'Sélectionnez un sous-module de niveau 1', ico: 'ri-git-branch-line', tone: 'warning' }"></ng-container>
+    <ng-container *ngTemplateOutlet="niveauCard; context: { n: 3, table: table4, titre: 'Sous-modules : niveau 3', parent: selectedEvtId2 !== null ? selectedNiv2Name : null, parentLabel: 'Sous-module', hint: 'Sélectionnez un sous-module de niveau 2', ico: 'ri-git-merge-line', tone: 'success' }"></ng-container>
+  </div>
+</div>
+
+<ng-template #niveauCard let-n="n" let-table="table" let-titre="titre" let-parent="parent" let-parentLabel="parentLabel"
+  let-hint="hint" let-ico="ico" let-tone="tone">
+  <div class="card">
+    <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar-sm flex-shrink-0">
+          <span class="avatar-title rounded fs-4" [ngClass]="'bg-' + tone + '-subtle text-' + tone">
+            <i [class]="ico" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div>
+          <h5 class="card-title mb-0">{{ titre }}</h5>
+          <p class="text-muted fs-13 mb-0">
+            {{ getRows(table).length }} ligne{{ getRows(table).length > 1 ? 's' : '' }}
+            <ng-container *ngIf="parent !== null"> · {{ parentLabel }} : <b>{{ parent }}</b></ng-container>
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="ajouterNiveau(n)">
+        <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter une ligne
+      </button>
+    </div>
+    <div class="card-body">
+      <div [formGroup]="table" class="table-responsive menu-scroll" [class.menu-scroll--max]="getRows(table).length > 6">
+        <table class="table table-sm align-middle mb-0 menu-table">
+          <thead>
+            <tr class="table-light">
+              <th scope="col" style="width: 10%;">Evt id</th>
+              <th scope="col" style="width: 31%;">Libellé</th>
+              <th scope="col" style="width: 25%;">Action (route)</th>
+              <th scope="col" style="width: 9%;">Rang</th>
+              <th scope="col" style="width: 12%;">Statut</th>
+              <th scope="col" class="text-end" style="width: 13%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="rows">
+            <tr *ngFor="let row of getRows(table).controls; let rowIndex = index" [formGroup]="row"
+              [class.menu-row]="n < 3" [class.menu-row--selected]="estSelectionne(n, row)" (click)="cliquerLigne(n, row)">
+              <td><input type="text" class="form-control form-control-sm" placeholder="Id" formControlName="evt_id" aria-label="Identifiant"></td>
+              <td><input type="text" class="form-control form-control-sm" placeholder="Libellé" formControlName="evt_name" aria-label="Libellé"></td>
+              <td><input type="text" class="form-control form-control-sm" placeholder="Action" formControlName="evt_action" aria-label="Action"></td>
+              <td><input type="text" class="form-control form-control-sm" placeholder="Rang" formControlName="evt_rank" aria-label="Rang"></td>
+              <td>
+                <select *ngIf="row.enabled; else statutEvt" class="form-select form-select-sm" formControlName="evt_maint" aria-label="Statut">
+                  <option value="">Sélectionner</option>
+                  <option value="O">Oui</option>
+                  <option value="N">Non</option>
+                </select>
+                <ng-template #statutEvt>
+                  <span class="badge fs-12" [ngClass]="row.get('evt_maint')?.value === 'O' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                    {{ row.get('evt_maint')?.value === 'O' ? 'Oui' : (row.get('evt_maint')?.value === 'N' ? 'Non' : '—') }}
+                  </span>
+                </ng-template>
+              </td>
+              <td class="text-end">
+                <div class="hstack gap-2 justify-content-end">
+                  <button *ngIf="row.enabled" type="button" class="btn btn-icon btn-soft-success" title="Enregistrer" aria-label="Enregistrer la ligne"
+                    (click)="$event.stopPropagation(); enregistrerNiveau(n, table, rowIndex)"><i class="ri-save-3-line fs-16" aria-hidden="true"></i></button>
+                  <button *ngIf="!row.enabled" type="button" class="btn btn-icon btn-soft-primary" title="Modifier" aria-label="Modifier la ligne"
+                    (click)="$event.stopPropagation(); editRow(table, rowIndex)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer" aria-label="Supprimer la ligne"
+                    (click)="$event.stopPropagation(); removeRowEvt(table, rowIndex)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!getRows(table).length">
+              <td colspan="6" class="text-center text-muted py-4">
+                <i class="ri-inbox-line fs-2 d-block mb-1" aria-hidden="true"></i>
+                {{ parent !== null ? 'Aucune ligne pour cette sélection' : hint }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-template>

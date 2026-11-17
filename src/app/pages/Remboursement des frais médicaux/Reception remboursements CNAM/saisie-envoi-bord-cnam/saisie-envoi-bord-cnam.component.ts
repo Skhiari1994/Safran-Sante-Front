@@ -135,10 +135,6 @@ export class SaisieEnvoiBordCnamComponent implements OnInit, HasUnsavedChanges {
     private saveService: SaveService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.breadCrumbItems = [
-      { label: 'Remboursement' },
-      { label: 'Saisie Bordereau Envoi CNAM', active: true }
-    ];
   }
 
   ngOnInit(): void {

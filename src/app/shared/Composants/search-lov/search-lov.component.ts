@@ -107,15 +107,16 @@ export class SearchLovComponent implements OnChanges {
   }
 
   /** Effectifs affichés à côté de chaque option du filtre Sexe (calculés à l'ouverture sur toute la liste). */
-  comptesSexe = { tous: 0, M: 0, F: 0 };
+  comptesSexe = { tous: 0, M: 0, F: 0, autre: 0 };
 
   private compterSexes(): void {
-    const c = { tous: 0, M: 0, F: 0 };
+    const c = { tous: 0, M: 0, F: 0, autre: 0 };
     for (const item of this.listData || []) {
       c.tous++;
       const s = String(item?.sexe ?? '').trim().toUpperCase();
       if (s === 'M') c.M++;
       else if (s === 'F') c.F++;
+      else c.autre++; // sexe absent ou invalide : compté dans « Tous » seulement
     }
     this.comptesSexe = c;
   }

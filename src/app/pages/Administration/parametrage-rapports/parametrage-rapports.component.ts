@@ -16,7 +16,8 @@ export class ParametrageRapportsComponent {
   rapportsFiltrer: any[] = [];
   isModalOpen = false;  
   pSusp: any;
-  nouveauRapport: any = {
+  private rapportVide(): any {
+    return {
     lib_rap: '',
     abrv_rap: '',
     lib_rap_jsp: '',
@@ -34,7 +35,9 @@ export class ParametrageRapportsComponent {
     jour_envoi: '',
     mois_envoi: '',
     annee_envoi: ''
-  };
+    };
+  }
+  nouveauRapport: any = this.rapportVide();
 
   constructor(private rapportServ: AdminService,
     private modalService: NgbModal,
@@ -62,6 +65,20 @@ export class ParametrageRapportsComponent {
     
   };
 
+  aSupprimer: { type: 'rapport' | 'parametre', id: any, libelle: string } | null = null;
+
+  confirmerSuppression(content: any, type: 'rapport' | 'parametre', id: any, libelle: string) {
+    this.aSupprimer = { type, id, libelle };
+    this.modalService.open(content, { centered: true, size: 'sm' });
+  }
+
+  supprimerConfirme() {
+    if (!this.aSupprimer) return;
+    const { type, id } = this.aSupprimer;
+    if (type === 'rapport') this.deleteRapport(id);
+    else this.deleteParametreById(id);
+  }
+
   openModalTab(content1: any) {
     this.modalService.open(content1, { size: "xl", centered: true });
   }
@@ -83,16 +100,7 @@ export class ParametrageRapportsComponent {
   }
 
   deleteParametreById(cod_param: any): void {
-    Swal.fire({
-      title: 'Êtes-vous sûr ?',
-      text: 'Ce paramètre sera définitivement supprimé.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, supprimer',
-      cancelButtonText: 'Annuler',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.rapportServ.deleteParametreById(cod_param).subscribe({
+    this.rapportServ.deleteParametreById(cod_param).subscribe({
           next: () => {
             Swal.fire({
               icon: 'success',
@@ -114,8 +122,6 @@ export class ParametrageRapportsComponent {
             });
           },
         });
-      }
-    });
   }
   
 
@@ -140,7 +146,7 @@ export class ParametrageRapportsComponent {
     });
   }
 
-  ajouterRapport(content1: any): void {
+  ajouterRapport(): void {
     this.rapportServ.createRapport(this.nouveauRapport).subscribe({
       next: (res) => {
         Swal.fire({
@@ -149,7 +155,7 @@ export class ParametrageRapportsComponent {
           text: 'Rapport créé avec succès !'
         });
         this.getAllRapport(); 
-        this.nouveauRapport = {}; 
+        this.nouveauRapport = this.rapportVide(); 
         this.modalService.dismissAll(); 
       },
       error: (err) => {

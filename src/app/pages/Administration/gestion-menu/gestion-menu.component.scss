@@ -1,41 +1,26 @@
-.col-libelle {
-    width: 40%;
-  }
-  
-  .col-route {
-    width: 20%;
-  }
-  
-  .col-status {
-    width: 10%;
-  }
-  
-  .col-rang {
-    width: 10%;
-  }
-  
-  .col-actions {
-    width: 20%;
-  }
-  
-:host ::ng-deep .menu-table thead th { text-align: center; vertical-align: middle; white-space: nowrap; }
+:host ::ng-deep .menu-table thead th { white-space: nowrap; vertical-align: middle; }
 :host ::ng-deep .menu-table td { vertical-align: middle; }
-:host ::ng-deep .menu-table input.form-control,
-:host ::ng-deep .menu-table select.form-select { height: 38px; font-size: .875rem; }
 
-/* Champs verrouillés : le clic traverse le champ pour sélectionner la ligne */
+/* Défilement interne quand un tableau dépasse 6 lignes (l'en-tête reste visible) */
+.menu-scroll--max { max-height: 420px; overflow-y: auto; }
+:host ::ng-deep .menu-scroll--max thead th { position: sticky; top: 0; z-index: 1; }
+
+/* Lecture seule : les champs ressemblent à du texte jusqu'au clic sur Modifier */
 :host ::ng-deep .menu-table input:disabled,
 :host ::ng-deep .menu-table select:disabled {
-  pointer-events: none;
-  background-color: #f8f9fa;
-  color: #495057;
+  pointer-events: none; /* le clic traverse le champ pour sélectionner la ligne */
+  background-color: transparent;
+  border-color: transparent;
+  color: inherit;
+  padding-left: 0;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
+/* Lignes dont on peut afficher les sous-modules */
+:host ::ng-deep .menu-row { cursor: pointer; }
+:host ::ng-deep .menu-row:hover > td { background-color: rgba(64, 81, 137, 0.04); }
+
 /* Ligne sélectionnée (celle dont les sous-modules sont affichés) */
-:host ::ng-deep .menu-table tr.table-active > td {
-  background-color: rgba(64, 81, 137, 0.08);
-  box-shadow: none;
-}
-:host ::ng-deep .menu-table tr.table-active > td:first-child {
-  box-shadow: inset 4px 0 0 #405189;
-}
+:host ::ng-deep .menu-row--selected > td { background-color: rgba(64, 81, 137, 0.08); }
+:host ::ng-deep .menu-row--selected > td:first-child { box-shadow: inset 4px 0 0 #405189; }

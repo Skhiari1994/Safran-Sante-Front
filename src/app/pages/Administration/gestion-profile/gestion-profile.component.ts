@@ -178,6 +178,21 @@ export class GestionProfileComponent {
     }
   }
 
+  /** Développe ou réduit tous les modules et sous-modules. */
+  toutDeplier(ouvert: boolean): void {
+    this.menuData.forEach(m => {
+      m.expanded = ouvert;
+      this.descendants(m).forEach((c: any) => { c.expanded = ouvert; });
+    });
+  }
+
+  /** Nombre de pages feuilles affichées / total sous un module (les sous-groupes ne comptent pas). */
+  private feuilles(item: any): any[] {
+    return this.descendants(item).filter((c: any) => !(c.subItems && c.subItems.length));
+  }
+  nbAffiches(item: any): number { return this.feuilles(item).filter((c: any) => c.checked).length; }
+  nbTotal(item: any): number { return this.feuilles(item).length; }
+
   getIndentationLevel(level: number): number {
     return 20 * level;
   }

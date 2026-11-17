@@ -42,10 +42,6 @@ export class ConsultationUtilisateurComponent implements OnInit {
     private tokenSociete: TokenStorage) { }
 
   ngOnInit(): void {
-    this.breadCrumbItems = [
-      { label: 'Espace Admin' },
-      { label: 'Consultation utilisateur', active: true }
-    ];
     this.charger();
     this.adminServ.getRole().subscribe((roles: any) => this.listRoles = roles || []);
   }
@@ -135,28 +131,32 @@ export class ConsultationUtilisateurComponent implements OnInit {
     });
   }
 
-  supprimer(u: any): void {
-    Swal.fire({
-      title: 'Supprimer cet utilisateur ?',
-      html: `Matricule <b>${u.matricule}</b> – ${u.nom ?? ''} ${u.prenom ?? ''}<br>Cette action est irréversible.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Oui, supprimer',
-      cancelButtonText: 'Annuler',
-    }).then(result => {
-      if (!result.isConfirmed) return;
-      this.adminServ.supprimerUtilisateur(u.useId).subscribe({
-        next: () => {
-          this.charger();
-          Swal.fire({ icon: 'success', title: 'Utilisateur supprimé', timer: 1500, showConfirmButton: false });
-        },
-        error: (err: any) => {
-          console.error('Erreur suppression utilisateur', err);
-          Swal.fire({ icon: 'error', title: 'Suppression impossible' });
-        }
-      });
+  aSupprimer: any = null;
+
+  confirmerSuppression(content: TemplateRef<any>, u: any): void {
+    if (this.estUtilisateurConnecte(u)) return;
+    this.aSupprimer = u;
+    this.modalService.open(content, { centered: true, size: 'sm' });
+  }
+
+  supprimerConfirme(): void {
+    const u = this.aSupprimer;
+    if (!u) return;
+    this.adminServ.supprimerUtilisateur(u.useId).subscribe({
+      next: () => {
+        this.charger();
+        Swal.fire({ icon: 'success', title: 'Utilisateur supprimé', timer: 1500, showConfirmButton: false });
+      },
+      error: (err: any) => {
+        console.error('Erreur suppression utilisateur', err);
+        Swal.fire({ icon: 'error', title: 'Suppression impossible' });
+      }
     });
+  }
+
+  /** Initiales affichées dans l'avatar (prénom + nom). */
+  initiales(u: any): string {
+    const i = `${(u?.prenom || '').trim().charAt(0)}${(u?.nom || '').trim().charAt(0)}`.toUpperCase();
+    return i || '?';
   }
 }

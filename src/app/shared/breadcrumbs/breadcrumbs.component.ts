@@ -12,6 +12,8 @@ import { Component, OnInit, Input } from '@angular/core';
 export class BreadcrumbsComponent implements OnInit {
 
   @Input() title: string | undefined;
+  /** Classe d'icône Remix de la pastille (facultative). */
+  @Input() icon = 'ri-file-list-3-line';
   @Input()
   breadcrumbItems!: Array<{
     active?: boolean;

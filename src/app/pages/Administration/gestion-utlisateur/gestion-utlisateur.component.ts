@@ -55,9 +55,6 @@ export class GestionUtlisateurComponent {
   }
 
   ngOnInit(): void {
-    /**
-    * BreadCrumb
-    */
 
     this.adminServ.getPersonnels().subscribe(data => {
       this.listValues = data;

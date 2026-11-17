@@ -834,3 +834,111 @@ input[placeholder*="dd/mm" i]:not([readonly]):not(:disabled) {
 .p-datatable:has(.p-paginator) {
   overflow: visible;
 }
+
+/* ===== Pop-up d'inactivité de session ===== */
+.swal2-popup.popup-inactivite {
+  padding: 2rem 2rem 1.75rem;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+
+  .inact-titre {
+    padding: 0;
+    margin: 0 0 1.25rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--vz-heading-color, #1f2a44);
+  }
+
+  .swal2-html-container {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .swal2-actions {
+    margin: 1.5rem 0 0;
+  }
+
+  .inact {
+    --inact-couleur: var(--vz-primary, #405189);
+    --inact-fond: var(--vz-primary-bg-subtle, #e9ecf8);
+
+    &--urgent {
+      --inact-couleur: var(--vz-danger, #f06548);
+      --inact-fond: var(--vz-danger-bg-subtle, #fde8e3);
+    }
+
+    &__anneau {
+      position: relative;
+      width: 148px;
+      height: 148px;
+      margin: 0 auto 1.25rem;
+      border-radius: 50%;
+      background: var(--inact-fond);
+      transition: background 0.4s;
+
+      svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg); /* le décompte part du haut */
+      }
+
+      circle {
+        fill: none;
+        stroke-width: 7;
+      }
+    }
+
+    &__piste {
+      stroke: rgba(255, 255, 255, 0.85);
+    }
+
+    &__progres {
+      stroke: var(--inact-couleur);
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s linear, stroke 0.4s;
+    }
+
+    &__temps {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.1;
+
+      span {
+        font-size: 2rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: var(--inact-couleur);
+        transition: color 0.4s;
+      }
+
+      small {
+        margin-top: 0.25rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.02em;
+        color: var(--vz-secondary-color, #6c757d);
+      }
+    }
+
+    &__message {
+      margin: 0 0 0.35rem;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--vz-body-color, #495057);
+    }
+
+    &__aide {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--vz-secondary-color, #6c757d);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .inact__progres, .inact__anneau, .inact__temps span { transition: none; }
+  }
+}

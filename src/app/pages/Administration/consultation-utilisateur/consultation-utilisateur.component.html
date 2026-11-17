@@ -1,111 +1,159 @@
-<div class="row" style="margin-top: 25px"></div>
-<app-breadcrumbs title="Consultation utilisateur" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs icon="ri-team-line" title="Consultation utilisateur" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
 
-<div class="card p-4 border shadow-none mb-3">
-  <h5 class="card-title text-primary mb-3">Liste des utilisateurs</h5>
-  <div class="table-responsive table-card mb-2">
-    <p-table #dt [value]="utilisateursFiltres" [paginator]="true" [rows]="10" [loading]="loading"
-      [globalFilterFields]="['matricule', 'nom', 'prenom', 'cin', 'role', 'libSoc']" styleClass="modern-table">
-      <ng-template pTemplate="caption">
-        <div class="row">
-          <div class="col-md-4">
-            <input type="text" class="form-control" placeholder="Rechercher (matricule, nom, prénom, CIN…)"
-              (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+              <i class="ri-team-line" aria-hidden="true"></i>
+            </span>
           </div>
-          <div class="col-md-3">
+          <div>
+            <h5 class="card-title mb-0">Liste des utilisateurs</h5>
+            <p class="text-muted fs-13 mb-0">
+              {{ utilisateursFiltres.length }} utilisateur{{ utilisateursFiltres.length > 1 ? 's' : '' }}
+              <ng-container *ngIf="utilisateursFiltres.length !== utilisateurs.length"> sur {{ utilisateurs.length }}</ng-container>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Filtres : toujours visibles -->
+        <div class="row g-3 mb-3">
+          <div class="col-lg-5">
+            <div class="search-box">
+              <input type="search" class="form-control" placeholder="Rechercher (matricule, nom, prénom, CIN…)"
+                aria-label="Rechercher un utilisateur" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+              <i class="ri-search-line search-icon" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
             <select class="form-select" aria-label="Filtrer par société" [(ngModel)]="societeFiltre"
               (ngModelChange)="appliquerFiltres()">
               <option value="">Toutes les sociétés</option>
               <option *ngFor="let s of societes" [value]="s">{{ s }}</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-6 col-lg-4">
             <select class="form-select" aria-label="Filtrer par rôle" [(ngModel)]="roleFiltre"
               (ngModelChange)="appliquerFiltres()">
               <option value="">Tous les rôles</option>
               <option *ngFor="let r of rolesDisponibles" [value]="r">{{ r }}</option>
             </select>
           </div>
-          <div class="col-md-2 d-flex align-items-center text-muted">
-            {{ utilisateursFiltres.length }} utilisateur(s)
-          </div>
         </div>
-      </ng-template>
-      <ng-template pTemplate="header">
-        <tr class="table-primary">
-          <th class="text-center">Matricule</th>
-          <th class="text-center">Nom</th>
-          <th class="text-center">Prénom</th>
-          <th class="text-center">CIN</th>
-          <th class="text-center">Rôle</th>
-          <th class="text-center">Société</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-u>
-        <tr>
-          <td class="text-center">{{ u.matricule }}</td>
-          <td class="text-center">{{ u.nom }}</td>
-          <td class="text-center">{{ u.prenom }}</td>
-          <td class="text-center">{{ u.cin || '—' }}</td>
-          <td class="text-center">
-            <span *ngFor="let r of roles(u)" class="badge fs-12 me-1" [ngClass]="couleurRole(r)">{{ r }}</span>
-          </td>
-          <td class="text-center">
-            <span *ngIf="u.libSoc; else aucuneSoc" class="soc-badge fs-12" [ngClass]="classeSociete(u.libSoc)">{{ u.libSoc }}</span>
-            <ng-template #aucuneSoc>—</ng-template>
-          </td>
-          <td>
-            <ul class="list-inline hstack gap-2 mb-0 justify-content-center">
-              <li class="list-inline-item">
-                <a class="edit-item-btn" title="Modifier" (click)="ouvrirModification(u, modifContent)">
-                  <i class="ri-pencil-fill align-bottom text-muted"></i>
-                </a>
-              </li>
-              <li class="list-inline-item me-0">
-                <a class="remove-item-btn" [class.action-desactivee]="estUtilisateurConnecte(u)"
-                  [title]="estUtilisateurConnecte(u) ? 'Vous ne pouvez pas supprimer votre propre compte' : 'Supprimer'"
-                  (click)="!estUtilisateurConnecte(u) && supprimer(u)">
-                  <i class="ri-delete-bin-fill align-bottom text-muted"></i>
-                </a>
-              </li>
-            </ul>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="7" class="text-center">
-            <span *ngIf="erreur" class="badge bg-danger-subtle text-danger">Chargement impossible</span>
-            <span *ngIf="!erreur" class="badge bg-info-subtle text-info">Aucune donnée disponible !</span>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+
+        <p-table #dt [value]="utilisateursFiltres" [paginator]="utilisateursFiltres.length > 10" [rows]="10"
+          [loading]="loading" [globalFilterFields]="['matricule', 'nom', 'prenom', 'cin', 'role', 'libSoc']"
+          styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <!-- Titres : un clic trie la colonne -->
+            <tr class="table-light">
+              <th scope="col" pSortableColumn="matricule" style="width: 11%;">Matricule<p-sortIcon field="matricule"></p-sortIcon></th>
+              <th scope="col" pSortableColumn="nom">Utilisateur<p-sortIcon field="nom"></p-sortIcon></th>
+              <th scope="col" pSortableColumn="cin" style="width: 11%;">CIN<p-sortIcon field="cin"></p-sortIcon></th>
+              <th scope="col" pSortableColumn="role">Rôle<p-sortIcon field="role"></p-sortIcon></th>
+              <th scope="col" pSortableColumn="libSoc">Société<p-sortIcon field="libSoc"></p-sortIcon></th>
+              <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-u>
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ u.matricule }}</span></td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="avatar-xs flex-shrink-0">
+                    <span class="avatar-title rounded-circle bg-info-subtle text-info fs-12 fw-semibold">{{ initiales(u) }}</span>
+                  </span>
+                  <span class="fw-medium">{{ u.nom }} {{ u.prenom }}</span>
+                </div>
+              </td>
+              <td>{{ u.cin || '—' }}</td>
+              <td>
+                <span *ngFor="let r of roles(u)" class="badge fs-12 me-1" [ngClass]="couleurRole(r)">{{ r }}</span>
+                <span *ngIf="!roles(u).length" class="text-muted">—</span>
+              </td>
+              <td>
+                <span *ngIf="u.libSoc; else aucuneSoc" class="soc-badge fs-12" [ngClass]="classeSociete(u.libSoc)">{{ u.libSoc }}</span>
+                <ng-template #aucuneSoc><span class="text-muted">—</span></ng-template>
+              </td>
+              <td class="text-end">
+                <div class="hstack gap-2 justify-content-end">
+                  <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                    [attr.aria-label]="'Modifier ' + u.nom + ' ' + u.prenom" (click)="ouvrirModification(u, modifContent)">
+                    <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" [disabled]="estUtilisateurConnecte(u)"
+                    [title]="estUtilisateurConnecte(u) ? 'Vous ne pouvez pas supprimer votre propre compte' : 'Supprimer'"
+                    [attr.aria-label]="'Supprimer ' + u.nom + ' ' + u.prenom" (click)="confirmerSuppression(deleteModel, u)">
+                    <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center text-muted py-5">
+                <ng-container *ngIf="erreur; else aucune">
+                  <i class="ri-error-warning-line fs-1 d-block mb-2 text-danger" aria-hidden="true"></i>
+                  Chargement impossible
+                  <div><button type="button" class="btn btn-sm btn-soft-primary mt-2" (click)="charger()">Réessayer</button></div>
+                </ng-container>
+                <ng-template #aucune>
+                  <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                  Aucun utilisateur trouvé
+                </ng-template>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Modification utilisateur -->
 <ng-template #modifContent let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">Modifier l'utilisateur</h5>
-    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-user-settings-line" aria-hidden="true"></i>
+        </span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0">Modifier l'utilisateur</h5>
+        <p class="text-muted fs-13 mb-0">Le matricule ne peut pas être modifié.</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body" *ngIf="edition">
     <div class="row g-3">
-      <div class="col-md-12">
+      <div class="col-12">
         <label class="form-label">Matricule</label>
-        <input type="text" class="form-control" [value]="edition.matricule" readonly />
+        <input type="text" class="form-control bg-light" [value]="edition.matricule" readonly />
       </div>
       <div class="col-md-6">
-        <label class="form-label">Nom</label>
-        <input type="text" class="form-control border-primary" [(ngModel)]="edition.nom" />
+        <label for="edit-nom" class="form-label">Nom <span class="text-danger">*</span></label>
+        <input id="edit-nom" type="text" class="form-control" [(ngModel)]="edition.nom" />
       </div>
       <div class="col-md-6">
-        <label class="form-label">Prénom</label>
-        <input type="text" class="form-control border-primary" [(ngModel)]="edition.prenom" />
+        <label for="edit-prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+        <input id="edit-prenom" type="text" class="form-control" [(ngModel)]="edition.prenom" />
       </div>
-      <div class="col-md-12">
+      <div class="col-12">
         <label class="form-label">Rôles</label>
         <ng-select [items]="listRoles" bindLabel="name" bindValue="id" [multiple]="true"
           [(ngModel)]="edition.roleIds" placeholder="Sélectionner les rôles"></ng-select>
@@ -114,6 +162,27 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="modal.dismiss()">Annuler</button>
-    <button type="button" class="btn btn-primary" [disabled]="enregistrement" (click)="enregistrer()">Enregistrer</button>
+    <button type="button" class="btn btn-success" [disabled]="enregistrement" (click)="enregistrer()">
+      <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+    </button>
+  </div>
+</ng-template>
+
+<!-- Confirmation de suppression -->
+<ng-template #deleteModel let-modal>
+  <div class="modal-body text-center p-4">
+    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548"
+      style="width: 100px; height: 100px"></lord-icon>
+    <h4 class="mt-3">Supprimer cet utilisateur ?</h4>
+    <p class="text-muted mb-0">
+      Matricule <strong>{{ aSupprimer?.matricule }}</strong> – {{ aSupprimer?.nom }} {{ aSupprimer?.prenom }}<br>
+      Cette action est irréversible.
+    </p>
+    <div class="d-flex gap-2 justify-content-center mt-4">
+      <button type="button" class="btn btn-light w-sm" (click)="modal.dismiss('Close click')">Annuler</button>
+      <button type="button" class="btn btn-danger w-sm" (click)="supprimerConfirme(); modal.close('Close click')">
+        Oui, supprimer
+      </button>
+    </div>
   </div>
 </ng-template>
