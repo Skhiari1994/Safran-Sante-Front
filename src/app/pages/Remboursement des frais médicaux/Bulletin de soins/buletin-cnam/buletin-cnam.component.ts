@@ -1964,6 +1964,7 @@ export class BuletinCNAMComponent {
       }
     });
   }
+
   verif_piece_pahr(event: any, index: any) {
     const value = event.target.value;
 
@@ -2012,8 +2013,11 @@ export class BuletinCNAMComponent {
         this.showMessage('warn', 'Erreur lors de la vérification des pièces');
       }
     });
+
   }
+
   etab_rsoc_phar: string[] = []
+
   onSelectedEtablisPhar(selectedValue: any, index: number): void {
     if (!selectedValue || !selectedValue.prf_cod) {
       console.warn('Invalid etablissement selection:', selectedValue);
@@ -2034,7 +2038,9 @@ export class BuletinCNAMComponent {
       prf_cod: selectedValue.prf_cod
     });
   }
+
   mntNetArrayPhar: number[] = [];
+
   calcul_mnt_netPhar(event: any, index: number) {
     const ligPhar = this.ligPharForm.get('phar') as FormArray;
     console.log("ligBult :", ligPhar)
@@ -2049,8 +2055,10 @@ export class BuletinCNAMComponent {
         console.log(this.mntNetArray)
       })
   }
+
   totalHonorairesPhar: number = 0;
   totalNetPhar: number = 0;
+  
   calculateTotalsPhar() {
     console.log("this.phar :", this.phar)
     this.totalHonorairesPhar = this.phar.controls.reduce((sum, ligne) => {

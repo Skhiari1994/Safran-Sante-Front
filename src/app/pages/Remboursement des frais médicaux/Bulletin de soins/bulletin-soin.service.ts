@@ -168,6 +168,7 @@ export class BulletinSoinService {
   addBBordArriver(data: any): Observable<any[]> {
     return this.http.post<any[]>(API_URL + "Remb/BordArriv/saveBordArrive", data);
   }
+  
   verif_indice = (abrv_act_: any, cod_fil_: any, cod_assur_: any, indice: any): Observable<any> => {
     const params = new HttpParams().set("abrv_act_", abrv_act_).set("cod_fil_", cod_fil_).set("cod_assur_", cod_assur_).set("indice", indice)
     return this.http.get<any>(API_URL + "Remb/BultSoin/verif_indice", { params });
