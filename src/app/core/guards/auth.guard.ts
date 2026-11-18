@@ -6,6 +6,7 @@ import { AuthenticationService } from '../services/auth.service';
 import { AuthfakeauthenticationService } from '../services/authfake.service';
 import { environment } from '../../../environments/environment';
 import { TokenStorage } from 'src/app/account/token-storage.service';
+import { memoriserMotifDeconnexion } from '../helpers/motif-deconnexion';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
@@ -19,6 +20,10 @@ canActivate(){
   return true;
   }else{
   // un token expiré fait échouer toutes les requêtes backend : on repart d'une session propre
+  if (jwt) {
+    // il y avait une session (jeton présent mais expiré) : l'écran de connexion le signale
+    memoriserMotifDeconnexion('expiree');
+  }
   this.token.signOut();
   this.route.navigate(['/auth/login']);
   return false;

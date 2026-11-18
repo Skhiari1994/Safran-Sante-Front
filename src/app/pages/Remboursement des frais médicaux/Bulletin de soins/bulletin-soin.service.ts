@@ -168,6 +168,7 @@ export class BulletinSoinService {
   addBBordArriver(data: any): Observable<any[]> {
     return this.http.post<any[]>(API_URL + "Remb/BordArriv/saveBordArrive", data);
   }
+  
   verif_indice = (abrv_act_: any, cod_fil_: any, cod_assur_: any, indice: any): Observable<any> => {
     const params = new HttpParams().set("abrv_act_", abrv_act_).set("cod_fil_", cod_fil_).set("cod_assur_", cod_assur_).set("indice", indice)
     return this.http.get<any>(API_URL + "Remb/BultSoin/verif_indice", { params });
@@ -309,8 +310,6 @@ export class BulletinSoinService {
   }
 
   getLigBultAct = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultAct @@@@@')
-    console.log('numSoin ---> ',numSoin)
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultAct", { params });
   }
@@ -321,8 +320,6 @@ export class BulletinSoinService {
   }
 
   getLigBultVisit = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultVisit @@@@@')
-    console.log('numSoin ---> ',numSoin)
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultVisit", { params });
   }
@@ -333,8 +330,6 @@ export class BulletinSoinService {
   }
 
   getLigBultMed = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultMed @@@@@')
-    console.log('numSoin ---> ',numSoin)
     let params = new HttpParams()
       .set("soc", soc)
       .set("mat", mat)
@@ -354,8 +349,6 @@ export class BulletinSoinService {
   }
   
   getLigBultApp = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultApp @@@@@')
-    console.log('numSoin ---> ',numSoin)
     let params = new HttpParams()
       .set("soc", soc)
       .set("mat", mat)

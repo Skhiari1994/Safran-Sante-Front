@@ -1,3 +1,12 @@
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td,
+:host ::ng-deep .modern-table tbody > tr > td { vertical-align: middle; }
 
-:host ::ng-deep .rap-table thead th { text-align: center; vertical-align: middle; white-space: nowrap; }
-:host ::ng-deep .rap-table td { vertical-align: middle; }
+/* Chemins de rapport longs : coupés proprement plutôt que de déformer le tableau */
+.rap-path {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--vz-font-family-monospace, monospace);
+  font-size: 0.8rem;
+}

@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { ChatNotificationService } from '../pages/chat/chat-notification.service';
 import { TokenStorage } from '../account/token-storage.service';
 import { CarteCnamAlertService } from '../pages/Adherent/carte-cnam-alert.service';
+import { SessionTimeoutService } from '../core/services/session-timeout.service';
 
 @Component({
   selector: 'app-layout',
@@ -21,9 +22,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
   layoutType!: string;
 
   constructor(private store: Store<RootReducerState>, private chatNotifications: ChatNotificationService,
-    private tokenStorage: TokenStorage, private carteCnamAlert: CarteCnamAlertService) { }
+    private tokenStorage: TokenStorage, private carteCnamAlert: CarteCnamAlertService,
+    private sessionTimeout: SessionTimeoutService) { }
 
   ngOnInit(): void {
+    this.sessionTimeout.demarrer();
     this.alerterCarteCnamApresConnexion();
     this.store.select('layout').subscribe((data) => {
       this.layoutType = data.LAYOUT;
@@ -56,6 +59,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.sessionTimeout.arreter();
     this.chatNotifications.reset();
   }
 

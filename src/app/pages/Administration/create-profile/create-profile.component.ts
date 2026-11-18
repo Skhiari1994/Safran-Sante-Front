@@ -13,6 +13,9 @@ export class CreateProfileComponent {
 
   RoleForm!: FormGroup
   ListRole: any
+  rolesAffiches: any[] = [];
+  breadCrumbItems!: Array<{}>;
+  aSupprimer: any = null;
   term!: string
   p: any
   isEdit = false;
@@ -54,18 +57,12 @@ export class CreateProfileComponent {
 
 
   }
+  confirmerSuppression(content: any, role: any) {
+    this.aSupprimer = role;
+    this.modalService.open(content, { centered: true, size: 'sm' });
+  }
+
   DeleteRole(id: number) {
-    Swal.fire({
-      title: 'Es-tu sûr?',
-      text: 'Tu ne pourras pas revenir en arrière!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#34c38f',
-      cancelButtonColor: '#f46a6a',
-      confirmButtonText: 'Oui, Supprimer le!'
-    }).then(result => {
-      console.log("result.value", result.value)
-      if (result.value) {
         this.adminServ.DeleteRole(id).subscribe(
           (data: any[]) => {
             console.log("data delete", data)
@@ -77,13 +74,10 @@ export class CreateProfileComponent {
 
           });
 
-      }
-    });
   }
 
-  toggleFilter(key: string) {
-    this.showFilters[key] = !this.showFilters[key];
-    if (!this.showFilters[key]) { this.searchz[key] = ''; this.p = 1; }
+  applyFilter() {
+    this.rolesAffiches = this.filteredRoles();
   }
 
   onSort(column: string) {
@@ -93,6 +87,7 @@ export class CreateProfileComponent {
     this.ListRole = [...(this.ListRole || [])].sort((a: any, b: any) =>
       String(a[column] ?? '').localeCompare(String(b[column] ?? ''), 'fr', { numeric: true }) * dir
     );
+    this.applyFilter();
   }
 
   filteredRoles(): any[] {
@@ -116,6 +111,7 @@ export class CreateProfileComponent {
     this.adminServ.getRole().subscribe(
       (data: any) => {
         this.ListRole = data;
+        this.applyFilter();
       },
       (error) => {
 

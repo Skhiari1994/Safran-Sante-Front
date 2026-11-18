@@ -330,10 +330,6 @@ export class MajAdherentComponent {
 
     })
 
-    this.breadCrumbItems = [
-      { label: 'Adherent' },
-      { label: 'ConsAdherent', active: true }
-    ];
     this.getNationalite()
     this.getDepartement()
     this.getAffectation()

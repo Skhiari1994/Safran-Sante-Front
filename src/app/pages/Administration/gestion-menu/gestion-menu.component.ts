@@ -329,6 +329,38 @@ export class GestionMenuComponent {
     });
   }
 
+  // --- Aiguillage des trois tableaux de sous-modules (niveaux 1, 2 et 3) ---
+
+  private get tableDuNiveau(): { [n: number]: FormGroup } {
+    return { 1: this.table2, 2: this.table3, 3: this.table4 };
+  }
+
+  ajouterNiveau(n: 1 | 2 | 3): void {
+    const creer = n === 1 ? this.createTable2Row : n === 2 ? this.createTable3Row : this.createTable4Row;
+    this.addRowNiv(this.tableDuNiveau[n], creer.bind(this), n);
+  }
+
+  enregistrerNiveau(n: 1 | 2 | 3, table: FormGroup, rowIndex: number): void {
+    if (n === 1) this.saveRowNiv1(table, rowIndex);
+    else if (n === 2) this.saveRowNiv2(table, rowIndex);
+    else this.saveRowNiv3(table, rowIndex);
+  }
+
+  /** Le niveau 3 n'a pas de sous-niveau : ses lignes ne se « sélectionnent » pas. */
+  cliquerLigne(n: 1 | 2 | 3, row: any): void {
+    const id = row.get('evt_id')?.value;
+    const nom = row.get('evt_name')?.value;
+    if (n === 1) this.onRowClickNiv1(id, nom);
+    else if (n === 2) this.onRowClickNiv2(id, nom);
+  }
+
+  estSelectionne(n: 1 | 2 | 3, row: any): boolean {
+    const id = row.get('evt_id')?.value;
+    if (n === 1) return this.selectedEvtId !== null && id === this.selectedEvtId;
+    if (n === 2) return this.selectedEvtId2 !== null && id === this.selectedEvtId2;
+    return false;
+  }
+
   private ajoutEnCours = false;
 
   /** Rang suivant parmi les lignes du tableau (donc parmi les enfants du parent sélectionné) : dernier + 1. */

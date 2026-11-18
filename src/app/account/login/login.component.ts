@@ -9,6 +9,7 @@ import { Societe } from '../../pages/Adherent/adherent.service';
 import { Observable } from 'rxjs';
 import { ToastService } from './toast-service';
 import { SocieteLogin } from 'src/app/pages/Adherent/adherent.service';
+import { consommerMotifDeconnexion, MotifDeconnexion } from '../../core/helpers/motif-deconnexion';
 
 @Component({
   selector: 'app-login',
@@ -43,6 +44,9 @@ export class LoginComponent implements OnInit {
   /** Matricule et CIN saisis mais aucune société trouvée : l'un des deux est faux. */
   societesIntrouvables = false;
 
+  /** Pourquoi l'utilisateur a été renvoyé ici (inactivité, jeton expiré) ; null = arrivée normale. */
+  motifDeconnexion: MotifDeconnexion | null = null;
+
   constructor(private formBuilder: UntypedFormBuilder, private authenticationService: AuthenticationService, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService) {
     // redirect to home if already logged in
@@ -52,6 +56,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.motifDeconnexion = consommerMotifDeconnexion();
     /**
      * Form Validatyion
      */

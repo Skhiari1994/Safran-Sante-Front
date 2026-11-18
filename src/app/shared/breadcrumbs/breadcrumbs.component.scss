@@ -1,0 +1,41 @@
+/* En-tête de page : pastille d'icône + titre en casse normale, fil d'Ariane dessous.
+   Remplace la barre blanche pleine largeur du thème (titre en majuscules). */
+.page-title-box.titre-page {
+  margin: 0 0 0.25rem;
+  padding: 0.5rem 0.25rem;
+  border: 0;
+  box-shadow: none;
+  /* léger voile : le contenu qui défile sous l'en-tête collant reste lisible */
+  background-color: color-mix(in srgb, var(--vz-body-bg, #f3f3f9) 82%, transparent) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+}
+
+.titre-page__icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  color: var(--vz-primary, #405189);
+  background-color: var(--vz-primary-bg-subtle, #dfe3f1);
+  border-radius: 10px;
+}
+
+.page-title-box.titre-page .titre-page__titre {
+  font-size: 1.125rem !important;
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  color: var(--vz-heading-color, #343a40);
+}
+
+.titre-page__chemin {
+  font-size: 0.8125rem;
+  flex-wrap: wrap;
+}
+
+.min-w-0 { min-width: 0; }

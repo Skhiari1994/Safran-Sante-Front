@@ -73,7 +73,7 @@
                 <span class="lov-prop-m" [class.dim]="sexeFiltre === 'F'" [style.width.%]="pctM"></span>
                 <span class="lov-prop-f" [class.dim]="sexeFiltre === 'M'" [style.width.%]="pctF"></span>
               </span>
-              <span class="lov-prop-txt"><b class="m">{{ pctM }} %</b> hommes · <b class="f">{{ pctF }} %</b> femmes</span>
+              <span class="lov-prop-txt"><b class="m">{{ pctM }} %</b> hommes · <b class="f">{{ pctF }} %</b> femmes<ng-container *ngIf="comptesSexe.autre"> · {{ comptesSexe.autre }} non renseigné{{ comptesSexe.autre > 1 ? 's' : '' }}</ng-container></span>
             </div>
           </div>
         </div>

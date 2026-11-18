@@ -33,6 +33,26 @@
                                 <h5 class="text-primary">Bienvenue !</h5>
                                 <p class="text-muted">Connectez-vous pour continuer vers la mutuelle.</p>
                             </div>
+
+                            @if (motifDeconnexion) {
+                            <div class="alert alert-warning login-session-expiree d-flex align-items-start gap-2 py-2 mt-3 mb-0"
+                                role="alert">
+                                <i class="ri-time-line fs-18 mt-1" aria-hidden="true"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Session expirée</strong>
+                                    <div>
+                                        @if (motifDeconnexion === 'inactivite') {
+                                        Pour des raisons d'inactivité, votre session a été déconnectée.
+                                        } @else {
+                                        Votre session a expiré.
+                                        }
+                                        Veuillez vous reconnecter.
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" aria-label="Fermer le message"
+                                    (click)="motifDeconnexion = null"></button>
+                            </div>
+                            }
                             <div class="p-2 mt-4">
                                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 

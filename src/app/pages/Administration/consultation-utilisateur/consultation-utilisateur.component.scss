@@ -1,16 +1,6 @@
 :host ::ng-deep .modern-table .p-datatable-thead > tr > th,
 :host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
-  text-align: center !important;
   vertical-align: middle;
-}
-
-:host ::ng-deep .modern-table .p-datatable-tbody > tr > td {
-  font-size: 0.85rem;
-}
-
-:host ::ng-deep .edit-item-btn,
-:host ::ng-deep .remove-item-btn {
-  cursor: pointer;
 }
 
 /* Pastilles société : une teinte propre à chaque société (différente des rôles) */
@@ -27,8 +17,3 @@
 .soc-3 { background: #fce4ec; color: #c2185b; }
 .soc-4 { background: #e3f2fd; color: #1565c0; }
 .soc-5 { background: #f1f8e9; color: #558b2f; }
-
-:host ::ng-deep .action-desactivee {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
