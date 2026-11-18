@@ -310,8 +310,6 @@ export class BulletinSoinService {
   }
 
   getLigBultAct = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultAct @@@@@')
-    console.log('numSoin ---> ',numSoin)
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultAct", { params });
   }
@@ -322,8 +320,6 @@ export class BulletinSoinService {
   }
 
   getLigBultVisit = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultVisit @@@@@')
-    console.log('numSoin ---> ',numSoin)
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultVisit", { params });
   }
@@ -334,8 +330,6 @@ export class BulletinSoinService {
   }
 
   getLigBultMed = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultMed @@@@@')
-    console.log('numSoin ---> ',numSoin)
     let params = new HttpParams()
       .set("soc", soc)
       .set("mat", mat)
@@ -355,8 +349,6 @@ export class BulletinSoinService {
   }
   
   getLigBultApp = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
-    console.log('getLigBultApp @@@@@')
-    console.log('numSoin ---> ',numSoin)
     let params = new HttpParams()
       .set("soc", soc)
       .set("mat", mat)

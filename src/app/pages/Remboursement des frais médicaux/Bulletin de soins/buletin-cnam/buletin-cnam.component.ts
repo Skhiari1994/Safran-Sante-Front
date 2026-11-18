@@ -205,7 +205,6 @@ export class BuletinCNAMComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((canSearch) => {
         this.isSearch = canSearch
-        console.log("is search valid", canSearch)
       })
 
     this.saveService.add$.subscribe((reset) => {
@@ -296,15 +295,9 @@ export class BuletinCNAMComponent {
       dat_vir: formatDate(rawHeader.dat_vir)
     };
 
-    // Debug logging
-    console.log('🔍 Header before toNullIfEmpty:', header);
-    console.log('🔍 reg_remb value:', header.reg_remb, 'Type:', typeof header.reg_remb);
-
     // Convert empty strings → null
     Object.keys(header).forEach(k => header[k] = toNullIfEmpty(header[k]));
 
-    console.log('🔍 Header after toNullIfEmpty:', header);
-    console.log('🔍 reg_remb after conversion:', header.reg_remb);
 
     /* ---------- SAVE HEADER ---------- */
 
@@ -438,7 +431,6 @@ export class BuletinCNAMComponent {
   }
 
   search(item: any) {
-    console.log('item.num_fam :', item)
     this.matricule = item.mat_pers
     this.PEC = item.num_pec
 
@@ -451,6 +443,9 @@ export class BuletinCNAMComponent {
         const adherent = this.listAdherent.find(a => a.num_fam == item.num_fam);
         if (adherent) {
           this.nomAdherent = adherent.nom_pren;
+
+          // Récupérer la date de naissance
+          this.datNais = adherent.dat_nais;
         }
       }
     })
@@ -511,12 +506,9 @@ export class BuletinCNAMComponent {
         { key: "lib_act", label: "Libelle" },
       ];
 
-      console.log("listActe (master list):", this.listActe);
-
       // Now load the saved actes from database
       this.serv.getLigBultAct(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
         // DON'T overwrite this.listActe here!
-        console.log("Loaded actes from DB:", data);
         this.loadDataIntoTable(data);
       });
     });
@@ -533,15 +525,36 @@ export class BuletinCNAMComponent {
       this.calculateTotalsAppareil();
     })
 
-    // Load plafond
-    this.serv.get_plafond_cnam(this.token.getUser().codSoc, item.mat_pers, item.dat_soin, this.datNais,
-      item.cod_assur, item.dat_saisie).subscribe((data: any) => {
+    this.serv.getDatNais(
+      this.token.getUser().codSoc,
+      item.mat_pers,
+      item.num_fam
+    ).subscribe((data: any) => {
+    
+      this.datNais = this.datePipe.transform(data?.dat_nais, 'dd/MM/yyyy') || '';
+    
+      if (!this.datNais) {
+        console.error("Date de naissance introuvable");
+        return;
+      }
+    
+      // Maintenant la date existe réellement
+      this.serv.get_plafond_cnam(
+        this.token.getUser().codSoc,
+        item.mat_pers,
+        item.dat_soin,
+        this.datNais,
+        item.cod_assur,
+        item.dat_saisie
+      ).subscribe((data: any) => {
         this.ageAn = data.ageAn;
         this.ageMois = data.ageMois;
         this.soldPlafond = Number(data.soldPlafond).toFixed(3);
         const val = Number(data.soldPlafondEstim);
         this.soldPlafondEstim = isNaN(val) ? '0.000' : val.toFixed(3);
-      })
+      });
+    });
+
   }
 
   loadDataIntoTable(data: any[]) {
@@ -770,9 +783,6 @@ export class BuletinCNAMComponent {
       }))));
 
       this.calculateTotalsPhar();
-      console.log("this.ligPharForm :", this.ligPharForm.value);
-      console.log("this.libMed :", this.libMed);
-      console.log("this.Med :", this.Med);
     });
   }
 
@@ -913,8 +923,6 @@ export class BuletinCNAMComponent {
         this.serv.getVisite(this.parente, this.sexe, codFil, codAssur).subscribe(
           (data: any) => {
             this.listVisite = Array.isArray(data) ? data : [];
-            console.log("listVisite :", this.listVisite);
-
             this.columnVisite = [
               { key: "cod_Visit", label: "Abrv acte" },
               { key: "lib_Visit", label: "Libelle" },
@@ -940,7 +948,6 @@ export class BuletinCNAMComponent {
       return;
     }
 
-    console.log("item :", item);
     this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, this.token.getUser().codSoc, item.nom);
     this.numAssur = item.numRetr;
     this.nomPers = item.nom;
@@ -1038,11 +1045,9 @@ export class BuletinCNAMComponent {
 
     const formBuletinSoin = formatDates(this.formBuletinSoin, [
       "dat_soin",
-
     ]);
-    console.log(this.formBuletinSoin.get('dat_soin')?.value)
+
     this.serv.get_duree_bulletin(item.target.value, this.formBuletinSoin.get('cod_assur')?.value).subscribe((data: any) => {
-      console.log("data :", data)
       if (data.reponse) {
         Swal.fire({
           title: 'Message',
@@ -1133,15 +1138,11 @@ export class BuletinCNAMComponent {
       event.target.value, this.parente, this.sexe
     ).subscribe((data: any) => {
       this.reponseVerifModRemb = data;
-      console.log("this.showMsgMalad :", this.reponseVerifModRemb);
       // Vérification des valeurs retournées
       this.showMsgMalad = data.msg_malad === "true";
       this.showMsgDatAccouch = data.msg_dat_accouch === "true";
       this.showMsgPriseCharge = data.msg_prise_charge === "true";
 
-      console.log("this.showMsgMalad :", this.showMsgMalad);
-      console.log("this.showMsgDatAccouch :", this.showMsgDatAccouch);
-      console.log("this.showMsgPriseCharge :", this.showMsgPriseCharge);
 
       if (data.message) {
         Swal.fire({
@@ -1155,13 +1156,6 @@ export class BuletinCNAMComponent {
       }
     });
   }
-
-  // confirm(content: any, id: any) {
-  //   console.log("annee:", id);
-  //   this.deleteId = id;
-  //   this.modalService.open(content, { centered: true });
-  // }
-  /* Traitement des actes*/
 
   get lignes(): FormArray {
     return this.ligPretForm.get('lignes') as FormArray;
@@ -1253,21 +1247,15 @@ export class BuletinCNAMComponent {
     }
   }
 
-  // removeLigne(index: number): void {
-  //   this.lignes.removeAt(index);
-  //   this.calculateTotals(); // Met à jour les totaux
-
-  // }
   selectedIndex: number | null = null;
+
   confirm(index: any, content: any, id: any) {
     this.selectedIndex = index
-    console.log("this.selectedIndex:", this.selectedIndex);
-    //this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+
   ConfirmDelete(index: number): void {
     const ligne = this.lignes.at(index).value;
-    console.log("ligne:", ligne);
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -1279,11 +1267,9 @@ export class BuletinCNAMComponent {
       dat_act: ligne.dat_act
     };
 
-    console.log("Clé à vérifier :", cle);
 
     this.serv.existeLigBultAct(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
 
         if (exists) {
           this.serv.deleteLigBultAct(
@@ -1449,7 +1435,7 @@ export class BuletinCNAMComponent {
         confirmButtonText: 'OK',
       });
     }
-    console.log("ligBult :", ligBult.value[index].abrv_act)
+
     this.serv.calculer_montant_net_act(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligBult.value[index].cod_act, event.target.value,
       this.formBuletinSoin.get("dat_soin")?.value, this.selectedAct.act_prix, this.selectedAct.taux_act, 0, 0).subscribe((data: any) => {
 
@@ -1459,8 +1445,8 @@ export class BuletinCNAMComponent {
         this.mntNetArray[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
         this.lignes.at(index).patchValue({ mnt_net: this.mntNetArray[index] });
         this.calculateTotals();
-        console.log(this.mntNetArray)
       })
+
   }
 
   OnselectRefTyp(event: any) {
@@ -1587,7 +1573,6 @@ export class BuletinCNAMComponent {
   calculateTotals() {
 
     this.totalHonoraires = this.lignes.controls.reduce((sum, ligne) => {
-      console.log("ligne :", ligne.get('mnt_honor')?.value)
       const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
       return sum + honor;
     }, 0);
@@ -1823,14 +1808,14 @@ export class BuletinCNAMComponent {
   }
 
   selectedIndexMed: number | null = null;
+
   confirmMed(index: any, content: any) {
     this.selectedIndexMed = index;
-    console.log("selectedIndexMed:", this.selectedIndexMed);
     this.modalService.open(content, { centered: true });
   }
+
   ConfirmDeleteMed(index: number): void {
     const ligne = this.phar.at(index).value;
-    console.log("ligne:", ligne);
 
     // 🔥 SIMPLIFIED: Just try to delete directly
     this.serv.deleteLigBultMed(
@@ -1843,7 +1828,6 @@ export class BuletinCNAMComponent {
       ligne.cod_med
     ).subscribe({
       next: (response) => {
-        console.log("Suppression effectuée:", response);
 
         // Remove from FormArray and all related arrays
         this.phar.removeAt(index);
@@ -1896,11 +1880,11 @@ export class BuletinCNAMComponent {
       }
     });
   }
+
   verif_indice_phar(item: any, index: any) {
     const ligPhar = this.ligPharForm.get('phar') as FormArray;
     this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].abrv_act.indice).
       subscribe((data: any) => {
-        console.log("data", data)
         if (data.reponse != null) {
           Swal.fire({
             title: 'Message',
@@ -1935,8 +1919,6 @@ export class BuletinCNAMComponent {
       return;
     }
 
-    console.log("Checking vignettes for:", currentLine);
-
     this.serv.verif_vign(
       currentLine.abrv_act,
       this.formBuletinSoin.get('cod_fil')?.value,
@@ -1945,7 +1927,6 @@ export class BuletinCNAMComponent {
       value  // ✅ Use the input value directly
     ).subscribe({
       next: (data: any) => {
-        console.log("verif_vign response:", data);
 
         if (data && data.reponse) {
           Swal.fire({
@@ -1985,8 +1966,6 @@ export class BuletinCNAMComponent {
       return;
     }
 
-    console.log("Checking pieces for:", currentLine);
-
     this.serv.verif_piece(
       currentLine.abrv_act,
       this.formBuletinSoin.get('cod_fil')?.value,
@@ -1995,7 +1974,6 @@ export class BuletinCNAMComponent {
       value  // ✅ Use the input value directly
     ).subscribe({
       next: (data: any) => {
-        console.log("verif_piece response:", data);
 
         if (data && data.reponse) {
           Swal.fire({
@@ -2043,7 +2021,6 @@ export class BuletinCNAMComponent {
 
   calcul_mnt_netPhar(event: any, index: number) {
     const ligPhar = this.ligPharForm.get('phar') as FormArray;
-    console.log("ligBult :", ligPhar)
     this.serv.calculer_montant_net_med(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligPhar.value[index].cod_med
       , event.target.value, this.formBuletinSoin.get("dat_soin")?.value, this.selectedMed.prix_remb,
       ligPhar.value[index].indice, 0, 0).subscribe((data: any) => {
@@ -2052,7 +2029,6 @@ export class BuletinCNAMComponent {
         this.mntNetArrayPhar[index] = data.p_mnt_net;
         this.phar.at(index).patchValue({ mnt_net: this.mntNetArrayPhar[index] });
         this.calculateTotalsPhar();
-        console.log(this.mntNetArray)
       })
   }
 
@@ -2060,7 +2036,6 @@ export class BuletinCNAMComponent {
   totalNetPhar: number = 0;
   
   calculateTotalsPhar() {
-    console.log("this.phar :", this.phar)
     this.totalHonorairesPhar = this.phar.controls.reduce((sum, ligne) => {
       const honor = parseFloat((ligne.get('mnt_honor')?.value || '0')) || 0;
       return sum + honor;
@@ -2171,14 +2146,16 @@ export class BuletinCNAMComponent {
   }
 
   selectedIndexVisit: number | null = null;
+
   confirmVisit(index: any, content: any) {
     this.selectedIndexVisit = index;
-    console.log("selectedIndexVisit:", this.selectedIndexVisit);
     this.modalService.open(content, { centered: true });
   }
+
   ConfirmDeleteVisit(index: number): void {
+
     const ligne = this.visite.at(index).value;
-    console.log("ligne:", ligne);
+
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -2189,11 +2166,8 @@ export class BuletinCNAMComponent {
       dat_act: ligne.dat_act,
     };
 
-    console.log("Clé à vérifier :", cle);
-
     this.serv.existeLigBultVisit(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
 
         if (exists) {
           this.serv.deleteLigBultVisit(
@@ -2305,16 +2279,15 @@ export class BuletinCNAMComponent {
         confirmButtonText: 'OK',
       });
     }
-    console.log("ligBult :", ligBult.value[index].abrv_act)
+
     this.serv.calculer_montant_net_visit(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligBult.value[index].cod_visit,
       event.target.value, this.formBuletinSoin.get("dat_soin")?.value, this.selectedVisit.prix_Visit, this.selectedVisit.taux_Remb, '0').subscribe((data: any) => {
         this.mntNet = data.p_mnt_net
-
         this.mntNetArrayVisite[index] = data.p_mnt_net;
         this.visite.at(index).patchValue({ mnt_net: this.mntNetArrayVisite[index] });
         this.calculateTotalsVisite();
-        console.log(this.mntNetArrayVisite)
       })
+
   }
 
   totalHonorairesVisite: number = 0;
@@ -2335,7 +2308,7 @@ export class BuletinCNAMComponent {
     const ligPhar = this.ligVisiteForm.get('visite') as FormArray;
     this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].abrv_act.indice).
       subscribe((data: any) => {
-        console.log("data", data)
+
         if (data.reponse != null) {
           Swal.fire({
             title: 'Message',
@@ -2347,6 +2320,7 @@ export class BuletinCNAMComponent {
 
           item.target.value = '';
         }
+
       })
   }
 
@@ -2443,19 +2417,18 @@ export class BuletinCNAMComponent {
   selectedIndexAct: number | null = null;
   confirmAct(index: any, content: any) {
     this.selectedIndexAct = index;
-    console.log("selectedIndexAct:", this.selectedIndexAct);
     this.modalService.open(content, { centered: true });
   }
 
   selectedIndexApp: number | null = null;
+
   confirmApp(index: any, content: any) {
     this.selectedIndexApp = index;
-    console.log("selectedIndexApp:", this.selectedIndexApp);
     this.modalService.open(content, { centered: true });
   }
+
   ConfirmDeleteApp(index: number): void {
     const ligne = this.appareil.at(index).value;
-    console.log("ligne:", ligne);
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -2466,11 +2439,9 @@ export class BuletinCNAMComponent {
       num_lig_app: ligne.num_lig_app,
     };
 
-    console.log("Clé à vérifier :", cle);
 
     this.serv.existeLigBultApp(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
 
         if (exists) {
           this.serv.deleteLigBultApp(
@@ -2547,7 +2518,9 @@ export class BuletinCNAMComponent {
       }
     });
   }
+
   etab_rsoc_appareil: string[] = []
+
   onSelectedEtablisApp(selectedValue: any, index: number): void {
     if (!selectedValue || !selectedValue.prf_cod) {
       console.warn('Invalid etablissement selection:', selectedValue);
@@ -2568,7 +2541,9 @@ export class BuletinCNAMComponent {
       prf_cod: selectedValue.prf_cod
     });
   }
+
   mntNetArrayAppareil: number[] = [];
+
   calcul_mnt_net_app(event: any, index: number) {
     const ligBult = this.ligAppareilForm.get('appareil') as FormArray;
     if (event.target.value == null) {
@@ -2580,7 +2555,7 @@ export class BuletinCNAMComponent {
         confirmButtonText: 'OK',
       });
     }
-    console.log("ligBult :", ligBult.value[index].abrv_act)
+
     this.serv.calculer_montant_net_app(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, this.formBuletinSoin.get("num_fam")?.value,
       this.formBuletinSoin.get("dat_soin")?.value, event.target.value, ligBult.value[index].cod_app, 0).subscribe((data: any) => {
         this.mntNet = data.p_mnt_net ?? 0
@@ -2588,8 +2563,8 @@ export class BuletinCNAMComponent {
         this.mntNetArrayAppareil[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
         this.appareil.at(index).patchValue({ mnt_net: this.mntNetArrayAppareil[index] });
         this.calculateTotalsAppareil();
-        console.log(this.mntNetArrayVisite)
       })
+
   }
 
   totalHonorairesAppareil: number = 0;
@@ -2610,7 +2585,6 @@ export class BuletinCNAMComponent {
     const ligPhar = this.ligAppareilForm.get('appareil') as FormArray;
     this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].abrv_act.indice).
       subscribe((data: any) => {
-        console.log("data", data)
         if (data.reponse != null) {
           Swal.fire({
             title: 'Message',
