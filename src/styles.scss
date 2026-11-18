@@ -942,3 +942,103 @@ input[placeholder*="dd/mm" i]:not([readonly]):not(:disabled) {
     .inact__progres, .inact__anneau, .inact__temps span { transition: none; }
   }
 }
+
+/* Logo de la barre du haut : le thème le masque en layout vertical ; on ne l affiche que quand la sidebar (et son logo) est masquée, soit sur mobile */
+@media (max-width: 767.98px) {
+  :is([data-layout="vertical"], [data-layout="semibox"]) #page-topbar .horizontal-logo {
+    display: inline-block;
+    position: static;
+    width: auto;
+    padding: 0 0.5rem 0 0.75rem;
+    background: transparent;
+  }
+}
+
+
+/* ===== Fenêtre de confirmation de suppression (confirmerSuppression) ===== */
+.swal2-popup.popup-suppression {
+  width: 26em;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+
+  .supp-titre {
+    padding: 0;
+    margin: 0 0 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--vz-heading-color, #1f2a44);
+  }
+
+  .supp-contenu {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .supp__icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 1.125rem;
+    border-radius: 50%;
+    background: var(--vz-danger-bg-subtle, #fde8e3);
+  }
+
+  .supp__element {
+    margin: 0 0 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--vz-border-color, #e9ebec);
+    border-radius: 10px;
+    background: var(--vz-light, #f3f6f9);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--vz-body-color, #495057);
+    word-break: break-word;
+
+    b {
+      font-weight: 600;
+      color: var(--vz-heading-color, #1f2a44);
+    }
+  }
+
+  .supp__message {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--vz-secondary-color, #6c757d);
+  }
+
+  .supp-actions {
+    gap: 0.75rem;
+    margin: 1.5rem 0 0;
+    flex-wrap: wrap;
+  }
+
+  .supp-actions .btn {
+    min-width: 9rem;
+    min-height: 44px;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+/* Fenêtres modales de suppression (corbeille animée) : même présentation que confirmerSuppression, sans modifier chaque écran */
+.modal-content:has(lord-icon[src*="gsqxdxog"]) {
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--vz-heading-color, #1f2a44);
+  }
+
+  .btn.w-sm {
+    min-width: 9rem;
+    min-height: 44px;
+    font-weight: 500;
+  }
+}

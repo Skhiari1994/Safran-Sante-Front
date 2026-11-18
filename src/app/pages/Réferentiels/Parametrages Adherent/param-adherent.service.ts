@@ -62,6 +62,18 @@ export class ParamAdherentService {
   getSociete = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL+ "referentiel/paramAdherent/getSociete");
   };
+  /** Image du logo (404 si la société n'en a pas). Lue en blob : l'appel porte le jeton, contrairement à une balise img. */
+  getLogoSociete(codSoc: string): Observable<Blob> {
+    return this.http.get(API_URL+ "referentiel/paramAdherent/societe/" + encodeURIComponent(codSoc) + "/logo", { responseType: 'blob' });
+  }
+  setLogoSociete(codSoc: string, fichier: File): Observable<any> {
+    const donnees = new FormData();
+    donnees.append('fichier', fichier);
+    return this.http.put<any>(API_URL+ "referentiel/paramAdherent/societe/" + encodeURIComponent(codSoc) + "/logo", donnees);
+  }
+  deleteLogoSociete(codSoc: string): Observable<any> {
+    return this.http.delete<any>(API_URL+ "referentiel/paramAdherent/societe/" + encodeURIComponent(codSoc) + "/logo");
+  }
 
   AddDepartement(data: any): Observable<any> {
     return this.http.post<any>(API_URL+ "referentiel/paramAdherent/addDepartement", data);

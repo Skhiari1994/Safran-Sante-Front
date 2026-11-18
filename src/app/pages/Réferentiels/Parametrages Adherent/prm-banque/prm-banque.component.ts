@@ -6,7 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
-import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
+import { notifSucces, notifErreur, confirmerSuppression, echapperHtml, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 @Component({
   selector: 'app-prm-banque',
@@ -141,18 +141,9 @@ export class PrmBanqueComponent {
   }
 
   supprimerBanque(row: any) {
-    Swal.fire({
-      title: "Supprimer cette banque ?",
-      // même corbeille animée que la fenêtre de suppression des autres pages (à la place du point d'exclamation)
-      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-             <div class="mt-2">Code <b>${row.cod_banq}</b> – ${row.lib_banq ?? ""}</div>`,
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Oui, supprimer",
-      cancelButtonText: "Annuler",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
+    confirmerSuppression("Supprimer cette banque ?",
+      `Code <b>${echapperHtml(row.cod_banq)}</b> – ${echapperHtml(row.lib_banq)}`).then((confirme) => {
+      if (!confirme) return;
       this.serv.deleteBanque(row.cod_banq).subscribe({
         next: () => {
           if (this.codBanq === row.cod_banq) {

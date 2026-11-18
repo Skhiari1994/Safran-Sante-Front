@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces } from '../../../Réferentiels/Parametrages Adherent/notif';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { EnvoiServiceService } from '../envoi-service.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
@@ -657,28 +658,19 @@ onSelectedValueTypDepart(item: any) {
     });
   }
   deletBord() {
-    Swal.fire({
-      title: 'Êtes-vous sûr ?',
-      text: 'Vous êtes sûr de bien vouloir supprimer le bordereau ?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Oui, supprimer !',
-      cancelButtonText: 'Annuler'
-    }).then((result) => {
-      if (result.isConfirmed) {
+    confirmerSuppression('Supprimer ce bordereau ?', `Bordereau <b>${echapperHtml(this.codBord)}</b>`).then((confirme) => {
+      if (confirme) {
         this.envoiServ.callDeletBord(this.tokenStorage.getUser().codSoc, this.codBord).subscribe(
           (data) => {
             console.log("Bordereau supprimé :", data);
             this.getCodBord()
             this.bordEnvoiForm.reset()
-            Swal.fire('Supprimé !', 'Le bordereau a été supprimé avec succès.', 'success');
+            notifSucces('Bordereau supprimé avec succès !');
 
           },
           (error) => {
             console.error("Erreur lors de la suppression :", error);
-            Swal.fire('Erreur !', 'Impossible de supprimer le bordereau.', 'error');
+            notifErreur('Suppression impossible', error, 'Impossible de supprimer le bordereau.');
           }
         );
       } else {

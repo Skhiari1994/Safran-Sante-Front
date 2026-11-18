@@ -4,6 +4,7 @@ import { AdminService } from '../Admin.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import Swal from 'sweetalert2';
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces, MSG_SUPPR_IMPOSSIBLE } from '../../Réferentiels/Parametrages Adherent/notif';
  
 @Component({
   selector: 'app-maj-valideur',
@@ -281,45 +282,17 @@ export class MajValideurComponent {
 
   DeletePersValideur(cod_soc: string, mat_pers: string, mat_resp: string) {
 
-  Swal.fire({
-    title: 'Es-tu sûr?',
-    text: 'Tu ne pourras pas revenir en arrière!',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#34c38f',
-    cancelButtonColor: '#f46a6a',
-    confirmButtonText: 'Oui, Supprimer le!'
-  }).then(result => {
-    if (result.value) {
-
-      Swal.fire({
-        title: 'Es-tu sûr?',
-        text: 'Tu ne pourras pas revenir en arrière!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#34c38f',
-        cancelButtonColor: '#f46a6a',
-        confirmButtonText: 'Oui, Supprimer le!'
-      }).then(result => {
-        if (result.value) {
-          this.adminServ.deletePersValideur(cod_soc,mat_pers,mat_resp).subscribe(
-            (data: any ) => {
-                   
-            },
-            (error) => {
-             
-       
-            });
-          
-     
-      Swal.fire('Supprimer!', 'Intérim à été bien supprimer.', 'success');
-      this.GetPersValid()            
-
-    }
+    confirmerSuppression('Supprimer cet intérim ?',
+      `Matricule <b>${echapperHtml(mat_pers)}</b> – responsable <b>${echapperHtml(mat_resp)}</b>`).then(confirme => {
+      if (!confirme) return;
+      this.adminServ.deletePersValideur(cod_soc, mat_pers, mat_resp).subscribe({
+        next: () => {
+          notifSucces('Intérim supprimé avec succès !');
+          this.GetPersValid();
+        },
+        error: err => notifErreur('Suppression impossible', err, MSG_SUPPR_IMPOSSIBLE)
+      });
     });
-
-}
-});
   }
 
   // modules: Module[] = [ClientSideRowModelModule];

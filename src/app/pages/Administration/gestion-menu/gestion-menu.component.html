@@ -42,11 +42,12 @@
           <table class="table table-sm align-middle mb-0 menu-table">
             <thead>
               <tr class="table-light">
-                <th scope="col" style="width: 33%;">Libellé du module</th>
-                <th scope="col" style="width: 25%;">Route</th>
-                <th scope="col" style="width: 14%;">Statut</th>
-                <th scope="col" style="width: 10%;">Rang</th>
-                <th scope="col" class="text-end" style="width: 18%;">Actions</th>
+                <th scope="col" style="width: 27%;">Libellé du module</th>
+                <th scope="col" style="width: 19%;">Icône</th>
+                <th scope="col" style="width: 20%;">Route</th>
+                <th scope="col" style="width: 12%;">Statut</th>
+                <th scope="col" style="width: 8%;">Rang</th>
+                <th scope="col" class="text-end" style="width: 14%;">Actions</th>
               </tr>
             </thead>
             <tbody formArrayName="rows">
@@ -54,6 +55,7 @@
                 class="menu-row" [class.menu-row--selected]="selectedSumId !== null && row.get('sum_id')?.value === selectedSumId"
                 (click)="onRowClick(row.get('sum_id')?.value, row.get('sum_name')?.value)">
                 <td><input type="text" class="form-control form-control-sm" placeholder="Libellé" formControlName="sum_name" aria-label="Libellé du module"></td>
+                <td><app-icon-picker formControlName="mdl_icon1" [intitule]="row.get('sum_name')?.value" [niveau]="0"></app-icon-picker></td>
                 <td><input type="text" class="form-control form-control-sm" placeholder="Route" formControlName="sum_rout" aria-label="Route"></td>
                 <td>
                   <select *ngIf="row.enabled; else statutModule" class="form-select form-select-sm" formControlName="sum_status" aria-label="Statut">
@@ -80,7 +82,7 @@
                 </td>
               </tr>
               <tr *ngIf="!getRows(table1).length">
-                <td colspan="5" class="text-center text-muted py-4">
+                <td colspan="6" class="text-center text-muted py-4">
                   <i class="ri-inbox-line fs-2 d-block mb-1" aria-hidden="true"></i>Aucun module
                 </td>
               </tr>
@@ -124,12 +126,13 @@
         <table class="table table-sm align-middle mb-0 menu-table">
           <thead>
             <tr class="table-light">
-              <th scope="col" style="width: 10%;">Evt id</th>
-              <th scope="col" style="width: 31%;">Libellé</th>
-              <th scope="col" style="width: 25%;">Action (route)</th>
-              <th scope="col" style="width: 9%;">Rang</th>
-              <th scope="col" style="width: 12%;">Statut</th>
-              <th scope="col" class="text-end" style="width: 13%;">Actions</th>
+              <th scope="col" [style.width.%]="n === 1 ? 9 : 10">Evt id</th>
+              <th scope="col" [style.width.%]="n === 1 ? 24 : 31">Libellé</th>
+              <th scope="col" *ngIf="n === 1" style="width: 17%;">Icône</th>
+              <th scope="col" [style.width.%]="n === 1 ? 20 : 25">Action (route)</th>
+              <th scope="col" [style.width.%]="n === 1 ? 8 : 9">Rang</th>
+              <th scope="col" [style.width.%]="n === 1 ? 10 : 12">Statut</th>
+              <th scope="col" class="text-end" [style.width.%]="n === 1 ? 12 : 13">Actions</th>
             </tr>
           </thead>
           <tbody formArrayName="rows">
@@ -137,6 +140,7 @@
               [class.menu-row]="n < 3" [class.menu-row--selected]="estSelectionne(n, row)" (click)="cliquerLigne(n, row)">
               <td><input type="text" class="form-control form-control-sm" placeholder="Id" formControlName="evt_id" aria-label="Identifiant"></td>
               <td><input type="text" class="form-control form-control-sm" placeholder="Libellé" formControlName="evt_name" aria-label="Libellé"></td>
+              <td *ngIf="n === 1"><app-icon-picker formControlName="evt_icon" [intitule]="row.get('evt_name')?.value" [niveau]="1"></app-icon-picker></td>
               <td><input type="text" class="form-control form-control-sm" placeholder="Action" formControlName="evt_action" aria-label="Action"></td>
               <td><input type="text" class="form-control form-control-sm" placeholder="Rang" formControlName="evt_rank" aria-label="Rang"></td>
               <td>
@@ -163,7 +167,7 @@
               </td>
             </tr>
             <tr *ngIf="!getRows(table).length">
-              <td colspan="6" class="text-center text-muted py-4">
+              <td [attr.colspan]="n === 1 ? 7 : 6" class="text-center text-muted py-4">
                 <i class="ri-inbox-line fs-2 d-block mb-1" aria-hidden="true"></i>
                 {{ parent !== null ? 'Aucune ligne pour cette sélection' : hint }}
               </td>

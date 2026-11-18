@@ -4,6 +4,7 @@ import { AdherentService } from '../adherent.service';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../../Réferentiels/Parametrages Adherent/notif';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TableauComponent } from 'src/app/shared/Composants/tableau/tableau.component';
 import { forkJoin, switchMap } from 'rxjs';
@@ -943,33 +944,21 @@ export class MajAdherentComponent {
   deleteRow(id: any) {
     console.log("id", id)
     console.log("id", this.formAdherent.get('mat_pers')?.value)
-    Swal.fire({
-      title: 'Es-tu sûr?',
-      text: 'Tu ne pourras pas revenir en arrière!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#34c38f',
-      cancelButtonColor: '#f46a6a',
-      confirmButtonText: 'Oui, Supprimer le!'
-    }).then(result => {
-      if (result.value) {
+    const nom = id?.nom_pren ? ` – ${echapperHtml(id.nom_pren)}` : '';
+    confirmerSuppression('Supprimer ce membre de la famille ?', `Membre n° <b>${echapperHtml(id?.num_fam)}</b>${nom}`).then(confirme => {
+      if (!confirme) return;
 
-        this.adherentServ.deleteFamille(this.tokenStorage.getUser().codSoc, id.num_fam, this.formAdherent.get('mat_pers')?.value).subscribe({
-          next: () => {
-            console.log("succes");
-            // this.rows = this.rows.filter((row:any) => row.id !== id.num_fam);
-
-            // Emit the delete event to the generic component
-            this.deleteRowEvent.emit(id.num_fam);
-            // Remove the row from the data array after successful deletion
-            //this.rows = this.rows.filter(row => row.id !== id);
-          },
-          error: (err) => {
-            console.error('Error deleting row:', err);
-          }
-        });
-
-      }
+      this.adherentServ.deleteFamille(this.tokenStorage.getUser().codSoc, id.num_fam, this.formAdherent.get('mat_pers')?.value).subscribe({
+        next: () => {
+          // Emit the delete event to the generic component
+          this.deleteRowEvent.emit(id.num_fam);
+          notifSucces(MSG_SUPPR);
+        },
+        error: (err) => {
+          console.error('Error deleting row:', err);
+          notifErreur('Suppression impossible', err, MSG_SUPPR_IMPOSSIBLE);
+        }
+      });
     });
 
   }

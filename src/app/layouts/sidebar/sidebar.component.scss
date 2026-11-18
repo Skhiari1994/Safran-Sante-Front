@@ -1,3 +1,204 @@
 .app-menu {
-    z-index: 1050; /* Assurez-vous qu'il est au-dessus des autres éléments */
+  z-index: 1050; /* Assurez-vous qu'il est au-dessus des autres éléments */
+}
+
+/*
+ * Menu latéral (thèmes sombres / dégradé) : modules avec icône, groupes avec icône, écrans avec puce,
+ * trait-guide des sous-menus, états survol / ouvert / actif. Composant sans encapsulation : ces règles sont globales,
+ * d'où le préfixe .app-menu.navbar-menu (spécificité supérieure à celle du thème).
+ */
+$sombre: ':is([data-sidebar="gradient"], [data-sidebar="gradient-2"], [data-sidebar="gradient-3"], [data-sidebar="gradient-4"], [data-sidebar="dark"])';
+
+/* ---------- Couleurs et états (toutes tailles de menu) ---------- */
+html#{$sombre} .app-menu.navbar-menu {
+  --sb-text: rgba(255, 255, 255, 0.82);
+  --sb-text-sub: rgba(255, 255, 255, 0.74);
+  --sb-strong: #ffffff;
+  --sb-icon: #a9c8f5;
+  --sb-accent: #62c4ff;
+  --sb-hover: rgba(255, 255, 255, 0.09);
+  --sb-open: rgba(255, 255, 255, 0.06);
+  --sb-active: rgba(255, 255, 255, 0.16);
+  --sb-guide: rgba(255, 255, 255, 0.18);
+
+  .navbar-nav {
+    .nav-link {
+      position: relative;
+      color: var(--sb-text);
+      transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+
+      i {
+        color: var(--sb-icon);
+        transition: color 0.18s ease;
+      }
+
+      &:hover {
+        color: var(--sb-strong);
+        background: var(--sb-hover);
+
+        i {
+          color: var(--sb-strong);
+        }
+      }
+
+      &:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.85);
+        outline-offset: -2px;
+      }
+
+      /* groupe déplié */
+      &[data-bs-toggle="collapse"][aria-expanded="true"] {
+        color: var(--sb-strong);
+        background: var(--sb-open);
+
+        i {
+          color: var(--sb-strong);
+        }
+      }
+
+      /* groupe qui contient la page courante */
+      &[data-bs-toggle="collapse"].active {
+        color: var(--sb-strong);
+
+        i {
+          color: var(--sb-accent);
+        }
+      }
+
+      /* écran courant */
+      &.active:not([data-bs-toggle="collapse"]) {
+        color: var(--sb-strong);
+        background: var(--sb-active);
+        box-shadow: inset 3px 0 0 var(--sb-accent);
+
+        i {
+          color: var(--sb-accent);
+        }
+      }
+
+      /* chevron */
+      &[data-bs-toggle="collapse"]::after {
+        opacity: 0.7;
+        right: 14px;
+      }
+    }
+
+    .nav-sm .nav-link {
+      color: var(--sb-text-sub);
+
+      &:hover {
+        color: var(--sb-strong);
+      }
+    }
   }
+}
+
+/* ---------- Mise en forme (menu déplié uniquement : le mode réduit garde la mise en page du thème) ---------- */
+html#{$sombre}:not([data-sidebar-size="sm"]) .app-menu.navbar-menu .navbar-nav {
+  padding-bottom: 24px;
+
+  /* niveau 0 : modules */
+  > .nav-item {
+    margin: 2px 12px;
+
+    > .nav-link.menu-link {
+      padding: 11px 38px 11px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.35;
+
+      .nav-icon {
+        flex: 0 0 22px;
+        width: 22px;
+        min-width: 22px;
+        margin: 0 12px 0 0;
+        font-size: 20px;
+        text-align: center;
+      }
+    }
+  }
+
+  /* sous-menus : trait-guide à gauche */
+  .menu-dropdown > .nav-sm {
+    margin: 4px 0 6px 23px;
+    padding-left: 0;
+    border-left: 1px solid var(--sb-guide);
+
+    .nav-sm {
+      margin: 2px 0 4px 14px;
+      padding-left: 0;
+    }
+  }
+
+  /* niveaux suivants : écrans */
+  .nav-sm .nav-link {
+    margin: 1px 6px 1px 10px;
+    padding: 8px 34px 8px 26px !important;
+    border-radius: 8px;
+    font-size: 13.5px;
+    line-height: 1.4;
+
+    /* puce */
+    &::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      left: 11px;
+      top: 17px;
+      transform: translateY(-50%);
+      border: 0;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: 0.45;
+    }
+
+    &:hover::before {
+      opacity: 0.9;
+    }
+
+    &.active {
+      background: var(--sb-active);
+      box-shadow: inset 3px 0 0 var(--sb-accent);
+
+      &::before {
+        background-color: var(--sb-accent);
+        opacity: 1;
+      }
+    }
+
+    /* groupes et écrans directs de niveau 1 : icône à la place de la puce */
+    &.has-icon {
+      padding-left: 10px !important;
+
+      &::before {
+        display: none;
+      }
+
+      .nav-icon-sub {
+        flex: 0 0 18px;
+        width: 18px;
+        min-width: 18px;
+        margin-right: 10px;
+        font-size: 17px;
+        text-align: center;
+      }
+
+      &[data-bs-toggle="collapse"]::after {
+        right: 10px;
+      }
+
+      &[data-bs-toggle="collapse"].active {
+        background: transparent;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html .app-menu.navbar-menu .navbar-nav .nav-link,
+  html .app-menu.navbar-menu .navbar-nav .nav-link i {
+    transition: none;
+  }
+}

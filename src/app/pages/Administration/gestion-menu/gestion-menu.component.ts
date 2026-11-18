@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { AdminService } from '../Admin.service';
 import { subModule } from '../subModule.model';
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../../Réferentiels/Parametrages Adherent/notif';
 
 @Component({
   selector: 'app-gestion-menu',
@@ -54,7 +55,8 @@ export class GestionMenuComponent {
       sum_name: [data.sum_name || ''],
       sum_rout: [data.sum_rout || ''],
       sum_status: [data.sum_status || ''],
-      sum_rank: [data.sum_rank || '']
+      sum_rank: [data.sum_rank || ''],
+      mdl_icon1: [data.mdl_icon1 || '']
 
     });
   }
@@ -65,8 +67,8 @@ export class GestionMenuComponent {
       evt_name: [data.evt_name || ''],
       evt_action: [data.evt_action || ''],
       evt_rank: [data.evt_rank || ''],
-      evt_maint:[data.evt_maint || '']
-
+      evt_maint:[data.evt_maint || ''],
+      evt_icon: [data.evt_icon || '']
     });
   }
 
@@ -76,8 +78,8 @@ export class GestionMenuComponent {
       evt_name: [data.evt_name || ''],
       evt_action: [data.evt_action || ''],
       evt_rank: [data.evt_rank || ''],
-      evt_maint:[data.evt_maint || '']
-
+      evt_maint:[data.evt_maint || ''],
+      evt_icon: [data.evt_icon || '']
     });
   }
 
@@ -87,8 +89,8 @@ export class GestionMenuComponent {
       evt_name: [data.evt_name || ''],
       evt_action: [data.evt_action || ''],
       evt_rank: [data.evt_rank || ''],
-      evt_maint:[data.evt_maint || '']
-
+      evt_maint:[data.evt_maint || ''],
+      evt_icon: [data.evt_icon || '']
     });
   }
 
@@ -123,26 +125,17 @@ export class GestionMenuComponent {
     const row = rows.at(rowIndex) as FormGroup;
     const rowId = row.get('sum_id')?.value; // Assuming 'sum_id' is the unique identifier in your row form
 
-    if (rowId) {    
-      Swal.fire({
-      title: 'Es-tu sûr?',
-      text: 'Tu ne pourras pas revenir en arrière!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#34c38f',
-      cancelButtonColor: '#f46a6a',
-      confirmButtonText: 'Oui, Supprimer le!'
-    }).then(result => {
-      if (result.value) {
-        this.serv.DeleteSubModule(rowId).subscribe(() => {
-          rows.removeAt(rowIndex);
-          Swal.fire('Supprimer!', 'Opération éffectuer avec succés.', 'success');
-        }, error => {
-          Swal.fire('Suppression impossible', typeof error?.error === 'string' && error.error ? error.error : 'Une erreur est survenue.', 'warning');
+    if (rowId) {
+      confirmerSuppression('Supprimer ce module ?', `<b>${echapperHtml(row.get('sum_name')?.value)}</b>`).then(confirme => {
+        if (!confirme) return;
+        this.serv.DeleteSubModule(rowId).subscribe({
+          next: () => {
+            rows.removeAt(rowIndex);
+            notifSucces(MSG_SUPPR);
+          },
+          error: err => notifErreur('Suppression impossible', err, MSG_SUPPR_IMPOSSIBLE)
         });
-      }
-    });
-
+      });
     } else {
       rows.removeAt(rowIndex); // If there is no 'sum_id', simply remove the form group from form array
     }
@@ -154,30 +147,23 @@ export class GestionMenuComponent {
 
     // une ligne jamais enregistrée (Evt id seulement pré-rempli) n'existe pas en base : simple retrait de l'écran
     if (rowId && this.persistedRows.has(row)) {
-
-      Swal.fire({
-        title: 'Es-tu sûr?',
-        text: 'Tu ne pourras pas revenir en arrière!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#34c38f',
-        cancelButtonColor: '#f46a6a',
-        confirmButtonText: 'Oui, Supprimer le!'
-      }).then(result => {
-        if (result.value) {
-          this.serv.DeleteEvt(rowId).subscribe(() => {
+      confirmerSuppression('Supprimer cette ligne ?',
+        `<b>${echapperHtml(row.get('evt_name')?.value)}</b><br><span class="text-muted">Evt id ${echapperHtml(rowId)}</span>`).then(confirme => {
+        if (!confirme) return;
+        this.serv.DeleteEvt(rowId).subscribe({
+          next: () => {
             rows.removeAt(rowIndex);
-            Swal.fire('Supprimer!', 'Opération éffectuer avec succés.', 'success');
-          }, error => {
-            if (error?.status === 404) {
+            notifSucces(MSG_SUPPR);
+          },
+          error: err => {
+            if (err?.status === 404) {
               rows.removeAt(rowIndex); // déjà absent de la base
               return;
             }
-            Swal.fire('Suppression impossible', typeof error?.error === 'string' && error.error ? error.error : 'Une erreur est survenue.', 'warning');
-          });
-        }
+            notifErreur('Suppression impossible', err, MSG_SUPPR_IMPOSSIBLE);
+          }
+        });
       });
-      
     } else {
       rows.removeAt(rowIndex); 
     }

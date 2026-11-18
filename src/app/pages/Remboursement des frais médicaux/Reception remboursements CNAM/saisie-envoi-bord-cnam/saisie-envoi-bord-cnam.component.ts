@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { ReceptionRemboursementService } from '../reception-remboursement.service';
 import Swal from 'sweetalert2';
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces } from '../../../Réferentiels/Parametrages Adherent/notif';
 import { BulletinSoinService } from '../../Bulletin de soins/bulletin-soin.service';
 import { EnvoiServiceService } from '../../Envoi/envoi-service.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -1447,22 +1448,15 @@ export class SaisieEnvoiBordCnamComponent implements OnInit, HasUnsavedChanges {
   ConfirmDeleteBulletin(index: number): void {
     const bult = this.lignes.at(index).value;
 
-    Swal.fire({
-      title: 'Êtes-vous sûr ?',
-      text: "Voulez-vous vraiment supprimer ce bulletin et tous ses services associés ?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Oui, supprimer !',
-      cancelButtonText: 'Annuler'
-    }).then((result) => {
-      if (result.isConfirmed) {
+    confirmerSuppression('Supprimer ce bulletin ?',
+      `Bulletin du <b>${echapperHtml(bult.dat_soin)}</b> – matricule <b>${echapperHtml(bult.mat_pers)}</b>`,
+      'Tous ses services associés seront supprimés avec lui. Cette action est définitive.').then((confirme) => {
+      if (confirme) {
         this.serv.deleteBultArrive(
           bult.cod_soc, bult.mat_pers, bult.num_fam, bult.dat_soin
         ).subscribe({
           next: () => {
-            Swal.fire('Supprimé !', 'Le bulletin a été supprimé avec succès.', 'success');
+            notifSucces('Bulletin supprimé avec succès !');
             if (this.selectedRow === index) {
               this.selectedBulletinKey = '';
             }
@@ -1470,7 +1464,7 @@ export class SaisieEnvoiBordCnamComponent implements OnInit, HasUnsavedChanges {
           },
           error: (err) => {
             console.error("Erreur suppression bulletin:", err);
-            Swal.fire('Erreur', 'Impossible de supprimer le bulletin. Il est peut-être déjà validé.', 'error');
+            notifErreur('Suppression impossible', err, 'Impossible de supprimer le bulletin. Il est peut-être déjà validé.');
           }
         });
       }

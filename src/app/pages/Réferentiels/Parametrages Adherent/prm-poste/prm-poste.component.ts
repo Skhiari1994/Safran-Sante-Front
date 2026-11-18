@@ -6,7 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
-import { notifSucces, notifErreur, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
+import { notifSucces, notifErreur, confirmerSuppression, echapperHtml, MSG_AJOUT, MSG_MODIF, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from '../notif';
 import { ParamAdherentService } from '../param-adherent.service';
 
 @Component({
@@ -149,18 +149,9 @@ onSort2(column: any) {
   }
 
   supprimerGouv(row: any) {
-    Swal.fire({
-      title: "Supprimer ce gouvernorat ?",
-      // même corbeille animée que la fenêtre de suppression des autres pages (à la place du point d'exclamation)
-      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-             <div class="mt-2">Code <b>${row.cod_gouv}</b> – ${row.lib_gouv ?? ""}</div>`,
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Oui, supprimer",
-      cancelButtonText: "Annuler",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
+    confirmerSuppression("Supprimer ce gouvernorat ?",
+      `Code <b>${echapperHtml(row.cod_gouv)}</b> – ${echapperHtml(row.lib_gouv)}`).then((confirme) => {
+      if (!confirme) return;
       this.serv.deleteGouv(row.cod_gouv).subscribe({
         next: () => {
           if (this.listPoste?.length && this.listPoste[0]?.cod_gouv === row.cod_gouv) {

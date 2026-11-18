@@ -25,6 +25,7 @@
 
           <ng-template pTemplate="header">
             <tr class="table-light">
+              <th scope="col" style="width: 112px;">Logo</th>
               <th scope="col" style="width: 14%;">
                 <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
                   (click)="onSort('cod_soc')" aria-label="Trier par code">
@@ -49,6 +50,13 @@
 
           <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
             <tr>
+              <td>
+                <img *ngIf="logos[rowData.cod_soc]; else initialeSociete" class="logo-soc-miniature" [src]="logos[rowData.cod_soc]"
+                  [alt]="'Logo de ' + rowData.lib_soc">
+                <ng-template #initialeSociete>
+                  <span class="logo-soc-miniature logo-soc-miniature--initiale" aria-hidden="true">{{ (rowData.lib_soc || rowData.cod_soc || '?').charAt(0) }}</span>
+                </ng-template>
+              </td>
               <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_soc }}</span></td>
               <td class="fw-medium">{{ rowData.lib_soc }}</td>
               <td>{{ rowData.adr_soc }}</td>
@@ -69,7 +77,7 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="4" class="text-center text-muted py-5">
+              <td colspan="5" class="text-center text-muted py-5">
                 <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
                 Aucune société trouvée
               </td>
@@ -110,6 +118,32 @@
         <div class="col-md-4">
           <label for="soc-libelle-ar" class="form-label">Libellé en arabe</label>
           <input id="soc-libelle-ar" type="text" class="form-control" placeholder="مثال : شركة" formControlName="lib_soc_a" dir="rtl" lang="ar" />
+        </div>
+        <div class="col-12">
+          <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Logo</h6>
+        </div>
+        <div class="col-12">
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <div class="logo-soc-apercu" [class.logo-soc-apercu--vide]="!logoAffiche">
+              <img *ngIf="logoAffiche; else logoVide" [src]="logoAffiche" alt="Aperçu du logo de la société">
+              <ng-template #logoVide><i class="ri-image-add-line" aria-hidden="true"></i></ng-template>
+            </div>
+            <div>
+              <input #champLogo id="soc-logo" type="file" class="d-none" accept="image/png,image/jpeg,image/webp"
+                (change)="choisirLogo($event)" aria-label="Choisir le logo de la société">
+              <div class="hstack gap-2">
+                <button type="button" class="btn btn-soft-primary btn-sm" [disabled]="logoEnPreparation" (click)="champLogo.click()">
+                  <i class="ri-upload-2-line align-bottom me-1" aria-hidden="true"></i>{{ logoEnPreparation ? 'Préparation…' : (logoAffiche ? 'Changer le logo' : 'Choisir une image') }}
+                </button>
+                <button *ngIf="logoAffiche" type="button" class="btn btn-soft-danger btn-sm" (click)="retirerLogo(); champLogo.value = ''">
+                  <i class="ri-delete-bin-line align-bottom me-1" aria-hidden="true"></i>Retirer
+                </button>
+              </div>
+              <p class="text-muted fs-12 mb-0 mt-2">PNG, JPEG ou WebP · 20 Mo maximum · les grandes images sont réduites automatiquement. Un PNG à fond transparent donne le meilleur rendu.</p>
+              <p *ngIf="logoInfo" class="text-success fs-12 mb-0 mt-1" role="status"><i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>{{ logoInfo }}</p>
+              <p *ngIf="logoErreur" class="text-danger fs-12 mb-0 mt-1" role="alert">{{ logoErreur }}</p>
+            </div>
+          </div>
         </div>
         <div class="col-12">
           <h6 class="text-muted text-uppercase fs-12 fw-semibold border-bottom pb-2 mb-0">Coordonnées</h6>

@@ -385,14 +385,19 @@
   }
 }
 
-/* Logo Safran : séparé de la pilule par un trait fin */
-.profile-brand {
-  margin-left: 0.75rem !important;
-  padding-left: 0.75rem;
-  border-left: 1px solid var(--vz-border-color, #e9ebec);
+/* Logo Safran de la barre du haut : visible uniquement quand la sidebar est masquée (mobile) */
+.topbar-logo-link {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
 }
 
-.profile-brand img {
+.topbar-logo {
+  height: 22px;
   width: auto;
-  object-fit: contain;
+}
+
+.topbar-logo-mark {
+  height: 28px;
+  width: auto;
 }

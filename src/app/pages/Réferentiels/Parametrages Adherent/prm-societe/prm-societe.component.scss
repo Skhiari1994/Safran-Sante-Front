@@ -1,0 +1,48 @@
+
+/* Logo de la société : miniature dans la liste, aperçu dans la fenêtre */
+.logo-soc-miniature {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 88px;
+  height: 44px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--vz-border-color, #e9ebec);
+}
+
+.logo-soc-miniature--initiale {
+  background: var(--vz-primary-bg-subtle, #e9ecf8);
+  color: var(--vz-primary, #405189);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.logo-soc-apercu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112px;
+  height: 112px;
+  padding: 8px;
+  border: 1px solid var(--vz-border-color, #e9ebec);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.logo-soc-apercu img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.logo-soc-apercu--vide {
+  border-style: dashed;
+  background: var(--vz-light, #f3f6f9);
+  color: #878a99;
+  font-size: 2rem;
+}

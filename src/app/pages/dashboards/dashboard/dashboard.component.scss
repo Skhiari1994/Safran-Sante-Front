@@ -69,13 +69,6 @@
   &.home-role.role-utilisateur { background: #dcfce7; color: #166534; }
 }
 
-.home-welcome-logo {
-  flex: none;
-  height: 36px;
-  width: auto;
-  opacity: 0.9;
-}
-
 @media (max-width: 575.98px) {
   .home-welcome { padding: 1.125rem; }
   .home-title { font-size: 1.25rem; }

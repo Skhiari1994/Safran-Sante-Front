@@ -25,6 +25,7 @@ import { ngxCsv } from "ngx-csv";
 import { TokenStorage } from "src/app/account/token-storage.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import Swal from "sweetalert2";
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from "../../Réferentiels/Parametrages Adherent/notif";
 
 @Component({
   selector: 'app-valid-adherent',
@@ -1187,32 +1188,25 @@ export class ValidAdherentComponent {
   deleteRow(id: any) {
     console.log("id", id);
     console.log("id", this.formAdherent.get("mat_pers")?.value);
-    Swal.fire({
-      title: "Es-tu sûr?",
-      text: "Tu ne pourras pas revenir en arrière!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#34c38f",
-      cancelButtonColor: "#f46a6a",
-      confirmButtonText: "Oui, Supprimer le!",
-    }).then((result) => {
-      if (result.value) {
-        this.adherentServ
-          .deleteFamille(
-            this.tokenStorage.getUser().codSoc,
-            id.num_fam,
-            this.formAdherent.get("mat_pers")?.value
-          )
-          .subscribe({
-            next: () => {
-              console.log("succes");
-              this.deleteRowEvent.emit(id.num_fam);
-            },
-            error: (err) => {
-              console.error("Error deleting row:", err);
-            },
-          });
-      }
+    const nom = id?.nom_pren ? ` – ${echapperHtml(id.nom_pren)}` : "";
+    confirmerSuppression("Supprimer ce membre de la famille ?", `Membre n° <b>${echapperHtml(id?.num_fam)}</b>${nom}`).then((confirme) => {
+      if (!confirme) return;
+      this.adherentServ
+        .deleteFamille(
+          this.tokenStorage.getUser().codSoc,
+          id.num_fam,
+          this.formAdherent.get("mat_pers")?.value
+        )
+        .subscribe({
+          next: () => {
+            this.deleteRowEvent.emit(id.num_fam);
+            notifSucces(MSG_SUPPR);
+          },
+          error: (err) => {
+            console.error("Error deleting row:", err);
+            notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE);
+          },
+        });
     });
   }
 

@@ -1,9 +1,10 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
+import { iconeMenu } from './menu-icons';
 import { environment } from 'src/environments/environment';
 import { SidebarService } from './sidebar.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
@@ -12,7 +13,9 @@ import { ChatNotificationService } from 'src/app/pages/chat/chat-notification.se
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss']
+  styleUrls: ['./sidebar.component.scss'],
+  // les styles du menu doivent atteindre le contenu généré par ngx-simplebar et dépendre des attributs de <html>
+  encapsulation: ViewEncapsulation.None
 })
 export class SidebarComponent implements OnInit {
 
@@ -24,6 +27,19 @@ export class SidebarComponent implements OnInit {
 
   constructor(private router: Router, public translate: TranslateService,private sideBar:SidebarService,private token:TokenStorage, public chatNotifications: ChatNotificationService) {
     translate.setDefaultLang('en');
+  }
+
+  private iconesCalculees = new WeakMap<object, string>();
+
+  /** Classe d'icône d'une entrée du menu (niveau 0 = module, niveau 1 = groupe/écran direct), mémorisée par entrée. */
+  iconFor(item: any, niveau: 0 | 1): string {
+    if (!item || typeof item !== 'object') return '';
+    let icone = this.iconesCalculees.get(item);
+    if (icone === undefined) {
+      icone = iconeMenu(item.icon, this.translate.instant(item.label || ''), niveau);
+      this.iconesCalculees.set(item, icone);
+    }
+    return icone;
   }
 
   private containsChat(items: any[] | null | undefined): boolean {
@@ -145,7 +161,8 @@ export class SidebarComponent implements OnInit {
       const items = Array.from(ul.querySelectorAll("a.nav-link"));
       this.removeActivation(items);
     }
-    this.activateParentDropdown(event.target);
+    // currentTarget = le lien lui-même (event.target pourrait être l'icône ou le libellé placés à l'intérieur)
+    this.activateParentDropdown(event.currentTarget || event.target);
   }
 
   initActiveMenu() {

@@ -18,6 +18,7 @@ import {
 } from "@angular/forms";
 import { SaveService } from "src/app/shared/Service/save.service";
 import Swal from "sweetalert2";
+import { confirmerSuppression, echapperHtml, notifErreur, notifSucces, MSG_SUPPR, MSG_SUPPR_IMPOSSIBLE } from "../../Réferentiels/Parametrages Adherent/notif";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TableauComponent } from "src/app/shared/Composants/tableau/tableau.component";
 import { forkJoin, Observable, of, switchMap, take, combineLatest, startWith } from "rxjs";
@@ -1203,32 +1204,25 @@ export class MajAdherentTestComponent {
   deleteRow(id: any) {
     console.log("id", id);
     console.log("id", this.formAdherent.get("mat_pers")?.value);
-    Swal.fire({
-      title: "Es-tu sûr?",
-      text: "Tu ne pourras pas revenir en arrière!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#34c38f",
-      cancelButtonColor: "#f46a6a",
-      confirmButtonText: "Oui, Supprimer le!",
-    }).then((result) => {
-      if (result.value) {
-        this.adherentServ
-          .deleteFamille(
-            this.tokenStorage.getUser().codSoc,
-            id.num_fam,
-            this.formAdherent.get("mat_pers")?.value
-          )
-          .subscribe({
-            next: () => {
-              console.log("succes");
-              this.deleteRowEvent.emit(id.num_fam);
-            },
-            error: (err) => {
-              console.error("Error deleting row:", err);
-            },
-          });
-      }
+    const nom = id?.nom_pren ? ` – ${echapperHtml(id.nom_pren)}` : "";
+    confirmerSuppression("Supprimer ce membre de la famille ?", `Membre n° <b>${echapperHtml(id?.num_fam)}</b>${nom}`).then((confirme) => {
+      if (!confirme) return;
+      this.adherentServ
+        .deleteFamille(
+          this.tokenStorage.getUser().codSoc,
+          id.num_fam,
+          this.formAdherent.get("mat_pers")?.value
+        )
+        .subscribe({
+          next: () => {
+            this.deleteRowEvent.emit(id.num_fam);
+            notifSucces(MSG_SUPPR);
+          },
+          error: (err) => {
+            console.error("Error deleting row:", err);
+            notifErreur("Suppression impossible", err, MSG_SUPPR_IMPOSSIBLE);
+          },
+        });
     });
   }
 
@@ -1615,17 +1609,9 @@ export class MajAdherentTestComponent {
   }
   /** Supprime une adresse : sur le serveur si elle y est déjà enregistrée, sinon seulement de la liste affichée. */
   supprimerAdresse(adresse: any, index: number) {
-    Swal.fire({
-      title: "Supprimer cette adresse ?",
-      html: `<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px"></lord-icon>
-             <div class="mt-2">${adresse.libGouv ?? ""}${adresse.libPoste ? " – " + adresse.libPoste : ""}</div>`,
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Oui, supprimer",
-      cancelButtonText: "Annuler",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
+    confirmerSuppression("Supprimer cette adresse ?",
+      `<b>${echapperHtml(adresse.libGouv)}</b>${adresse.libPoste ? " – " + echapperHtml(adresse.libPoste) : ""}`).then((confirme) => {
+      if (!confirme) return;
 
       const retirer = () => {
         this.listAdresse = this.listAdresse.filter((_, i) => i !== index);
@@ -1810,15 +1796,9 @@ export class MajAdherentTestComponent {
   deleteCarteCnam(row: any) {
     const adherent = this.adherentCourant();
     if (!adherent) return;
-    Swal.fire({
-      title: "Supprimer cette carte ?",
-      text: `Période du ${row.date_debut} au ${row.date_fin}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Supprimer",
-      cancelButtonText: "Annuler",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
+    confirmerSuppression("Supprimer cette carte ?",
+      `Période du <b>${echapperHtml(row.date_debut)}</b> au <b>${echapperHtml(row.date_fin)}</b>`).then((confirme) => {
+      if (!confirme) return;
       this.adherentServ.deleteCarteSoinCnam(adherent.cod_soc, adherent.mat_pers, row.nat_cart, row.date_debut).subscribe({
         next: () => {
           Swal.fire({ position: "top-end", icon: "success", title: "Supprimé avec succès !", showConfirmButton: false, timer: 2000 });

@@ -31,6 +31,7 @@ import { ExtraspagesModule } from '../extrapages/extraspages.module';
 import { LovComponent } from 'src/app/extraspages/lov/lov.component';
  
 import { ParametrageRapportsComponent } from './parametrage-rapports/parametrage-rapports.component';
+import { IconPickerComponent } from './icon-picker/icon-picker.component';
 import { NgxMaskPipe } from 'ngx-mask';
    
 @NgModule({
@@ -41,8 +42,9 @@ GestionMenuComponent,
 MajValideurComponent,
 GestionUtlisateurComponent,
 ConsultationUtilisateurComponent,
- 
-ParametrageRapportsComponent
+
+ParametrageRapportsComponent,
+IconPickerComponent
     ],
   imports: [
     CommonModule,

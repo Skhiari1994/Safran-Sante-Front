@@ -1,0 +1,37 @@
+<div class="icon-picker" [class.icon-picker--lecture]="desactive">
+  <button #declencheur type="button" class="icon-picker__bouton" [disabled]="desactive" (click)="basculer($event)"
+    aria-haspopup="dialog" [attr.aria-expanded]="ouvert" aria-label="Choisir une icône">
+    <i class="icon-picker__apercu" [ngClass]="valeur || (iconeAuto + ' icon-picker__apercu--auto')" aria-hidden="true"></i>
+    <span class="icon-picker__nom">{{ libelle }}<small *ngIf="!valeur && libelleAuto" class="icon-picker__auto-nom"> · {{ libelleAuto }}</small></span>
+    <i *ngIf="!desactive" class="ri-arrow-down-s-line icon-picker__fleche" aria-hidden="true"></i>
+  </button>
+
+  <div *ngIf="ouvert" class="icon-picker__panneau" role="dialog" aria-label="Choisir une icône"
+    [style.top.px]="haut" [style.left.px]="gauche" (click)="$event.stopPropagation()">
+    <div class="icon-picker__recherche">
+      <i class="ri-search-line" aria-hidden="true"></i>
+      <input #champRecherche type="search" class="form-control form-control-sm" placeholder="Rechercher une icône"
+        aria-label="Rechercher une icône" [(ngModel)]="recherche" [ngModelOptions]="{ standalone: true }">
+    </div>
+
+    <button type="button" class="icon-picker__auto" [class.icon-picker__auto--choisi]="!valeur" (click)="choisir('')">
+      <i [ngClass]="intitule ? iconeAuto : 'ri-magic-line'" aria-hidden="true"></i>
+      <span>Automatique <small>(selon le libellé<ng-container *ngIf="intitule && libelleAuto"> : {{ libelleAuto }}</ng-container>)</small></span>
+      <i *ngIf="!valeur" class="ri-check-line ms-auto" aria-hidden="true"></i>
+    </button>
+
+    <div class="icon-picker__grille">
+      <button *ngFor="let icone of filtrees" type="button" class="icon-picker__choix"
+        [class.icon-picker__choix--choisi]="icone.classe === valeur" [title]="icone.libelle"
+        [attr.aria-label]="icone.libelle" [attr.aria-pressed]="icone.classe === valeur" (click)="choisir(icone.classe)">
+        <i [ngClass]="icone.classe" aria-hidden="true"></i>
+      </button>
+      <p *ngIf="!filtrees.length" class="icon-picker__vide">Aucune icône ne correspond.</p>
+    </div>
+
+    <p class="icon-picker__aide">
+      <ng-container *ngIf="valeur">Choisie : <b>{{ libelle }}</b> <code>{{ valeur }}</code></ng-container>
+      <ng-container *ngIf="!valeur">Aucune icône choisie : le menu en déduit une d'après le libellé<ng-container *ngIf="libelleAuto"> (ici : <b>{{ libelleAuto }}</b>)</ng-container>.</ng-container>
+    </p>
+  </div>
+</div>
