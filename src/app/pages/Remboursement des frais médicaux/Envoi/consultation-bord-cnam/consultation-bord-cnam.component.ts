@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
@@ -8,9 +8,9 @@ import { confirmerSuppression, echapperHtml, notifErreur, notifSucces } from '..
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { EnvoiServiceService } from '../envoi-service.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
-import { catchError, forkJoin, map, of, tap } from 'rxjs';
-import { forEach } from 'lodash';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import * as saveAs from 'file-saver';
+
 @Component({
   selector: 'app-consultation-bord-cnam',
   templateUrl: './consultation-bord-cnam.component.html',
@@ -33,15 +33,19 @@ export class ConsultationBordCnamComponent {
   getValueModPay(arg0: any) {
     throw new Error('Method not implemented.');
   }
+
   getValueEtatCot(arg0: any) {
     throw new Error('Method not implemented.');
   }
+
   onCorpsChange($event: any) {
     throw new Error('Method not implemented.');
   }
+
   ChargActInx() {
     throw new Error('Method not implemented.');
   }
+
   imageURL: string | undefined;
   isReadOnly: boolean = true;  // Set to 'true' to visually make it readonly
   rowActive: boolean = true;
@@ -77,7 +81,6 @@ export class ConsultationBordCnamComponent {
 
   ////////////////////////lib
 
-
   libNat: string = "";
   libLieu: string = "";
   libAffect: string = "";
@@ -89,8 +92,6 @@ export class ConsultationBordCnamComponent {
   libMatInt: string = "";
   libActivite: string = "";
   libNom: string = "";
-
-
 
   bordEnvoiForm!: FormGroup;
   bordEnvoiConsForm!: FormGroup;
@@ -109,8 +110,6 @@ export class ConsultationBordCnamComponent {
   allcompany: any;
   searchTerm: any;
   company?: any[] | undefined;
-
-
 
   listCodBord: any[] = [];
   columnsBord: any[] = [];
@@ -147,29 +146,23 @@ export class ConsultationBordCnamComponent {
     mnt_honor: "Totale Hr",
     mnt_tot: "Totale Net",
 
-
   };
 
 
-  constructor(private changeDetector: ChangeDetectorRef, private tokenStorage: TokenStorage, public service: PaginationService, private adherentServ: AdherentService, private envoiServ: EnvoiServiceService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
-
-
-
-
-
+  constructor(private tokenStorage: TokenStorage, public service: PaginationService, private adherentServ: AdherentService, private envoiServ: EnvoiServiceService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal) {
   }
+
   ngOnInit() {
     this.bordEnvoiForm = this.fb.group({
-
-      cod_bord: [''],
-      dat_bord: [''],
-      cod_assur: [''],
-      lib_assur: [''],
-      dat_deb: [''],
-      dat_fin: [''],
-      nbr_bult: [''],
-      tot_honor: [''],
-      tot_net: ['']
+      cod_bord: [{ value: '', disabled: true }],
+      dat_bord: [{ value: '', disabled: true }],
+      cod_assur: [{ value: '', disabled: true }],
+      lib_assur: [{ value: '', disabled: true }],
+      dat_deb: [{ value: '', disabled: true }],
+      dat_fin: [{ value: '', disabled: true }],
+      nbr_bult: [{ value: '', disabled: true }],
+      tot_honor: [{ value: '', disabled: true }],
+      tot_net: [{ value: '', disabled: true }]
     });
 
     this.bordEnvoiConsForm = this.fb.group({
@@ -181,20 +174,11 @@ export class ConsultationBordCnamComponent {
 
 
 
-
-
     this.saveService.canSave$.subscribe((canSave) => {
       this.save = canSave;
       if (this.save) {
-        // this.submit();
-        //   this.onSubmit()
       }
     });
-
-    /*  this.formCotisMutPersForm.valueChanges.subscribe(() => {
-      // this.isDisabled = this.formCotisMutPersForm.pristine;
-       this.saveService.setDisabled(this.isDisabled);
-     }); */
 
     ///////////////////////////save
     this.saveService.registerSaveCallback(() => this.saveUpdates());
@@ -213,13 +197,13 @@ export class ConsultationBordCnamComponent {
 
     this.getCodBord()
     this.getCodAssur()
+
   }
 
   ngOnDestroy() {
     // Clear the callback to avoid memory leaks
     this.saveService.clearSaveCallback();
     this.saveService.setIsSearch(false)
-
   }
 
   getCodBord() {

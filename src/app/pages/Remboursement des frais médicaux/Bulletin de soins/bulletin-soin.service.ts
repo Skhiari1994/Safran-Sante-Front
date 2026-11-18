@@ -22,8 +22,8 @@ export class BulletinSoinService {
     return this.http.get<any>(API_URL + "Remb/BultSoin/getDatSexe", { params })
   }
 
-  get_duree_bulletin(wdat_soin: any, wCOD_ASSUR: any) {
-    const params = new HttpParams().set("wdat_soin", wdat_soin).set("wCOD_ASSUR", wCOD_ASSUR)
+  get_duree_bulletin(datSoin: any, codAssur: any) {
+    const params = new HttpParams().set("datSoin", datSoin).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_duree_bulletin", { params })
   }
 
@@ -31,7 +31,7 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("wdat_soin", wdat_soin).set("datNais", datNais).set("datSaisie", datSaisie)
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_plafond_mutuelle", { params })
   }
-  
+
   get_plafond_cnam(soc: any, mat: any, wdat_soin: any, datNais: any, codAssur: any, datSaisie: any) {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("wdat_soin", wdat_soin).set("datNais", datNais).set("codAssur", codAssur).set("datSaisie", datSaisie)
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_plafond_cnam", { params })
@@ -95,7 +95,7 @@ export class BulletinSoinService {
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultCnamListe", { params: { soc } });
   };
 
-  getBultCnamCons = (soc: any,mat?: string, num_fam?: string, dat_soin?: string): Observable<any> => {
+  getBultCnamCons = (soc: any, mat?: string, num_fam?: string, dat_soin?: string): Observable<any> => {
     let params: any = {};
 
     if (soc) params['soc'] = soc;
@@ -168,7 +168,7 @@ export class BulletinSoinService {
   addBBordArriver(data: any): Observable<any[]> {
     return this.http.post<any[]>(API_URL + "Remb/BordArriv/saveBordArrive", data);
   }
-  
+
   verif_indice = (abrv_act_: any, cod_fil_: any, cod_assur_: any, indice: any): Observable<any> => {
     const params = new HttpParams().set("abrv_act_", abrv_act_).set("cod_fil_", cod_fil_).set("cod_assur_", cod_assur_).set("indice", indice)
     return this.http.get<any>(API_URL + "Remb/BultSoin/verif_indice", { params });
@@ -197,9 +197,15 @@ export class BulletinSoinService {
     return this.http.get<any[]>(API_URL + "Remb/BultSoin/getRegimeRemb")
   }
 
-  vetif_mod_remb = (soc: any, mat: any, numFam: any, datSoin: any, reg_remb_: any, parente: any, sexe: any): Observable<any> => {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("reg_remb_", reg_remb_).set("parente", parente)
-      .set("sexe", sexe)
+  vetif_mod_remb = (codSoc: any, matPers: any, numFam: any, datSoin: any, regRemb: any, parente: any, sexe: any): Observable<any> => {
+    const params = new HttpParams()
+    .set("codSoc", codSoc)
+    .set("matPers", matPers)
+    .set("numFam", numFam)
+    .set("datSoin", datSoin)
+    .set("regRemb", regRemb)
+    .set("parente", parente)
+    .set("sexe", sexe)
     return this.http.get<any>(API_URL + "Remb/BultSoin/vetif_mod_remb", { params });
   }
 
@@ -335,11 +341,11 @@ export class BulletinSoinService {
       .set("mat", mat)
       .set("numFam", numFam)
       .set("datSoin", datSoin);
-  
+
     if (numSoin !== null && numSoin !== undefined && numSoin !== '') {
       params = params.set("numSoin", numSoin);
     }
-  
+
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultMed", { params });
   }
 
@@ -347,14 +353,14 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultMedCons", { params });
   }
-  
+
   getLigBultApp = (soc: any, mat: any, numFam: any, datSoin: any, numSoin?: any): Observable<any> => {
     let params = new HttpParams()
       .set("soc", soc)
       .set("mat", mat)
       .set("numFam", numFam)
       .set("datSoin", datSoin);
-  
+
     if (numSoin !== null && numSoin !== undefined && numSoin !== '') {
       params = params.set("numSoin", numSoin);
     }

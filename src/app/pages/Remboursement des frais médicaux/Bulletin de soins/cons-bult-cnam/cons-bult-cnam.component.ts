@@ -1062,7 +1062,9 @@ export class ConsBultCnamComponent {
       this.formBuletinSoin.get('mat_pers')?.value,
       this.formBuletinSoin.get('num_fam')?.value,
       this.formBuletinSoin.get('dat_soin')?.value,
-      event.target.value, this.parente, this.sexe
+      event.target.value, 
+      this.parente, 
+      this.sexe
     ).subscribe((data: any) => {
       this.reponseVerifModRemb = data;
       console.log("this.showMsgMalad :", this.reponseVerifModRemb);

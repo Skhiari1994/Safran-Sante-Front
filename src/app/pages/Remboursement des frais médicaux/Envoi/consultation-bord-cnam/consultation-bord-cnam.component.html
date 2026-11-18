@@ -28,21 +28,21 @@
         <div class="col-md-3">
           <label class="form-label">Code bordereau</label>
           <app-lov [listData]="listCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="codBord"
-            (selectedValue)="onSelectedValueCodBord($event)">
+            (selectedValue)="onSelectedValueCodBord($event)" readonly disabled >
           </app-lov>
         </div>
         <div class="col-md-3">
           <label for="bord-date" class="form-label">Date du bordereau</label>
           <input id="bord-date" type="text" class="form-control" placeholder="jj/mm/aaaa" mask="00/00/0000"
-            formControlName="dat_bord" appDateFormatter />
+            formControlName="dat_bord" appDateFormatter readonly disabled />
         </div>
         <div class="col-md-2">
           <label for="bord-assur" class="form-label">Code assurance</label>
-          <input id="bord-assur" type="text" class="form-control" formControlName="cod_assur" readonly />
+          <input id="bord-assur" type="text" class="form-control" formControlName="cod_assur" readonly disabled />
         </div>
         <div class="col-md-4">
           <label for="bord-assur-lib" class="form-label">Libellé assurance</label>
-          <input id="bord-assur-lib" type="text" class="form-control" formControlName="lib_assur" readonly />
+          <input id="bord-assur-lib" type="text" class="form-control" formControlName="lib_assur" readonly disabled />
         </div>
 
         <div class="col-12 mt-4">
@@ -51,16 +51,16 @@
         <div class="col-md-3">
           <label for="bord-debut" class="form-label">Date de début</label>
           <input id="bord-debut" type="text" class="form-control" mask="00/00/0000" formControlName="dat_deb"
-            appDateFormatter readonly />
+            appDateFormatter readonly disabled />
         </div>
         <div class="col-md-3">
           <label for="bord-fin" class="form-label">Date de fin</label>
           <input id="bord-fin" type="text" class="form-control" mask="00/00/0000" formControlName="dat_fin"
-            appDateFormatter readonly />
+            appDateFormatter readonly disabled />
         </div>
         <div class="col-md-3">
           <label for="bord-nbr" class="form-label">Nombre de bulletins</label>
-          <input id="bord-nbr" type="text" class="form-control" formControlName="nbr_bult" readonly />
+          <input id="bord-nbr" type="text" class="form-control" formControlName="nbr_bult" readonly disabled />
         </div>
 
       </form>

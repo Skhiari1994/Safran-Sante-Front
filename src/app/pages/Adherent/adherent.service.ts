@@ -273,17 +273,11 @@ export class AdherentService {
     return this.http.get<void>(API_URL + "adherent/Personnel/getDiskPretImport", { params });
   }
 
-  fichier_salarie(
-    soc: string,
-    nomFichier: string,
-    etat_act: string,
-
-  ): Observable<any> {
+  fichier_salarie(soc: string, nomFichier: string, etat_act: string,): Observable<any> {
     const params = new HttpParams()
       .set("soc", soc)
       .set('nomFichier', nomFichier)
       .set('etat_act', etat_act);
-    console.log("params :", params)
     return this.http.get(API_URL + `adherent/Personnel/fichier_salarie`, { params });
   }
 
