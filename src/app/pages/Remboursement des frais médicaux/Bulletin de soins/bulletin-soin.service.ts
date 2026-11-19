@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, forkJoin, Observable, of } from 'rxjs';
-
 import { environment } from 'src/environments/environment';
+
 const API_URL = environment.urlServer;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -427,5 +428,16 @@ export class BulletinSoinService {
   getPlafondAssurAdherent(mat: string): Observable<any[]> {
     const params = new HttpParams().set('mat', mat);
     return this.http.get<any[]>(API_URL + 'Remb/Personnel/getPlafondAssur', { params });
+  }
+
+  getAnnees(codSoc?: string, matPers?: string): Observable<number[]> {
+    let params = new HttpParams();
+    if (codSoc && codSoc.trim() !== '') {
+      params = params.set('codSoc', codSoc.trim());
+    }
+    if (matPers && matPers.trim() !== '') {
+      params = params.set('matPers', matPers.trim());
+    }
+    return this.http.get<number[]>(API_URL + 'Remb/Annee', { params });
   }
 }
