@@ -62,6 +62,12 @@ export class AuthenticationService {
         );
     }
 
+    getSocietesByCin(cin: string): Observable<SocieteLogin[]> {
+        return this.http.get<SocieteLogin[]>(
+            `${API_URL}api/auth/getSocieteByCin/${cin}`
+        );
+    }
+
     getSocietesByLogin(matPers: string, cin: string): Observable<SocieteLogin[]> {
         return this.http.get<SocieteLogin[]>(
             `${API_URL}api/auth/getSocieteByLogin/${matPers}/${cin}`

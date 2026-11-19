@@ -56,36 +56,15 @@
                             <div class="p-2 mt-4">
                                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-
                                     <div class="mb-3">
-                                        <label class="form-label" for="username">Matricule</label>
-                                        <input type="email" class="form-control" id="email" formControlName="useLogin"
-                                            [ngClass]="{ 'is-invalid': submitted && f['useLogin'].errors }"
-                                            placeholder="Entrez votre matricule">
-                                        @if(submitted && f['useLogin'].errors){
-                                        <div class="invalid-feedback">
-                                            @if(f['useLogin'].errors['required']){
-                                            <div>Le matricule est requis</div>
-                                            }
-                                            @if(f['useLogin'].errors['useLogin']){
-                                            <div>Le matricule doit être valide</div>
-                                            }
-                                        </div>
-                                        }
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label" for="username">Cin</label>
+                                        <label class="form-label" for="cin">CIN</label>
                                         <input type="text" class="form-control" id="cin" formControlName="cin"
                                             [ngClass]="{ 'is-invalid': submitted && f['cin'].errors }" [class.champ-erreur]="erreurIdentifiants"
-                                            placeholder="Entrez votre cin" required>
+                                            placeholder="Entrez votre CIN" required>
                                         @if(submitted && f['cin'].errors){
                                         <div class="invalid-feedback">
                                             @if(f['cin'].errors['required']){
-                                            <div>CIN est requis</div>
-                                            }
-                                            @if(f['cin'].errors['cin']){
-                                            <div>CIN doit être valide</div>
+                                            <div>Le CIN est requis</div>
                                             }
                                         </div>
                                         }
@@ -135,7 +114,7 @@
 
                                         @if (societesIntrouvables) {
                                         <div class="text-danger fs-13 mt-1" role="alert">
-                                            Aucune société trouvée pour ce matricule et ce CIN. Vérifiez votre saisie.
+                                            Aucune société trouvée pour ce CIN. Vérifiez votre saisie.
                                         </div>
                                         }
 

@@ -31,6 +31,9 @@ export class ConsultationSoinComponent implements OnInit {
   // Données Régimes de remboursement
   listRegime: any[] = [];
 
+  // Liste des années cumulées
+  listAnnees: number[] = [];
+
   // Données Adhérents / Bénéficiaires
   listAdherents: any[] = [];
 
@@ -63,31 +66,77 @@ export class ConsultationSoinComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.tokenService.getUser() || {};
-    this.codSoc = this.currentUser.codSoc || '01';
+    this.codSoc = this.currentUser.codSoc || this.currentUser.cod_soc || '01';
+    this.defaultMatPers = this.currentUser.matPers || this.currentUser.mat_pers || this.currentUser.matricule || this.currentUser.useLogin || '';
+
+    // Sécurité supplémentaire : vérification du localStorage brut
+    if (!this.defaultMatPers || !this.currentUser.codSoc) {
+      try {
+        const raw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        if (raw) {
+          const u = JSON.parse(raw);
+          if (!this.defaultMatPers) {
+            this.defaultMatPers = u.matPers || u.mat_pers || u.matricule || u.useLogin || '';
+          }
+          if (!this.codSoc || this.codSoc === '01') {
+            this.codSoc = u.codSoc || u.cod_soc || this.codSoc;
+          }
+        }
+      } catch (e) { }
+    }
 
     // Rôle : utilisateur simple ou RH/Admin
     const roles: string[] = (this.currentUser?.roles || []).map((r: any) => (r.name || r).toUpperCase());
     this.isUser = roles.includes('UTILISATEUR') && !roles.includes('ADMIN') && !roles.includes('RH');
 
-    this.defaultMatPers = this.currentUser?.useLogin || '';
-
-    const currentYear = new Date().getFullYear();
-
     this.filterForm = this.fb.group({
       natBult: [''], // 'C' = CNAM, 'M' = Mutuelle
-      annee: [currentYear, Validators.required],
+      annee: ['', Validators.required],
       matPers: [this.defaultMatPers, Validators.required]
     });
 
     this.chargerRegimes();
+    this.chargerAnnees(this.codSoc, this.defaultMatPers);
 
     if (!this.isUser) {
       this.chargerPersonnel();
     }
+  }
 
-    if (this.defaultMatPers) {
-      this.rechercher();
-    }
+  chargerAnnees(codSoc?: string, matPers?: string): void {
+    const soc = codSoc || this.codSoc;
+    const mat = matPers || this.defaultMatPers;
+
+    this.bultService.getAnnees(soc, mat).subscribe({
+      next: (annees: number[]) => {
+        console.log('📅 Années reçues du backend :', annees);
+        if (annees && annees.length > 0) {
+          this.listAnnees = annees;
+          const currentAnnee = Number(this.filterForm.get('annee')?.value);
+          const anneeCible = (currentAnnee && this.listAnnees.includes(currentAnnee))
+            ? currentAnnee
+            : this.listAnnees[0];
+          this.filterForm.patchValue({ annee: anneeCible });
+        } else {
+          const currentYear = new Date().getFullYear();
+          this.listAnnees = [currentYear];
+          this.filterForm.patchValue({ annee: currentYear });
+        }
+
+        if (this.filterForm.get('matPers')?.value) {
+          this.rechercher();
+        }
+      },
+      error: (err) => {
+        console.error('❌ Erreur chargement des années :', err);
+        const currentYear = new Date().getFullYear();
+        this.listAnnees = [currentYear];
+        this.filterForm.patchValue({ annee: currentYear });
+        if (this.filterForm.get('matPers')?.value) {
+          this.rechercher();
+        }
+      }
+    });
   }
 
   chargerRegimes(): void {
@@ -164,7 +213,7 @@ export class ConsultationSoinComponent implements OnInit {
     const mat = item?.mat_pers || item?.matricule || '';
     if (mat) {
       this.filterForm.patchValue({ matPers: mat });
-      this.rechercher();
+      this.chargerAnnees(this.codSoc, mat);
     }
   }
 
@@ -252,10 +301,11 @@ export class ConsultationSoinComponent implements OnInit {
 
   reinitialiser(): void {
     const currentYear = new Date().getFullYear();
+    const defaultAnnee = this.listAnnees.length > 0 ? this.listAnnees[0] : currentYear;
     const defaultMat = this.isUser ? this.defaultMatPers : '';
     this.filterForm.patchValue({
       natBult: '',
-      annee: currentYear,
+      annee: defaultAnnee,
       matPers: defaultMat
     });
     if (this.isUser && defaultMat) {

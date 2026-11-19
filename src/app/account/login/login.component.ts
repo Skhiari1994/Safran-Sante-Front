@@ -65,16 +65,15 @@ export class LoginComponent implements OnInit {
     }
     this.loginForm = this.formBuilder.group({
       cin: ['', [Validators.required]],
-      useLogin: ['', [Validators.required]],
-      password: ['', [Validators.required]],
       cod_soc: ['', [Validators.required]],
+      password: ['', [Validators.required]],
       remember: [false],
     });
 
-    // "Se souvenir de moi" : on retrouve le matricule et le CIN (jamais le mot de passe)
+    // "Se souvenir de moi" : on retrouve le CIN (jamais le mot de passe)
     const memorise = this.lireIdentifiantsMemorises();
-    if (memorise) {
-      this.loginForm.patchValue({ useLogin: memorise.useLogin, cin: memorise.cin, remember: true });
+    if (memorise?.cin) {
+      this.loginForm.patchValue({ cin: memorise.cin, remember: true });
       this.loadSocietes();
     }
 
@@ -82,10 +81,6 @@ export class LoginComponent implements OnInit {
     this.loginForm.valueChanges.subscribe(() => {
       if (this.error) this.error = '';
       this.erreurIdentifiants = false;
-    });
-
-    this.loginForm.get('useLogin')?.valueChanges.subscribe(() => {
-      this.loadSocietes();
     });
 
     this.loginForm.get('cin')?.valueChanges.subscribe(() => {
@@ -158,27 +153,27 @@ export class LoginComponent implements OnInit {
     }
     // 401 (mauvais identifiants) et 400 (saisie invalide) : on reste volontairement général, pour ne pas dire
     // quelle information est fausse.
-    return 'Identifiants incorrects. Vérifiez votre matricule, votre CIN, votre mot de passe et votre société.';
+    return 'Identifiants incorrects. Vérifiez votre CIN, votre mot de passe et votre société.';
   }
 
   private readonly CLE_MEMOIRE = 'rememberedLogin';
 
-  private lireIdentifiantsMemorises(): { useLogin: string, cin: string } | null {
+  private lireIdentifiantsMemorises(): { cin: string } | null {
     try {
       const brut = localStorage.getItem(this.CLE_MEMOIRE);
       const v = brut ? JSON.parse(brut) : null;
-      return v?.useLogin && v?.cin ? v : null;
+      return v?.cin ? { cin: v.cin } : null;
     } catch {
       return null;
     }
   }
 
-  /** Case cochée : on retient matricule + CIN ; décochée : on oublie. Le mot de passe n'est jamais stocké. */
+  /** Case cochée : on retient le CIN ; décochée : on oublie. Le mot de passe n'est jamais stocké. */
   private memoriserIdentifiants(): void {
     try {
       if (this.loginForm.value.remember) {
         localStorage.setItem(this.CLE_MEMOIRE,
-          JSON.stringify({ useLogin: this.loginForm.value.useLogin, cin: this.loginForm.value.cin }));
+          JSON.stringify({ cin: this.loginForm.value.cin }));
       } else {
         localStorage.removeItem(this.CLE_MEMOIRE);
       }
@@ -196,14 +191,12 @@ export class LoginComponent implements OnInit {
 
   loadSocietes(): void {
 
-    const useLogin = this.loginForm.get('useLogin')?.value;
     const cin = this.loginForm.get('cin')?.value;
 
-    console.log('useLogin : ' + useLogin)
-    console.log('cin : ' + cin)
+    console.log('cin : ' + cin);
 
-    // Don't call API until both fields are filled
-    if (!useLogin || !cin) {
+    // Ne pas appeler tant que le CIN n'est pas saisi
+    if (!cin || cin.toString().trim().length === 0) {
       this.societesIntrouvables = false;
       this.listSociete = [];
       this.loginForm.patchValue({
@@ -212,13 +205,12 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authenticationService.getSocietesByLogin(useLogin, cin)
+    this.authenticationService.getSocietesByCin(cin.toString().trim())
       .subscribe({
         next: (societes) => {
 
           this.listSociete = societes;
           this.societesIntrouvables = societes.length === 0;
-
 
           // If only one society, select it automatically
           if (societes.length === 1) {
