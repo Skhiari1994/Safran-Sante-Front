@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'src/app/core/services/pagination.service';
-import { forkJoin, map, Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, forkJoin, map, Subject, takeUntil } from 'rxjs';
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 
@@ -229,6 +229,10 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
         this.isSearch = canSearch
         console.log("is search valid", canSearch)
       })
+    // Ans / Mois / soldes dès que la date de soin est complète, sans attendre la sortie du champ
+    this.formBuletinSoin.get('dat_soin')?.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.calculerAgeEtPlafond())
   }
 
   ngOnDestroy() {
@@ -471,6 +475,25 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     })
 
   }
+  /** Âge à la date de soin et soldes du plafond ; ne fait rien tant que la date de soin ou la naissance manque. */
+  private calculerAgeEtPlafond(): void {
+    const datSoin = this.formBuletinSoin.get('dat_soin')?.value
+    if (!datSoin || String(datSoin).length < 10 || !this.datNais) {
+      return
+    }
+    this.serv.get_plafond_mutuelle(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, datSoin,
+      this.datNais, this.formBuletinSoin.get('dat_saisie')?.value, this.formBuletinSoin.get('num_fam')?.value
+    ).subscribe((data: any) => {
+      if (!data) {
+        return
+      }
+      this.ageAn = data.ageAn
+      this.ageMois = data.ageMois
+      this.soldPlafond = Number(data.soldPlafond).toFixed(3)
+      this.soldPlafondEstim = Number(data.soldPlafondEstim).toFixed(3)
+    })
+  }
+
   onSelectedAdherent(item: any) {
     console.log("onSelectedAdherent :", item)
     this.nomAdherent = item.nom_pren ?? item.nom_PREN ?? ''
@@ -479,6 +502,8 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     })
     this.serv.getDatNais(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe((data: any) => {
       this.datNais = data.dat_nais
+      // la date de soin peut avoir été saisie avant le prestataire : on calcule l'âge dès que les deux sont connus
+      this.calculerAgeEtPlafond()
     })
 
 
@@ -692,7 +717,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     })
 
     this.serv.get_plafond_mutuelle(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.target.value, this.datNais,
-      this.formBuletinSoin.get('dat_saisie')?.value).subscribe((data: any) => {
+      this.formBuletinSoin.get('dat_saisie')?.value, this.formBuletinSoin.get('num_fam')?.value).subscribe((data: any) => {
 
         if (data.message) {
           Swal.fire({
@@ -812,7 +837,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
       this.loadDataIntoTablePhar(data)
     })
     this.serv.get_plafond_mutuelle(this.token.getUser().codSoc, item.mat_pers, item.dat_soin, this.datNais,
-      item.dat_saisie).subscribe((data: any) => {
+      item.dat_saisie, item.num_fam).subscribe((data: any) => {
 
         this.ageAn = data.ageAn;
         this.ageMois = data.ageMois

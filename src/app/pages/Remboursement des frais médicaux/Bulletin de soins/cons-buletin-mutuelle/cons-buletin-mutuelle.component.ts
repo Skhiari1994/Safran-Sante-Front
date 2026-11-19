@@ -489,7 +489,7 @@ export class ConsBuletinMutuelleComponent {
     })
 
     this.serv.get_plafond_mutuelle(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.target.value, this.datNais,
-      this.formBuletinSoin.get('dat_saisie')?.value).subscribe((data: any) => {
+      this.formBuletinSoin.get('dat_saisie')?.value, this.formBuletinSoin.get('num_fam')?.value).subscribe((data: any) => {
 
         if (data.message) {
           Swal.fire({
@@ -573,10 +573,26 @@ export class ConsBuletinMutuelleComponent {
     this.nomPers = item.nom_complet_pers;
     this.lib_assur = item.lib_assur;
     this.lib_fill = item.lib_fill;
-    this.nomAdherent = item.nom_adherent;
+    this.num_retr = item.num_retr;
+    // prestataire 0 = l'adhérent lui-même : pas de ligne famille, on affiche son propre nom
+    this.nomAdherent = item.nom_adherent ?? item.nom_complet_pers;
 
+    // l'âge et les soldes dépendent de la date de naissance du prestataire : on l'attend avant de les demander
     this.serv.getDatNais(this.token.getUser().codSoc, item.mat_pers, item.num_fam).subscribe((data: any) => {
       this.datNais = data.dat_nais;
+      this.serv.get_plafond_mutuelle(
+        this.token.getUser().codSoc,
+        item.mat_pers,
+        item.dat_soin,
+        this.datNais,
+        item.dat_saisie,
+        item.num_fam
+      ).subscribe((plafond: any) => {
+        this.ageAn = plafond?.ageAn;
+        this.ageMois = plafond?.ageMois;
+        this.soldPlafond = Number(plafond?.soldPlafond).toFixed(3);
+        this.soldPlafondEstim = Number(plafond?.soldPlafondEstim).toFixed(3);
+      });
     });
 
     this.formBuletinSoin.patchValue({
@@ -629,18 +645,6 @@ export class ConsBuletinMutuelleComponent {
       this.loadDataIntoTablePhar(ligPhar);
     });
 
-    this.serv.get_plafond_mutuelle(
-      this.token.getUser().codSoc,
-      item.mat_pers,
-      item.dat_soin,
-      this.datNais,
-      item.dat_saisie
-    ).subscribe((data: any) => {
-      this.ageAn = data.ageAn;
-      this.ageMois = data.ageMois;
-      this.soldPlafond = Number(data.soldPlafond).toFixed(3);
-      this.soldPlafondEstim = Number(data.soldPlafondEstim).toFixed(3);
-    });
   }
 
   loadDataIntoTable(data: any[]) {

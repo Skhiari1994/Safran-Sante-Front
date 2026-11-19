@@ -41,23 +41,18 @@
               <input id="bm-datsaisie" type="text" class="form-control" placeholder="Date saisie"
                 formControlName="dat_saisie" readonly />
             </div>
-            <div class="col-md-4">
-              <label for="bm-numass" class="form-label">Num ass.</label>
-              <input id="bm-numass" type="text" class="form-control" placeholder="Num assurance"
-                formControlName="num_assur" readonly />
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label for="bm-codass" class="form-label">Code assurance</label>
               <input id="bm-codass" type="text" class="form-control" placeholder="Code assurance"
                 formControlName="cod_assur" readonly />
             </div>
-            <div class="col-md-4">
-              <label for="bm-cnrps" class="form-label">Id CNRPS</label>
-              <input id="bm-cnrps" type="text" class="form-control" placeholder="Id CNRPS" [value]="num_retr" readonly />
-            </div>
-            <div class="col-md-12">
+            <div class="col-md-5">
               <label for="bm-libass" class="form-label">Libellé assurance</label>
               <input id="bm-libass" type="text" class="form-control" placeholder="Libellé" [value]="lib_assur" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="bm-cnrps" class="form-label">Id CNSS/CNRPS</label>
+              <input id="bm-cnrps" type="text" class="form-control" placeholder="Id CNSS/CNRPS" [value]="num_retr" readonly />
             </div>
             <div class="col-md-4">
               <label for="bm-fil" class="form-label">Filière</label>

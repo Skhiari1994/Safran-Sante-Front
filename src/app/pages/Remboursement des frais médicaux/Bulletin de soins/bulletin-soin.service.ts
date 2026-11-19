@@ -28,8 +28,11 @@ export class BulletinSoinService {
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_duree_bulletin", { params })
   }
 
-  get_plafond_mutuelle(soc: any, mat: any, wdat_soin: any, datNais: any, datSaisie: any) {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("wdat_soin", wdat_soin).set("datNais", datNais).set("datSaisie", datSaisie)
+  get_plafond_mutuelle(soc: any, mat: any, wdat_soin: any, datNais: any, datSaisie: any, numFam?: any) {
+    let params = new HttpParams().set("soc", soc).set("mat", mat).set("wdat_soin", wdat_soin).set("datNais", datNais).set("datSaisie", datSaisie)
+    if (numFam !== undefined && numFam !== null && numFam !== "") {
+      params = params.set("numFam", numFam)
+    }
     return this.http.get<any>(API_URL + "Remb/BultSoin/get_plafond_mutuelle", { params })
   }
 

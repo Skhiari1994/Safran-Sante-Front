@@ -35,21 +35,17 @@
               <label for="cm-datsaisie" class="form-label">Date saisie</label>
               <input id="cm-datsaisie" type="text" class="form-control" placeholder="Date saisie" formControlName="dat_saisie" readonly />
             </div>
-            <div class="col-md-4">
-              <label for="cm-numass" class="form-label">Num ass.</label>
-              <input id="cm-numass" type="text" class="form-control" placeholder="Num assurance" formControlName="num_assur" readonly />
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label for="cm-codass" class="form-label">Code assurance</label>
               <input id="cm-codass" type="text" class="form-control" placeholder="Code assurance" formControlName="cod_assur" readonly />
             </div>
-            <div class="col-md-4">
-              <label for="cm-cnrps" class="form-label">Id CNRPS</label>
-              <input id="cm-cnrps" type="text" class="form-control" placeholder="Id CNRPS" [value]="num_retr" readonly />
-            </div>
-            <div class="col-md-12">
+            <div class="col-md-5">
               <label for="cm-libass" class="form-label">Libellé assurance</label>
               <input id="cm-libass" type="text" class="form-control" placeholder="Libellé" [value]="lib_assur" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="cm-cnrps" class="form-label">Id CNSS/CNRPS</label>
+              <input id="cm-cnrps" type="text" class="form-control" placeholder="Id CNSS/CNRPS" [value]="num_retr" readonly />
             </div>
             <div class="col-md-4">
               <label for="cm-fil" class="form-label">Filière</label>

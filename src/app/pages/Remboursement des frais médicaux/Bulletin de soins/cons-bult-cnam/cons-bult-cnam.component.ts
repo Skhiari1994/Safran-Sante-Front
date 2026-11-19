@@ -379,6 +379,7 @@ export class ConsBultCnamComponent {
     this.nomPers = item.nom_complet_pers;
     this.lib_assur = item.lib_assur;
     this.lib_fill = item.lib_fill;
+    this.num_retr = item.num_retr;
 
     const nomPrestataire = item.nom_adherent ?? item.nom_complet_pers;
     this.nomAdherent = nomPrestataire;
