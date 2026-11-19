@@ -451,3 +451,15 @@ th, td {
   display: block;
   margin: 0 auto;
 }
+
+/* Libellé d'un acte : aligné à gauche et lisible en entier (texte long : infobulle au survol) */
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td input.libelle-acte {
+  text-align: left !important;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .modern-table .p-datatable-tbody > tr > td span.libelle-acte {
+  display: block;
+  text-align: left !important;
+  white-space: normal;
+}

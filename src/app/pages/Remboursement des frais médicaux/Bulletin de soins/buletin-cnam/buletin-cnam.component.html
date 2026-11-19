@@ -158,16 +158,16 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">Code maladie</label>
-                <app-lov [listData]="listMed || []" [columns]="columnsMed || []" codeField="cod_MED"
-                  [selectedCode]="Med" (selectedValue)="onSelectedMed($event)"></app-lov>
+                <app-lov [listData]="listMaladie" [columns]="columnsMaladie" codeField="cod_malad"
+                  [selectedCode]="codMalad" (selectedValue)="onSelectedMaladie($event)"></app-lov>
               </div>
               <div class="col-md-5">
                 <label for="bc-libmal" class="form-label">Libellé</label>
-                <input id="bc-libmal" type="text" class="form-control" placeholder="Libellé" [value]="libMed" />
+                <input id="bc-libmal" type="text" class="form-control" placeholder="Libellé" [value]="libMalad" readonly />
               </div>
               <div class="col-md-4">
                 <label for="bc-numdoss" class="form-label">Numéro dossier</label>
-                <input id="bc-numdoss" type="text" class="form-control" placeholder="Numéro dossier" />
+                <input id="bc-numdoss" type="text" class="form-control" placeholder="Numéro dossier" [value]="numDosMld" readonly />
               </div>
             </ng-container>
 
@@ -244,7 +244,7 @@
             <tr class="table-light">
               <th style="text-align:center;width:50px"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
               <th style="text-align:center;width:50px">#</th>
-              <th style="text-align:left;width:100px">Date Acte</th>
+              <th style="text-align:left;width:100px">Date Visite</th>
               <th style="text-align:left;width:140px">Visite</th>
               <th style="text-align:left;min-width:180px">Libellé</th>
               <th style="text-align:right;width:100px">Honoraires</th>
@@ -566,7 +566,7 @@
                 Date Acte</th>
               <th style="text-align: left; width: 160px; min-width: 160px; max-width: 160px;">
                 Acte</th>
-              <th style="text-align: left; min-width: 180px; max-width: 200px;">
+              <th style="text-align: left; min-width: 320px; max-width: 420px;">
                 Libellé</th>
               <th style="text-align: center; width: 70px; max-width: 70px;">
                 Unit</th>
@@ -609,12 +609,12 @@
                   <ng-template pTemplate="output">{{ rowData.get('abrv_act')?.value }}</ng-template>
                 </p-cellEditor>
               </td>
-              <td pEditableColumn>
+              <td pEditableColumn style="min-width: 320px">
                 <p-cellEditor>
-                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full" [value]="libAct[ri] || ''"
+                  <ng-template pTemplate="input"><input pInputText type="text" class="w-full libelle-acte" [value]="libAct[ri] || ''" [title]="libAct[ri] || ''"
                       readonly
                       style="background-color:#f5faff;color:#6b7280;opacity:.9;cursor:not-allowed" /></ng-template>
-                  <ng-template pTemplate="output">{{ libAct[ri] || '' }}</ng-template>
+                  <ng-template pTemplate="output"><span class="libelle-acte" [title]="libAct[ri] || ''">{{ libAct[ri] || '' }}</span></ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>

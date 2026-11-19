@@ -86,6 +86,16 @@ export class BuletinCNAMComponent {
   visiteCode: string[] = []
   appareilCode: string[] = []
   Med: string[] = []
+  /** Liste « Code maladie » : maladies des dossiers maladie du bénéficiaire (pas les médicaments). */
+  listMaladie: any[] = []
+  columnsMaladie: any[] = [
+    { key: "cod_malad", label: "Code maladie" },
+    { key: "lib_malad", label: "Libellé" },
+    { key: "num_dos_mld", label: "Numéro dossier" },
+  ]
+  codMalad: string = ''
+  libMalad: string = ''
+  numDosMld: string = ''
   refEtablisVisit: string[] = []
   refEtablis: string[] = []
   refEtablisPhar: string[] = []
@@ -201,6 +211,25 @@ export class BuletinCNAMComponent {
         };
         this.controleDatSoin({ target });
       });
+    // Date de soin saisie : les dates des visites, pharmacies, actes et appareils se remplissent avec la même date.
+    // Une date modifiée à la main reste inchangée (seules les lignes vides ou encore égales à l'ancienne date de soin suivent).
+    datSoinCtrl?.valueChanges
+      .pipe(debounceTime(300), takeUntil(this.destroy$))
+      .subscribe((v: any) => {
+        const nouvelle = this.dateSoinComplete(v);
+        if (!nouvelle || nouvelle === this.datSoinPropagee) return;
+        const ancienne = this.datSoinPropagee;
+        this.datSoinPropagee = nouvelle;
+        for (const tableau of [this.lignes, this.phar, this.visite, this.appareil]) {
+          tableau.controls.forEach(ligne => {
+            const ctrl = ligne.get('dat_act');
+            const actuelle = String(ctrl?.value ?? '').trim();
+            if (ctrl && (!actuelle || actuelle === ancienne)) {
+              ctrl.setValue(nouvelle);
+            }
+          });
+        }
+      });
     this.saveService.isSearch$
       .pipe(takeUntil(this.destroy$))
       .subscribe((canSearch) => {
@@ -223,8 +252,14 @@ export class BuletinCNAMComponent {
     this.saveService.clearSaveCallback();
   }
 
+  /** Vrai pendant qu'un enregistrement est en cours : un second clic sur « Enregistrer » est ignoré. */
+  private enregistrementEnCours = false;
+
   // addBultSoin
   addBultSoin() {
+    if (this.enregistrementEnCours) {
+      return;
+    }
 
     if (!this.formBuletinSoin.valid) {
       Swal.fire('Formulaire invalide', 'Veuillez remplir le formulaire', 'warning');
@@ -301,6 +336,7 @@ export class BuletinCNAMComponent {
 
     /* ---------- SAVE HEADER ---------- */
 
+    this.enregistrementEnCours = true;
     this.serv.addBultSoin(header).subscribe({
 
       next: (saved: any) => {
@@ -308,6 +344,7 @@ export class BuletinCNAMComponent {
         const numSoin = saved?.num_soin ?? header.num_soin;
 
         if (numSoin === null || numSoin === undefined) {
+          this.enregistrementEnCours = false;
           Swal.fire('Erreur', 'Le numéro de soin n\'a pas été renvoyé par le serveur', 'error');
           return;
         }
@@ -323,13 +360,35 @@ export class BuletinCNAMComponent {
           return o;
         };
 
-        const visites = formArrays[0].controls.filter(c => c.valid).map(c => clean(c.value));
-        const acts = formArrays[2].controls.filter(c => c.valid).map(c => clean(c.value, ['nbr_piece', 'nbr_vign', 'obs']));
-        const meds = formArrays[1].controls.filter(c => c.valid).map(c => clean(c.value, ['nbr_piece', 'nbr_vign', 'obs']));
-        const apps = formArrays[3].controls.filter(c => c.valid).map(c => clean(c.value));
+        const ctrlVisites = formArrays[0].controls.filter(c => c.valid);
+        const ctrlActs = formArrays[2].controls.filter(c => c.valid);
+        const ctrlMeds = formArrays[1].controls.filter(c => c.valid);
+        const ctrlApps = formArrays[3].controls.filter(c => c.valid);
+
+        const visites = ctrlVisites.map(c => clean(c.value));
+        const acts = ctrlActs.map(c => clean(c.value, ['nbr_piece', 'nbr_vign', 'obs']));
+        const meds = ctrlMeds.map(c => clean(c.value, ['nbr_piece', 'nbr_vign', 'obs']));
+        const apps = ctrlApps.map(c => clean(c.value));
+
+        // Chaque ligne enregistrée garde le numéro de ligne attribué par le serveur et le numéro de soin :
+        // un second enregistrement met alors la même ligne à jour au lieu d'en créer une copie.
+        const memoriser = (controles: AbstractControl[], reponse: any) => {
+          if (!Array.isArray(reponse)) return;
+          controles.forEach((c, i) => {
+            const ligne = reponse[i];
+            if (ligne) {
+              c.patchValue({ num_lig: ligne.num_lig, num_soin: numSoin });
+            }
+          });
+        };
 
         this.serv.addAllLigBult(visites, acts, meds, apps).subscribe({
           next: (res: any) => {
+            this.enregistrementEnCours = false;
+            memoriser(ctrlVisites, res?.visit);
+            memoriser(ctrlActs, res?.act);
+            memoriser(ctrlMeds, res?.med);
+            memoriser(ctrlApps, res?.app);
             const echecs = Object.values(res || {}).filter((r: any) => r?.error).map((r: any) => r.message);
             if (echecs.length) {
               Swal.fire('Enregistrement incomplet', 'Échec de l\'enregistrement : ' + echecs.join(', '), 'error');
@@ -340,11 +399,17 @@ export class BuletinCNAMComponent {
             // le formulaire reste rempli : il ne se vide que par « Retour » ou « Nouveau » de la barre d'outils
             this.getBultSoin();
           },
-          error: () => this.showServerError()
+          error: () => {
+            this.enregistrementEnCours = false;
+            this.showServerError();
+          }
         });
       },
 
-      error: () => this.showServerError()
+      error: () => {
+        this.enregistrementEnCours = false;
+        this.showServerError();
+      }
     });
   }
 
@@ -385,6 +450,11 @@ export class BuletinCNAMComponent {
     this.refEtablis = [];
     this.etab_rsoc = [];
     this.Med = [];
+    this.datSoinPropagee = '';
+    this.listMaladie = [];
+    this.codMalad = '';
+    this.libMalad = '';
+    this.numDosMld = '';
     this.visiteCode = [];
     this.appareilCode = [];
     this.libAppareil = [];
@@ -480,6 +550,13 @@ export class BuletinCNAMComponent {
       mod_pay: item.mod_pay,
       dat_vir: item.dat_vir,
     })
+
+    // les lignes chargées gardent leurs dates : pas de propagation de la date de soin du bulletin ouvert
+    this.datSoinPropagee = this.dateSoinComplete();
+
+    // Maladie du bulletin : libellé et numéro de dossier à partir des dossiers maladie du bénéficiaire
+    this.codMalad = item.cod_malad ?? '';
+    this.chargerMaladies(item.cod_soc, item.mat_pers, item.num_fam);
 
     // 🔥 FIX: Load medicine list FIRST, then load the table data
     this.serv.getMeds(item.cod_fil, item.cod_assur).subscribe((medData: any) => {
@@ -593,8 +670,10 @@ export class BuletinCNAMComponent {
           this.acte.push(item.abrv_act);
 
           // Find and store the lib_act from listActe
-          const selectedActe = this.listActe.find(acte => acte.abrv_act === item.abrv_act);
-          this.libAct.push(selectedActe?.lib_act || '');
+          // abrv_act n'est pas unique (ex. « BP » : des centaines d'actes) : on cherche d'abord avec le code acte
+          const selectedActe = this.listActe.find(acte => acte.abrv_act === item.abrv_act && acte.cod_act === item.cod_act)
+            ?? this.listActe.find(acte => acte.abrv_act === item.abrv_act);
+          this.libAct.push((selectedActe?.lib_act || '').trim());
 
           // Store the etablissement code
           this.refEtablis.push(item.prf_cod);
@@ -690,6 +769,7 @@ export class BuletinCNAMComponent {
         dat_soin: [item.dat_soin],
         abrv_act: [item.abrv_act],
         cod_visit: [item.cod_visit],
+        num_soin: [item.num_soin],
         num_lig: [item.num_lig],
         mnt_honor: [Number(item.mnt_honor).toFixed(3)],
         mnt_remb: [Number(item.mnt_remb).toFixed(3)],
@@ -1028,6 +1108,14 @@ export class BuletinCNAMComponent {
 
 
   private lastDatSoinControle = '';
+  /** Dernière date de soin (jj/mm/aaaa) copiée dans les dates des lignes. */
+  private datSoinPropagee = '';
+
+  /** Date de soin complète au format jj/mm/aaaa, ou '' tant que la saisie n'est pas terminée. */
+  private dateSoinComplete(valeur: any = this.formBuletinSoin.get('dat_soin')?.value): string {
+    const d = String(valeur ?? '').replace(/\D/g, '');
+    return d.length === 8 ? `${d.substring(0, 2)}/${d.substring(2, 4)}/${d.substring(4, 8)}` : '';
+  }
 
   controleDatSoin(item: any) {
     // date vide : rien à contrôler (évite le message « Plafond non encore initialisé » à la sélection du matricule)
@@ -1142,6 +1230,9 @@ export class BuletinCNAMComponent {
       this.reponseVerifModRemb = data;
       // Vérification des valeurs retournées
       this.showMsgMalad = data.msg_malad === "true";
+      if (this.showMsgMalad) {
+        this.chargerMaladies();
+      }
       this.showMsgDatAccouch = data.msg_dat_accouch === "true";
       this.showMsgPriseCharge = data.msg_prise_charge === "true";
 
@@ -1157,6 +1248,40 @@ export class BuletinCNAMComponent {
         event.target.value = '';
       }
     });
+  }
+
+  /** Charge les maladies des dossiers maladie du bénéficiaire (adhérent ou membre de famille) choisi. */
+  chargerMaladies(soc?: any, mat?: any, numFam?: any): void {
+    const codSoc = soc ?? this.token.getUser().codSoc;
+    const matPers = mat ?? this.formBuletinSoin.get('mat_pers')?.value;
+    const famille = numFam ?? this.formBuletinSoin.get('num_fam')?.value;
+    if (!matPers || famille === null || famille === undefined || famille === '') {
+      this.listMaladie = [];
+      return;
+    }
+    this.serv.getDossiersMaladie(codSoc, matPers, famille).subscribe({
+      next: (data: any) => {
+        this.listMaladie = Array.isArray(data) ? data : [];
+        this.afficherMaladie(this.codMalad || this.formBuletinSoin.get('cod_malad')?.value);
+      },
+      error: (err) => {
+        console.error('Error loading maladies:', err);
+        this.listMaladie = [];
+      }
+    });
+  }
+
+  /** Renseigne libellé et numéro de dossier pour un code maladie de la liste (vide si le code n'y est pas). */
+  private afficherMaladie(code: any): void {
+    const trouve = code ? this.listMaladie.find(m => m.cod_malad === code) : null;
+    this.codMalad = trouve ? trouve.cod_malad : '';
+    this.libMalad = trouve?.lib_malad ?? '';
+    this.numDosMld = trouve?.num_dos_mld ?? '';
+  }
+
+  onSelectedMaladie(selectedValue: any): void {
+    this.afficherMaladie(selectedValue?.cod_malad);
+    this.formBuletinSoin.patchValue({ cod_malad: this.codMalad });
   }
 
   get lignes(): FormArray {
@@ -1180,7 +1305,7 @@ export class BuletinCNAMComponent {
       accord_act: [''],
       mnt_net: [''],
       indice: [''],
-      dat_act: [''],
+      dat_act: [this.dateSoinComplete()],
       prf_typ: [''],
       prf_cod: [''],
       mut_mnt_net: [''],
@@ -1371,7 +1496,8 @@ export class BuletinCNAMComponent {
     }
 
     this.acte[index] = selectedValue.abrv_act;
-    this.libAct[index] = selectedActe?.lib_act || '';
+    // le libellé est celui de la ligne choisie (le code abrégé, ex. « BP », est partagé par des centaines d'actes)
+    this.libAct[index] = (selectedValue.lib_act || selectedActe?.lib_act || '').trim();
 
     this.lignes.at(index).patchValue({
       abrv_act: selectedValue.abrv_act,
@@ -1703,7 +1829,7 @@ export class BuletinCNAMComponent {
       mnt_net: [''],
       mnt_remb: [''],
       accord_med: [''],
-      dat_act: [''],
+      dat_act: [this.dateSoinComplete()],
       prf_typ: [''],
       prf_cod: [''],
       num_pec_med: [''],
@@ -2087,6 +2213,7 @@ export class BuletinCNAMComponent {
       cod_soc: [this.token.getUser().codSoc],
       mat_pers: [''],
       num_fam: [''],
+      num_soin: [''],
       dat_soin: ['', Validators.required],
       abrv_act: [''],
       cod_visit: ['', Validators.required],
@@ -2095,7 +2222,7 @@ export class BuletinCNAMComponent {
       mnt_remb: [''],
       mnt_net: [''],
       indice: [''],
-      dat_act: [''],
+      dat_act: [this.dateSoinComplete()],
       prf_typ: [''],
       prf_cod: [''],
       prix_visit: [''],
@@ -2154,10 +2281,34 @@ export class BuletinCNAMComponent {
     this.modalService.open(content, { centered: true });
   }
 
+  /** Retire la ligne de l'écran (tableau et listes associées) ; une ligne vide est recréée si c'était la dernière. */
+  private retirerLigneVisite(index: number): void {
+    this.visite.removeAt(index);
+    this.visiteCode.splice(index, 1);
+    this.libVisite.splice(index, 1);
+    this.refEtablisVisit.splice(index, 1);
+    this.etab_rsoc_visite.splice(index, 1);
+    this.mntNetArrayVisite.splice(index, 1);
+
+    this.calculateTotalsVisite();
+
+    if (this.visite.length === 0) {
+      this.addLigneVisite();
+    }
+  }
+
   ConfirmDeleteVisit(index: number): void {
 
     const ligne = this.visite.at(index).value;
+    const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
 
+    // visite jamais enregistrée (pas de numéro de soin ni de ligne) : rien à supprimer en base
+    if (!present(ligne.num_soin) || !present(ligne.num_lig) || !present(ligne.mat_pers) || !present(ligne.num_fam)) {
+      this.retirerLigneVisite(index);
+      return;
+    }
+
+    // clé complète de la visite : inclut le numéro de ligne et le numéro de soin du bulletin
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -2166,84 +2317,48 @@ export class BuletinCNAMComponent {
       abrv_act: ligne.abrv_act,
       cod_visit: ligne.cod_visit,
       dat_act: ligne.dat_act,
+      num_lig: ligne.num_lig,
+      num_soin: ligne.num_soin,
     };
 
     this.serv.existeLigBultVisit(cle).subscribe({
       next: (exists: boolean) => {
-
-        if (exists) {
-          this.serv.deleteLigBultVisit(
-            ligne.cod_soc,
-            ligne.mat_pers,
-            ligne.num_fam,
-            ligne.dat_soin,
-            ligne.abrv_act,
-            ligne.num_lig,
-            ligne.dat_act,
-            ligne.cod_visit
-          ).subscribe({
-            next: () => {
-              // Remove from FormArray
-              this.visite.removeAt(index);
-
-              // Remove from all related arrays
-              this.visiteCode.splice(index, 1);
-              this.libVisite.splice(index, 1);
-              this.refEtablisVisit.splice(index, 1);
-              this.etab_rsoc_visite.splice(index, 1);
-              this.mntNetArrayVisite.splice(index, 1);
-
-              this.calculateTotalsVisite();
-
-              // Add a new empty line if this was the last one
-              if (this.visite.length === 0) {
-                this.addLigneVisite();
-              }
-            },
-            error: (error) => {
-              console.error("Erreur lors de la suppression :", error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: 'Erreur lors de la suppression de la visite',
-                confirmButtonText: 'OK'
-              });
-            }
-          });
-        } else {
-          // Remove from FormArray
-          this.visite.removeAt(index);
-
-          // Remove from all related arrays
-          this.visiteCode.splice(index, 1);
-          this.libVisite.splice(index, 1);
-          this.refEtablisVisit.splice(index, 1);
-          this.etab_rsoc_visite.splice(index, 1);
-          this.mntNetArrayVisite.splice(index, 1);
-
-          this.calculateTotalsVisite();
-
-          // Add a new empty line if this was the last one
-          if (this.visite.length === 0) {
-            this.addLigneVisite();
-          }
+        if (!exists) {
+          this.retirerLigneVisite(index);
+          return;
         }
+        this.serv.deleteLigBultVisit(
+          ligne.cod_soc,
+          ligne.mat_pers,
+          ligne.num_fam,
+          ligne.dat_soin,
+          ligne.abrv_act,
+          ligne.num_lig,
+          ligne.dat_act,
+          ligne.cod_visit,
+          ligne.num_soin
+        ).subscribe({
+          next: () => this.retirerLigneVisite(index),
+          error: (error) => {
+            console.error("Erreur lors de la suppression :", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: 'Erreur lors de la suppression de la visite',
+              confirmButtonText: 'OK'
+            });
+          }
+        });
       },
       error: (error) => {
+        // la vérification a échoué : la visite reste affichée, on ne la retire pas à tort de l'écran
         console.error("Erreur lors de la vérification d'existence :", error);
-        // Still remove locally even if check fails
-        this.visite.removeAt(index);
-        this.visiteCode.splice(index, 1);
-        this.libVisite.splice(index, 1);
-        this.refEtablisVisit.splice(index, 1);
-        this.etab_rsoc_visite.splice(index, 1);
-        this.mntNetArrayVisite.splice(index, 1);
-
-        this.calculateTotalsVisite();
-
-        if (this.visite.length === 0) {
-          this.addLigneVisite();
-        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de vérifier la visite avant suppression',
+          confirmButtonText: 'OK'
+        });
       }
     });
   }
@@ -2350,7 +2465,7 @@ export class BuletinCNAMComponent {
       mnt_remb: [''],
       accord_app: [''],
       indice: [''],
-      dat_act: [''],
+      dat_act: [this.dateSoinComplete()],
       prf_typ: [''],
       prf_cod: [''],
       num_pec_app: [''],

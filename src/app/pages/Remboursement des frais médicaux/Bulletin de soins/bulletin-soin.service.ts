@@ -230,6 +230,11 @@ export class BulletinSoinService {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getActesManuel", { params });
   }
+  /** Maladies des dossiers maladie de l'adhérent / du membre de famille (cod_malad, lib_malad, num_dos_mld). */
+  getDossiersMaladie = (soc: any, mat: any, numFam: any): Observable<any> => {
+    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam)
+    return this.http.get<any>(API_URL + "Remb/BultSoin/getDossiersMaladie", { params });
+  }
   getMeds = (codFil: any, codAssur: any): Observable<any> => {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getMeds", { params });
@@ -379,9 +384,12 @@ export class BulletinSoinService {
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigBultAct", { params })
   }
 
-  deleteLigBultVisit(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, datAct: any, codVisit: any) {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
+  deleteLigBultVisit(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, datAct: any, codVisit: any, numSoin?: any) {
+    let params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
       .set("numLig", numLig).set("datAct", datAct).set("codVisit", codVisit)
+    if (numSoin !== undefined && numSoin !== null && numSoin !== '') {
+      params = params.set("numSoin", numSoin)
+    }
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigBultVisit", { params })
   }
 

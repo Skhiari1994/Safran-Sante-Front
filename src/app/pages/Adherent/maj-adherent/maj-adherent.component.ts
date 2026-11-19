@@ -1056,6 +1056,10 @@ export class MajAdherentComponent {
     );
     this.adherentServ.getPere(item.cod_soc, item.mat_pers).subscribe(
       (data: any) => {
+        if (!data) {
+          this.formPere.reset();
+          return;
+        }
         this.formPere.patchValue({
           cod_soc: data.cod_soc,
           mat_pers: data.mat_pers,
@@ -1087,6 +1091,10 @@ export class MajAdherentComponent {
     );
     this.adherentServ.getMere(item.cod_soc, item.mat_pers).subscribe(
       (data: any) => {
+        if (!data) {
+          this.formMere.reset();
+          return;
+        }
         this.formMere.patchValue({
           cod_soc: data.cod_soc,
           mat_pers: data.mat_pers,
@@ -1118,6 +1126,10 @@ export class MajAdherentComponent {
     );
     this.adherentServ.getConjoint(item.cod_soc, item.mat_pers).subscribe(
       (data: any) => {
+        if (!data) {
+          this.formConjoint.reset();
+          return;
+        }
         this.formConjoint.patchValue({
           cod_soc: data.cod_soc,
           mat_pers: data.mat_pers,
@@ -1148,19 +1160,24 @@ export class MajAdherentComponent {
       }
     );
     this.adherentServ.getAdresse(item.cod_soc, item.mat_pers).subscribe(data => {
-      this.listAdresse = data
+      this.listAdresse = data || []
       console.log("this.listAdresse", data)
+      const adr = data?.[0];
+      if (!adr) {
+        this.formAdrPers.reset();
+        return;
+      }
       this.formAdrPers.patchValue({
-        cod_gouv: data[0].codGouv,
-        cod_poste: data[0].codPoste,
-        cod_soc: data[0].codSoc,
-        mat_pers: data[0].matPers,
-        num_adr: data[0].numAdr,
-        rue: data[0].rue,
-        tel_pers: data[0].telPers,
-        fax_pers: data[0].faxPers,
-        adr_courant: data[0].adrCourant,
-        rue_a: data[0].rueA,
+        cod_gouv: adr.codGouv,
+        cod_poste: adr.codPoste,
+        cod_soc: adr.codSoc,
+        mat_pers: adr.matPers,
+        num_adr: adr.numAdr,
+        rue: adr.rue,
+        tel_pers: adr.telPers,
+        fax_pers: adr.faxPers,
+        adr_courant: adr.adrCourant,
+        rue_a: adr.rueA,
       })
       console.log("this.listAdresse", this.formAdrPers.value)
 
@@ -1188,7 +1205,7 @@ export class MajAdherentComponent {
 
     this.adherentServ.getPhoto(item.cod_soc, item.mat_pers).subscribe({
       next: (data: any) => {
-        if (data.photo) {
+        if (data?.photo) {
           console.log("data.photo", data.photo);
 
           try {
