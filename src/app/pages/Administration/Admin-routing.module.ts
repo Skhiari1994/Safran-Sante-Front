@@ -4,7 +4,6 @@ import { CreateProfileComponent } from './create-profile/create-profile.componen
 import { GestionProfileComponent } from './gestion-profile/gestion-profile.component';
 import { GestionMenuComponent } from './gestion-menu/gestion-menu.component'; 
 import { ParametrageRapportsComponent } from './parametrage-rapports/parametrage-rapports.component';
-import { GestionUtlisateurComponent } from './gestion-utlisateur/gestion-utlisateur.component';
 import { ConsultationUtilisateurComponent } from './consultation-utilisateur/consultation-utilisateur.component';
 import { MajValideurComponent } from './maj-valideur/maj-valideur.component';
 import { ParametresGenerauxComponent } from './parametres-generaux/parametres-generaux.component';
@@ -22,7 +21,9 @@ const routes: Routes = [
   },
   {
     path: "GestionUtilisateur",
-    component: GestionUtlisateurComponent,
+    // l'ajout d'un utilisateur est une fenêtre de la liste : cette adresse (menu) ouvre la liste avec la fenêtre d'ajout
+    component: ConsultationUtilisateurComponent,
+    data: { ouvrirAjout: true },
     
     
     

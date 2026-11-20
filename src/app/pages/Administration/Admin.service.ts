@@ -42,6 +42,17 @@ export class AdminService {
   supprimerUtilisateur(id: number): Observable<any> {
     return this.http.delete<any>(API_URL + "admin/Utilisateur/" + id);
   }
+  /** Fiche du personnel reprise dans le compte : nom, prénom, CIN (login), e-mail ; dejaUtilisateur = compte déjà créé. */
+  getPersonnelUtilisateur(codSoc: string, matricule: string): Observable<any> {
+    return this.http.get<any>(API_URL + "admin/Utilisateur/personnel/" + encodeURIComponent(codSoc) + "/" + encodeURIComponent(matricule));
+  }
+  /** Personnel de la société qui n'a pas encore de compte (liste de choix de la fenêtre d'ajout). */
+  getPersonnelSansCompte(codSoc: string): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/Utilisateur/personnel-sans-compte", { params: { codSoc } });
+  }
+  creerUtilisateur(data: any): Observable<any> {
+    return this.http.post<any>(API_URL + "admin/Utilisateur", data);
+  }
   getRole(){
     return this.http.get(API_URL+"admin/Menu/role")
   }

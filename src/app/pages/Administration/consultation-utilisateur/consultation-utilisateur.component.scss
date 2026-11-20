@@ -17,3 +17,28 @@
 .soc-3 { background: #fce4ec; color: #c2185b; }
 .soc-4 { background: #e3f2fd; color: #1565c0; }
 .soc-5 { background: #f1f8e9; color: #558b2f; }
+
+/* Oeil intégré au champ mot de passe (fenêtre d'ajout), comme sur la page de connexion */
+.password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding: 0 12px;
+  color: #878a99;
+  border: 0;
+  text-decoration: none;
+  box-shadow: none;
+  line-height: 1;
+
+  i {
+    font-size: 18px;
+    vertical-align: middle;
+  }
+
+  &:hover,
+  &:focus {
+    color: #405189;
+    box-shadow: none;
+  }
+}

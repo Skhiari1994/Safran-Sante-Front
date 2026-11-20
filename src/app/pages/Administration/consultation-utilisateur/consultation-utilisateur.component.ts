@@ -1,4 +1,6 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Table } from 'primeng/table';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
@@ -10,7 +12,7 @@ import { AdminService } from '../Admin.service';
   templateUrl: './consultation-utilisateur.component.html',
   styleUrl: './consultation-utilisateur.component.scss'
 })
-export class ConsultationUtilisateurComponent implements OnInit {
+export class ConsultationUtilisateurComponent implements OnInit, AfterViewInit {
   breadCrumbItems!: Array<{}>;
   utilisateurs: any[] = [];
   utilisateursFiltres: any[] = [];
@@ -23,6 +25,36 @@ export class ConsultationUtilisateurComponent implements OnInit {
   listRoles: any[] = [];
   loading = true;
   erreur = false;
+
+  @ViewChild('dt') dt?: Table;
+  /** texte de la recherche ; pré-rempli par ?q= (ex. arrivée depuis « Nouvel utilisateur » après un enregistrement) */
+  recherche = '';
+
+  // ----- ajout d'un utilisateur (fenêtre) -----
+  @ViewChild('ajoutContent') ajoutContent?: TemplateRef<any>;
+  ajout: {
+    codSoc: string, matricule: string, cin: string, nom: string, prenom: string, email: string,
+    roleIds: number[], password: string, confirmation: string
+  } | null = null;
+  libSocieteAjout = '';
+  personnelListe: any[] = [];
+  colonnesPersonnel = [
+    { key: 'mat_pers', label: 'Matricule' },
+    { key: 'cin', label: 'CIN' },
+    { key: 'dat_nais', label: 'Date naissance' },
+    { key: 'full_name', label: 'Nom & prénom' },
+  ];
+  /** compte déjà existant ou fiche sans CIN : message affiché sous la sélection, l'enregistrement est alors refusé */
+  ficheDejaUtilisateur = false;
+  ficheSansCin = false;
+  chargementFiche = false;
+  chargementPersonnel = false;
+  ajoutEnCours = false;
+  afficherMotDePasse = false;
+  private modalAjoutRef?: NgbModalRef;
+  private ouvrirAjoutAuDemarrage = false;
+  private readonly MOT_DE_PASSE_FORT = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  private readonly EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
   edition: { useId: number, matricule: string, nom: string, prenom: string, roleIds: number[] } | null = null;
   enregistrement = false;
@@ -39,11 +71,20 @@ export class ConsultationUtilisateurComponent implements OnInit {
   private readonly COULEURS_AUTRES = ['bg-primary-subtle text-primary', 'bg-secondary-subtle text-secondary', 'bg-dark-subtle text-dark'];
 
   constructor(private adminServ: AdminService, private modalService: NgbModal, private token: TokenStorageService,
-    private tokenSociete: TokenStorage) { }
+    private tokenSociete: TokenStorage, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
+    this.recherche = this.route.snapshot.queryParamMap.get('q') ?? '';
+    this.ouvrirAjoutAuDemarrage = !!this.route.snapshot.data['ouvrirAjout'];
     this.charger();
     this.adminServ.getRole().subscribe((roles: any) => this.listRoles = roles || []);
+  }
+
+  ngAfterViewInit(): void {
+    // arrivée par l'adresse « Gestion des utilisateurs » (menu) : la fenêtre d'ajout s'ouvre directement
+    if (this.ouvrirAjoutAuDemarrage) {
+      setTimeout(() => this.ouvrirAjout());
+    }
   }
 
   charger(): void {
@@ -60,6 +101,10 @@ export class ConsultationUtilisateurComponent implements OnInit {
         this.rolesDisponibles = Array.from(new Set(this.utilisateurs.flatMap(u => this.roles(u)))).sort();
         this.appliquerFiltres();
         this.loading = false;
+        // la recherche en cours (ou venue de l'adresse) est ré-appliquée une fois les lignes affichées
+        if (this.recherche) {
+          setTimeout(() => this.dt?.filterGlobal(this.recherche, 'contains'));
+        }
       },
       error: (err: any) => {
         console.error('Erreur chargement utilisateurs', err);
@@ -96,6 +141,136 @@ export class ConsultationUtilisateurComponent implements OnInit {
 
   estUtilisateurConnecte(u: any): boolean {
     return String(u?.matricule) === String(this.token.getUser()?.useLogin);
+  }
+
+  /** Ouvre la fenêtre d'ajout : société = celle de la connexion, le reste est repris de la fiche du personnel choisie. */
+  ouvrirAjout(): void {
+    if (!this.ajoutContent) return;
+    this.ajout = {
+      codSoc: this.tokenSociete.getSociete() ?? '', matricule: '', cin: '', nom: '', prenom: '', email: '',
+      roleIds: [], password: '', confirmation: ''
+    };
+    this.libSocieteAjout = this.tokenSociete.getLibSociete();
+    this.ficheDejaUtilisateur = false;
+    this.ficheSansCin = false;
+    this.afficherMotDePasse = false;
+    // seul le personnel sans compte est proposé (liste relue à chaque ouverture : un compte vient peut-être d'être créé)
+    this.personnelListe = [];
+    this.chargementPersonnel = true;
+    this.adminServ.getPersonnelSansCompte(this.ajout.codSoc).subscribe({
+      next: (data: any[]) => { this.personnelListe = data || []; this.chargementPersonnel = false; },
+      error: (err: any) => { console.error('Erreur chargement personnel', err); this.chargementPersonnel = false; }
+    });
+    this.modalAjoutRef = this.modalService.open(this.ajoutContent, { centered: true, size: 'lg' });
+    // ouvert par l'adresse du menu : à la fermeture on revient sur l'adresse de la liste
+    this.modalAjoutRef.result.then(() => this.revenirListe(), () => this.revenirListe());
+  }
+
+  private revenirListe(): void {
+    if (this.ouvrirAjoutAuDemarrage) {
+      this.ouvrirAjoutAuDemarrage = false;
+      this.router.navigate(['/Admin/UtilisateurConsultation'], { replaceUrl: true, queryParams: this.recherche ? { q: this.recherche } : {} });
+    }
+  }
+
+  /** Membre du personnel choisi : on reprend sa fiche (matricule, nom, prénom, CIN, e-mail) depuis le serveur. */
+  onSelectedPersonnel(item: any): void {
+    const mat = item?.mat_pers;
+    if (!this.ajout || !mat || mat === this.ajout.matricule) return;
+    this.chargementFiche = true;
+    this.adminServ.getPersonnelUtilisateur(this.ajout.codSoc, String(mat)).subscribe({
+      next: (fiche: any) => {
+        this.chargementFiche = false;
+        if (!this.ajout) return;
+        this.ajout.matricule = fiche.matricule;
+        this.ajout.cin = fiche.cin || '';
+        this.ajout.nom = fiche.nom || '';
+        this.ajout.prenom = fiche.prenom || '';
+        this.ajout.email = fiche.email || '';
+        this.ficheDejaUtilisateur = !!fiche.dejaUtilisateur;
+        this.ficheSansCin = !fiche.cin;
+      },
+      error: (err: any) => {
+        this.chargementFiche = false;
+        Swal.fire({ icon: 'error', title: 'Fiche introuvable', text: typeof err === 'string' ? err : 'Impossible de lire la fiche du personnel.' });
+      }
+    });
+  }
+
+  /** Initiales de la carte de la fiche choisie. */
+  get initialesAjout(): string {
+    const a = this.ajout;
+    const i = `${(a?.prenom || '').trim().charAt(0)}${(a?.nom || '').trim().charAt(0)}`.toUpperCase();
+    return i || '?';
+  }
+
+  /** Règles du mot de passe, cochées au fur et à mesure de la saisie. */
+  get reglesMotDePasse(): { libelle: string, ok: boolean }[] {
+    const p = this.ajout?.password ?? '';
+    return [
+      { libelle: '8 caractères minimum', ok: p.length >= 8 },
+      { libelle: 'Une majuscule', ok: /[A-Z]/.test(p) },
+      { libelle: 'Un chiffre', ok: /\d/.test(p) },
+      { libelle: 'Un symbole', ok: /[^A-Za-z0-9]/.test(p) },
+    ];
+  }
+
+  /** Ce qu'il reste à renseigner : explique pourquoi « Enregistrer » est grisé. */
+  get manque(): string[] {
+    const a = this.ajout;
+    if (!a) return [];
+    const reste: string[] = [];
+    if (!a.matricule) reste.push('un membre du personnel');
+    else if (this.ficheDejaUtilisateur) reste.push('un membre sans compte (celui-ci en a déjà un)');
+    else if (!a.cin) reste.push('un CIN sur la fiche');
+    if (a.roleIds.length === 0) reste.push('au moins un rôle');
+    if (!a.password) reste.push('un mot de passe');
+    else if (!this.motDePasseFort) reste.push('un mot de passe conforme aux règles');
+    if (a.password && this.motDePasseFort && a.password !== a.confirmation) reste.push('la même valeur dans la confirmation');
+    else if (!a.password && !a.confirmation) { /* déjà signalé */ }
+    if (this.emailInvalide) reste.push('un e-mail valide');
+    return reste;
+  }
+
+  get motDePasseFort(): boolean {
+    return this.MOT_DE_PASSE_FORT.test(this.ajout?.password ?? '');
+  }
+
+  get emailInvalide(): boolean {
+    const e = (this.ajout?.email ?? '').trim();
+    return !!e && !this.EMAIL.test(e);
+  }
+
+  get ajoutValide(): boolean {
+    const a = this.ajout;
+    return !!a && !!a.matricule && !!a.cin && !this.ficheDejaUtilisateur && a.roleIds.length > 0
+      && this.motDePasseFort && a.password === a.confirmation && !this.emailInvalide;
+  }
+
+  enregistrerAjout(): void {
+    const a = this.ajout;
+    if (!a || !this.ajoutValide) return;
+    this.ajoutEnCours = true;
+    this.adminServ.creerUtilisateur({
+      codSoc: a.codSoc, matricule: a.matricule, email: a.email.trim(), roleIds: a.roleIds, password: a.password
+    }).subscribe({
+      next: () => {
+        this.ajoutEnCours = false;
+        // la liste s'ouvre sur le nouvel utilisateur : son matricule est mis dans la recherche
+        this.recherche = a.matricule;
+        this.modalAjoutRef?.close();
+        this.charger();
+        Swal.fire({
+          icon: 'success', title: 'Utilisateur ajouté',
+          text: `${a.nom} ${a.prenom} peut se connecter avec son CIN (${a.cin}).`,
+          confirmButtonColor: '#3085d6'
+        });
+      },
+      error: (err: any) => {
+        this.ajoutEnCours = false;
+        Swal.fire({ icon: 'error', title: 'Ajout impossible', text: typeof err === 'string' ? err : 'Erreur lors de l\'enregistrement.' });
+      }
+    });
   }
 
   ouvrirModification(u: any, content: TemplateRef<any>): void {

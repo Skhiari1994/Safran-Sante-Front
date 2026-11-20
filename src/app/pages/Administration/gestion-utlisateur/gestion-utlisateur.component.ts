@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdminService } from '../Admin.service';
 import { AbstractControl, FormBuilder, FormGroup, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -30,7 +31,10 @@ export class GestionUtlisateurComponent {
   showPassword = false;
 
 
-  constructor(private formBuilder: FormBuilder, private adminServ: AdminService, private authService: AuthenticationService) {
+  private readonly URL_LISTE = '/Admin/UtilisateurConsultation';
+
+  constructor(private formBuilder: FormBuilder, private adminServ: AdminService, private authService: AuthenticationService,
+    private router: Router) {
 
     this.userForm = this.formBuilder.group({
       items: this.formBuilder.array([
@@ -108,6 +112,28 @@ export class GestionUtlisateurComponent {
     this.utilisateurForm.reset({ firstname: '', lastname: '', email: '', useLogin: '', roles: '', password: '', confirmPassword: '' });
   }
 
+  /** Retour à la liste ; si une saisie est en cours, on demande confirmation pour ne pas la perdre. */
+  retourListe() {
+    if (!this.selectedCode && !this.utilisateurForm.dirty) {
+      this.router.navigate([this.URL_LISTE]);
+      return;
+    }
+    Swal.fire({
+      icon: 'warning',
+      title: 'Quitter sans enregistrer ?',
+      text: 'Les informations saisies seront perdues.',
+      showCancelButton: true,
+      confirmButtonText: 'Quitter',
+      cancelButtonText: 'Rester',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#6c757d'
+    }).then(choix => {
+      if (choix.isConfirmed) {
+        this.router.navigate([this.URL_LISTE]);
+      }
+    });
+  }
+
   AddUser() {
     this.submitted = true;
     if (this.utilisateurForm.invalid) {
@@ -127,8 +153,24 @@ export class GestionUtlisateurComponent {
 
     this.authService.register(payload).subscribe({
       next: (data) => {
-        Swal.fire('Succès', 'Utilisateur enregistré avec succès', 'success');
+        const matricule = payload.useLogin;
         this.resetForm();
+        Swal.fire({
+          icon: 'success',
+          title: 'Utilisateur enregistré',
+          text: 'Que voulez-vous faire maintenant ?',
+          showCancelButton: true,
+          confirmButtonText: 'Voir dans la liste',
+          cancelButtonText: 'Ajouter un autre',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#6c757d',
+          allowOutsideClick: false
+        }).then(choix => {
+          // « Voir dans la liste » : la liste s'ouvre avec le matricule créé déjà tapé dans la recherche
+          if (choix.isConfirmed) {
+            this.router.navigate([this.URL_LISTE], { queryParams: { q: matricule } });
+          }
+        });
       },
       error: (error) => {
         console.error(error);

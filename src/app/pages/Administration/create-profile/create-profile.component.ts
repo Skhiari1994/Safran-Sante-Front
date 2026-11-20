@@ -59,7 +59,7 @@ export class CreateProfileComponent {
   }
   confirmerSuppression(content: any, role: any) {
     this.aSupprimer = role;
-    this.modalService.open(content, { centered: true, size: 'sm' });
+    this.modalService.open(content, { centered: true });
   }
 
   DeleteRole(id: number) {

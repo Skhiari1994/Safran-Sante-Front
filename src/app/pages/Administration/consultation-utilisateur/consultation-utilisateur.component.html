@@ -22,6 +22,9 @@
             </p>
           </div>
         </div>
+        <button type="button" class="btn btn-primary" (click)="ouvrirAjout()">
+          <i class="ri-user-add-line align-bottom me-1" aria-hidden="true"></i>Nouvel utilisateur
+        </button>
       </div>
 
       <div class="card-body">
@@ -30,7 +33,8 @@
           <div class="col-lg-5">
             <div class="search-box">
               <input type="search" class="form-control" placeholder="Rechercher (matricule, nom, prénom, CIN…)"
-                aria-label="Rechercher un utilisateur" (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+                aria-label="Rechercher un utilisateur" [value]="recherche"
+                (input)="recherche = $any($event.target).value; dt.filterGlobal(recherche, 'contains')" />
               <i class="ri-search-line search-icon" aria-hidden="true"></i>
             </div>
           </div>
@@ -163,6 +167,129 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="modal.dismiss()">Annuler</button>
     <button type="button" class="btn btn-success" [disabled]="enregistrement" (click)="enregistrer()">
+      <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
+    </button>
+  </div>
+</ng-template>
+
+<!-- Ajout utilisateur -->
+<ng-template #ajoutContent let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-user-add-line" aria-hidden="true"></i>
+        </span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0">Ajouter un utilisateur</h5>
+        <p class="text-muted fs-13 mb-0">Choisissez un membre du personnel : ses informations sont reprises automatiquement.</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="ajout">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Membre du personnel <span class="text-danger">*</span></label>
+        <app-lov [listData]="personnelListe" [columns]="colonnesPersonnel" codeField="mat_pers"
+          [selectedCode]="ajout.matricule" (selectedValue)="onSelectedPersonnel($event)"></app-lov>
+        <div class="text-muted fs-12 mt-1" *ngIf="chargementPersonnel || chargementFiche">
+          {{ chargementPersonnel ? 'Chargement du personnel…' : 'Lecture de la fiche…' }}
+        </div>
+        <div class="text-muted fs-12 mt-1" *ngIf="!chargementPersonnel && !personnelListe.length">
+          <i class="ri-checkbox-circle-line align-bottom me-1" aria-hidden="true"></i>
+          Tous les membres du personnel de cette société ont déjà un compte.
+        </div>
+        <div class="text-muted fs-12 mt-1" *ngIf="!chargementPersonnel && personnelListe.length">
+          {{ personnelListe.length }} membre{{ personnelListe.length > 1 ? 's' : '' }} du personnel sans compte
+        </div>
+        <div class="alert alert-warning py-2 fs-13 mt-2 mb-0" *ngIf="ficheDejaUtilisateur">
+          Cet utilisateur existe déjà (matricule {{ ajout.matricule }}).
+        </div>
+        <div class="alert alert-danger py-2 fs-13 mt-2 mb-0" *ngIf="ajout.matricule && ficheSansCin">
+          Cette fiche n'a pas de CIN : il sert d'identifiant de connexion, le compte ne peut pas être créé.
+        </div>
+      </div>
+
+      <!-- Fiche choisie : reprise automatiquement du personnel (le CIN sera l'identifiant de connexion) -->
+      <div class="col-12" *ngIf="ajout.matricule">
+        <div class="d-flex align-items-center gap-3 p-3 rounded border bg-light-subtle">
+          <span class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded-circle bg-info-subtle text-info fs-5 fw-semibold">{{ initialesAjout }}</span>
+          </span>
+          <div class="min-w-0">
+            <div class="fw-semibold fs-15">{{ ajout.prenom }} {{ ajout.nom }}</div>
+            <div class="text-muted fs-13">
+              Matricule <span class="badge bg-primary-subtle text-primary fs-12">{{ ajout.matricule }}</span>
+              <span class="mx-1">·</span>CIN (identifiant de connexion) <strong class="text-body">{{ ajout.cin || '—' }}</strong>
+            </div>
+            <div class="text-muted fs-13">
+              <i class="ri-building-line align-bottom me-1" aria-hidden="true"></i>{{ libSocieteAjout || ajout.codSoc }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <label for="ajout-email" class="form-label">E-mail <span class="text-muted fs-12">(facultatif)</span></label>
+        <input id="ajout-email" type="email" class="form-control" placeholder="nom@exemple.com" [(ngModel)]="ajout.email"
+          [ngClass]="{ 'is-invalid': emailInvalide }" autocomplete="off" />
+        <div class="invalid-feedback">Entrez une adresse e-mail valide</div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Rôles <span class="text-danger">*</span></label>
+        <ng-select [items]="listRoles" bindLabel="name" bindValue="id" [multiple]="true" [(ngModel)]="ajout.roleIds"
+          placeholder="Sélectionner un ou plusieurs rôles"></ng-select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="ajout-mdp" class="form-label">Mot de passe <span class="text-danger">*</span></label>
+        <div class="position-relative">
+          <input [type]="afficherMotDePasse ? 'text' : 'password'" id="ajout-mdp" class="form-control pe-5"
+            placeholder="Mot de passe" [(ngModel)]="ajout.password" autocomplete="new-password" />
+          <button type="button" class="btn btn-link password-toggle" (click)="afficherMotDePasse = !afficherMotDePasse"
+            [title]="afficherMotDePasse ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+            [attr.aria-label]="afficherMotDePasse ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+            <i [class]="afficherMotDePasse ? 'ri-eye-off-line' : 'ri-eye-line'" aria-hidden="true"></i>
+          </button>
+        </div>
+        <!-- règles : chacune passe au vert quand elle est respectée -->
+        <ul class="list-unstyled fs-12 mb-0 mt-2 d-flex flex-wrap gap-x-3" aria-label="Règles du mot de passe">
+          <li *ngFor="let r of reglesMotDePasse" class="me-3" [ngClass]="r.ok ? 'text-success' : 'text-muted'">
+            <i [class]="r.ok ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" class="align-bottom me-1"
+              aria-hidden="true"></i>{{ r.libelle }}<span class="visually-hidden">{{ r.ok ? ' : respectée' : ' : à respecter' }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <label for="ajout-confirmation" class="form-label">Confirmer le mot de passe <span class="text-danger">*</span></label>
+        <div class="position-relative">
+          <input [type]="afficherMotDePasse ? 'text' : 'password'" id="ajout-confirmation" class="form-control pe-5"
+            placeholder="Confirmer le mot de passe" [(ngModel)]="ajout.confirmation" autocomplete="new-password"
+            [ngClass]="{ 'is-invalid': ajout.confirmation && ajout.confirmation !== ajout.password }" />
+          <button type="button" class="btn btn-link password-toggle" (click)="afficherMotDePasse = !afficherMotDePasse"
+            [title]="afficherMotDePasse ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+            [attr.aria-label]="afficherMotDePasse ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+            <i [class]="afficherMotDePasse ? 'ri-eye-off-line' : 'ri-eye-line'" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="text-danger fs-12 mt-1" *ngIf="ajout.confirmation && ajout.confirmation !== ajout.password">
+          Les mots de passe ne correspondent pas
+        </div>
+        <div class="text-success fs-12 mt-1" *ngIf="ajout.confirmation && ajout.confirmation === ajout.password && motDePasseFort">
+          <i class="ri-checkbox-circle-fill align-bottom me-1" aria-hidden="true"></i>Les mots de passe correspondent
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <!-- ce qu'il reste à renseigner : explique pourquoi « Enregistrer » est grisé -->
+    <div class="me-auto text-muted fs-13" role="status" aria-live="polite" *ngIf="ajout && manque.length">
+      <i class="ri-information-line align-bottom me-1" aria-hidden="true"></i>Il manque : {{ manque.join(', ') }}
+    </div>
+    <button type="button" class="btn btn-light" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-success" [disabled]="!ajoutValide || ajoutEnCours" (click)="enregistrerAjout()">
       <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>Enregistrer
     </button>
   </div>
