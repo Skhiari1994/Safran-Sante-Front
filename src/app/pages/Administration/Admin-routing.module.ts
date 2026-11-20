@@ -7,6 +7,7 @@ import { ParametrageRapportsComponent } from './parametrage-rapports/parametrage
 import { GestionUtlisateurComponent } from './gestion-utlisateur/gestion-utlisateur.component';
 import { ConsultationUtilisateurComponent } from './consultation-utilisateur/consultation-utilisateur.component';
 import { MajValideurComponent } from './maj-valideur/maj-valideur.component';
+import { ParametresGenerauxComponent } from './parametres-generaux/parametres-generaux.component';
   
 
 // Component pages
@@ -49,6 +50,10 @@ const routes: Routes = [
   {
     path: "ParametrageRapport",
     component: ParametrageRapportsComponent
+  },
+  {
+    path: "ParametresGeneraux",
+    component: ParametresGenerauxComponent
   },
    
   // {

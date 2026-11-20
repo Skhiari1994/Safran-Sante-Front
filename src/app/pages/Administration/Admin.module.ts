@@ -32,6 +32,7 @@ import { LovComponent } from 'src/app/extraspages/lov/lov.component';
  
 import { ParametrageRapportsComponent } from './parametrage-rapports/parametrage-rapports.component';
 import { IconPickerComponent } from './icon-picker/icon-picker.component';
+import { ParametresGenerauxComponent } from './parametres-generaux/parametres-generaux.component';
 import { NgxMaskPipe } from 'ngx-mask';
    
 @NgModule({
@@ -44,7 +45,8 @@ GestionUtlisateurComponent,
 ConsultationUtilisateurComponent,
 
 ParametrageRapportsComponent,
-IconPickerComponent
+IconPickerComponent,
+ParametresGenerauxComponent
     ],
   imports: [
     CommonModule,

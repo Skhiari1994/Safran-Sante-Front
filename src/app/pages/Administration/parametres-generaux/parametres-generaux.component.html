@@ -1,0 +1,177 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs icon="ri-settings-4-line" title="Paramètres Généraux"></app-breadcrumbs>
+</div>
+
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
+    <!-- Carte Principale -->
+    <div class="card">
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0">
+            <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+              <i class="ri-settings-4-line" aria-hidden="true"></i>
+            </span>
+          </div>
+          <div>
+            <h5 class="card-title mb-0">Liste des paramètres</h5>
+            <p class="text-muted fs-13 mb-0">
+              {{ parametres.length }} paramètre{{ parametres.length > 1 ? 's' : '' }}
+            </p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="ouvrirModal(paramModal)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Nouveau paramètre
+        </button>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0 modern-table">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" style="width: 70px;">ID</th>
+                <th scope="col">Code / Libellé</th>
+                <th scope="col">Description</th>
+                <th scope="col">Valeur 1</th>
+                <th scope="col">Valeur 2</th>
+                <th scope="col">Valeur 3</th>
+                <th scope="col">Type</th>
+                <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of parametres">
+                <td class="fw-semibold">#{{ p.idParam }}</td>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary fs-12 px-2 py-1">
+                    {{ p.libParam }}
+                  </span>
+                </td>
+                <td>
+                  <span class="text-muted">{{ p.commentaireParam || '—' }}</span>
+                </td>
+                <td>
+                  <span class="fw-bold text-dark">{{ p.valeur1 }}</span>
+                </td>
+                <td>
+                  <span>{{ p.valeur2 || '—' }}</span>
+                </td>
+                <td>
+                  <span>{{ p.valeur3 || '—' }}</span>
+                </td>
+                <td>
+                  <span class="badge bg-secondary-subtle text-secondary">
+                    {{ getTypeLibelle(p.type) }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div class="hstack gap-2 justify-content-end">
+                    <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                      [attr.aria-label]="'Modifier ' + p.libParam"
+                      (click)="ouvrirModal(paramModal, p)">
+                      <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+                      [attr.aria-label]="'Supprimer ' + p.libParam"
+                      (click)="supprimer(p)">
+                      <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- État Vide -->
+              <tr *ngIf="parametres.length === 0 && !isLoading">
+                <td colspan="8" class="text-center text-muted py-5">
+                  <i class="ri-inbox-line fs-2 d-block mb-1" aria-hidden="true"></i>
+                  Aucun paramètre trouvé
+                </td>
+              </tr>
+
+              <!-- Chargement -->
+              <tr *ngIf="isLoading">
+                <td colspan="8" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Ajout / Modification -->
+<ng-template #paramModal let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0">
+        <span class="avatar-title rounded bg-primary-subtle text-primary fs-4">
+          <i class="ri-settings-4-line" aria-hidden="true"></i>
+        </span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0">{{ isEditMode ? 'Modifier le paramètre' : 'Nouveau paramètre' }}</h5>
+        <p class="text-muted fs-13 mb-0">Les champs marqués * sont obligatoires.</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row g-3">
+      <!-- Code / Libellé -->
+      <div class="col-md-6">
+        <label class="form-label">Code / Libellé <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="currentParam.libParam" [disabled]="isEditMode" placeholder="Ex: JWT_EXPIRATION">
+        <small class="text-muted" *ngIf="isEditMode">L'identifiant du paramètre ne peut pas être modifié.</small>
+      </div>
+
+      <!-- Type -->
+      <div class="col-md-6">
+        <label class="form-label">Type de donnée</label>
+        <select class="form-select" [(ngModel)]="currentParam.type">
+          <option [ngValue]="1">1 - Nombre entier</option>
+          <option [ngValue]="2">2 - Montant / Décimal</option>
+          <option [ngValue]="3">3 - Texte</option>
+          <option [ngValue]="4">4 - Booléen (1=Oui, 0=Non)</option>
+          <option [ngValue]="5">5 - Date</option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div class="col-12">
+        <label class="form-label">Description / Commentaire</label>
+        <textarea class="form-control" rows="2" [(ngModel)]="currentParam.commentaireParam" placeholder="Expliquez à quoi sert ce paramètre..."></textarea>
+      </div>
+
+      <!-- Valeur 1 (Obligatoire) -->
+      <div class="col-md-4">
+        <label class="form-label">Valeur 1 <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="currentParam.valeur1" placeholder="Valeur 1">
+      </div>
+
+      <!-- Valeur 2 (Optionnelle) -->
+      <div class="col-md-4">
+        <label class="form-label">Valeur 2 (Optionnel)</label>
+        <input type="text" class="form-control" [(ngModel)]="currentParam.valeur2" placeholder="Optionnel">
+      </div>
+
+      <!-- Valeur 3 (Optionnelle) -->
+      <div class="col-md-4">
+        <label class="form-label">Valeur 3 (Optionnel)</label>
+        <input type="text" class="form-control" [(ngModel)]="currentParam.valeur3" placeholder="Optionnel">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-success" (click)="enregistrer(modal)">
+      <i class="ri-check-line align-bottom me-1" aria-hidden="true"></i>{{ isEditMode ? 'Enregistrer' : 'Ajouter' }}
+    </button>
+  </div>
+</ng-template>

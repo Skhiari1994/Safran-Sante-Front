@@ -168,4 +168,25 @@ createParametre(parametre: any): Observable<any> {
   return this.http.post(API_URL + 'Print/ParamRubController', parametre);
 }
 
+  // --- Paramètres Généraux (PARAM_GRH) ---
+  getAllParamGrh(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/ParamGrh/all");
+  }
+
+  getParamGrhById(id: number): Observable<any> {
+    return this.http.get<any>(API_URL + "admin/ParamGrh/" + id);
+  }
+
+  addParamGrh(data: any): Observable<any> {
+    return this.http.post<any>(API_URL + "admin/ParamGrh/add", data);
+  }
+
+  updateParamGrh(id: number, data: any): Observable<any> {
+    return this.http.put<any>(API_URL + "admin/ParamGrh/update/" + id, data);
+  }
+
+  deleteParamGrh(id: number): Observable<any> {
+    return this.http.delete<any>(API_URL + "admin/ParamGrh/delete/" + id);
+  }
+
 }
