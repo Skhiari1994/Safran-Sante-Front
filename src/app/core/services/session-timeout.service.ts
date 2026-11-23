@@ -2,17 +2,18 @@ import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { AuthenticationService } from './auth.service';
+import { AuthenticationService, DelaisSession } from './auth.service';
 import { TokenStorage } from 'src/app/account/token-storage.service';
 import { memoriserMotifDeconnexion } from '../helpers/motif-deconnexion';
+import { HttpClient } from '@angular/common/http';
 
 /** Inactivité tolérée avant l'affichage de l'avertissement. */
-export const DELAI_INACTIVITE_MS = 3 * 60 * 1000;
+export const DELAI_INACTIVITE_MS = 4 * 60 * 1000;
 /** Durée pendant laquelle l'avertissement reste affiché avant la déconnexion. */
 export const DELAI_AVERTISSEMENT_MS = 2 * 60 * 1000;
 
 /**
- * Le jeton du serveur est court (7 min) : tant que l'utilisateur est actif, on le renouvelle au plus une fois par
+ * Le jeton du serveur est court (10 min) : tant que l'utilisateur est actif, on le renouvelle au plus une fois par
  * minute. Quand il est inactif on ne renouvelle plus, donc la session meurt aussi côté serveur.
  */
 export const INTERVALLE_RENOUVELLEMENT_MS = 60 * 1000;
@@ -59,7 +60,7 @@ export class SessionTimeoutService {
     private router: Router,
     private modalService: NgbModal,
     private authService: AuthenticationService,
-    private tokenStorage: TokenStorage,
+    private tokenStorage: TokenStorage
   ) { }
 
   /** À appeler quand l'utilisateur est connecté. Sans effet si déjà démarré. */
@@ -76,6 +77,9 @@ export class SessionTimeoutService {
       this.evenements.forEach(e => document.addEventListener(e, this.surActivite, { passive: true, capture: true }));
       this.minuteur = setInterval(() => this.verifier(), this.periodeVerification);
     });
+
+    this.chargerDelais();
+
   }
 
   /** À appeler quand l'utilisateur quitte l'application (déconnexion, destruction du layout). */
@@ -98,6 +102,8 @@ export class SessionTimeoutService {
     if (maintenant - this.derniereEcriture >= 1000) this.ecrireActivite(maintenant);
     this.renouvelerJeton(false);
   }
+
+
 
   /** Demande un jeton neuf au serveur (au plus un appel à la fois, et un par intervalle sauf `forcer`). */
   private renouvelerJeton(forcer: boolean): void {
@@ -228,4 +234,17 @@ export class SessionTimeoutService {
     const s = (secondes % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
+
+  /** Lit les délais dans PARAM_GRH ; en cas d'échec, les valeurs par défaut s'appliquent. */
+  private chargerDelais(): void {
+    this.authService.getDelaisSession().subscribe(d => {
+      // on ne modifie pas les délais en plein décompte
+      if (this.debutAvertissement !== null) return;
+      this.delaiInactivite = d?.delaiInactiviteMs || DELAI_INACTIVITE_MS;
+      this.delaiAvertissement = d?.delaiAvertissementMs || DELAI_AVERTISSEMENT_MS;
+      console.log('delaiInactivite ---> ', this.delaiInactivite);
+      console.log('delaiAvertissement ---> ', this.delaiAvertissement);
+    });
+  }
+
 }

@@ -13,6 +13,12 @@ import { SocieteLogin } from 'src/app/pages/Adherent/adherent.service';
 
 //;
 
+/* Interface pour lire les délais d'inactivité et d'avertissement */
+export interface DelaisSession {
+    delaiInactiviteMs: number;
+    delaiAvertissementMs: number;
+}
+
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -153,5 +159,18 @@ export class AuthenticationService {
 
         return this.http.put(API_URL + 'api/auth/updatePass', user)
     }
+
+    /** Lit les délais d'inactivité et d'avertissement dans PARAM_GRH.
+     * Renvoie null en cas d'échec : l'appelant applique alors ses valeurs par défaut.
+     */
+    getDelaisSession(): Observable<DelaisSession | null> {
+        return this.http.get<DelaisSession>(API_URL + 'api/auth/delais-session').pipe(
+            catchError(err => {
+                console.warn('Échec du chargement des délais de session', err?.status, err?.url);
+                return of(null);
+            })
+        );
+    }
+
 }
 
