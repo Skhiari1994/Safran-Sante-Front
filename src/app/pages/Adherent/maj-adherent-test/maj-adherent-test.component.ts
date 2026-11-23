@@ -52,7 +52,6 @@ export class MajAdherentTestComponent {
   listPoste: any[] = [];
   listAdresse: any[] = [];
   listPersonnel: any[] = [];
-  listMatInt: any[] = [];
 
   dataRows!: any[];
   listActivite!: any[];
@@ -76,7 +75,6 @@ export class MajAdherentTestComponent {
   codAgenceVal?: string;
   codPostVal?: string;
   codGouvVal?: string;
-  codMatIntVal?: string;
   codActiviteVal?: string;
   numFam?: string;
   files!: File;
@@ -93,7 +91,6 @@ export class MajAdherentTestComponent {
   libAgence: string = "";
   libGouv: string = "";
   libPoste: string = "";
-  libMatInt: string = "";
   libActivite: string = "";
   libNom: string = "";
 
@@ -112,7 +109,6 @@ export class MajAdherentTestComponent {
   columnsGouv: any[] = [];
   columnsPoste: any[] = [];
   columnsSearch: any[] = [];
-  columnsMatInt: any[] = [];
   columnsActivite: any[] = [];
   columnFamille: any[] = [];
 
@@ -521,7 +517,6 @@ export class MajAdherentTestComponent {
     this.getGouv();
     this.getPersonnels();
     this.getActivite();
-    this.getMatInt();
     this.addEnfant();
 
     this.addCarteSoin()
@@ -778,23 +773,6 @@ export class MajAdherentTestComponent {
 
     this.formAdrPers.patchValue({
       cod_poste: item.cod_poste,
-    });
-  }
-  onSelectedVMatInt(item: any) {
-    this.formAdherent.get("mat_pers")?.setValue(item.matPers); // Mise à jour du champ libellé
-
-    this.formAdherent.get("mat_pers")?.patchValue(item.matPers); // Mise à jour du champ libellé
-  }
-  getMatInt() {
-    this.adherentServ.getMatInt().subscribe((data) => {
-      this.listMatInt = data;
-      console.log(this.listNationalite);
-      // Définir les colonnes dynamiques du tableau
-      this.columnsMatInt = [
-        { key: "matInt", label: "Mat int" },
-        { key: "matPers", label: "Matricule" },
-        { key: "nomPren", label: "Nom & Prénom" },
-      ];
     });
   }
   getNationalite() {
@@ -1233,7 +1211,6 @@ export class MajAdherentTestComponent {
   search(item: any) {
     this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, item.cod_soc, [item.nom_pers, item.pren_pers].filter(Boolean).join(' '));
     this.serachEdit = true
-    this.codMatIntVal = item.mat_int
     this.codNatP = item.cod_natp
 
     this.formAdherent.patchValue({

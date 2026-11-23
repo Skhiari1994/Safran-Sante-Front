@@ -13,21 +13,16 @@
           <!-- Identité : les trois champs se partagent toute la largeur disponible -->
           <div class="col">
             <div class="row g-3">
-              <div class="col-md-6 col-xl-3">
+              <div class="col-md-4">
                 <label for="adh-mat" class="form-label">Matricule</label>
                 <input id="adh-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers"
                   (change)="checkMatricule($event)" />
               </div>
-              <div class="col-md-6 col-xl-3">
-                <label for="adh-mat-int" class="form-label">Matricule admin</label>
-                <input id="adh-mat-int" type="text" class="form-control" placeholder="Matricule admin"
-                  formControlName="mat_int" />
-              </div>
-              <div class="col-md-6 col-xl-3">
+              <div class="col-md-4">
                 <label for="adh-nom" class="form-label">Nom</label>
                 <input id="adh-nom" type="text" class="form-control" placeholder="Nom" formControlName="nom_pers" />
               </div>
-              <div class="col-md-6 col-xl-3">
+              <div class="col-md-4">
                 <label for="adh-prenom" class="form-label">Prénom</label>
                 <input id="adh-prenom" type="text" class="form-control" placeholder="Prénom" formControlName="pren_pers" />
               </div>

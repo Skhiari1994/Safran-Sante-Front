@@ -131,6 +131,19 @@ export class ParamAdherentService {
   deletActiviteEnf(data: any): Observable<any> {
     return this.http.post<any>(API_URL+ "referentiel/paramAdherent/deletActiviteEnf", data);
   }
+
+  getCorps = (): Observable<any[]> => {
+    return this.http.get<any[]>(API_URL+ "referentiel/paramAdherent/getCorps");
+  };
+  addCorps(corps: any): Observable<any> {
+    return this.http.post<any>(API_URL+ "referentiel/paramAdherent/corps", corps);
+  }
+  updateCorps(codCorps: string, corps: any): Observable<any> {
+    return this.http.put<any>(API_URL+ "referentiel/paramAdherent/corps/" + encodeURIComponent(codCorps), corps);
+  }
+  deleteCorps(codCorps: string): Observable<any> {
+    return this.http.delete<any>(API_URL+ "referentiel/paramAdherent/corps/" + encodeURIComponent(codCorps));
+  }
 }
 
 

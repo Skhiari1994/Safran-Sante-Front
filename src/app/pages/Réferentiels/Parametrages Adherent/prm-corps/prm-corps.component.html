@@ -1,0 +1,168 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs icon="ri-user-star-line" title="Corps" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-star-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Liste des corps</h5>
+            <p class="text-muted fs-13 mb-0">{{ listCorps.length }} corps<span *ngIf="filtreActif"> (filtre sur {{ totalCorps }})</span></p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="ouvrirAjout(content)">
+          <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un corps
+        </button>
+      </div>
+
+      <div class="card-body">
+        <p-table [value]="listCorps" [paginator]="listCorps.length > 10" [rows]="10" styleClass="p-datatable-sm modern-table">
+
+          <ng-template pTemplate="header">
+            <tr class="table-light">
+              <th scope="col" style="width: 16%;">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('cod_corps')" aria-label="Trier par code">
+                  Code<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_corps')" aria-label="Trier par libellé">
+                  Libellé<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col">
+                <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  (click)="onSort('lib_corps_a')" aria-label="Trier par libellé arabe">
+                  Libellé arabe<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                </button>
+              </th>
+              <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+            </tr>
+            <tr>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['cod_corps']" (input)="applyFilter()" aria-label="Filtrer par code" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_corps']" (input)="applyFilter()" aria-label="Filtrer par libellé" />
+              </th>
+              <th class="py-2">
+                <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                  [(ngModel)]="searchz['lib_corps_a']" (input)="applyFilter()" aria-label="Filtrer par libellé arabe" />
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData>
+            <tr>
+              <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.cod_corps }}</span></td>
+              <td class="fw-medium">{{ rowData.lib_corps }}</td>
+              <td>
+                <span *ngIf="rowData.lib_corps_a; else sansArabe" dir="rtl" lang="ar">{{ rowData.lib_corps_a }}</span>
+                <ng-template #sansArabe><span class="text-muted">—</span></ng-template>
+              </td>
+              <td class="text-end">
+                <div class="hstack gap-2 justify-content-end">
+                  <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                    [attr.aria-label]="'Modifier ' + rowData.lib_corps" (click)="ouvrirModification(rowData, content)">
+                    <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+                    [attr.aria-label]="'Supprimer ' + rowData.lib_corps" (click)="supprimer(rowData)">
+                    <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center text-muted py-5">
+                <ng-container *ngIf="chargementEnCours; else chargementTermine">
+                  <div class="spinner-border spinner-border-sm text-primary mb-2" role="status" aria-hidden="true"></div>
+                  <div>Chargement des corps…</div>
+                </ng-container>
+                <ng-template #chargementTermine>
+                  <ng-container *ngIf="erreurChargement; else listeVide">
+                    <i class="ri-error-warning-line fs-1 d-block mb-2 text-danger" aria-hidden="true"></i>
+                    <div class="mb-3">La liste des corps n’a pas pu être chargée.</div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="charger()">
+                      <i class="ri-refresh-line align-bottom me-1" aria-hidden="true"></i>Réessayer
+                    </button>
+                  </ng-container>
+                  <ng-template #listeVide>
+                    <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                    {{ filtreActif ? 'Aucun corps ne correspond à votre recherche' : 'Aucun corps enregistré' }}
+                  </ng-template>
+                </ng-template>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-user-star-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ modeAjout ? 'Ajouter un corps' : 'Modifier le corps' }}</h5>
+        <p class="text-muted fs-13 mb-0">{{ modeAjout ? 'Les champs marqués * sont obligatoires.' : 'Le code ne peut pas être modifié.' }}</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <form [formGroup]="formCorps" class="tablelist-form" autocomplete="off" (ngSubmit)="enregistrer(modal)" novalidate>
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="corps-code" class="form-label">Code <span class="text-danger">*</span></label>
+          <input id="corps-code" type="text" class="form-control text-uppercase" formControlName="cod_corps"
+            [maxlength]="longueurCode" placeholder="Ex. D" [readonly]="!modeAjout"
+            [class.is-invalid]="champEnErreur('cod_corps')" aria-describedby="corps-code-aide" />
+          <div id="corps-code-aide" class="form-text">{{ longueurCode }} caractère : c’est la longueur du champ Corps d’un adhérent.</div>
+          <div class="invalid-feedback" role="alert">
+            <ng-container *ngIf="formCorps.get('cod_corps')?.hasError('existe'); else codeObligatoire">Ce code existe déjà.</ng-container>
+            <ng-template #codeObligatoire>Le code est obligatoire.</ng-template>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <label for="corps-libelle" class="form-label">Libellé <span class="text-danger">*</span></label>
+          <input id="corps-libelle" type="text" class="form-control" formControlName="lib_corps"
+            [maxlength]="longueurLibelle" placeholder="Ex. Divers"
+            [class.is-invalid]="champEnErreur('lib_corps')" />
+          <div class="invalid-feedback" role="alert">Le libellé est obligatoire ({{ longueurLibelle }} caractères au maximum).</div>
+        </div>
+        <div class="col-12">
+          <label for="corps-libelle-ar" class="form-label">Libellé en arabe</label>
+          <input id="corps-libelle-ar" type="text" class="form-control" formControlName="lib_corps_a"
+            [maxlength]="longueurLibelle" dir="rtl" lang="ar" placeholder="مثال : متنوع"
+            [class.is-invalid]="champEnErreur('lib_corps_a')" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.dismiss('Close click')">Annuler</button>
+      <button type="submit" class="btn btn-success" [disabled]="formCorps.invalid || enregistrementEnCours">
+        <span *ngIf="enregistrementEnCours; else iconeValider" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        <ng-template #iconeValider><i class="ri-check-line align-bottom me-1" aria-hidden="true"></i></ng-template>
+        Enregistrer
+      </button>
+    </div>
+  </form>
+</ng-template>

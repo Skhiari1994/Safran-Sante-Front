@@ -28,7 +28,6 @@ export class MajAdherentComponent {
   listPoste: any[] = []
   listAdresse: any[] = []
   listPersonnel: any[] = []
-  listMatInt: any[] = []
 
   dataRows!: any[];
   listActivite!: any[];
@@ -67,7 +66,6 @@ export class MajAdherentComponent {
   codAgenceVal?: string;
   codPostVal?: string;
   codGouvVal?: string;
-  codMatIntVal?: string;
 
   selectedCode: string = '';
   selectedCodeLieu: string = '';
@@ -80,7 +78,6 @@ export class MajAdherentComponent {
   libAgence: string = ''
   libGouv: string = ''
   libPoste: string = ''
-  libMatInt: string = ''
 
   formAdherent!: FormGroup;
   formAdrPers!: FormGroup;
@@ -97,7 +94,6 @@ export class MajAdherentComponent {
   columnsGouv: any[] = [];
   columnsPoste: any[] = [];
   columnsSearch: any[] = [];
-  columnsMatInt: any[] = [];
   file!: File
   imageURL: string | undefined;
 
@@ -341,7 +337,6 @@ export class MajAdherentComponent {
     this.getPersonnels(); // Call your service once
 
     this.getActivite()
-    this.getMatInt()
     //this.getCarteSoin()
     // this.getFamille()
 
@@ -535,28 +530,6 @@ export class MajAdherentComponent {
 
     this.formAdrPers.patchValue({
       cod_poste: item.cod_poste,
-
-    });
-  }
-  onSelectedVMatInt(item: any) {
-    this.formAdherent.get('mat_pers')?.setValue(item.matPers)  // Mise à jour du champ libellé
-
-    this.formAdherent.get('mat_pers')?.patchValue(item.matPers)  // Mise à jour du champ libellé
-
-
-  }
-  getMatInt() {
-    this.adherentServ.getMatInt().subscribe(data => {
-      this.listMatInt = data;
-      console.log(this.listNationalite)
-      // Définir les colonnes dynamiques du tableau
-      this.columnsMatInt = [
-        { key: 'matInt', label: 'Mat int' },
-        { key: 'matPers', label: 'Matricule' },
-        { key: 'nomPren', label: 'Nom & Prénom' },
-
-        // { key: 'lib_tit_a', label: 'Libellé 2éme langue' }
-      ];
 
     });
   }

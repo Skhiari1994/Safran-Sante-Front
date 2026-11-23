@@ -13,21 +13,16 @@
           <!-- Identité : les champs se partagent toute la largeur disponible -->
           <div class="col">
             <div class="row g-3">
-              <div class="col-md-6 col-xl-3">
+              <div class="col-md-4">
                 <label for="adh-mat" class="form-label">Matricule</label>
                 <input id="adh-mat" type="text" class="form-control" placeholder="Matricule" formControlName="mat_pers" />
                 <div *ngIf="errorMessageMat" class="error-message">{{ errorMessageMat }}</div>
               </div>
-              <div class="col-md-6 col-xl-3">
-                <label class="form-label">Matricule admin</label>
-                <app-lov [disabled]="isConsultation" [listData]="listMatInt" [columns]="columnsMatInt" codeField="matInt"
-                  [selectedCode]="codMatIntVal" (selectedValue)="onSelectedVMatInt($event)"></app-lov>
-              </div>
-              <div class="col-md-6 col-xl-3">
+              <div class="col-md-4">
                 <label for="adh-nom" class="form-label">Nom</label>
                 <input id="adh-nom" type="text" class="form-control" placeholder="Nom" formControlName="nom_pers" />
               </div>
-              <div class="col-md-6 col-xl-3">
+              <div class="col-md-4">
                 <label for="adh-prenom" class="form-label">Prénom</label>
                 <input id="adh-prenom" type="text" class="form-control" placeholder="Prénom" formControlName="pren_pers" />
               </div>

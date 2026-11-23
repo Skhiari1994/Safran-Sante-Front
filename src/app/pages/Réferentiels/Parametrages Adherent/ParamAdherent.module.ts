@@ -30,13 +30,14 @@ import { PrmDepartementComponent } from './prm-departement/prm-departement.compo
 import { PrmAffectationComponent } from './prm-affectation/prm-affectation.component';
 import { PrmTypDepartComponent } from './prm-typ-depart/prm-typ-depart.component';
 import { PrmActiviteEnfComponent } from './prm-activite-enf/prm-activite-enf.component';
+import { PrmCorpsComponent } from './prm-corps/prm-corps.component';
 import { MisAjCnamComponent } from '../Parameterages assurances/mis-aj-cnam/mis-aj-cnam.component';
 import { TableModule } from 'primeng/table';
    
 @NgModule({
   declarations: [ 
     
-    PrmNationaliteComponent, PrmPosteComponent, PrmBanqueComponent, PrmSocieteComponent, PrmDepartementComponent, PrmAffectationComponent, PrmTypDepartComponent, PrmActiviteEnfComponent, MisAjCnamComponent
+    PrmNationaliteComponent, PrmPosteComponent, PrmBanqueComponent, PrmSocieteComponent, PrmDepartementComponent, PrmAffectationComponent, PrmTypDepartComponent, PrmActiviteEnfComponent, PrmCorpsComponent, MisAjCnamComponent
   ],
   imports: [
     CommonModule,

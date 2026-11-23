@@ -8,6 +8,7 @@ import { PrmDepartementComponent } from './prm-departement/prm-departement.compo
 import { PrmAffectationComponent } from './prm-affectation/prm-affectation.component';
 import { PrmTypDepartComponent } from './prm-typ-depart/prm-typ-depart.component';
 import { PrmActiviteEnfComponent } from './prm-activite-enf/prm-activite-enf.component';
+import { PrmCorpsComponent } from './prm-corps/prm-corps.component';
 import { MisAjCnamComponent } from '../Parameterages assurances/mis-aj-cnam/mis-aj-cnam.component';
 
 // Component pages
@@ -45,6 +46,10 @@ const routes: Routes = [
   {
     path: "activiteEnf",
     component: PrmActiviteEnfComponent
+  },
+  {
+    path: "corps",
+    component: PrmCorpsComponent
   },
  
   // {
