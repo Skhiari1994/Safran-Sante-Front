@@ -19,6 +19,7 @@ import { CarteCnamAlertService } from '../carte-cnam-alert.service';
 export class MajAdherentComponent {
   breadCrumbItems!: Array<{}>;
   listNationalite: any[] = []
+  listCorps: any[] = []
   listAffectation: any[] = []
   listTypeDepart: any[] = []
   listBanque: any[] = []
@@ -328,6 +329,7 @@ export class MajAdherentComponent {
     })
 
     this.getNationalite()
+    this.getCorps()
     this.getDepartement()
     this.getAffectation()
     this.getTypeDepart()
@@ -531,6 +533,11 @@ export class MajAdherentComponent {
     this.formAdrPers.patchValue({
       cod_poste: item.cod_poste,
 
+    });
+  }
+  getCorps() {
+    this.adherentServ.getCorps().subscribe((data) => {
+      this.listCorps = data;
     });
   }
   getNationalite() {

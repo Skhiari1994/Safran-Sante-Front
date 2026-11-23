@@ -200,4 +200,23 @@ createParametre(parametre: any): Observable<any> {
     return this.http.delete<any>(API_URL + "admin/ParamGrh/delete/" + id);
   }
 
+  getAllParamNotif(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/ParamNotif/all");
+  }
+  getCorpsNotif(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/ParamNotif/corps");
+  }
+  getSocietesNotif(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "admin/ParamNotif/societes");
+  }
+  addParamNotif(data: any): Observable<any> {
+    return this.http.post<any>(API_URL + "admin/ParamNotif/add", data);
+  }
+  updateParamNotif(id: number, data: any): Observable<any> {
+    return this.http.put<any>(API_URL + "admin/ParamNotif/update/" + id, data);
+  }
+  deleteParamNotif(id: number): Observable<any> {
+    return this.http.delete<any>(API_URL + "admin/ParamNotif/delete/" + id);
+  }
+
 }

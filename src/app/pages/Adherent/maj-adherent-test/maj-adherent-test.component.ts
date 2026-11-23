@@ -43,6 +43,7 @@ export class MajAdherentTestComponent {
 
   breadCrumbItems!: Array<{}>;
   listNationalite: any[] = [];
+  listCorps: any[] = [];
   listAffectation: any[] = [];
   listTypeDepart: any[] = [];
   listBanque: any[] = [];
@@ -510,6 +511,7 @@ export class MajAdherentTestComponent {
     this.breadCrumbItems = [
     ];
     this.getNationalite();
+    this.getCorps();
     this.getDepartement();
     this.getAffectation();
     this.getTypeDepart();
@@ -773,6 +775,11 @@ export class MajAdherentTestComponent {
 
     this.formAdrPers.patchValue({
       cod_poste: item.cod_poste,
+    });
+  }
+  getCorps() {
+    this.adherentServ.getCorps().subscribe((data) => {
+      this.listCorps = data;
     });
   }
   getNationalite() {

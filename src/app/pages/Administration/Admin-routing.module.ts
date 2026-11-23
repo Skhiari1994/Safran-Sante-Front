@@ -7,6 +7,7 @@ import { ParametrageRapportsComponent } from './parametrage-rapports/parametrage
 import { ConsultationUtilisateurComponent } from './consultation-utilisateur/consultation-utilisateur.component';
 import { MajValideurComponent } from './maj-valideur/maj-valideur.component';
 import { ParametresGenerauxComponent } from './parametres-generaux/parametres-generaux.component';
+import { ParametreNotificationsComponent } from './parametre-notifications/parametre-notifications.component';
   
 
 // Component pages
@@ -55,6 +56,10 @@ const routes: Routes = [
   {
     path: "ParametresGeneraux",
     component: ParametresGenerauxComponent
+  },
+  {
+    path: "ParametreNotifications",
+    component: ParametreNotificationsComponent
   },
    
   // {

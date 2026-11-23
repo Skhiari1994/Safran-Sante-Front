@@ -193,13 +193,7 @@
                       <label for="adh-corps" class="form-label">Corps</label>
                       <select id="adh-corps" class="form-select" formControlName="corps">
                         <option value="">Sélectionner</option>
-                        <option value="C">Cadre commun</option>
-                        <option value="S">Sécurité</option>
-                        <option value="M">Médiateur administratif</option>
-                        <option value="H">HCCAF</option>
-                        <option value="I">ITES</option>
-                        <option value="P">Ministère de l'intérieur</option>
-                        <option value="D">Divers</option>
+                        <option *ngFor="let c of listCorps" [value]="c.cod_corps">{{ c.lib_corps }}</option>
                       </select>
                     </div>
                     <div class="col-md-4">
@@ -280,8 +274,8 @@
                       </select>
                     </div>
                     <div class="col-md-4">
-                      <label for="adh-num-retr" class="form-label">Identifiant unique CNRPS</label>
-                      <input id="adh-num-retr" type="text" class="form-control" placeholder="Identifiant unique"
+                      <label for="adh-num-retr" class="form-label">Id CNSS / CNRPS</label>
+                      <input id="adh-num-retr" type="text" class="form-control" placeholder="Id CNSS / CNRPS"
                         formControlName="num_retr" />
                     </div>
                     <div class="col-md-4">
