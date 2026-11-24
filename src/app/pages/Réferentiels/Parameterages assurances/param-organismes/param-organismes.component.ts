@@ -38,6 +38,12 @@ const COLONNES = [
   { cle: 'emailOrg', titre: 'Email' },
   { cle: 'identFsc', titre: 'Identifiant fiscal' },
 ];
+/** Natures possibles d'un organisme (valeur enregistrée dans NAT_ORG + description affichée). */
+const NATURES = [
+  { code: 'ASSUREUR', libelle: 'Organisme assureur' },
+  { code: 'PRETEUR', libelle: 'Organisme prêteur' },
+  { code: 'FORMATEUR', libelle: 'Organisme d\'enseignement' },
+];
 const COLONNES_FILTRABLES = COLONNES.map(c => c.cle);
 
 @Component({
@@ -51,6 +57,7 @@ export class ParamOrganismesComponent implements OnInit {
 
   readonly longueurs = LONGUEURS;
   readonly colonnes = COLONNES;
+  readonly natures = NATURES;
 
   listOrganismes: any[] = [];
   private listOrganismesComplete: any[] = [];
@@ -75,7 +82,7 @@ export class ParamOrganismesComponent implements OnInit {
     this.formOrganisme = this.fb.group({
       libOrg: ['', [Validators.required, this.nonVide, Validators.maxLength(LONGUEURS.libOrg)]],
       abrvOrg: ['', [Validators.maxLength(LONGUEURS.abrvOrg)]],
-      natOrg: ['', [Validators.maxLength(LONGUEURS.natOrg)]],
+      natOrg: ['', [Validators.required]],
       adrOrg: ['', [Validators.maxLength(LONGUEURS.adrOrg)]],
       telOrg: telephone(LONGUEURS.telOrg),
       faxOrg: telephone(LONGUEURS.faxOrg),
@@ -124,9 +131,14 @@ export class ParamOrganismesComponent implements OnInit {
     this.listOrganismes = this.listOrganismesComplete.filter((ligne: any) =>
       Object.keys(this.searchz).every((cle) => {
         const recherche = (this.searchz[cle] ?? '').toString().trim().toLowerCase();
-        const valeur = (ligne[cle] ?? '').toString().toLowerCase();
-        return valeur.includes(recherche);
+        // la nature se filtre aussi sur sa description (« enseignement » retrouve FORMATEUR)
+        const brut = cle === 'natOrg' ? `${ligne[cle] ?? ''} ${this.libelleNature(ligne[cle])}` : (ligne[cle] ?? '');
+        return brut.toString().toLowerCase().includes(recherche);
       }));
+  }
+
+  libelleNature(code: string | null): string {
+    return this.natures.find(n => n.code === code)?.libelle ?? code ?? '';
   }
 
   get filtreActif(): boolean {
@@ -192,7 +204,7 @@ export class ParamOrganismesComponent implements OnInit {
     const organisme = {
       libOrg: String(v.libOrg).trim(),
       abrvOrg: texte(v.abrvOrg)?.toUpperCase() ?? null,
-      natOrg: texte(v.natOrg),
+      natOrg: String(v.natOrg),
       adrOrg: texte(v.adrOrg),
       telOrg: texte(v.telOrg),
       faxOrg: texte(v.faxOrg),

@@ -36,6 +36,8 @@ export class ParamIdentificationMutComponent {
   isDisabled!: boolean;
   isSearch!: boolean;
   ListeFiliere:any;
+  /** Organismes de nature ASSUREUR proposés dans la liste « Organisme ». */
+  listOrganismes: any[] = [];
   ListeAllFiliere:any;
   ListAcivMutuelle:any;
   ListActiviteFamille:any;
@@ -74,6 +76,7 @@ export class ParamIdentificationMutComponent {
       num_retr: [""],
       taux_mut: [""],
       plaf_mut: [""],
+      cod_org: [null],
     });
 
 
@@ -135,6 +138,7 @@ export class ParamIdentificationMutComponent {
     this.GetAllActiviteFamille()
     
     this.GetAllAssurance();
+    this.chargerOrganismes();
     this.saveService.registerSaveCallback(() => this.save());
     this.formAssurance.valueChanges.subscribe(() => {
       this.saveService.setDisabled(!this.isDisabled);
@@ -286,6 +290,21 @@ AjouterFiliere() {
     this.saveService.clearSaveCallback();
      
   }
+  chargerOrganismes(): void {
+    this.serv.getAllOrganismes().subscribe({
+      next: (data) => {
+        this.listOrganismes = (data ?? []).filter((o: any) => o.natOrg === 'ASSUREUR');
+      },
+      error: () => {
+        Swal.fire({ icon: 'error', title: 'Chargement impossible', text: 'La liste des organismes n’a pas pu être chargée.' });
+      },
+    });
+  }
+
+  libelleOrganisme(o: any): string {
+    return o.codOrg + ' – ' + (o.abrvOrg || o.libOrg);
+  }
+
   GetAllAssurance() {
     this.serv.GetAllAssurance().subscribe((data: any) => {
       this.listAssurance = data;
@@ -355,7 +374,7 @@ AjouterFiliere() {
   save() {
  
 
- this.serv.AddAssurance(this.formAssurance.getRawValue()).subscribe(
+ this.serv.AddAssurance({ ...this.formAssurance.getRawValue(), cod_org: this.formAssurance.get("cod_org")?.value ?? null }).subscribe(
       (data: any) => {
         Swal.fire({
           position: "top-end",
@@ -419,6 +438,7 @@ AjouterFiliere() {
       num_retr: data.num_retr,
       taux_mut: data.taux_mut,
       plaf_mut: data.plaf_mut,
+      cod_org: data.cod_org ?? null,
     });
   }
   formatDate(dateString: any): string {

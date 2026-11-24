@@ -57,7 +57,9 @@
                 </td>
                 <td class="fw-medium"><span class="cellule-tronquee" [title]="rowData.libOrg">{{ rowData.libOrg }}</span></td>
                 <td>
-                  <ng-container *ngIf="rowData.natOrg; else vide">{{ rowData.natOrg }}</ng-container>
+                  <ng-container *ngIf="rowData.natOrg; else vide">
+                    <span class="text-nowrap" [title]="rowData.natOrg">{{ libelleNature(rowData.natOrg) }}</span>
+                  </ng-container>
                 </td>
                 <td>
                   <span *ngIf="rowData.adrOrg; else vide" class="cellule-tronquee" [title]="rowData.adrOrg">{{ rowData.adrOrg }}</span>
@@ -153,10 +155,13 @@
             [class.is-invalid]="champEnErreur('abrvOrg')" />
         </div>
         <div class="col-md-6">
-          <label for="org-nature" class="form-label">Nature</label>
-          <input id="org-nature" type="text" class="form-control" formControlName="natOrg"
-            [maxlength]="longueurs.natOrg" placeholder="Ex. MUTUELLE"
-            [class.is-invalid]="champEnErreur('natOrg')" />
+          <label for="org-nature" class="form-label">Nature <span class="text-danger">*</span></label>
+          <select id="org-nature" class="form-select" formControlName="natOrg"
+            [class.is-invalid]="champEnErreur('natOrg')">
+            <option value="" disabled>Choisir une nature…</option>
+            <option *ngFor="let n of natures" [value]="n.code">{{ n.libelle }}</option>
+          </select>
+          <div class="invalid-feedback" role="alert">La nature est obligatoire.</div>
         </div>
 
         <div class="col-12">

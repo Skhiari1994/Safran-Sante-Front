@@ -29,15 +29,22 @@
           <label for="mut-code" class="form-label">Code</label>
           <input id="mut-code" type="text" class="form-control" placeholder="Ex. 01" formControlName="cod_assur" />
         </div>
-        <div class="col-md-9 col-xl-5">
+        <div class="col-md-9 col-xl-4">
           <label for="mut-libelle" class="form-label">Libellé</label>
           <input id="mut-libelle" type="text" class="form-control" placeholder="Nom de la mutuelle"
             formControlName="lib_assur" />
         </div>
-        <div class="col-xl-5">
+        <div class="col-md-6 col-xl-3">
           <label for="mut-libelle-ar" class="form-label">Libellé en arabe</label>
           <input id="mut-libelle-ar" type="text" class="form-control" placeholder="الاسم بالعربية" dir="rtl" lang="ar"
             formControlName="lib_assur_a" />
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <label for="mut-organisme" class="form-label">Organisme</label>
+          <select id="mut-organisme" class="form-select" formControlName="cod_org">
+            <option [ngValue]="null">Sélectionner</option>
+            <option *ngFor="let o of listOrganismes" [ngValue]="o.codOrg" [title]="o.libOrg">{{ libelleOrganisme(o) }}</option>
+          </select>
         </div>
 
         <div class="col-12 mt-4">
