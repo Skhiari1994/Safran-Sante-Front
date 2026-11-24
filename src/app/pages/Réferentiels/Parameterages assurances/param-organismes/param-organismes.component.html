@@ -1,0 +1,225 @@
+<div class="row" style="margin-top: 25px;"></div>
+<div class="row sticky-top" style="z-index: 1025; top: 121px;">
+  <app-breadcrumbs icon="ri-building-2-line" title="Organismes (mutuelles et assurances)" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+</div>
+
+<div class="row justify-content-center mt-3">
+  <div class="col-12">
+    <div class="card">
+
+      <div class="card-header border-bottom-dashed d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-building-2-line" aria-hidden="true"></i></span></div>
+          <div>
+            <h5 class="card-title mb-0">Liste des organismes</h5>
+            <p class="text-muted fs-13 mb-0">{{ listOrganismes.length }} organisme<span *ngIf="listOrganismes.length > 1">s</span><span *ngIf="filtreActif"> (filtre sur {{ totalOrganismes }})</span></p>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-light" *ngIf="filtreActif" (click)="reinitialiserFiltres()">
+            <i class="ri-filter-off-line align-bottom me-1" aria-hidden="true"></i>Effacer les filtres
+          </button>
+          <button type="button" class="btn btn-primary" (click)="ouvrirAjout(content)">
+            <i class="ri-add-line align-bottom me-1" aria-hidden="true"></i>Ajouter un organisme
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <p-table [value]="listOrganismes" [paginator]="listOrganismes.length > 10" [rows]="10"
+            [tableStyle]="{ 'min-width': '88rem' }" styleClass="p-datatable-sm modern-table">
+
+            <ng-template pTemplate="header">
+              <tr class="table-light">
+                <th scope="col" *ngFor="let col of colonnes">
+                  <button type="button" class="btn btn-link p-0 text-reset text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                    (click)="onSort(col.cle)" [attr.aria-label]="'Trier par ' + col.titre.toLowerCase()">
+                    {{ col.titre }}<i class="ri-arrow-up-down-line text-muted fs-14" aria-hidden="true"></i>
+                  </button>
+                </th>
+                <th scope="col" class="text-end" style="width: 120px;">Actions</th>
+              </tr>
+              <tr>
+                <th class="py-2" *ngFor="let col of colonnes">
+                  <input type="search" class="form-control form-control-sm" placeholder="Filtrer…"
+                    [(ngModel)]="searchz[col.cle]" (input)="applyFilter()" [attr.aria-label]="'Filtrer par ' + col.titre.toLowerCase()" />
+                </th>
+                <th></th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData>
+              <tr>
+                <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.codOrg }}</span></td>
+                <td>
+                  <span *ngIf="rowData.abrvOrg; else vide" class="badge bg-info-subtle text-info fs-12">{{ rowData.abrvOrg }}</span>
+                </td>
+                <td class="fw-medium"><span class="cellule-tronquee" [title]="rowData.libOrg">{{ rowData.libOrg }}</span></td>
+                <td>
+                  <ng-container *ngIf="rowData.natOrg; else vide">{{ rowData.natOrg }}</ng-container>
+                </td>
+                <td>
+                  <span *ngIf="rowData.adrOrg; else vide" class="cellule-tronquee" [title]="rowData.adrOrg">{{ rowData.adrOrg }}</span>
+                </td>
+                <td class="text-nowrap">
+                  <ng-container *ngIf="rowData.telOrg; else vide">{{ rowData.telOrg }}</ng-container>
+                </td>
+                <td class="text-nowrap">
+                  <ng-container *ngIf="rowData.faxOrg; else vide">{{ rowData.faxOrg }}</ng-container>
+                </td>
+                <td class="text-nowrap">
+                  <ng-container *ngIf="rowData.gsm; else vide">{{ rowData.gsm }}</ng-container>
+                </td>
+                <td>
+                  <a *ngIf="rowData.emailOrg; else vide" class="cellule-tronquee" [href]="'mailto:' + rowData.emailOrg" [title]="rowData.emailOrg">{{ rowData.emailOrg }}</a>
+                </td>
+                <td class="text-nowrap">
+                  <ng-container *ngIf="rowData.identFsc; else vide">{{ rowData.identFsc }}</ng-container>
+                </td>
+                <td class="text-end">
+                  <div class="hstack gap-2 justify-content-end">
+                    <button type="button" class="btn btn-icon btn-soft-primary" title="Modifier"
+                      [attr.aria-label]="'Modifier ' + rowData.libOrg" (click)="ouvrirModification(rowData, content)">
+                      <i class="ri-pencil-line fs-16" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-icon btn-soft-danger" title="Supprimer"
+                      [attr.aria-label]="'Supprimer ' + rowData.libOrg" (click)="supprimer(rowData)">
+                      <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td [attr.colspan]="colonnes.length + 1" class="text-center text-muted py-5">
+                  <ng-container *ngIf="chargementEnCours; else chargementTermine">
+                    <div class="spinner-border spinner-border-sm text-primary mb-2" role="status" aria-hidden="true"></div>
+                    <div>Chargement des organismes…</div>
+                  </ng-container>
+                  <ng-template #chargementTermine>
+                    <ng-container *ngIf="erreurChargement; else listeVide">
+                      <i class="ri-error-warning-line fs-1 d-block mb-2 text-danger" aria-hidden="true"></i>
+                      <div class="mb-3">La liste des organismes n’a pas pu être chargée.</div>
+                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="charger()">
+                        <i class="ri-refresh-line align-bottom me-1" aria-hidden="true"></i>Réessayer
+                      </button>
+                    </ng-container>
+                    <ng-template #listeVide>
+                      <i class="ri-search-eye-line fs-1 d-block mb-2" aria-hidden="true"></i>
+                      {{ filtreActif ? 'Aucun organisme ne correspond à votre recherche' : 'Aucun organisme enregistré' }}
+                    </ng-template>
+                  </ng-template>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #vide><span class="text-muted">—</span></ng-template>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header border-bottom-dashed">
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar-sm flex-shrink-0"><span class="avatar-title rounded bg-primary-subtle text-primary fs-4"><i class="ri-building-2-line" aria-hidden="true"></i></span></div>
+      <div>
+        <h5 class="modal-title mb-0">{{ modeAjout ? 'Ajouter un organisme' : 'Modifier l’organisme' }}</h5>
+        <p class="text-muted fs-13 mb-0">Les champs marqués * sont obligatoires.</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <form [formGroup]="formOrganisme" class="tablelist-form" autocomplete="off" (ngSubmit)="enregistrer(modal)" novalidate>
+    <div class="modal-body">
+      <div class="row g-3">
+
+        <div class="col-md-3">
+          <label for="org-code" class="form-label">Code</label>
+          <input id="org-code" type="text" class="form-control" readonly tabindex="-1"
+            [value]="modeAjout ? '' : codeModifie" [placeholder]="modeAjout ? 'Automatique' : ''" aria-describedby="org-code-aide" />
+          <div id="org-code-aide" class="form-text">{{ modeAjout ? 'Attribué à l’enregistrement.' : 'Le code ne peut pas être modifié.' }}</div>
+        </div>
+        <div class="col-md-3">
+          <label for="org-abrv" class="form-label">Abréviation</label>
+          <input id="org-abrv" type="text" class="form-control text-uppercase" formControlName="abrvOrg"
+            [maxlength]="longueurs.abrvOrg" placeholder="Ex. STAR"
+            [class.is-invalid]="champEnErreur('abrvOrg')" />
+        </div>
+        <div class="col-md-6">
+          <label for="org-nature" class="form-label">Nature</label>
+          <input id="org-nature" type="text" class="form-control" formControlName="natOrg"
+            [maxlength]="longueurs.natOrg" placeholder="Ex. MUTUELLE"
+            [class.is-invalid]="champEnErreur('natOrg')" />
+        </div>
+
+        <div class="col-12">
+          <label for="org-libelle" class="form-label">Libellé <span class="text-danger">*</span></label>
+          <input id="org-libelle" type="text" class="form-control" formControlName="libOrg"
+            [maxlength]="longueurs.libOrg" placeholder="Nom complet de l’organisme"
+            [class.is-invalid]="champEnErreur('libOrg')" />
+          <div class="invalid-feedback" role="alert">Le libellé est obligatoire ({{ longueurs.libOrg }} caractères au maximum).</div>
+        </div>
+
+        <div class="col-12">
+          <label for="org-adresse" class="form-label">Adresse</label>
+          <input id="org-adresse" type="text" class="form-control" formControlName="adrOrg"
+            [maxlength]="longueurs.adrOrg" [class.is-invalid]="champEnErreur('adrOrg')" />
+        </div>
+
+        <div class="col-md-4">
+          <label for="org-tel" class="form-label">Téléphone</label>
+          <input id="org-tel" type="tel" class="form-control" formControlName="telOrg"
+            [maxlength]="longueurs.telOrg" placeholder="Ex. 71 123 456"
+            [class.is-invalid]="champEnErreur('telOrg')" />
+          <div class="invalid-feedback" role="alert">Chiffres, espaces et + ( ) . , / - uniquement.</div>
+        </div>
+        <div class="col-md-4">
+          <label for="org-fax" class="form-label">Fax</label>
+          <input id="org-fax" type="tel" class="form-control" formControlName="faxOrg"
+            [maxlength]="longueurs.faxOrg" placeholder="Ex. 71 123 457"
+            [class.is-invalid]="champEnErreur('faxOrg')" />
+          <div class="invalid-feedback" role="alert">Chiffres, espaces et + ( ) . , / - uniquement.</div>
+        </div>
+        <div class="col-md-4">
+          <label for="org-gsm" class="form-label">GSM</label>
+          <input id="org-gsm" type="tel" class="form-control" formControlName="gsm"
+            [maxlength]="longueurs.gsm" placeholder="Ex. 98 123 456"
+            [class.is-invalid]="champEnErreur('gsm')" />
+          <div class="invalid-feedback" role="alert">Chiffres, espaces et + ( ) . , / - uniquement.</div>
+        </div>
+
+        <div class="col-md-7">
+          <label for="org-email" class="form-label">Email</label>
+          <input id="org-email" type="email" class="form-control" formControlName="emailOrg"
+            [maxlength]="longueurs.emailOrg" placeholder="contact@organisme.tn"
+            [class.is-invalid]="champEnErreur('emailOrg')" />
+          <div class="invalid-feedback" role="alert">L’adresse email n’est pas valide.</div>
+        </div>
+        <div class="col-md-5">
+          <label for="org-fiscal" class="form-label">Identifiant fiscal</label>
+          <input id="org-fiscal" type="text" class="form-control text-uppercase" formControlName="identFsc"
+            [maxlength]="longueurs.identFsc" placeholder="Ex. 1234567/A/M/000"
+            [class.is-invalid]="champEnErreur('identFsc')" />
+          <div class="invalid-feedback" role="alert">Lettres, chiffres et / . - uniquement.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.dismiss('Close click')">Annuler</button>
+      <button type="submit" class="btn btn-success" [disabled]="formOrganisme.invalid || enregistrementEnCours">
+        <span *ngIf="enregistrementEnCours; else iconeValider" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        <ng-template #iconeValider><i class="ri-check-line align-bottom me-1" aria-hidden="true"></i></ng-template>
+        Enregistrer
+      </button>
+    </div>
+  </form>
+</ng-template>

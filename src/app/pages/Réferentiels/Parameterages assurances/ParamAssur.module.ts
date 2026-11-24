@@ -42,6 +42,7 @@ import { ParamActiviteEtablisComponent } from './param-activite-etablis/param-ac
 import { ParamPersonneConventionneesComponent } from './param-personne-conventionnees/param-personne-conventionnees.component';
 import { ParamEtablissConventionneesComponent } from './param-etabliss-conventionnees/param-etabliss-conventionnees.component';
 import { TableModule } from 'primeng/table';
+import { ParamOrganismesComponent } from './param-organismes/param-organismes.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { TableModule } from 'primeng/table';
     PriseChargeBaremRembComponent,
     ParamActiviteEtablisComponent,
     ParamPersonneConventionneesComponent,
-    ParamEtablissConventionneesComponent],
+    ParamEtablissConventionneesComponent,
+    ParamOrganismesComponent],
 
  
   imports: [

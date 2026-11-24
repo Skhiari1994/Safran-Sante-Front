@@ -274,6 +274,24 @@ export class AssurService {
     );
   }
 
+  // ---------- Organismes (table PARAM_ORGANISMES) ----------
+
+  getAllOrganismes(): Observable<any[]> {
+    return this.http.get<any[]>(API_URL + "referentiel/ParamOrganisme/all");
+  }
+
+  addOrganisme(organisme: any): Observable<any> {
+    return this.http.post<any>(API_URL + "referentiel/ParamOrganisme/add", organisme);
+  }
+
+  updateOrganisme(code: number, organisme: any): Observable<any> {
+    return this.http.put<any>(API_URL + "referentiel/ParamOrganisme/update/" + code, organisme);
+  }
+
+  deleteOrganisme(code: number): Observable<any> {
+    return this.http.delete<any>(API_URL + "referentiel/ParamOrganisme/delete/" + code);
+  }
+
   private handleError(error: HttpErrorResponse) {
     const message = error.error instanceof ErrorEvent
       ? `Client error: ${error.error.message}`

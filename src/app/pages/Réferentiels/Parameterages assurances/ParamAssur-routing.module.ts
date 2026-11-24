@@ -17,11 +17,16 @@ import { ParamActiviteEtablisComponent } from './param-activite-etablis/param-ac
 import { ParamPersonneConventionneesComponent } from './param-personne-conventionnees/param-personne-conventionnees.component';
 import { ParamEtablissConventionneesComponent } from './param-etabliss-conventionnees/param-etabliss-conventionnees.component';
 import { MisAjCnamComponent } from './mis-aj-cnam/mis-aj-cnam.component';
+import { ParamOrganismesComponent } from './param-organismes/param-organismes.component';
 
 // Component pages
  
  
 const routes: Routes = [
+  {
+    path: "ParamOrganismes",
+    component: ParamOrganismesComponent
+  },
   {
     path: "IdentificationMut",
     component: ParamIdentificationMutComponent
