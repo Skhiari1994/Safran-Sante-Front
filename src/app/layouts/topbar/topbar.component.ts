@@ -20,6 +20,9 @@ import { cartData } from './data';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
 import { SaveService } from 'src/app/shared/Service/save.service';
+import { EtatNavigation, NavigationFicheService } from 'src/app/shared/Service/navigation-fiche.service';
+import { SensNavigation } from 'src/app/shared/navigation-liste';
+import Swal from 'sweetalert2';
 import { debounceTime, Subject } from 'rxjs';
 import { MajAdherentComponent } from 'src/app/pages/Adherent/maj-adherent/maj-adherent.component';
 
@@ -74,9 +77,11 @@ export class TopbarComponent implements OnInit {
   isDisabled: boolean = true; // Initially set to true, meaning the button is disabled
   isDisabledSearch: boolean = true;
   consultation: boolean = false;
+  /** Position dans la liste de la dernière sélection faite avec la loupe ; null = rien à parcourir. */
+  navEtat: EtatNavigation | null = null;
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
     public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
-    private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService,
+    private router: Router, private TokenStorageService: TokenStorageService,private saveService: SaveService, private navFiche: NavigationFicheService,
     private tokenStorage: TokenStorage) { }
   ngOnInit(): void {
     this.userData = this.TokenStorageService.getUser();
@@ -116,6 +121,9 @@ export class TopbarComponent implements OnInit {
       var item_price = item.quantity * item.price
       this.total += item_price
     });
+    // boutons première / précédente / suivante / dernière fiche
+    this.navFiche.etat$.subscribe(etat => (this.navEtat = etat));
+
        //////////////////////////// save button disabled ////////////////////////////////////////
     // Subscribe to the SaveService's isDisabled$ observable to track changes
     this.saveService.isDisabled$.subscribe((isDisabled: boolean) => {
@@ -168,6 +176,41 @@ console.log("Can save:", this.isSaveAllowed); // This will log true or false bas
 this.saveService.setCanSave(true); */
 //this.router.navigate(['/Adherent1'], { queryParams: { triggerSubmit: true } });
 this.saveService.triggerSave();
+this.navFiche.marquerEnregistre();
+}
+
+/** Première, précédente, suivante ou dernière fiche de la liste choisie avec la loupe. */
+async naviguer(sens: SensNavigation) {
+  if (!this.navEtat) return;
+  if (this.navFiche.modifie) {
+    const reponse = await Swal.fire({
+      icon: 'warning',
+      title: 'Modifications non enregistrées',
+      text: 'Changer de fiche fera perdre les modifications en cours. Continuer ?',
+      showCancelButton: true,
+      reverseButtons: true,
+      focusCancel: true,
+      confirmButtonText: 'Oui, continuer',
+      cancelButtonText: 'Rester sur cette fiche',
+    });
+    if (!reponse.isConfirmed) return;
+  }
+  this.navFiche.demander(sens);
+}
+
+get navAuDebut(): boolean {
+  return !this.navEtat || this.navEtat.position <= 1;
+}
+
+get navALaFin(): boolean {
+  return !this.navEtat || this.navEtat.position >= this.navEtat.total;
+}
+
+/** Retient les saisies de l'utilisateur (pas celles du programme) pour avertir avant de quitter une fiche modifiée. */
+@HostListener('document:input', ['$event'])
+@HostListener('document:change', ['$event'])
+signalerSaisie(event: Event): void {
+  this.navFiche.signalerSaisie(event);
 }
 print(){
   this.saveService.triggerPrint();

@@ -504,6 +504,7 @@ export class BuletinCNAMComponent {
     this.matricule = item.mat_pers
     this.PEC = item.num_pec
 
+    this.nomAdherent = '';
     this.serv.getAdherent(this.token.getUser().codSoc, item.mat_pers).subscribe((data: any) => {
       this.listAdherent = Array.isArray(data) ? data : [];
       this.numFam = item.num_fam;
@@ -575,19 +576,27 @@ export class BuletinCNAMComponent {
     });
 
     // Load actes
-    this.serv.getActes(this.parente, this.sexe, item.cod_fil, item.num_assur).subscribe((acteList: any) => {
-      this.listActe = acteList; // ✅ Store the master list
-
-      this.columnActe = [
-        { key: "abrv_act", label: "Abrv acte" },
-        { key: "lib_act", label: "Libelle" },
-      ];
-
-      // Now load the saved actes from database
-      this.serv.getLigBultAct(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
-        // DON'T overwrite this.listActe here!
-        this.loadDataIntoTable(data);
+    // les actes dépendent du sexe et de la parenté du bénéficiaire de CE bulletin : on les lit avant de demander la liste
+    this.serv.getSexe(this.token.getUser().codSoc, item.mat_pers, item.num_fam).subscribe((sx: any) => {
+      this.sexe = sx?.sexe || '';
+      this.parente = sx?.parente || '';
+      this.serv.getActes(this.parente, this.sexe, item.cod_fil, item.num_assur).subscribe((acteList: any) => {
+        this.listActe = acteList; // ✅ Store the master list
+  
+        this.columnActe = [
+          { key: "abrv_act", label: "Abrv acte" },
+          { key: "lib_act", label: "Libelle" },
+        ];
+  
+        // Now load the saved actes from database
+        this.serv.getLigBultAct(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
+          // DON'T overwrite this.listActe here!
+          this.loadDataIntoTable(data);
+        });
       });
+    }, () => {
+      this.sexe = '';
+      this.parente = '';
     });
 
     // Load visits

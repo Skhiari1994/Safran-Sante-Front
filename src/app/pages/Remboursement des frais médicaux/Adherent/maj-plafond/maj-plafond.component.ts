@@ -166,6 +166,9 @@ export class MajPlafondComponent {
 
 
   search(item: any) {
+    // listes de l'adhérent précédent vidées d'abord : si le serveur ne répond pas, l'écran ne montre pas ses données
+    this.listPlafAssur = [];
+    this.listPlafCnam = [];
     console.log("item :", item);
     this.matPersVal = item.mat_pers
     this.formPersonnel.patchValue({

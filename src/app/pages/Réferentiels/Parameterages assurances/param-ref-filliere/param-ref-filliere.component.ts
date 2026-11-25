@@ -116,6 +116,8 @@ this.getActe()
  }
  codFil:any
  search(data:any){
+  this.listRefFillAct = [];
+  this.listRefFillActFiltr = [];
   this.codFil=data.cod_fil;
  this.formRefFilliere.patchValue({
     cod_fil:data.cod_fil,

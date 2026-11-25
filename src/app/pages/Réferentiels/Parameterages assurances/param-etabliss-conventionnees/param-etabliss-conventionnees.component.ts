@@ -136,18 +136,22 @@ this.formRefEtablis=this.fb.group({
       etat_act_cnam:data.etat_act_cnam,
 
     })
-    this.serv.getActiviteEtablis(data.cod_activ).subscribe((data:any)=>{
-      this.libActiv=data.lib_activite
+    // libellés : toujours ceux de la fiche affichée, vides si elle n'a pas de valeur ou si le serveur ne répond pas
+    this.libActiv = ''
+    this.libGouv = ''
+    this.libPoste = ''
+    if (data.cod_activ) this.serv.getActiviteEtablis(data.cod_activ).subscribe({
+      next: (r: any) => { this.libActiv = r?.lib_activite ?? '' },
+      error: () => { this.libActiv = '' }
     })
 
-    this.serv.getGouv(data.cod_gouv).subscribe((data:any)=>{
-      this.libGouv=data.lib_gouv
+    if (data.cod_gouv) this.serv.getGouv(data.cod_gouv).subscribe({
+      next: (r: any) => { this.libGouv = r?.lib_gouv ?? '' },
+      error: () => { this.libGouv = '' }
     })
-    this.serv.getPoste(data.cod_gouv,data.cod_post).subscribe((data:any)=>{
-     
-      this.libPoste=data.lib_post
-      
-
+    if (data.cod_gouv && data.cod_post) this.serv.getPoste(data.cod_gouv, data.cod_post).subscribe({
+      next: (r: any) => { this.libPoste = r?.lib_post ?? '' },
+      error: () => { this.libPoste = '' }
     })
   }
 

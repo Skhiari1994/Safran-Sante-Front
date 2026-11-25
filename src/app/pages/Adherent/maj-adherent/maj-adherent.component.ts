@@ -1,3 +1,4 @@
+import { libelleDe } from 'src/app/shared/lov-libelle';
 import { TokenStorage } from './../../../account/token-storage.service';
 import { ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { AdherentService } from '../adherent.service';
@@ -361,43 +362,55 @@ export class MajAdherentComponent {
     // Subscribe to resetObservable to reset the form
     this.saveService.add$.subscribe(reset => {
       if (reset) {
-        this.formAdherent.reset(); // Reset the form
-        this.formAdrPers.reset();
-        this.formConjoint.reset();
-        this.formMere.reset();
-        this.formPere.reset();
-        this.codNatP = ''
-        this.codLieuVal = '';
-        this.codAffectVal = '';
-        this.codTypDepartVal = '';
-        this.codBanqueVal = '';
-        this.codAgenceVal = '';
-        this.codPostVal = '';
-        this.codGouvVal = '';
-        this.selectedCode = '';
-        this.selectedCodeLieu = '';
-
-        this.libNat = ''
-        this.libLieu = ''
-        this.libAffect = ''
-        this.libTypDepart = ''
-        this.libBanque = ''
-        this.libAgence = ''
-        this.libGouv = ''
-        this.libPoste = ''
-        this.tableau1 = null as any
-        this.tableau2 = null as any
-        this.CarteSoinList = []
-        this.CarteSoinCnamList = []
-        this.dataRows = []
+        this.viderFiche();
         this.saveService.setAdded(false); // Reset the observable to false
-        this.file = null as any
-        console.log("this.file :", this.file)
       }
     });
 
 
   }
+  /**
+   * Remet à zéro tout ce qui dépend de la fiche affichée : formulaires, listes, champs à loupe (code et libellé), photo.
+   * Lancée par « Nouveau » et au début de search() : une fiche sans valeur ne garde rien de la fiche précédente.
+   */
+  private viderFiche(): void {
+    this.formAdherent.reset(); // Reset the form
+    this.formAdrPers.reset();
+    this.formConjoint.reset();
+    this.formMere.reset();
+    this.formPere.reset();
+    this.codNatP = ''
+    this.codLieuVal = '';
+    this.codAffectVal = '';
+    this.codTypDepartVal = '';
+    this.codBanqueVal = '';
+    this.codAgenceVal = '';
+    this.codPostVal = '';
+    this.codGouvVal = '';
+    this.selectedCode = '';
+    this.selectedCodeLieu = '';
+
+    this.libNat = ''
+    this.libLieu = ''
+    this.libAffect = ''
+    this.libTypDepart = ''
+    this.libBanque = ''
+    this.libAgence = ''
+    this.libGouv = ''
+    this.libPoste = ''
+    this.tableau1 = null as any
+    this.tableau2 = null as any
+    this.CarteSoinList = []
+    this.CarteSoinCnamList = []
+    this.dataRows = []
+    this.file = null as any
+    console.log("this.file :", this.file)
+    // photo : celle de la fiche précédente ne doit pas rester affichée
+    this.imageURL = undefined;
+    const photo = document.getElementById('product-img') as HTMLImageElement | null;
+    if (photo) photo.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+  }
+
   ngOnDestroy() {
     this.saveService.setConsultation(false);
     if (this.imageURL) {
@@ -948,6 +961,7 @@ export class MajAdherentComponent {
   }
 
   search(item: any) {
+    this.viderFiche();
     console.log("this.codeField", this.codeField)
     this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, item.cod_soc, [item.nom_pers, item.pren_pers].filter(Boolean).join(' '));
     this.formAdherent.patchValue({
@@ -1001,8 +1015,21 @@ export class MajAdherentComponent {
     this.codLieuVal = item.cod_lieu_geog
     this.codAffectVal = item.cod_affect
     this.codTypDepartVal = item.cod_typ_depart
-    this.codBanqueVal = item.codBanque
-    this.codAgence = item.codAgenceVal
+    this.codBanqueVal = item.cod_banq
+    this.codAgenceVal = item.cod_agc
+    // libellés des champs à loupe : toujours ceux de la fiche affichée (vides si elle n'a pas de valeur)
+    this.libNat = libelleDe(this.listNationalite, 'cod_natp', item.cod_natp, 'lib_nat');
+    this.libLieu = libelleDe(this.listLieu, 'cod_lieu_geog', item.cod_lieu_geog, 'lib_lieu');
+    this.libAffect = libelleDe(this.listAffectation, 'cod_affect', item.cod_affect, 'lib_affect');
+    this.libTypDepart = libelleDe(this.listTypeDepart, 'cod_typ_depart', item.cod_typ_depart, 'lib_typ_depart');
+    this.libBanque = libelleDe(this.listBanque, 'cod_banq', item.cod_banq, 'lib_banq');
+    if (item.cod_banq && this.libBanque) {
+      // les agences de la banque de cette fiche ; le libellé de l'agence arrive avec elles
+      this.adherentServ.getAgence(item.cod_banq).subscribe((data) => {
+        this.listAgence = data;
+        this.libAgence = libelleDe(this.listAgence, 'cod_agc', item.cod_agc, 'lib_agc');
+      });
+    }
     console.log("this.codNatP", this.codNatP)
     this.adherentServ.getEnfants(item.cod_soc, item.mat_pers).subscribe(
       (data: any) => {

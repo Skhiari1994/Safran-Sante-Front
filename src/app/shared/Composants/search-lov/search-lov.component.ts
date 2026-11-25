@@ -4,6 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { SaveService } from 'src/app/shared/Service/save.service';
+import { DemandeNavigation, NavigationFicheService } from 'src/app/shared/Service/navigation-fiche.service';
+import { cibleNavigation, clesDeNavigation, ContexteNavigation, identification, ordonner, signature } from 'src/app/shared/navigation-liste';
 
 @Component({
   selector: 'app-search-lov',
@@ -160,7 +162,7 @@ export class SearchLovComponent implements OnChanges {
   private isSearchSubscription!: Subscription;
   private dateFormatCache = new Map<any, string>(); // Cache for formatted dates
 
-  constructor(private modalService: NgbModal, private saveService: SaveService) { }
+  constructor(private modalService: NgbModal, private saveService: SaveService, private navFiche: NavigationFicheService) { }
 
   ngOnInit(): void {
     this.filteredData = this.listData;
@@ -172,6 +174,13 @@ export class SearchLovComponent implements OnChanges {
     // Subscribe to isSearch$
     this.isSearchSubscription = this.saveService.isSearch$.subscribe((value) => {
       if (value) {
+        // un bouton première / précédente / suivante / dernière fiche de la barre d'outils a réveillé la recherche :
+        // on se déplace sans ouvrir la fenêtre
+        const demande = this.navFiche.prendreDemande();
+        if (demande) {
+          this.appliquerNavigation(demande);
+          return;
+        }
         this.loadDataAndOpenModal();
         console.log("search f");
       }
@@ -256,6 +265,69 @@ export class SearchLovComponent implements OnChanges {
     this.selectedCode = item[this.codeField] || '';
     this.selectedLabel = item[this.labelField] || '';
     this.selectedValue.emit(item);
+    this.publierNavigation(item);
+  }
+
+  // ---------- navigation entre les fiches (boutons de la barre d'outils) ----------
+
+  /**
+   * Retient la liste affichée au moment du choix (filtrée ou non) et la fiche choisie. La position est gardée dans le
+   * service : les écrans détruisent cette fenêtre dès qu'une ligne est choisie.
+   */
+  private publierNavigation(item: any): void {
+    const cles = clesDeNavigation(this.visibleColumns);
+    const filtre = this.hasQuery();
+    const liste = ordonner(this.filteredData, cles);
+    const index = liste.indexOf(item);
+    if (index < 0) {
+      this.navFiche.effacer();
+      return;
+    }
+    const contexte: ContexteNavigation = {
+      cles,
+      signature: signature(item, this.visibleColumns),
+      filtre,
+      signaturesPortee: filtre ? liste.map(l => signature(l, this.visibleColumns)) : null,
+    };
+    const id = identification(item, liste, this.visibleColumns, (cle, valeur) => this.valeurAffichee(cle, valeur));
+    this.navFiche.publier(contexte, { position: index + 1, total: liste.length, filtre, code: id.code, detail: id.detail });
+  }
+
+  /** Valeur d'une colonne telle que l'utilisateur la lit (les dates en jj/mm/aaaa). */
+  private valeurAffichee(cle: string, valeur: unknown): string {
+    return /^dat/i.test(cle) ? this.formatDateValue(valeur) : String(valeur ?? '');
+  }
+
+  /**
+   * Va à la première, précédente, suivante ou dernière fiche : même sélection qu'un clic sur une ligne, sans fenêtre.
+   * Fait en différé : cette fenêtre vient d'être créée au milieu d'un cycle de détection de changements, et l'écran
+   * ne doit pas être modifié à cet instant.
+   */
+  private appliquerNavigation(demande: DemandeNavigation): void {
+    setTimeout(() => {
+      const resultat = cibleNavigation(this.listData, this.visibleColumns, demande.contexte, demande.sens);
+      if (resultat && resultat.index === resultat.courant) {
+        // déjà à la première ou à la dernière fiche : on ne recharge pas la fiche affichée (une saisie en cours serait perdue)
+      } else if (resultat) {
+        const item: any = resultat.item;
+        this.selectedCode = item[this.codeField] || '';
+        this.selectedLabel = item[this.labelField] || '';
+        this.selectedValue.emit(item);
+        const contexte: ContexteNavigation = { ...demande.contexte, signature: signature(item, this.visibleColumns) };
+        const id = identification(item, resultat.liste, this.visibleColumns, (cle, valeur) => this.valeurAffichee(cle, valeur));
+        this.navFiche.publier(contexte, {
+          position: resultat.index + 1,
+          total: resultat.liste.length,
+          filtre: demande.contexte.filtre,
+          code: id.code,
+          detail: id.detail,
+        });
+      } else {
+        // la fiche affichée n'est plus dans la liste (supprimée, ou sortie du filtre) : la navigation s'arrête
+        this.navFiche.effacer();
+      }
+      this.saveService.setIsSearch(false);
+    });
   }
 
   // Open modal and load data

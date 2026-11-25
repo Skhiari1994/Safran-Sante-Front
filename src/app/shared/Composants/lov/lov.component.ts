@@ -114,6 +114,13 @@ export class LovComponent implements OnInit, OnChanges {
     if (changes['selectedCode'] && this.hasCode(changes['selectedCode'].currentValue)) {
       this.patchValue(changes['selectedCode'].currentValue);
     }
+
+    // l'écran a vidé le code (autre fiche, sans valeur) : on efface aussi l'état de la valeur précédente
+    // (message « Valeur introuvable. » et valeur choisie), sinon il resterait affiché sous un champ vide
+    if (changes['selectedCode'] && !changes['selectedCode'].firstChange && !this.hasCode(changes['selectedCode'].currentValue)) {
+      this.selectedItem = null;
+      this.errorMessage = '';
+    }
   }
   /** Un code est présent même s'il vaut 0 (ex. numéro de famille 0 = adhérent). */
   private hasCode(code: any): boolean {

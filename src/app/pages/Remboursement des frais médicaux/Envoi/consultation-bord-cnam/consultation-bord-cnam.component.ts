@@ -517,6 +517,10 @@ export class ConsultationBordCnamComponent {
   search(item: any) {
     this.rowActive = false
     this.saveService.setAdded(false)
+    // le bordereau précédent ne doit rien laisser : si le nouveau ne se charge pas, l'écran reste vide
+    this.listBord = [];
+    this.codAssur = '';
+    this.bordEnvoiForm.patchValue({ cod_assur: '', lib_assur: '', dat_deb: '', dat_fin: '', nbr_bult: '', tot_honor: '', tot_net: '' }, { emitEvent: false });
     console.log("this.rowActive", this.rowActive);
     this.codBord = item.cod_bord;
     // Patch initial values to the form

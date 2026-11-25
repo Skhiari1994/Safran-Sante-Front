@@ -96,6 +96,8 @@ export class MajCertifFamComponent {
   }
 
   search(item: any) {
+    // listes de l'adhérent précédent vidées d'abord : si le serveur ne répond pas, l'écran ne montre pas ses données
+    this.listEnfants = [];
     this.formAdherent.patchValue({
       cod_soc: item.cod_soc,
       mat_pers: item.mat_pers,

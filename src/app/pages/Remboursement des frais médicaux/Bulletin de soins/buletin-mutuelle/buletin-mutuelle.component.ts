@@ -836,15 +836,19 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     this.serv.getLigPhar(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin).subscribe((data: any) => {
       this.loadDataIntoTablePhar(data)
     })
-    this.serv.get_plafond_mutuelle(this.token.getUser().codSoc, item.mat_pers, item.dat_soin, this.datNais,
-      item.dat_saisie, item.num_fam).subscribe((data: any) => {
-
-        this.ageAn = data.ageAn;
-        this.ageMois = data.ageMois
-        this.soldPlafond = Number(data.soldPlafond).toFixed(3)
-        this.soldPlafondEstim = Number(data.soldPlafondEstim).toFixed(3)
-
-      })
+    // l'âge et les soldes dépendent de la date de naissance du bénéficiaire de CE bulletin : on la lit avant de les demander
+    this.serv.getDatNais(this.token.getUser().codSoc, item.mat_pers, item.num_fam).subscribe((naissance: any) => {
+      this.datNais = naissance?.dat_nais ?? '';
+      this.serv.get_plafond_mutuelle(this.token.getUser().codSoc, item.mat_pers, item.dat_soin, this.datNais,
+        item.dat_saisie, item.num_fam).subscribe((data: any) => {
+  
+          this.ageAn = data.ageAn;
+          this.ageMois = data.ageMois
+          this.soldPlafond = Number(data.soldPlafond).toFixed(3)
+          this.soldPlafondEstim = Number(data.soldPlafondEstim).toFixed(3)
+  
+        })
+    });
 
   }
   loadDataIntoTable(data: any[]) {
@@ -854,6 +858,12 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     this.etab_rsoc = [];
     this.refEtablis = [];
 
+    if (!data || data.length === 0) {
+      // ce bulletin n'a aucun acte : le tableau du bulletin précédent ne doit pas rester affiché
+      this.ligPretForm.setControl('lignes', this.fb.array([]));
+      this.calculateTotals();
+      return;
+    }
     const observables = data.map((item: any) =>
       this.serv.getRefPhysique(item.prf_typ).pipe(
         map((refData: any) => ({ item, refData }))
@@ -932,6 +942,12 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     this.etab_rsoc_phar = [];
     this.refEtablisPhar = [];
 
+    if (!data || data.length === 0) {
+      // ce bulletin n'a aucun médicament : le tableau du bulletin précédent ne doit pas rester affiché
+      this.ligPharForm.setControl('phar', this.fb.array([]));
+      this.calculateTotalsPhar();
+      return;
+    }
     const observables = data.map((item: any) =>
       this.serv.getRefPhysique(item.prf_typ).pipe(
         map((refData: any) => ({ item, refData }))

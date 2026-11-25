@@ -366,6 +366,11 @@ export class ConsBultCnamComponent {
   private chargerBulletin(item: any) {
     // cancel any requests still running for the previous bulletin
     this.cancelLoad$.next();
+    // tableaux vidés d'abord : si le serveur ne répond pas, l'écran ne montre pas les lignes du bulletin précédent
+    this.loadDataIntoTable([]);
+    this.loadDataIntoTableMed([]);
+    this.loadDataIntoTableVisite([]);
+    this.loadDataIntoTablApp([]);
     const stop$ = merge(this.cancelLoad$, this.destroy$);
 
     const codSoc = this.token.getUser().codSoc;
@@ -650,6 +655,12 @@ export class ConsBultCnamComponent {
     this.refEtablisVisit = [];
     this.etab_rsoc_visite = [];
     console.log("data visite", data)
+    if (!data || data.length === 0) {
+      // ce bulletin n'a aucune visite : le tableau du bulletin précédent ne doit pas rester affiché
+      this.ligVisiteForm.setControl('visite', this.fb.array([]));
+      this.addLigneVisite();
+      return;
+    }
     const observables = data.map((item: any) =>
       this.serv.getRefPhysiqueByCode(item.prf_cod, item.prf_typ).pipe(
         map((refData: any) => {

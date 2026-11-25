@@ -6,7 +6,7 @@ import { TokenStorageService } from 'src/app/core/services/token-storage.service
 import { SaveService } from 'src/app/shared/Service/save.service';
 import Swal from 'sweetalert2';
 import { BulletinSoinService } from '../bulletin-soin.service';
-import { forkJoin, map, tap } from 'rxjs';
+import { forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-cons-buletin-mutuelle',
@@ -171,6 +171,7 @@ export class ConsBuletinMutuelleComponent {
 
 
   ngOnDestroy() {
+    this.annulerChargement$.next();
     this.saveService.setConsultation(false);
   }
 
@@ -560,12 +561,20 @@ export class ConsBuletinMutuelleComponent {
     });
   }
 
+  /** Les chargements du bulletin précédent sont abandonnés dès qu'on en affiche un autre (clics rapides sur ▶ ◀). */
+  private annulerChargement$ = new Subject<void>();
+
   private chargerBulletin(item: any) {
+    this.annulerChargement$.next();
+    // tableaux vidés d'abord : si le serveur ne répond pas, l'écran ne montre pas les lignes du bulletin précédent
+    this.loadDataIntoTable([]);
+    this.loadDataIntoTablePhar([]);
+    this.numFam = item.num_fam;
     this.matricule = item.mat_pers;
     this.PEC = item.num_pec;
     this.matConj = item.mat_pers_conj;
 
-    this.serv.getAdherent(this.token.getUser().codSoc, item.mat_pers).subscribe((data: any) => {
+    this.serv.getAdherent(this.token.getUser().codSoc, item.mat_pers).pipe(takeUntil(this.annulerChargement$)).subscribe((data: any) => {
       this.listAdherent = data;
       this.numFam = item.num_fam;
     });
@@ -578,7 +587,7 @@ export class ConsBuletinMutuelleComponent {
     this.nomAdherent = item.nom_adherent ?? item.nom_complet_pers;
 
     // l'âge et les soldes dépendent de la date de naissance du prestataire : on l'attend avant de les demander
-    this.serv.getDatNais(this.token.getUser().codSoc, item.mat_pers, item.num_fam).subscribe((data: any) => {
+    this.serv.getDatNais(this.token.getUser().codSoc, item.mat_pers, item.num_fam).pipe(takeUntil(this.annulerChargement$)).subscribe((data: any) => {
       this.datNais = data.dat_nais;
       this.serv.get_plafond_mutuelle(
         this.token.getUser().codSoc,
@@ -587,7 +596,7 @@ export class ConsBuletinMutuelleComponent {
         this.datNais,
         item.dat_saisie,
         item.num_fam
-      ).subscribe((plafond: any) => {
+      ).pipe(takeUntil(this.annulerChargement$)).subscribe((plafond: any) => {
         this.ageAn = plafond?.ageAn;
         this.ageMois = plafond?.ageMois;
         this.soldPlafond = Number(plafond?.soldPlafond).toFixed(3);
@@ -632,7 +641,7 @@ export class ConsBuletinMutuelleComponent {
       meds: this.serv.getMed(item.cod_fil, item.cod_assur),
       ligBult: this.serv.getLigBult(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin),
       ligPhar: this.serv.getLigPhar(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin)
-    }).subscribe(({ actes, meds, ligBult, ligPhar }) => {
+    }).pipe(takeUntil(this.annulerChargement$)).subscribe(({ actes, meds, ligBult, ligPhar }) => {
       // Set the lists first
       this.listActe = actes;
       this.listMed = meds;
@@ -659,6 +668,9 @@ export class ConsBuletinMutuelleComponent {
 
     if (!data || data.length === 0) {
       console.log("No data to load");
+      // ce bulletin n'a aucun acte : le tableau du bulletin précédent ne doit pas rester affiché
+      this.ligPretForm.setControl('lignes', this.fb.array([]));
+      this.calculateTotals();
       return;
     }
 
@@ -776,6 +788,9 @@ export class ConsBuletinMutuelleComponent {
     if (!data || data.length === 0) {
       console.log("Aucune donnée à charger.");
       this.ligPharForm.reset();
+      // ce bulletin n'a aucun médicament : le tableau du bulletin précédent ne doit pas rester affiché
+      this.ligPharForm.setControl('phar', this.fb.array([]));
+      this.calculateTotalsPhar();
       return;
     }
 

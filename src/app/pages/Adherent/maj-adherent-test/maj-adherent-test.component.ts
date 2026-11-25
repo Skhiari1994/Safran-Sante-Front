@@ -1,3 +1,4 @@
+import { libelleDe } from 'src/app/shared/lov-libelle';
 import {
   ChangeDetectorRef,
   Component,
@@ -543,49 +544,63 @@ export class MajAdherentTestComponent {
     this.setupBirthHireAlert();
     this.saveService.add$.subscribe((reset) => {
       if (reset) {
-        // les listes repartent sur « Sélectionner » (valeur '') et non sur un choix vide (null)
-        this.formAdherent.reset({ cod_retr: '', sexe: '', cod_sit: '', corps: '', etat_act: '', typ_aff: '', cod_pay: '', pers_carte: '' }); // Reset the form
-        this.formAdrPers.reset({ adr_courant: '' });
-        this.formConjoint.reset({ pec: '', pec_mut: '' });
-        this.formMere.reset({ pec: '', pec_mut: '' });
-        this.formPere.reset({ pec: '', pec_mut: '' });
-        this.formCarteSoin.reset();
-        this.formEnfant.reset();
-        this.listFamille = []
-        this.listAdresse = []
-        this.codNatP = "";
-        this.codLieuVal = "";
-        this.codAffectVal = "";
-        this.codTypDepartVal = "";
-        this.codBanqueVal = "";
-        this.codAgenceVal = "";
-        this.codPostVal = "";
-        this.codGouvVal = "";
-        this.selectedCode = "";
-        this.selectedCodeLieu = "";
-
-        this.libNat = "";
-        this.libLieu = "";
-        this.libAffect = "";
-        this.libTypDepart = "";
-        this.libBanque = "";
-        this.libAgence = "";
-        this.libGouv = "";
-        this.libPoste = "";
-        this.tableau1 = null as any;
-        this.tableau2 = null as any;
-        this.CarteSoinList = [];
-        this.CarteSoinCnamList = [];
-        this.filteredDataCarteSoint = []
-        this.filteredDataRows = []
-        this.dataRows = [];
+        this.viderFiche();
         this.saveService.setAdded(false); // Reset the observable to false
-        this.file = null as any;
-        console.log("this.file :", this.file);
       }
     });
   }
 
+
+  /**
+   * Remet à zéro tout ce qui dépend de la fiche affichée : formulaires, listes, champs à loupe (code et libellé), photo.
+   * Lancée par « Nouveau » et au début de search() : une fiche sans valeur ne garde rien de la fiche précédente.
+   */
+  private viderFiche(): void {
+    // les listes repartent sur « Sélectionner » (valeur '') et non sur un choix vide (null)
+    this.formAdherent.reset({ cod_retr: '', sexe: '', cod_sit: '', corps: '', etat_act: '', typ_aff: '', cod_pay: '', pers_carte: '' }); // Reset the form
+    this.formAdrPers.reset({ adr_courant: '' });
+    this.formConjoint.reset({ pec: '', pec_mut: '' });
+    this.formMere.reset({ pec: '', pec_mut: '' });
+    this.formPere.reset({ pec: '', pec_mut: '' });
+    this.formCarteSoin.reset();
+    this.formEnfant.reset();
+    this.listFamille = []
+    this.listAdresse = []
+    this.codNatP = "";
+    this.codLieuVal = "";
+    this.codAffectVal = "";
+    this.codTypDepartVal = "";
+    this.codBanqueVal = "";
+    this.codAgenceVal = "";
+    this.codPostVal = "";
+    this.codGouvVal = "";
+    this.selectedCode = "";
+    this.selectedCodeLieu = "";
+
+    this.libNat = "";
+    this.libLieu = "";
+    this.libAffect = "";
+    this.libTypDepart = "";
+    this.libBanque = "";
+    this.libAgence = "";
+    this.libGouv = "";
+    this.libPoste = "";
+    this.tableau1 = null as any;
+    this.tableau2 = null as any;
+    this.CarteSoinList = [];
+    this.CarteSoinCnamList = [];
+    this.filteredDataCarteSoint = []
+    this.filteredDataRows = []
+    this.dataRows = [];
+    this.file = null as any;
+    console.log("this.file :", this.file);
+    // photo : celle de la fiche précédente ne doit ni rester affichée ni être rattachée à la nouvelle fiche
+    this.files = undefined as any;
+    this.idAttachment = undefined;
+    this.imageURL = undefined;
+    const photo = document.getElementById('product-img') as HTMLImageElement | null;
+    if (photo) photo.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+  }
 
   ngOnDestroy() {
     // Clear the callback to avoid memory leaks
@@ -1216,6 +1231,7 @@ export class MajAdherentTestComponent {
   }
 
   search(item: any) {
+    this.viderFiche();
     this.carteCnamAlert.verifierExpirationMatricule(item.mat_pers, item.cod_soc, [item.nom_pers, item.pren_pers].filter(Boolean).join(' '));
     this.serachEdit = true
     this.codNatP = item.cod_natp
@@ -1278,6 +1294,10 @@ export class MajAdherentTestComponent {
     }
     this.codBanqueVal = item.cod_banq;
     this.codAgenceVal = item.cod_agc;
+    // libellés des champs à loupe : toujours ceux de la fiche affichée (vides si elle n'a pas de valeur)
+    this.libNat = libelleDe(this.listNationalite, 'cod_natp', item.cod_natp, 'lib_nat');
+    this.libLieu = libelleDe(this.listLieu, 'cod_lieu_geog', item.cod_lieu_geog, 'lib_lieu');
+    this.libAffect = libelleDe(this.listAffectation, 'cod_affect', item.cod_affect, 'lib_affect');
 
     // Populate Banque libelle
     if (item.cod_banq && this.listBanque) {

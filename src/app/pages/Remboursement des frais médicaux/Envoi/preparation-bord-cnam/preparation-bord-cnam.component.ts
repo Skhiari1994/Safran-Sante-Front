@@ -665,6 +665,10 @@ export class PreparationBordCnamComponent {
   search(item: any) {
     this.rowActive = false;
     this.saveService.setAdded(false);
+    // le bordereau précédent ne doit rien laisser : si le nouveau ne se charge pas, l'écran reste vide
+    this.listBord = [];
+    this.codAssur = '';
+    this.bordEnvoiForm.patchValue({ cod_assur: '', lib_assur: '', dat_deb: '', dat_fin: '', nbr_bult: '', tot_honor: '', tot_net: '' }, { emitEvent: false });
 
     if (!item || !item.cod_bord) {
       this.codBord = '';

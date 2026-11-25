@@ -390,6 +390,32 @@
                         
                     </button>
                 </li>
+                <li class="nav-item d-flex align-items-center" style="margin-right: 10px;">
+                    <div class="btn-group" role="group" aria-label="Navigation entre les fiches">
+                        <button type="button" class="btn btn-outline-secondary btn-icon btn-sm" (click)="naviguer('premier')" [disabled]="navAuDebut"
+                            title="Première fiche" aria-label="Première fiche">
+                            <i class="ri-skip-back-mini-line"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-icon btn-sm" (click)="naviguer('precedent')" [disabled]="navAuDebut"
+                            title="Fiche précédente" aria-label="Fiche précédente">
+                            <i class="ri-arrow-left-s-line"></i>
+                        </button>
+                        <span class="d-inline-flex align-items-center justify-content-center px-2 fs-12 text-muted border-top border-bottom" style="min-width: 130px; max-width: 340px;"
+                            aria-live="polite" [title]="navEtat ? navEtat.detail + (navEtat.filtre ? ' — parcours limité aux résultats filtrés' : '') : ''">
+                            <ng-container *ngIf="navEtat; else navVide"><span class="text-truncate"><b class="text-body me-1">{{ navEtat.code }}</b></span><span class="text-nowrap ms-1">· {{ navEtat.position }} / {{ navEtat.total }}<span *ngIf="navEtat.filtre" class="ms-1">(filtre)</span></span></ng-container>
+                            <ng-template #navVide>— / —</ng-template>
+                        </span>
+                        <button type="button" class="btn btn-outline-secondary btn-icon btn-sm" (click)="naviguer('suivant')" [disabled]="navALaFin"
+                            title="Fiche suivante" aria-label="Fiche suivante">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-icon btn-sm" (click)="naviguer('dernier')" [disabled]="navALaFin"
+                            title="Dernière fiche" aria-label="Dernière fiche">
+                            <i class="ri-skip-forward-mini-line"></i>
+                        </button>
+                    </div>
+                </li>
+                <li class="nav-item d-flex align-items-center" style="margin-right: 10px;" aria-hidden="true"><span class="vr" style="height: 22px;"></span></li>
                 <li class="nav-item">
                     <button type="button" (click)="delete()" [disabled]="consultation" class="btn btn-outline-danger btn-icon waves-effect waves-light btn-sm" style="margin-right: 10px;" title="Delete">
                         <i class="ri-delete-bin-line"></i>
