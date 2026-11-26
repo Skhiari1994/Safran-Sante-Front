@@ -138,19 +138,12 @@
 
 <ng-template #deleteModel let-modal>
   <div class="modal-body text-center p-4">
-    <lord-icon
-      src="https://cdn.lordicon.com/gsqxdxog.json"
-      trigger="loop"
-      colors="primary:#f7b84b,secondary:#f06548"
-      style="width: 100px; height: 100px"
-    ></lord-icon>
+    <div class="supp-modale__icone" aria-hidden="true"><i class="ri-delete-bin-6-line"></i></div>
     <h4 class="mt-3">Supprimer cette activité ?</h4>
     <p class="text-muted mb-0">L'activité <strong>{{ deleteId?.cod_activite }}</strong> · {{ deleteId?.lib_activite }} sera supprimée définitivement.</p>
     <div class="d-flex gap-2 justify-content-center mt-4">
       <button type="button" class="btn btn-light w-sm" (click)="modal.close('Close click')">Annuler</button>
-      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')">
-        Oui, supprimer
-      </button>
+      <button type="button" class="btn btn-danger w-sm" id="delete-product" (click)="ConfirmDelete(); modal.close('Close click')"><i class="ri-delete-bin-line align-bottom me-1" aria-hidden="true"></i>Supprimer</button>
     </div>
   </div>
 </ng-template>

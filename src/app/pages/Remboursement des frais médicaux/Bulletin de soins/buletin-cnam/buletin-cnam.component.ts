@@ -8,10 +8,11 @@ import { SaveService } from 'src/app/shared/Service/save.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'ngx-pagination';
 import Swal from 'sweetalert2';
-import { forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
+import { distinctUntilChanged, forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Table } from 'primeng/table';
 import { CarteCnamAlertService } from '../../../Adherent/carte-cnam-alert.service';
+import { focusPremiereCase } from '../../../../shared/focus-nouvelle-ligne';
 
 @Component({
   selector: 'app-buletin-cnam',
@@ -212,6 +213,17 @@ export class BuletinCNAMComponent {
         };
         this.controleDatSoin({ target });
       });
+    // Onglet « Consultation actes Mut » : actes mutuelle du même bénéficiaire à la même date de soin, rechargés dès que
+    // le bénéficiaire ou la date change (avant, ils ne l'étaient qu'au contrôle d'une nouvelle date : la liste d'un
+    // bulletin précédent restait affichée en passant à un bulletin de même date)
+    this.formBuletinSoin.valueChanges
+      .pipe(
+        map(() => [this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value,
+          this.formBuletinSoin.get('num_fam')?.value, this.dateSoinComplete()].map(v => String(v ?? '').trim()).join('|')),
+        distinctUntilChanged(),
+        debounceTime(300),
+        takeUntil(this.destroy$))
+      .subscribe(() => this.chargerActesMutuelle());
     // Date de soin saisie : les dates des visites, pharmacies, actes et appareils se remplissent avec la même date.
     // Une date modifiée à la main reste inchangée (seules les lignes vides ou encore égales à l'ancienne date de soin suivent).
     datSoinCtrl?.valueChanges
@@ -587,7 +599,9 @@ export class BuletinCNAMComponent {
   
         this.columnActe = [
           { key: "abrv_act", label: "Abrv acte" },
+          { key: "cod_act", label: "Code acte" },
           { key: "lib_act", label: "Libelle" },
+          { key: "cot_act", label: "Cotisation" },
         ];
   
         // Now load the saved actes from database
@@ -724,6 +738,7 @@ export class BuletinCNAMComponent {
             num_pec_act: [item.num_pec_act],
             taux_act: [item.taux_act],
             typ_prf: [item.typ_prf],
+            num_soin: [item.num_soin],
           }))
         )
       );
@@ -856,6 +871,7 @@ export class BuletinCNAMComponent {
         abrv_act: [item.abrv_act],
         cod_med: [item.cod_med],
         num_lig: [item.num_lig],
+        num_soin: [item.num_soin],
         mnt_honor: [Number(item.mnt_honor).toFixed(3)],
         mnt_remb: [Number(item.mnt_remb).toFixed(3)],
         mnt_net: [Number(item.mnt_net).toFixed(3)],
@@ -927,6 +943,7 @@ export class BuletinCNAMComponent {
         abrv_act: [item.abrv_act],
         cod_app: [item.cod_app],
         num_lig: [item.num_lig],
+        num_soin: [item.num_soin],
         mnt_honor: [Number(item.mnt_honor).toFixed(3)],
         mnt_remb: [Number(item.mnt_remb).toFixed(3)],
         mnt_net: [Number(item.mnt_net).toFixed(3)],
@@ -1002,7 +1019,9 @@ export class BuletinCNAMComponent {
 
             this.columnActe = [
               { key: "abrv_act", label: "Abrv acte" },
+              { key: "cod_act", label: "Code acte" },
               { key: "lib_act", label: "Libelle" },
+              { key: "cot_act", label: "Cotisation" },
             ];
           },
           error => {
@@ -1193,11 +1212,6 @@ export class BuletinCNAMComponent {
         ];
       })
 
-    this.serv.getLigBult(this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value,
-      this.formBuletinSoin.get('num_fam')?.value, this.formBuletinSoin.get('dat_soin')?.value).subscribe((data: any) => {
-        this.ligBult = data
-        this.calculerTotaux()
-      })
   }
 
   getRegimeRemb() {
@@ -1309,6 +1323,7 @@ export class BuletinCNAMComponent {
       abrv_act: ['', Validators.required],
       cod_act: [''],
       num_lig: ['1'],
+      num_soin: [''],
       let_cod: [''],
       cot_act: [''],
       act_prix: [''],
@@ -1371,6 +1386,8 @@ export class BuletinCNAMComponent {
     try {
       // Start editing the row using PrimeNG Table's initRowEdit
       this.tableActes?.initRowEdit(row);
+      // curseur directement dans la première case de la nouvelle ligne
+      focusPremiereCase(this.tableActes, this.tableActes?.value?.indexOf(row) ?? -1);
 
       // One more change detection to ensure edit mode is active
       setTimeout(() => {
@@ -1393,8 +1410,33 @@ export class BuletinCNAMComponent {
     this.modalService.open(content, { centered: true });
   }
 
+  private retirerLigneActe(index: number): void {
+    this.lignes.removeAt(index);
+    this.acte.splice(index, 1);
+    this.libAct.splice(index, 1);
+    this.refEtablis.splice(index, 1);
+    this.etab_rsoc.splice(index, 1);
+    this.mntNetArray.splice(index, 1);
+
+    this.calculateTotals();
+
+    if (this.lignes.length === 0) {
+      this.addLigne(0);
+    }
+  }
+
   ConfirmDelete(index: number): void {
     const ligne = this.lignes.at(index).value;
+    const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
+
+    // acte jamais enregistré (pas de numéro de soin ni de ligne) : rien à supprimer en base
+    if (!present(ligne.num_soin) || !present(ligne.num_lig) || !present(ligne.mat_pers) || !present(ligne.num_fam)) {
+      this.retirerLigneActe(index);
+      return;
+    }
+
+    // clé complète de l'acte : inclut le numéro de soin du bulletin (sans lui, la vérification répondait toujours « absent »
+    // et la ligne n'était retirée que de l'écran, pas de la base)
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
@@ -1403,86 +1445,48 @@ export class BuletinCNAMComponent {
       abrv_act: ligne.abrv_act,
       cod_act: ligne.cod_act,
       num_lig: ligne.num_lig,
-      dat_act: ligne.dat_act
+      dat_act: ligne.dat_act,
+      num_soin: ligne.num_soin,
     };
-
 
     this.serv.existeLigBultAct(cle).subscribe({
       next: (exists: boolean) => {
-
-        if (exists) {
-          this.serv.deleteLigBultAct(
-            ligne.cod_soc,
-            ligne.mat_pers,
-            ligne.num_fam,
-            ligne.dat_soin,
-            ligne.abrv_act,
-            ligne.num_lig,
-            ligne.dat_act,
-            ligne.cod_act
-          ).subscribe({
-            next: () => {
-              // Remove from FormArray
-              this.lignes.removeAt(index);
-
-              // Remove from all related arrays
-              this.acte.splice(index, 1);
-              this.libAct.splice(index, 1);
-              this.refEtablis.splice(index, 1);
-              this.etab_rsoc.splice(index, 1);
-              this.mntNetArray.splice(index, 1);
-
-              this.calculateTotals();
-
-              // Add a new empty line if this was the last one
-              if (this.lignes.length === 0) {
-                this.addLigne(0);
-              }
-            },
-            error: (error) => {
-              console.error("Erreur lors de la suppression :", error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: 'Erreur lors de la suppression de l\'acte',
-                confirmButtonText: 'OK'
-              });
-            }
-          });
-        } else {
-          // Remove from FormArray
-          this.lignes.removeAt(index);
-
-          // Remove from all related arrays
-          this.acte.splice(index, 1);
-          this.libAct.splice(index, 1);
-          this.refEtablis.splice(index, 1);
-          this.etab_rsoc.splice(index, 1);
-          this.mntNetArray.splice(index, 1);
-
-          this.calculateTotals();
-
-          // Add a new empty line if this was the last one
-          if (this.lignes.length === 0) {
-            this.addLigne(0);
-          }
+        if (!exists) {
+          this.retirerLigneActe(index);
+          return;
         }
+        this.serv.deleteLigBultAct(
+          ligne.cod_soc,
+          ligne.mat_pers,
+          ligne.num_fam,
+          ligne.dat_soin,
+          ligne.abrv_act,
+          ligne.num_lig,
+          ligne.dat_act,
+          ligne.cod_act,
+          ligne.num_soin
+        ).subscribe({
+          next: () => this.retirerLigneActe(index),
+          error: (error) => {
+            console.error("Erreur lors de la suppression :", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: 'Erreur lors de la suppression de l\'acte',
+              confirmButtonText: 'OK'
+            });
+          }
+        });
       },
       error: (error) => {
+        // la vérification a échoué : l'acte reste affiché, on ne le retire pas à tort de l'écran
         console.error("Erreur lors de la vérification d'existence :", error);
-        // Still remove locally even if check fails
-        this.lignes.removeAt(index);
-        this.acte.splice(index, 1);
-        this.libAct.splice(index, 1);
-        this.refEtablis.splice(index, 1);
-        this.etab_rsoc.splice(index, 1);
-        this.mntNetArray.splice(index, 1);
-
-        this.calculateTotals();
-
-        if (this.lignes.length === 0) {
-          this.addLigne(0);
-        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de vérifier l\'acte avant suppression',
+          confirmButtonText: 'OK'
+        });
       }
     });
   }
@@ -1513,7 +1517,12 @@ export class BuletinCNAMComponent {
 
     this.lignes.at(index).patchValue({
       abrv_act: selectedValue.abrv_act,
-      cod_act: selectedValue.cod_act
+      cod_act: selectedValue.cod_act,
+      // valeurs de référence de l'acte choisi (REF_ACT) : sans elles, LET_COD, COT_ACT, ACT_PRIX et TAUX_ACT partaient vides en base
+      let_cod: selectedValue.let_cod ?? null,
+      cot_act: selectedValue.cot_act ?? null,
+      act_prix: selectedValue.act_prix ?? null,
+      taux_act: selectedValue.taux_act ?? null
     });
   }
   
@@ -1837,6 +1846,7 @@ export class BuletinCNAMComponent {
       abrv_act: ['', Validators.required],
       cod_med: [''],
       num_lig: [''],
+      num_soin: [''],
       indice: [''],
       mnt_honor: [''],
       mnt_net: [''],
@@ -1897,6 +1907,8 @@ export class BuletinCNAMComponent {
     try {
       // Start editing the row using PrimeNG Table's initRowEdit
       this.tablePhar?.initRowEdit(row);
+      // curseur directement dans la première case de la nouvelle ligne
+      focusPremiereCase(this.tablePhar, this.tablePhar?.value?.indexOf(row) ?? -1);
 
       // One more change detection to ensure edit mode is active
       setTimeout(() => {
@@ -1955,69 +1967,93 @@ export class BuletinCNAMComponent {
     this.modalService.open(content, { centered: true });
   }
 
+  /** Retire la ligne de l'écran (tableau et listes associées) ; une ligne vide est recréée si c'était la dernière. */
+  private retirerLignePhar(index: number): void {
+    this.phar.removeAt(index);
+    this.libMed.splice(index, 1);
+    this.Med.splice(index, 1);
+    this.refEtablisPhar.splice(index, 1);
+    this.etab_rsoc_phar.splice(index, 1);
+    this.mntNetArrayPhar.splice(index, 1);
+
+    this.calculateTotalsPhar();
+
+    if (this.phar.length === 0) {
+      this.addLignePhar(0);
+    }
+  }
+
   ConfirmDeleteMed(index: number): void {
     const ligne = this.phar.at(index).value;
+    const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
 
-    // 🔥 SIMPLIFIED: Just try to delete directly
-    this.serv.deleteLigBultMed(
-      ligne.cod_soc,
-      ligne.mat_pers,
-      ligne.num_fam,
-      ligne.dat_soin,
-      ligne.abrv_act,
-      ligne.num_lig_med,
-      ligne.cod_med
-    ).subscribe({
-      next: (response) => {
+    // médicament jamais enregistré (pas de numéro de soin ni de ligne) : rien à supprimer en base
+    if (!present(ligne.num_soin) || !present(ligne.num_lig) || !present(ligne.mat_pers) || !present(ligne.num_fam)) {
+      this.retirerLignePhar(index);
+      return;
+    }
 
-        // Remove from FormArray and all related arrays
-        this.phar.removeAt(index);
-        this.libMed.splice(index, 1);
-        this.Med.splice(index, 1);
-        this.refEtablisPhar.splice(index, 1);
-        this.etab_rsoc_phar.splice(index, 1);
-        this.mntNetArrayPhar.splice(index, 1);
+    // clé complète du médicament (num_lig_med est vide sur les anciennes lignes : il ne peut pas servir de clé)
+    const cle = {
+      cod_soc: ligne.cod_soc,
+      mat_pers: ligne.mat_pers,
+      num_fam: ligne.num_fam,
+      dat_soin: ligne.dat_soin,
+      abrv_act: ligne.abrv_act,
+      dat_act: ligne.dat_act,
+      cod_med: ligne.cod_med,
+      num_lig: ligne.num_lig,
+      num_soin: ligne.num_soin,
+    };
 
-        this.calculateTotalsPhar();
-
-        if (this.phar.length === 0) {
-          this.addLignePhar(0);
+    this.serv.existeLigBultMed(cle).subscribe({
+      next: (exists: boolean) => {
+        if (!exists) {
+          this.retirerLignePhar(index);
+          return;
         }
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Suppression réussie',
-          text: 'Le médicament a été supprimé avec succès',
-          confirmButtonText: 'OK',
-          timer: 2000
+        this.serv.deleteLigBultMed(
+          ligne.cod_soc,
+          ligne.mat_pers,
+          ligne.num_fam,
+          ligne.dat_soin,
+          ligne.abrv_act,
+          ligne.num_lig,
+          ligne.cod_med,
+          ligne.num_soin,
+          ligne.dat_act
+        ).subscribe({
+          next: () => {
+            this.retirerLignePhar(index);
+            Swal.fire({
+              icon: 'success',
+              title: 'Suppression réussie',
+              text: 'Le médicament a été supprimé avec succès',
+              confirmButtonText: 'OK',
+              timer: 2000
+            });
+          },
+          error: (error) => {
+            // la suppression a échoué : la ligne reste affichée (elle est toujours en base)
+            console.error("Erreur lors de la suppression :", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: 'Erreur lors de la suppression du médicament',
+              confirmButtonText: 'OK'
+            });
+          }
         });
       },
       error: (error) => {
-        console.error("Erreur lors de la suppression :", error);
-
-        // Still remove locally even if DB delete fails
-        this.phar.removeAt(index);
-        this.libMed.splice(index, 1);
-        this.Med.splice(index, 1);
-        this.refEtablisPhar.splice(index, 1);
-        this.etab_rsoc_phar.splice(index, 1);
-        this.mntNetArrayPhar.splice(index, 1);
-
-        this.calculateTotalsPhar();
-
-        if (this.phar.length === 0) {
-          this.addLignePhar(0);
-        }
-
-        // Only show error if it's a real database error, not "record not found"
-        if (error.status !== 404) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Erreur',
-            text: 'Erreur lors de la suppression du médicament',
-            confirmButtonText: 'OK'
-          });
-        }
+        // la vérification a échoué : la ligne reste affichée, on ne la retire pas à tort de l'écran
+        console.error("Erreur lors de la vérification d'existence :", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de vérifier le médicament avant suppression',
+          confirmButtonText: 'OK'
+        });
       }
     });
   }
@@ -2267,6 +2303,8 @@ export class BuletinCNAMComponent {
     try {
       // Start editing the row using PrimeNG Table's initRowEdit
       this.tableVisite?.initRowEdit(row);
+      // curseur directement dans la première case de la nouvelle ligne
+      focusPremiereCase(this.tableVisite, this.tableVisite?.value?.indexOf(row) ?? -1);
 
       // One more change detection to ensure edit mode is active
       setTimeout(() => {
@@ -2473,6 +2511,7 @@ export class BuletinCNAMComponent {
       abrv_act: [''],
       cod_app: ['', Validators.required],
       num_lig: [''],
+      num_soin: [''],
       mnt_honor: [''],
       mnt_net: [''],
       mnt_remb: [''],
@@ -2523,6 +2562,8 @@ export class BuletinCNAMComponent {
     try {
       // Start editing the row using PrimeNG Table's initRowEdit
       this.tableApp?.initRowEdit(row);
+      // curseur directement dans la première case de la nouvelle ligne
+      focusPremiereCase(this.tableApp, this.tableApp?.value?.indexOf(row) ?? -1);
 
       // One more change detection to ensure edit mode is active
       setTimeout(() => {
@@ -2557,94 +2598,84 @@ export class BuletinCNAMComponent {
     this.modalService.open(content, { centered: true });
   }
 
+  /** Retire la ligne de l'écran (tableau et listes associées) ; une ligne vide est recréée si c'était la dernière. */
+  private retirerLigneAppareil(index: number): void {
+    this.appareil.removeAt(index);
+    this.appareilCode.splice(index, 1);
+    this.libAppareil.splice(index, 1);
+    this.refEtablisApp.splice(index, 1);
+    this.etab_rsoc_appareil.splice(index, 1);
+    this.mntNetArrayAppareil.splice(index, 1);
+
+    this.calculateTotalsAppareil();
+
+    if (this.appareil.length === 0) {
+      this.addLigneAppareil(0);
+    }
+  }
+
   ConfirmDeleteApp(index: number): void {
     const ligne = this.appareil.at(index).value;
+    const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
+
+    // appareil jamais enregistré (pas de numéro de soin ni de ligne) : rien à supprimer en base
+    if (!present(ligne.num_soin) || !present(ligne.num_lig) || !present(ligne.mat_pers) || !present(ligne.num_fam)) {
+      this.retirerLigneAppareil(index);
+      return;
+    }
+
+    // clé complète de l'appareil : sans la date de l'acte, le numéro de ligne et le numéro de soin,
+    // la vérification répondait toujours « absent » et la ligne n'était retirée que de l'écran
     const cle = {
       cod_soc: ligne.cod_soc,
       mat_pers: ligne.mat_pers,
       num_fam: ligne.num_fam,
       dat_soin: ligne.dat_soin,
       abrv_act: ligne.abrv_act,
+      dat_act: ligne.dat_act,
       cod_app: ligne.cod_app,
-      num_lig_app: ligne.num_lig_app,
+      num_lig: ligne.num_lig,
+      num_soin: ligne.num_soin,
     };
-
 
     this.serv.existeLigBultApp(cle).subscribe({
       next: (exists: boolean) => {
-
-        if (exists) {
-          this.serv.deleteLigBultApp(
-            ligne.cod_soc,
-            ligne.mat_pers,
-            ligne.num_fam,
-            ligne.dat_soin,
-            ligne.abrv_act,
-            ligne.num_lig_app,
-            ligne.cod_app
-          ).subscribe({
-            next: () => {
-              // Remove from FormArray
-              this.appareil.removeAt(index);
-
-              // Remove from all related arrays
-              this.appareilCode.splice(index, 1);
-              this.libAppareil.splice(index, 1);
-              this.refEtablisApp.splice(index, 1);
-              this.etab_rsoc_appareil.splice(index, 1);
-              this.mntNetArrayAppareil.splice(index, 1);
-
-              this.calculateTotalsAppareil();
-
-              // Add a new empty line if this was the last one
-              if (this.appareil.length === 0) {
-                this.addLigneAppareil(0);
-              }
-            },
-            error: (error) => {
-              console.error("Erreur lors de la suppression :", error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: 'Erreur lors de la suppression de l\'appareil',
-                confirmButtonText: 'OK'
-              });
-            }
-          });
-        } else {
-          // Remove from FormArray
-          this.appareil.removeAt(index);
-
-          // Remove from all related arrays
-          this.appareilCode.splice(index, 1);
-          this.libAppareil.splice(index, 1);
-          this.refEtablisApp.splice(index, 1);
-          this.etab_rsoc_appareil.splice(index, 1);
-          this.mntNetArrayAppareil.splice(index, 1);
-
-          this.calculateTotalsAppareil();
-
-          // Add a new empty line if this was the last one
-          if (this.appareil.length === 0) {
-            this.addLigneAppareil(0);
-          }
+        if (!exists) {
+          this.retirerLigneAppareil(index);
+          return;
         }
+        this.serv.deleteLigBultApp(
+          ligne.cod_soc,
+          ligne.mat_pers,
+          ligne.num_fam,
+          ligne.dat_soin,
+          ligne.abrv_act,
+          ligne.num_lig,
+          ligne.cod_app,
+          ligne.num_soin,
+          ligne.dat_act
+        ).subscribe({
+          next: () => this.retirerLigneAppareil(index),
+          error: (error) => {
+            console.error("Erreur lors de la suppression :", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur',
+              text: 'Erreur lors de la suppression de l\'appareil',
+              confirmButtonText: 'OK'
+            });
+          }
+        });
       },
       error: (error) => {
+        // la vérification a échoué : la ligne reste affichée, on ne la retire pas à tort de l'écran
         console.error("Erreur lors de la vérification d'existence :", error);
-        // Still remove locally even if check fails
-        this.appareil.removeAt(index);
-        this.appareilCode.splice(index, 1);
-        this.libAppareil.splice(index, 1);
-        this.refEtablisApp.splice(index, 1);
-        this.etab_rsoc_appareil.splice(index, 1);
-        this.mntNetArrayAppareil.splice(index, 1);
-
-        this.calculateTotalsAppareil();
-
-        if (this.appareil.length === 0) {
-          this.addLigneAppareil(0);
-        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de vérifier l\'appareil avant suppression',
+          confirmButtonText: 'OK'
+        });
       }
     });
   }
@@ -2738,12 +2769,57 @@ export class BuletinCNAMComponent {
 
 
 
-  calculerTotaux() {
-    if (this.ligBult && this.ligBult.length) {
-      this.totalHonorairesLigBult = this.ligBult.reduce((sum, item) => sum + (item.mnt_honor || 0), 0);
-      this.totalNetLigBult = this.ligBult.reduce((sum, item) => sum + (item.mnt_net || 0), 0);
-    }
+  /** Actes mutuelle dans l'ordre de leur numéro de ligne (la requête du serveur ne les trie pas). */
+  private trierActesMutuelle(data: any): any[] {
+    return (Array.isArray(data) ? [...data] : []).sort((a, b) => (Number(a?.num_lig) || 0) - (Number(b?.num_lig) || 0));
   }
+
+  calculerTotaux() {
+    // remis à zéro quand il n'y a aucun acte (sinon les totaux du bulletin précédent restaient affichés)
+    const lignes = Array.isArray(this.ligBult) ? this.ligBult : [];
+    this.totalHonorairesLigBult = lignes.reduce((sum, item) => sum + (Number(item?.mnt_honor) || 0), 0);
+    this.totalNetLigBult = lignes.reduce((sum, item) => sum + (Number(item?.mnt_net) || 0), 0);
+  }
+
+  /** Actes mutuelle du bénéficiaire à la date de soin, avec leur libellé (onglet « Consultation actes Mut »). */
+  chargerActesMutuelle() {
+    const soc = String(this.formBuletinSoin.get('cod_soc')?.value ?? '').trim();
+    const mat = String(this.formBuletinSoin.get('mat_pers')?.value ?? '').trim();
+    const fam = String(this.formBuletinSoin.get('num_fam')?.value ?? '').trim();   // 0 = l'adhérent lui-même
+    const datSoin = this.dateSoinComplete();
+    if (!soc || !mat || fam === '' || !datSoin) {
+      this.ligBult = [];
+      this.calculerTotaux();
+      return;
+    }
+    const demande = [soc, mat, fam, datSoin].join('|');
+    this.demandeActesMutuelle = demande;
+    this.serv.getLigBultCons(soc, mat, fam, datSoin).subscribe({
+      next: (data: any) => {
+        if (this.demandeActesMutuelle !== demande) return;   // une réponse plus ancienne arrive après la nouvelle
+        this.ligBult = this.trierActesMutuelle(data);
+        this.calculerTotaux();
+      },
+      error: (err: any) => {
+        if (this.demandeActesMutuelle !== demande) return;
+        // repli : liste sans libellé plutôt que « Aucun acte » si la consultation avec libellé échoue
+        console.error('Erreur lors du chargement des actes mutuelle (avec libellé) :', err);
+        this.serv.getLigBult(soc, mat, fam, datSoin).subscribe({
+          next: (data: any) => {
+            if (this.demandeActesMutuelle !== demande) return;
+            this.ligBult = this.trierActesMutuelle(data);
+            this.calculerTotaux();
+          },
+          error: () => {
+            if (this.demandeActesMutuelle !== demande) return;
+            this.ligBult = [];
+            this.calculerTotaux();
+          }
+        });
+      }
+    });
+  }
+  private demandeActesMutuelle = '';
 
   startRowEditActes(row: any) {
     try {

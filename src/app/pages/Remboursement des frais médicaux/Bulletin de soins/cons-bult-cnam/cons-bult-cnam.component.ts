@@ -372,6 +372,8 @@ export class ConsBultCnamComponent {
     this.loadDataIntoTableMed([]);
     this.loadDataIntoTableVisite([]);
     this.loadDataIntoTablApp([]);
+    this.ligBult = [];
+    this.calculerTotaux();
     const stop$ = merge(this.cancelLoad$, this.destroy$);
 
     const codSoc = this.token.getUser().codSoc;
@@ -508,6 +510,30 @@ export class ConsBultCnamComponent {
           this.calculateTotalsAppareil();
         },
         error: (e) => console.error('appareils', e),
+      });
+
+    // ---- 5 bis. onglet « Consultation actes Mut » : actes mutuelle du bénéficiaire à la même date de soin ----
+    // (avant, ils n'étaient chargés qu'au contrôle d'une date saisie, ce qui n'arrive jamais en consultation : onglet toujours vide)
+    this.serv.getLigBultCons(cod_soc, mat_pers, num_fam, dat_soin)
+      .pipe(takeUntil(stop$))
+      .subscribe({
+        next: (data: any) => {
+          this.ligBult = this.trierActesMutuelle(data);
+          this.calculerTotaux();
+        },
+        error: (e) => {
+          // repli : liste sans libellé plutôt que « Aucun acte »
+          console.error('actes mutuelle (avec libellé)', e);
+          this.serv.getLigBult(cod_soc, mat_pers, num_fam, dat_soin)
+            .pipe(takeUntil(stop$))
+            .subscribe({
+              next: (data: any) => {
+                this.ligBult = this.trierActesMutuelle(data);
+                this.calculerTotaux();
+              },
+              error: (e2) => console.error('actes mutuelle', e2),
+            });
+        },
       });
 
     // ---- 6. birth date, THEN age + plafond ----
@@ -1235,7 +1261,12 @@ export class ConsBultCnamComponent {
     this.libAct[index] = selectedActe.lib_act
     this.lignes.at(index).patchValue({
       abrv_act: selectedValue.abrv_act,
-      cod_act: selectedValue.cod_act
+      cod_act: selectedValue.cod_act,
+      // valeurs de référence de l'acte choisi (REF_ACT) : sans elles, LET_COD, COT_ACT, ACT_PRIX et TAUX_ACT partaient vides en base
+      let_cod: selectedValue.let_cod ?? null,
+      cot_act: selectedValue.cot_act ?? null,
+      act_prix: selectedValue.act_prix ?? null,
+      taux_act: selectedValue.taux_act ?? null
     });
 
 
@@ -1976,11 +2007,16 @@ export class ConsBultCnamComponent {
 
 
 
+  /** Actes mutuelle dans l'ordre de leur numéro de ligne (la requête du serveur ne les trie pas). */
+  private trierActesMutuelle(data: any): any[] {
+    return (Array.isArray(data) ? [...data] : []).sort((a, b) => (Number(a?.num_lig) || 0) - (Number(b?.num_lig) || 0));
+  }
+
   calculerTotaux() {
-    if (this.ligBult && this.ligBult.length) {
-      this.totalHonorairesLigBult = this.ligBult.reduce((sum, item) => sum + (item.mnt_honor || 0), 0);
-      this.totalNetLigBult = this.ligBult.reduce((sum, item) => sum + (item.mnt_net || 0), 0);
-    }
+    // remis à zéro quand il n'y a aucun acte (sinon les totaux du bulletin précédent restaient affichés)
+    const lignes = Array.isArray(this.ligBult) ? this.ligBult : [];
+    this.totalHonorairesLigBult = lignes.reduce((sum, item) => sum + (Number(item?.mnt_honor) || 0), 0);
+    this.totalNetLigBult = lignes.reduce((sum, item) => sum + (Number(item?.mnt_net) || 0), 0);
   }
 }
 

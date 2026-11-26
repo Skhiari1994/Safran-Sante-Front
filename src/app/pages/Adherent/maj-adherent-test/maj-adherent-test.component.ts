@@ -38,6 +38,8 @@ export class MajAdherentTestComponent {
   p: any
   pSusp: number = 1;
   editIndex: number | null = null; // Track the index of the child being edited
+  /** Enfant du tableau en cours de modification dans la fenêtre (null : ajout). */
+  private enfantEnEdition: any = null;
   editIndexCarte: number | null = null;
   editCarteIndex: number | null = null;
   serachEdit: boolean = true
@@ -684,32 +686,25 @@ export class MajAdherentTestComponent {
     }
 
   }
-  onSelectedValueActivite(item: any): void {
-    const enfantsArray = this.formEnfant.get('enfants') as FormArray;
-    this.libActivite = item.lib_activite
+  onSelectedValueActivite(item: any, index: number = 0): void {
+    const groupe = (this.formEnfant.get('enfants') as FormArray)?.at(index) as FormGroup | undefined;
+    this.libActivite = item?.lib_activite || '';
+    groupe?.patchValue({ cod_activite: item?.cod_activite ?? '' });
+  }
 
-    if (this.editIndex !== null && this.editIndex >= 0) {
-      const selectedFormGroup = enfantsArray.at(0) as FormGroup;
+  /** Libellé d'une activité d'après son code ; à défaut, celui déjà connu de l'enfant en cours de modification. */
+  libelleActivite(code: any): string {
+    if (!code) return '';
+    const trouve = (this.listActivite || []).find((a: any) => String(a.cod_activite) === String(code));
+    if (trouve) return trouve.lib_activite || '';
+    return this.enfantEnEdition && String(this.enfantEnEdition.cod_activite) === String(code)
+      ? (this.enfantEnEdition.lib_activite || '') : '';
+  }
 
-      console.log("enfantsArray", enfantsArray);
-
-      if (selectedFormGroup) {
-        if (selectedFormGroup.get('cod_activite')) {
-          selectedFormGroup.patchValue({
-            cod_activite: item.cod_activite,
-          });
-          console.log("selectedFormGroup", selectedFormGroup);
-
-          console.log(`Patched values: cod_activite = ${item.cod_activite}, lib_activite = ${item.lib_activite}`);
-        } else {
-          console.error(`cod_activite control is missing in the FormGroup at index ${this.editIndex}`);
-        }
-      } else {
-        console.error(`FormGroup is missing at index ${this.editIndex}`);
-      }
-    } else {
-      console.error('Invalid editIndex:', this.editIndex);
-    }
+  /** Prochain numéro de famille libre pour un enfant : plus grand numéro existant + 1 (conjoint 99, père 97, mère 98 exclus). */
+  prochainNumFam(): number {
+    const nums = (this.dataRows || []).map((e: any) => Number(e?.num_fam)).filter((n: number) => Number.isFinite(n) && n < 97);
+    return (nums.length ? Math.max(...nums) : 0) + 1;
   }
 
 
@@ -938,14 +933,20 @@ export class MajAdherentTestComponent {
 
         if (this.formPere.valid) requests.push(this.adherentServ.AddPere(this.formPere.value));
         if (this.formMere.valid) requests.push(this.adherentServ.AddMere(this.formMere.value));
-        if (this.formConjoint.valid && codSit && codSit !== "C") {
+        // conjoint envoyé seulement s'il est saisi (nom renseigné) : sinon une ligne conjoint vide (NUM_FAM 99) était créée
+        const conjointSaisi = String(this.formConjoint.get("nom_pren")?.value ?? "").trim() !== "";
+        if (this.formConjoint.valid && conjointSaisi && codSit && codSit !== "C") {
           requests.push(this.adherentServ.AddConjoint(this.formConjoint.value));
         }
 
-        if (this.enfants.valid && this.enfants.value?.length > 0) {
+        // tous les enfants du tableau (ajoutés, modifiés ou inchangés), au même format que le formulaire enfant
+        const enfantsTableau: any[] = this.dataRows || [];
+        if (enfantsTableau.length > 0) {
           const soc = codSoc;
           const mat = matPers;
-          const enfantsVal = (this.enfants.value as any[]).map(e => ({ ...e, parente: 'E' }));
+          const enfantsVal = enfantsTableau.map(e => ({
+            ...this.createEnfantFormGroup(e).getRawValue(), cod_soc: codSoc, mat_pers: matPers, parente: 'E',
+          }));
           const missing = enfantsVal.filter(e => !e.num_fam);
           if (missing.length > 0 && soc && mat) {
             requests.push(
@@ -1548,7 +1549,7 @@ export class MajAdherentTestComponent {
       parente: ["E"],
       nom_pren: [data?.nom_pren || '', Validators.required],
       dat_naiss: [data?.dat_naiss || '', Validators.required],
-      sexe: [data?.sexe || '', Validators.required],
+      sexe: [data?.sexe || '', [Validators.required, Validators.pattern(/^[MF]$/)]],
       cod_sit: [data?.cod_sit],
       handicap: [data?.handicap || 'N'],
       pec: [data?.pec || 'N'],
@@ -1639,19 +1640,18 @@ export class MajAdherentTestComponent {
   }
 
   openEditModal(content: any, index: number) {
-
-    this.editIndex = index;
     const enfantData = this.filteredDataRows[index];
-    console.log("index :", index)
-    console.log("enfantData :", this.filteredDataRows)
+    if (!enfantData) return;
+    this.editIndex = index;
+    this.enfantEnEdition = enfantData;
     this.edit = false;
-    // Populate the modal form with the selected child's data
+    // la fenêtre travaille sur une copie : « Annuler » ne change ni le tableau ni ce qui sera enregistré
     this.formEnfant.setControl(
       'enfants',
       this.fb.array([this.createEnfantFormGroup(enfantData)])
     );
-    this.codActiviteVal = enfantData.cod_activite
-    // Open the modal
+    this.codActiviteVal = enfantData.cod_activite;
+    this.libActivite = this.libelleActivite(enfantData.cod_activite);
     this.modalService.open(content, { size: 'lg' });
   }
   private static readonly BADGES_CNAM: { [statut: string]: { label: string; cls: string } } = {
@@ -1884,10 +1884,13 @@ export class MajAdherentTestComponent {
   }
   openAddModal(content: any) {
     this.editIndex = null;
+    this.enfantEnEdition = null;
+    this.submitted = false;
+    this.libActivite = '';
     this.edit = true,
       this.formEnfant.reset()
 
-    const nextNum = (this.filteredDataRows?.length || 0) + 1;
+    const nextNum = this.prochainNumFam();
     const newEnfantGroup = this.createEnfantFormGroup({
       cod_soc: '',
       mat_pers: '',
@@ -1968,6 +1971,7 @@ export class MajAdherentTestComponent {
     this.adherentServ.deleteFamille(soc, num, mat).subscribe({
       next: () => {
         this.filteredDataRows = (this.filteredDataRows || []).filter((item: any) => item.num_fam !== num);
+        this.dataRows = (this.dataRows || []).filter((item: any) => item.num_fam !== num);
         if (modal) modal.close('Close click');
         Swal.fire({
           icon: 'success',
@@ -1980,6 +1984,7 @@ export class MajAdherentTestComponent {
       error: (err) => {
         console.error('Erreur suppression :', err);
         this.filteredDataRows = (this.filteredDataRows || []).filter((item: any) => item.num_fam !== num);
+        this.dataRows = (this.dataRows || []).filter((item: any) => item.num_fam !== num);
         if (modal) modal.close('Close click');
       }
     });
@@ -2100,7 +2105,7 @@ export class MajAdherentTestComponent {
     )
   }
   addEnfant() {
-    const nextNum = (this.filteredDataRows?.length || 0) + this.enfants.length + 1;
+    const nextNum = this.prochainNumFam() + this.enfants.length;
     this.enfants.push(
       this.fb.group({
         cod_soc: [""],
@@ -2109,7 +2114,7 @@ export class MajAdherentTestComponent {
         parente: ["E"],
         nom_pren: ["", Validators.required],
         dat_naiss: ["", Validators.required],
-        sexe: ["", Validators.required],
+        sexe: ["", [Validators.required, Validators.pattern(/^[MF]$/)]],
         cod_sit: [""],
         handicap: [""],
         cod_activite: [""],
@@ -2156,80 +2161,66 @@ export class MajAdherentTestComponent {
     console.log('listAdresse:', this.listAdresse);
   }
 
-  validateEnfants(): void {
-    // Function to format dates for a given FormGroup
-    const formatDates = (form: FormGroup, fields: string[]): string[] =>
-      fields.reduce<string[]>((formatted, field) => {
-        const value = this.formatDate(form.get(field)?.value);
-        form.get(field)?.setValue(value);
-        if (value) {
-          formatted.push(value);
-        }
-        return formatted;
-      }, []);
-
-    // Get the FormArray 'enfants'
+  /**
+   * Valide la fenêtre enfant. Renvoie false (fenêtre laissée ouverte) si la saisie est incomplète ou incohérente.
+   * Le tableau des enfants (dataRows) est la liste complète envoyée au serveur à l'enregistrement.
+   */
+  validateEnfants(): boolean {
     const enfantsArray = this.formEnfant.get('enfants') as FormArray;
+    if (!enfantsArray || enfantsArray.length === 0) return true;
 
-    if (enfantsArray && enfantsArray.valid) {
-      // Loop through each FormGroup in the FormArray
-      enfantsArray.controls.forEach((formGroup: AbstractControl, index: number) => {
-        if (formGroup instanceof FormGroup) {
-          // Format the dates
-          formatDates(formGroup, [
-            'dat_naiss',
-            'dat_pec',
-            'dat_dece',
-            'dat_pec_mut',
-          ]);
-
-          // Patch additional fields
-          formGroup
-            .get('mat_pers')
-            ?.patchValue(this.formAdherent.get('mat_pers')?.value);
-          formGroup
-            .get('cod_soc')
-            ?.patchValue(this.tokenStorage.getUser().codSoc);
-
-          // Update the corresponding row in filteredDataRows
-          if (this.editIndex !== null) {
-            // Replace only the row being edited
-            this.filteredDataRows[this.editIndex] = formGroup.value;
-          }
-        }
-      });
-
-      // Contrôle date de naissance >= enfant précédent
-      for (let i = 1; i < enfantsArray.length; i++) {
-        const dPrev = this.parseDdMmYyyy(enfantsArray.at(i - 1).get('dat_naiss')?.value);
-        const dCurr = this.parseDdMmYyyy(enfantsArray.at(i).get('dat_naiss')?.value);
-        if (dPrev && dCurr && dCurr < dPrev) {
-          Swal.fire('Erreur', 'La date de naissance doit être supérieure ou égale à celle du premier enfant', 'error');
-          return;
-        }
-      }
-      if (this.editIndex === null && this.filteredDataRows?.length > 0) {
-        const dPrev = this.parseDdMmYyyy(this.filteredDataRows[this.filteredDataRows.length - 1]?.dat_naiss);
-        const dCurr = this.parseDdMmYyyy(enfantsArray.at(0)?.get('dat_naiss')?.value);
-        if (dPrev && dCurr && dCurr < dPrev) {
-          Swal.fire('Erreur', 'La date de naissance doit être supérieure ou égale à celle de l\'enfant précédent', 'error');
-          return;
-        }
-      }
-
-      // If adding a new row, push the data to the table
-
-      if (this.editIndex === null) {
-        if (!this.filteredDataRows) {
-          this.filteredDataRows = [];
-        }
-        this.filteredDataRows.push(...enfantsArray.value);
-      }
-      // Reset editIndex after saving
-      this.editIndex = null;
-
-      console.log('filteredDataRows:', this.filteredDataRows);
+    if (enfantsArray.invalid) {
+      enfantsArray.markAllAsTouched();
+      Swal.fire('Saisie incomplète', 'Renseignez le nom et prénom, la date de naissance et le sexe (Masculin ou Féminin) de chaque enfant.', 'warning');
+      return false;
     }
+
+    const matPers = this.formAdherent.get('mat_pers')?.value;
+    const codSoc = this.tokenStorage.getUser().codSoc;
+    const lignes = enfantsArray.controls.map((groupe: AbstractControl) => {
+      const v: any = { ...(groupe as FormGroup).getRawValue() };
+      ['dat_naiss', 'dat_pec', 'dat_dece', 'dat_pec_mut'].forEach(champ => v[champ] = this.formatDate(v[champ]));
+      v.mat_pers = matPers;
+      v.cod_soc = codSoc;
+      v.parente = 'E';
+      v.lib_activite = this.libelleActivite(v.cod_activite);
+      return v;
+    });
+
+    // Contrôle date de naissance >= enfant précédent (avant de toucher au tableau)
+    for (let i = 1; i < lignes.length; i++) {
+      const dPrev = this.parseDdMmYyyy(lignes[i - 1].dat_naiss);
+      const dCurr = this.parseDdMmYyyy(lignes[i].dat_naiss);
+      if (dPrev && dCurr && dCurr < dPrev) {
+        Swal.fire('Erreur', 'La date de naissance doit être supérieure ou égale à celle du premier enfant', 'error');
+        return false;
+      }
+    }
+    const existants: any[] = this.dataRows || [];
+    if (!this.enfantEnEdition && existants.length > 0) {
+      const dernier = existants.reduce((a: any, b: any) => (Number(b?.num_fam) > Number(a?.num_fam) ? b : a));
+      const dPrev = this.parseDdMmYyyy(dernier?.dat_naiss);
+      const dCurr = this.parseDdMmYyyy(lignes[0]?.dat_naiss);
+      if (dPrev && dCurr && dCurr < dPrev) {
+        Swal.fire('Erreur', 'La date de naissance doit être supérieure ou égale à celle de l\'enfant précédent', 'error');
+        return false;
+      }
+    }
+
+    if (this.enfantEnEdition) {
+      // modification : la ligne est remplacée dans la liste complète et dans la vue filtrée
+      const ancien = this.enfantEnEdition;
+      const nouveau = { ...ancien, ...lignes[0] };
+      this.dataRows = existants.map((e: any) => (e === ancien ? nouveau : e));
+      this.filteredDataRows = (this.filteredDataRows || []).map((e: any) => (e === ancien ? nouveau : e));
+    } else {
+      this.dataRows = [...existants, ...lignes];
+      this.filteredDataRows = [...(this.filteredDataRows || []), ...lignes];
+    }
+
+    this.editIndex = null;
+    this.enfantEnEdition = null;
+    return true;
   }
 
   validateCarteSoin(): void {

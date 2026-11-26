@@ -450,10 +450,10 @@
                 <tr class="table-light">
                   <th>#</th>
                   <th>Date acte</th>
-                  <th>Act</th>
+                  <th>Acte</th>
                   <th>Libellé</th>
                   <th>Unit</th>
-                  <th class="text-end">Mnt Hr App</th>
+                  <th class="text-end">Honoraires</th>
                   <th class="text-end">Net</th>
                 </tr>
               </ng-template>
@@ -464,15 +464,15 @@
                   <td><span class="badge bg-primary-subtle text-primary fs-12">{{ rowData.abrv_act }}</span></td>
                   <td class="fw-medium">{{ rowData.lib_act }}</td>
                   <td>{{ rowData.indice }}</td>
-                  <td class="text-end">{{ rowData.mnt_honor | number:'1.2-2' }}</td>
-                  <td class="text-end">{{ rowData.mnt_net | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ rowData.mnt_honor | number:'1.3-3' }}</td>
+                  <td class="text-end">{{ rowData.mnt_net | number:'1.3-3' }}</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr class="bg-light fw-bold">
                   <td colspan="5" class="text-end">Total :</td>
-                  <td class="text-end">{{ totalHonorairesLigBult | number:'1.2-2' }}</td>
-                  <td class="text-end">{{ totalNetLigBult | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ totalHonorairesLigBult | number:'1.3-3' }}</td>
+                  <td class="text-end">{{ totalNetLigBult | number:'1.3-3' }}</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">

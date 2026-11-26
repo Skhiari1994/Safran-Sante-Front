@@ -11,6 +11,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { debounceTime, distinctUntilChanged, forkJoin, map, Subject, takeUntil } from 'rxjs';
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
+import { focusPremiereCase } from '../../../../shared/focus-nouvelle-ligne';
 
 @Component({
   selector: 'app-buletin-mutuelle',
@@ -1220,6 +1221,8 @@ formatDateddmmyyyyy(date: any): string | null {
     try {
       // Start editing the row using PrimeNG Table's initRowEdit
       this.tableActes?.initRowEdit(row);
+      // curseur directement dans la première case de la nouvelle ligne
+      focusPremiereCase(this.tableActes, this.tableActes?.value?.indexOf(row) ?? -1);
 
       // One more change detection to ensure edit mode is active
       setTimeout(() => {
@@ -1266,6 +1269,8 @@ formatDateddmmyyyyy(date: any): string | null {
     try {
       // Start editing the row using PrimeNG Table's initRowEdit
       this.tablePhar?.initRowEdit(row);
+      // curseur directement dans la première case de la nouvelle ligne
+      focusPremiereCase(this.tablePhar, this.tablePhar?.value?.indexOf(row) ?? -1);
 
       // One more change detection to ensure edit mode is active
       setTimeout(() => {
@@ -1639,6 +1644,19 @@ formatDateddmmyyyyy(date: any): string | null {
     this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+  /** Retire la ligne de l'écran avec les listes affichées en parallèle (code, libellé, établissement, net…). */
+  private retirerLigneActe(index: number): void {
+    this.lignes.removeAt(index);
+    this.acte.splice(index, 1);
+    this.libAct.splice(index, 1);
+    this.refEtablis.splice(index, 1);
+    this.etab_rsoc.splice(index, 1);
+    this.mntNetArray.splice(index, 1);
+    this.showActeEditor.splice(index, 1);
+    this.showCodeEditor.splice(index, 1);
+    this.calculateTotals();
+  }
+
   ConfirmDelete(index: number): void {
     const ligne = this.lignes.at(index).value; // Récupérer les données de la ligne
 
@@ -1650,12 +1668,8 @@ formatDateddmmyyyyy(date: any): string | null {
       abrv_act: ligne.abrv_act
     };
 
-    console.log("Clé à vérifier :", cle);
-
     this.serv.existeLigBult(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
-
         if (exists) {
           // Si l'enregistrement existe, on appelle le service de suppression
           this.serv.deleteLigBult(
@@ -1666,35 +1680,47 @@ formatDateddmmyyyyy(date: any): string | null {
             ligne.abrv_act,
             ligne.num_lig
           ).subscribe({
-            next: () => {
-              this.lignes.removeAt(index); // Suppression de la ligne dans le formulaire
-              this.calculateTotals();
-            },
+            next: () => this.retirerLigneActe(index),
             error: (error) => {
+              // la suppression a échoué : la ligne reste affichée (elle est toujours en base)
               console.error("Erreur lors de la suppression :", error);
+              Swal.fire({ icon: 'error', title: 'Erreur', text: 'Erreur lors de la suppression de l\'acte', confirmButtonText: 'OK' });
             }
           });
         } else {
           // Si l'enregistrement n'existe pas, on supprime directement du formulaire
-          this.lignes.removeAt(index);
-          this.calculateTotals();
+          this.retirerLigneActe(index);
         }
       },
       error: (error) => {
         console.error("Erreur lors de la vérification d'existence :", error);
-        //alert("Une erreur est survenue lors de la vérification. Veuillez réessayer.");
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de vérifier l\'acte avant suppression', confirmButtonText: 'OK' });
       }
     });
   }
 
 
   selectedIndexPhar: number | null = null;
+
   confirmPhar(index: any, content: any, id: any) {
     this.selectedIndexPhar = index
     console.log("annee:", id);
     //this.deleteId = id;
     this.modalService.open(content, { centered: true });
   }
+  /** Retire la ligne de l'écran avec les listes affichées en parallèle (code, libellé, établissement, net…). */
+  private retirerLignePhar(index: number): void {
+    this.phar.removeAt(index);
+    this.Med.splice(index, 1);
+    this.libMed.splice(index, 1);
+    this.refEtablisPhar.splice(index, 1);
+    this.etab_rsoc_phar.splice(index, 1);
+    this.mntNetArrayPhar.splice(index, 1);
+    this.showMedEditor.splice(index, 1);
+    this.showCodeEditorPhar.splice(index, 1);
+    this.calculateTotalsPhar();
+  }
+
   ConfirmDeletePhar(index: number): void {
     const phar = this.phar.at(index).value; // Récupérer les données de la ligne
 
@@ -1708,12 +1734,8 @@ formatDateddmmyyyyy(date: any): string | null {
 
     };
 
-    console.log("Clé à vérifier :", cle);
-
     this.serv.existeLigPhar(cle).subscribe({
       next: (exists: boolean) => {
-        console.log("Enregistrement existant :", exists);
-
         if (exists) {
           // Si l'enregistrement existe, on appelle le service de suppression
           this.serv.deleteLigPhar(
@@ -1724,23 +1746,21 @@ formatDateddmmyyyyy(date: any): string | null {
             phar.cod_med,
             phar.num_lig
           ).subscribe({
-            next: () => {
-              this.phar.removeAt(index); // Suppression de la ligne dans le formulaire
-              this.calculateTotalsPhar();
-            },
+            next: () => this.retirerLignePhar(index),
             error: (error) => {
+              // la suppression a échoué : la ligne reste affichée (elle est toujours en base)
               console.error("Erreur lors de la suppression :", error);
+              Swal.fire({ icon: 'error', title: 'Erreur', text: 'Erreur lors de la suppression du médicament', confirmButtonText: 'OK' });
             }
           });
         } else {
           // Si l'enregistrement n'existe pas, on supprime directement du formulaire
-          this.phar.removeAt(index);
-          this.calculateTotalsPhar();
+          this.retirerLignePhar(index);
         }
       },
       error: (error) => {
         console.error("Erreur lors de la vérification d'existence :", error);
-        //  alert("Une erreur est survenue lors de la vérification. Veuillez réessayer.");
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de vérifier le médicament avant suppression', confirmButtonText: 'OK' });
       }
     });
   }

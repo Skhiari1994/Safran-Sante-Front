@@ -398,9 +398,10 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultAppCons", { params });
   }
-  deleteLigBultAct(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, datAct: any, codAct: any) {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
+  deleteLigBultAct(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, datAct: any, codAct: any, numSoin?: any) {
+    let params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
       .set("numLig", numLig).set("datAct", datAct).set("codAct", codAct)
+    if (numSoin !== null && numSoin !== undefined && String(numSoin).trim() !== '') params = params.set("numSoin", numSoin);
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigBultAct", { params })
   }
 
@@ -413,14 +414,22 @@ export class BulletinSoinService {
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigBultVisit", { params })
   }
 
-  deleteLigBultApp(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, codApp: any) {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
+  /** Avec numSoin et datAct : numLig est le numéro de ligne du bulletin (clé complète) ; sans eux : num_lig_app. */
+  deleteLigBultApp(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, codApp: any, numSoin?: any, datAct?: any) {
+    let params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
       .set("numLig", numLig).set("codApp", codApp)
+    if (numSoin !== null && numSoin !== undefined && String(numSoin).trim() !== '' && datAct) {
+      params = params.set("numSoin", numSoin).set("datAct", datAct)
+    }
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigBultApp", { params })
   }
-  deleteLigBultMed(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, codMed: any) {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
+  /** Avec numSoin et datAct : numLig est le numéro de ligne du bulletin (clé complète) ; sans eux : num_lig_med. */
+  deleteLigBultMed(soc: any, mat: any, fam: any, datSoin: any, abrv: any, numLig: any, codMed: any, numSoin?: any, datAct?: any) {
+    let params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("abrv", abrv)
       .set("numLig", numLig).set("codMed", codMed)
+    if (numSoin !== null && numSoin !== undefined && String(numSoin).trim() !== '' && datAct) {
+      params = params.set("numSoin", numSoin).set("datAct", datAct)
+    }
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigBultMed", { params })
   }
 

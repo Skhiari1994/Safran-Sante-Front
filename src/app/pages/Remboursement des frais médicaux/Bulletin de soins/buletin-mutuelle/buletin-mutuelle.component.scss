@@ -406,3 +406,26 @@
   display: block;
   margin: 0 auto;
 }
+
+/* ===== Tableau des actes : largeur des colonnes ===== */
+/* Les champs prennent la largeur de leur colonne (la classe w-full n'existe pas dans le projet :
+   sans cela chaque champ garde sa largeur par défaut, ~180 px, et élargit la colonne) */
+:host ::ng-deep .colonnes-compactes .p-datatable-tbody > tr > td input:not([type="checkbox"]),
+:host ::ng-deep .colonnes-compactes .p-datatable-tbody > tr > td select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Champ code + loupe : même chose (le composant de recherche impose sinon une largeur automatique) */
+:host ::ng-deep .colonnes-compactes .p-datatable-tbody > tr > td app-lov input.form-control {
+  width: 0 !important; /* plus fort que la règle du composant de recherche (width: auto) */
+  flex: 1 1 auto;
+}
+
+/* Marges intérieures des cellules réduites */
+:host ::ng-deep .colonnes-compactes .p-datatable-thead > tr > th,
+:host ::ng-deep .colonnes-compactes .p-datatable-tbody > tr > td,
+:host ::ng-deep .colonnes-compactes .p-datatable-tfoot > tr > td {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}

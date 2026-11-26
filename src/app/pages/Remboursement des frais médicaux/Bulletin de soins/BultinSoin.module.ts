@@ -21,6 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LovComponent } from 'src/app/extraspages/lov/lov.component';
 import { BultinSoinRoutingModule } from './BultinSoin-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NavigationClavierDirective } from 'src/app/shared/navigation-clavier.directive';
 import { ExtraspagesModule } from '../../extrapages/extraspages.module';
 import { BuletinMutuelleComponent } from './buletin-mutuelle/buletin-mutuelle.component';
 import { MontantMaskDirective } from './montant-mask.directive';
@@ -69,6 +70,7 @@ import { MessageService } from 'primeng/api';
     NgSelectModule,
     BultinSoinRoutingModule,
     SharedModule,
+    NavigationClavierDirective,
     NgxPaginationModule,
     ExtraspagesModule,
     NgbAlertModule,

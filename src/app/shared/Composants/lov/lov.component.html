@@ -5,7 +5,10 @@
       <div class="col-md-12">
         <div class="input-group">
           <input type="text" [(ngModel)]="selectedCode" class="form-control border-primary" placeholder="Code"
-            (ngModelChange)="onCodeChange()" [disabled]="disabled" />
+            (ngModelChange)="onCodeChange()" [disabled]="disabled"
+            (keydown.f9)="$event.preventDefault(); openModal(content)"
+            (keydown.alt.arrowdown)="$event.preventDefault(); openModal(content)"
+            title="F9 : rechercher" aria-keyshortcuts="F9" />
           &nbsp;&nbsp;
           <div class="input-group-append" *ngIf="!disabled">
             <a (click)="openModal(content)" aria-label="Search">

@@ -2,12 +2,16 @@ import Swal from 'sweetalert2';
 
 /** Message de réussite en haut à droite (ajout, modification, suppression). */
 export function notifSucces(titre: string): void {
+  // même notification que les messages automatiques de l'application (voir MessagesResultatService)
   Swal.fire({
+    toast: true,
     position: 'top-end',
     icon: 'success',
     title: titre,
     showConfirmButton: false,
-    timer: 2000,
+    showCloseButton: true,
+    timer: 3000,
+    timerProgressBar: true,
   });
 }
 
@@ -29,34 +33,36 @@ export function echapperHtml(texte: unknown): string {
 }
 
 /**
- * Fenêtre de confirmation de suppression, identique sur tous les écrans : corbeille animée dans un cercle,
- * carte « élément concerné » (HTML déjà échappé avec echapperHtml), rappel que l'action est définitive,
- * boutons « Annuler » / « Oui, supprimer ». Le focus est sur « Annuler » : une touche Entrée ne supprime rien.
+ * Fenêtre de confirmation de suppression, identique sur tous les écrans : corbeille dans un cercle rouge au-dessus
+ * du titre, carte « élément concerné » (HTML déjà échappé avec echapperHtml), avertissement « définitif »,
+ * boutons « Annuler » / « Supprimer ». Le focus est sur « Annuler » : Entrée ou Échap ne suppriment rien.
  * Renvoie true si l'utilisateur confirme.
  */
 export function confirmerSuppression(titre: string, detailHtml = '', message = 'Cette action est définitive et ne pourra pas être annulée.'): Promise<boolean> {
   return Swal.fire({
     title: titre,
-    html: `<div class="supp">
-             <div class="supp__icone" aria-hidden="true">
-               <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 64px; height: 64px"></lord-icon>
-             </div>`
-      + (detailHtml ? `<div class="supp__element">${detailHtml}</div>` : '')
-      + `<p class="supp__message">${message}</p>
+    icon: 'warning',
+    iconHtml: '<i class="ri-delete-bin-6-line" aria-hidden="true"></i>',
+    html: `<div class="supp">`
+      + (detailHtml
+        ? `<div class="supp__element"><span class="supp__etiquette">Élément concerné</span><span class="supp__valeur">${detailHtml}</span></div>`
+        : '')
+      + `<p class="supp__message"><i class="ri-error-warning-line" aria-hidden="true"></i><span>${message}</span></p>
            </div>`,
     showCancelButton: true,
     reverseButtons: true,
     focusCancel: true,
     buttonsStyling: false,
-    confirmButtonText: '<i class="ri-delete-bin-line align-bottom me-1" aria-hidden="true"></i>Oui, supprimer',
+    confirmButtonText: '<i class="ri-delete-bin-line align-bottom me-1" aria-hidden="true"></i>Supprimer',
     cancelButtonText: 'Annuler',
     customClass: {
       popup: 'popup-suppression',
+      icon: 'supp-icone',
       title: 'supp-titre',
       htmlContainer: 'supp-contenu',
       actions: 'supp-actions',
-      confirmButton: 'btn btn-danger btn-lg px-4',
-      cancelButton: 'btn btn-light btn-lg px-4',
+      confirmButton: 'btn btn-danger px-4',
+      cancelButton: 'btn btn-light px-4',
     },
   }).then(resultat => resultat.isConfirmed);
 }

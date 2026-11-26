@@ -8,8 +8,10 @@ import {
   Output,
   SimpleChanges,
   HostListener,
+  ElementRef,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NavigationFicheService } from '../../Service/navigation-fiche.service';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -81,7 +83,7 @@ export class LovComponent implements OnInit, OnChanges {
   searchSubject = new Subject<string>(); // Debounce subject
   errorMessage: string = ''; // Property to track errors
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal, private hote: ElementRef<HTMLElement>, private navFiche: NavigationFicheService) { }
 
   ngOnInit(): void {
     this.visibleColumns = (this.columns || []).filter(c => !this.hiddenKeys.includes(c.key));
@@ -191,6 +193,8 @@ export class LovComponent implements OnInit, OnChanges {
     this.selectedCode = item[this.codeField] ?? '';
     this.selectedValue.emit(item);
     this.errorMessage = ''; // Clear error on selection
+    // valeur choisie par l'utilisateur dans la fenêtre : la fiche est modifiée (avertissement avant de la quitter)
+    this.navFiche.signalerChoix(this.hote.nativeElement);
   }
 
   openModal(content: any): void {

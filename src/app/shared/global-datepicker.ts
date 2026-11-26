@@ -214,6 +214,12 @@ export function initGlobalDatePicker(): void {
           if (menu) menu.style.display = 'none';
         },
       }) as flatpickr.Instance;
+      // curseur placé par l'application (ex. nouvelle ligne d'un tableau) : calendrier prêt mais fermé,
+      // il s'ouvrira au clic de l'utilisateur
+      if (el.dataset['fpSansOuverture']) {
+        delete el.dataset['fpSansOuverture'];
+        return;
+      }
       fp.open();
     },
     true

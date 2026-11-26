@@ -92,9 +92,18 @@ export class SearchLovComponent implements OnChanges {
   /** Entrée dans la barre : s'il ne reste qu'un résultat, on le choisit directement. */
   entrerRecherche(modal: any): void {
     if (this.filteredData.length === 1) {
-      this.selectItem(this.filteredData[0]);
-      modal.close();
+      this.choisir(this.filteredData[0], modal);
     }
+  }
+
+  /**
+   * Ligne choisie dans la fenêtre : si la fiche affichée a été modifiée sans être enregistrée, confirmation d'abord.
+   * La fenêtre reste ouverte pendant la question (les écrans la retirent de la page dès qu'elle se ferme).
+   */
+  async choisir(item: any, modal: any): Promise<void> {
+    if (!(await this.navFiche.confirmerAbandon())) return;
+    this.selectItem(item);
+    modal.close();
   }
 
   /** Un ou plusieurs mots de la barre unique retrouvés dans une des colonnes visibles de la ligne. */

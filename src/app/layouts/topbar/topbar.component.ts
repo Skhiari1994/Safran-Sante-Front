@@ -182,19 +182,7 @@ this.navFiche.marquerEnregistre();
 /** Première, précédente, suivante ou dernière fiche de la liste choisie avec la loupe. */
 async naviguer(sens: SensNavigation) {
   if (!this.navEtat) return;
-  if (this.navFiche.modifie) {
-    const reponse = await Swal.fire({
-      icon: 'warning',
-      title: 'Modifications non enregistrées',
-      text: 'Changer de fiche fera perdre les modifications en cours. Continuer ?',
-      showCancelButton: true,
-      reverseButtons: true,
-      focusCancel: true,
-      confirmButtonText: 'Oui, continuer',
-      cancelButtonText: 'Rester sur cette fiche',
-    });
-    if (!reponse.isConfirmed) return;
-  }
+  if (!(await this.navFiche.confirmerAbandon())) return;
   this.navFiche.demander(sens);
 }
 
@@ -221,7 +209,9 @@ delete(){
 
 ////////////////////////////
 
-resetForm() {
+/** Retour et Nouveau vident le formulaire : confirmation si la fiche a été modifiée sans être enregistrée. */
+async resetForm() {
+  if (!(await this.navFiche.confirmerAbandon('formulaire'))) return;
   this.saveService.setAdded(true); // Trigger reset
 }
  
@@ -322,7 +312,8 @@ resetForm() {
     this.modalService.open(ChangePasswordModalComponent, { centered: true, backdrop: 'static' });
   }
 
-  logout() {
+  async logout() {
+    if (!(await this.navFiche.confirmerAbandon('deconnexion'))) return;
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }

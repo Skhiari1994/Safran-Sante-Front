@@ -15,6 +15,7 @@ import { initFirebaseBackend } from './authUtils';
 import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
+import { ResultatEcritureInterceptor } from './core/helpers/resultat-ecriture.interceptor';
 
 // Store
 import { rootReducer } from './store';
@@ -95,6 +96,8 @@ if (environment.defaultauth === 'firebase') {
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    // après ErrorInterceptor : reçoit l'erreur HTTP d'origine pour afficher un message clair
+    { provide: HTTP_INTERCEPTORS, useClass: ResultatEcritureInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
      
       {
