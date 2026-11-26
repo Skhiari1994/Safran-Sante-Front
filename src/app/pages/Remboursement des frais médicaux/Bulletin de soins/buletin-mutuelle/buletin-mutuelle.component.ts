@@ -61,6 +61,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
   lib_fill: string = ''
   lib_assur: string = ''
   num_retr: string = ''
+  cod_retr: string = ''
   nomAdherent: string = ''
   datNais: string = ''
   ageAn: string = ''
@@ -180,6 +181,7 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
         this.soldPlafond = '';
         this.soldPlafondEstim = '';
         this.num_retr = '';
+        this.cod_retr = '';
 
         this.refEtablisPhar = [];
         this.etab_rsoc = [];
@@ -560,7 +562,8 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
       this.cod_fil = item.datEmb,
       this.lib_fill = item.lib_fill,
       this.lib_assur = item.lib_assur,
-      this.num_retr = item.num_retr
+      this.num_retr = item.num_retr;
+      this.cod_retr = item.cod_retr ?? '';
     this.formBuletinSoin.patchValue({
       mat_pers: item.mat_pers,
       cod_fil: item.cod_fil,

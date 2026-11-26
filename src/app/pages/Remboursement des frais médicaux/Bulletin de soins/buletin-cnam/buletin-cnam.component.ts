@@ -71,6 +71,7 @@ export class BuletinCNAMComponent {
   lib_fill: string = ''
   lib_assur: string = ''
   num_retr: string = ''
+  cod_retr: string = ''
   nomAdherent: string = ''
   datNais: string = ''
   ageAn: string = ''
@@ -437,6 +438,7 @@ export class BuletinCNAMComponent {
     this.soldPlafond = '';
     this.soldPlafondEstim = '';
     this.num_retr = '';
+    this.cod_retr = '';
     this.refEtablis = [];
     this.refEtablisApp = [];
     this.refEtablisPhar = [];
@@ -1046,6 +1048,7 @@ export class BuletinCNAMComponent {
     this.lib_fill = item.lib_fill;
     this.lib_assur = item.lib_assur;
     this.num_retr = item.num_retr;
+    this.cod_retr = item.cod_retr ?? '';
 
     this.formBuletinSoin.patchValue({
       mat_pers: item.mat_pers,

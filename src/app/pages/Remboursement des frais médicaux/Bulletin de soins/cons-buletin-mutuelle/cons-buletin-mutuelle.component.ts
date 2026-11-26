@@ -53,6 +53,7 @@ export class ConsBuletinMutuelleComponent {
   lib_fill: string = ''
   lib_assur: string = ''
   num_retr: string = ''
+  cod_retr: string = ''
   nomAdherent: string = ''
   datNais: string = ''
   ageAn: string = ''
@@ -390,7 +391,8 @@ export class ConsBuletinMutuelleComponent {
       this.cod_fil = item.datEmb,
       this.lib_fill = item.lib_fill,
       this.lib_assur = item.lib_assur,
-      this.num_retr = item.num_retr
+      this.num_retr = item.num_retr;
+      this.cod_retr = item.cod_retr ?? '';
     this.formBuletinSoin.patchValue({
       mat_pers: item.mat_pers,
       cod_fil: item.cod_fil,
@@ -583,6 +585,7 @@ export class ConsBuletinMutuelleComponent {
     this.lib_assur = item.lib_assur;
     this.lib_fill = item.lib_fill;
     this.num_retr = item.num_retr;
+    this.cod_retr = item.cod_retr ?? '';
     // prestataire 0 = l'adhérent lui-même : pas de ligne famille, on affiche son propre nom
     this.nomAdherent = item.nom_adherent ?? item.nom_complet_pers;
 

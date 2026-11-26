@@ -274,8 +274,8 @@
                       </select>
                     </div>
                     <div class="col-md-4">
-                      <label for="adh-num-retr" class="form-label">Id CNSS / CNRPS</label>
-                      <input id="adh-num-retr" type="text" class="form-control" placeholder="Id CNSS / CNRPS"
+                      <label for="adh-num-retr" class="form-label">{{ formAdherent.get('cod_retr')?.value == 2 ? 'Identifiant CNRPS' : 'Identifiant CNSS' }}</label>
+                      <input id="adh-num-retr" type="text" class="form-control" [placeholder]="formAdherent.get('cod_retr')?.value == 2 ? 'Identifiant CNRPS' : 'Identifiant CNSS'"
                         formControlName="num_retr" />
                     </div>
                     <div class="col-md-4">

@@ -48,8 +48,8 @@
               <input id="cc-libass" type="text" class="form-control" placeholder="Libellé" [value]="lib_assur" readonly />
             </div>
             <div class="col-md-3">
-              <label for="cc-cnrps" class="form-label">Id CNSS/CNRPS</label>
-              <input id="cc-cnrps" type="text" class="form-control" placeholder="Id CNSS/CNRPS" [value]="num_retr" readonly />
+              <label for="cc-cnrps" class="form-label">{{ cod_retr?.trim() === '2' ? 'Identifiant CNRPS' : 'Identifiant CNSS' }}</label>
+              <input id="cc-cnrps" type="text" class="form-control" [placeholder]="cod_retr?.trim() === '2' ? 'Identifiant CNRPS' : 'Identifiant CNSS'" [value]="num_retr" readonly />
             </div>
             <div class="col-md-3">
               <label for="cc-fil" class="form-label">Filière</label>
