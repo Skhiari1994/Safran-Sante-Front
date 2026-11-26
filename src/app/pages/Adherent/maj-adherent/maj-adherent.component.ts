@@ -142,6 +142,7 @@ export class MajAdherentComponent {
     readonly: true
 
   };
+
   CarteSoinTable = {
     columns: [
       {
@@ -154,8 +155,7 @@ export class MajAdherentComponent {
         lovColumns: [{ key: 'num_fam', label: 'Num fam' }, { key: 'nom_pren', label: 'nom_pren' }],
         updateFieldsOnSelect: { 'nom_pren': 'nom_pren' }
       },
-      // { header: 'libActivite', field: 'lib_activite', editable: true, width: '200px', natureChamp: 'code' ,ignoreInForm: true },
-      // { header: 'Numéro', field: 'num_fam', editable: true, width: '80px', natureChamp: 'code' },
+
       { header: 'Nom & Prénom', field: 'nom_pren', editable: true, width: '200px', natureChamp: 'code', ignoreInForm: true },
       { header: 'Nature', field: 'nat_cart', editable: true, selectOptions: [{ label: "Carte de Soins", value: "S" }, { label: "Carnet Militaire", value: "M" }], width: '200px' },
       { header: 'Numéro', field: 'num_cart', editable: true, width: '80px', natureChamp: 'code' },
@@ -169,10 +169,11 @@ export class MajAdherentComponent {
     readonly: true
 
   };
+
   patchedCode: any;
   rows: any;
-  constructor(private route: ActivatedRoute, private adherentServ: AdherentService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal, private cdr: ChangeDetectorRef, private tokenStorage: TokenStorage, private carteCnamAlert: CarteCnamAlertService) {
 
+  constructor(private route: ActivatedRoute, private adherentServ: AdherentService, private fb: FormBuilder, private saveService: SaveService, private modalService: NgbModal, private cdr: ChangeDetectorRef, private tokenStorage: TokenStorage, private carteCnamAlert: CarteCnamAlertService) {
     this.formAdherent = this.fb.group({
       cod_soc: [''],
       mat_pers: ['', Validators.required],
@@ -218,8 +219,8 @@ export class MajAdherentComponent {
       dat_maj: [''],
       mat_int: [''],
       pers_carte: [''],
-
     });
+
     this.formPhoto = this.fb.group({
       cod_soc: [''],
       mat_pers: [''],
@@ -228,9 +229,8 @@ export class MajAdherentComponent {
       content_type: [''],
       path: [''],
       id_photo_pers: [''],
-
-
     })
+
     this.formAdrPers = this.fb.group({
       cod_gouv: [],
       cod_poste: [],
@@ -242,9 +242,7 @@ export class MajAdherentComponent {
       fax_pers: [],
       adr_courant: [],
       rue_a: [],
-
     })
-
 
     this.formPere = this.fb.group({
       cod_soc: [''],
@@ -266,8 +264,8 @@ export class MajAdherentComponent {
       mat_pers_conj: [''],
       pec_mut: [''],
       dat_pec_mut: [''],
-
     })
+
     this.formMere = this.fb.group({
       cod_soc: [''],
       mat_pers: [''],
@@ -288,8 +286,8 @@ export class MajAdherentComponent {
       mat_pers_conj: [''],
       pec_mut: [''],
       dat_pec_mut: [''],
-
     })
+
     this.formConjoint = this.fb.group({
       cod_soc: [''],
       mat_pers: [''],
@@ -310,9 +308,10 @@ export class MajAdherentComponent {
       mat_pers_conj: [''],
       pec_mut: [''],
       dat_pec_mut: [''],
-
     })
+
   }
+  
   ngOnInit(): void {
     /**
     * BreadCrumb
@@ -323,10 +322,10 @@ export class MajAdherentComponent {
     this.saveService.clearDeleteCallback();
     this.saveService.setDisabled(false);
     this.saveService.setConsultation(true);
-    this.saveService.setIsSearch(false)
+    this.saveService.setIsSearch(false);
+
     this.saveService.isSearch$.subscribe((canSearch) => {
       this.isSearch = canSearch
-
     })
 
     this.getNationalite()
@@ -340,16 +339,14 @@ export class MajAdherentComponent {
     this.getPersonnels(); // Call your service once
 
     this.getActivite()
-    //this.getCarteSoin()
-    // this.getFamille()
-
 
     this.route.queryParams.subscribe(params => {
+      
       if (params['triggerSubmit']) {
         this.submit();
         console.log("test save :")
-
       }
+      
     });
 
 
