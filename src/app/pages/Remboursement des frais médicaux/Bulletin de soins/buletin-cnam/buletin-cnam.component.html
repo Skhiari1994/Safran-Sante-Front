@@ -557,36 +557,21 @@
           selectionMode="multiple" [(selection)]="selectedActes">
           <ng-template pTemplate="header">
             <tr class="table-light">
-              <th style="text-align: center; width: 50px; max-width: 50px;">
-                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              </th>
-              <th style="text-align: center; width: 50px; max-width: 50px;">#
-              </th>
-              <th style="text-align: left; width: 110px; max-width: 110px;">
-                Date Acte</th>
-              <th style="text-align: left; width: 160px; min-width: 160px; max-width: 160px;">
-                Acte</th>
-              <th style="text-align: left; min-width: 320px; max-width: 420px;">
-                Libellé</th>
-              <th style="text-align: center; width: 70px; max-width: 70px;">
-                Unit</th>
-              <th style="text-align: right; width: 110px; max-width: 110px;">
-                Honoraires</th>
-              <th style="text-align: right; width: 110px; max-width: 110px;">
-                Net</th>
-              <th style="text-align: center; width: 70px; max-width: 70px;">
-                Pièces</th>
-              <th style="text-align: center; width: 80px; max-width: 80px;">
-                Vignettes</th>
-              <th style="text-align: left; width: 200px; min-width: 200px;">
-                Type établis</th>
-              <th style="text-align: left; width: 160px; min-width: 160px; max-width: 160px;">
-                Code</th>
-              <th style="text-align: left; min-width: 200px;">Etablissement
-              </th>
+              <th style="text-align: center; width: 50px; max-width: 50px;"><p-tableHeaderCheckbox/></th>
+              <th style="text-align: center; width: 50px; max-width: 50px;">#</th>
+              <th style="text-align: left; width: 110px; max-width: 110px;">Date Acte</th>
+              <th style="text-align: left; width: 160px; min-width: 160px; max-width: 160px;">Acte</th>
+              <th style="text-align: left; min-width: 320px; max-width: 420px;">Libellé</th>
+              <th style="text-align: center; width: 70px; max-width: 70px;">Unit</th>
+              <th style="text-align: right; width: 110px; max-width: 110px;">Honoraires</th>
+              <th style="text-align: right; width: 110px; max-width: 110px;">Net</th>
+              <th style="text-align: center; width: 70px; max-width: 70px;">Pièces</th>
+              <th style="text-align: center; width: 80px; max-width: 80px;">Vignettes</th>
+              <th style="text-align: left; width: 200px; min-width: 200px;">Type établis</th>
+              <th style="text-align: left; width: 160px; min-width: 160px; max-width: 160px;">Code</th>
+              <th style="text-align: left; min-width: 200px;">Etablissement</th>
               <th style="text-align: left; min-width: 150px;">Obs</th>
-              <th style="text-align: center; width: 100px; max-width: 100px;">
-                Actions</th>
+              <th style="text-align: center; width: 100px; max-width: 100px;">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
@@ -710,7 +695,7 @@
                 <div class="d-flex align-items-center justify-content-center gap-2">
                   <button type="button" pInitEditableRow class="btn btn-icon btn-soft-primary" *ngIf="!editing" pTooltip="Modifier" aria-label="Modifier la ligne" (click)="startRowEditActes(rowData, ri)"><i class="ri-pencil-line fs-16" aria-hidden="true"></i></button>
                   <button type="button" class="btn btn-icon btn-soft-secondary" *ngIf="editing" pTooltip="Fermer la ligne" aria-label="Fermer la ligne" (click)="closeRowEditActes(rowData)"><i class="ri-close-line fs-16" aria-hidden="true"></i></button>
-                  <button type="button" class="btn btn-icon btn-soft-danger" *ngIf="lignes.length > 1" pTooltip="Supprimer" aria-label="Supprimer la ligne" (click)="confirmAct(ri, deleteModel, rowData.value)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-icon btn-soft-danger" pTooltip="Supprimer" aria-label="Supprimer la ligne" (click)="confirmAct(ri, deleteModel, rowData.value)"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button>
                 </div>
               </td>
             </tr>

@@ -51,9 +51,10 @@ export class AdherentService {
 
     return this.http.get<any>(API_URL + "Remb/Personnel/majPecEnf", { params });
   }
-  GetAllPers(): Observable<any[]> {
 
-    return this.http.get<any[]>(API_URL + "Remb/Personnel/GetAllPers");
+  getAllPers(cod_soc: string): Observable<any[]> {
+    const params = new HttpParams().set('soc', cod_soc);
+    return this.http.get<any>(API_URL + "Remb/Personnel/GetAllPers", { params });
   }
 
   getPersAffil(cod_soc: any, mat: any): Observable<any[]> {

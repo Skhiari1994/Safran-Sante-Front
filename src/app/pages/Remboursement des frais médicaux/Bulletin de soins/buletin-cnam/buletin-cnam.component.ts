@@ -1516,6 +1516,7 @@ export class BuletinCNAMComponent {
       cod_act: selectedValue.cod_act
     });
   }
+  
   libVisite: string[] = []
   selectedVisit: any
   onSelectedVisite(selectedValue: any, index: number): void {

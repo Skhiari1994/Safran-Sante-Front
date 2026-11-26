@@ -178,7 +178,7 @@ export class MajAffiliationComponent {
   */
 
   getPersonnels() {
-    this.adherentServ.GetAllPers().subscribe(data => {
+    this.adherentServ.getAllPers(this.token.getUser().codSoc).subscribe(data => {
       this.listPersonnel = data
       this.columnPersonnels = [
         { key: "mat_pers", label: "Matricule" },

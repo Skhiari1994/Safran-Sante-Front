@@ -10,8 +10,8 @@ const API_URL = environment.urlServer;
 })
 export class BulletinSoinService {
 
+  // constructor par défaut
   constructor(private http: HttpClient) { }
-
 
   getDatNais(soc: any, mat: any, num_fam: any) {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", num_fam)
@@ -55,6 +55,7 @@ export class BulletinSoinService {
     const params = new HttpParams().set("codAssur", codAssur).set("numSoin", numSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getNbreBult", { params });
   };
+
   getListEtablisPec = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getListEtablisPec", { params });
@@ -64,16 +65,16 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getPersCons", { params });
   };
-  getBultSoin = (): Observable<any> => {
 
+  getBultSoin = (): Observable<any> => {
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultSoin");
   };
-
 
   getBultMut = (soc: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultMut", { params });
   }
+
   /** Liste légère (code bordereau, matricule, num fam, date soin) des bulletins mutuelle, pour la fenêtre de recherche. */
   getBultMutListe = (soc: any): Observable<any> => {
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultMutListe", { params: { soc } });
@@ -91,6 +92,7 @@ export class BulletinSoinService {
     if (mat) params['mat'] = mat;
     if (num_fam) params['num_fam'] = num_fam;
     if (dat_soin) params['dat_soin'] = dat_soin;
+
     return this.http.get<any>(API_URL + "Remb/BultSoin/getBultSoinCons", { params });
   };
 
@@ -114,10 +116,12 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBult", { params });
   };
+
   getLigBultCons = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigBultCons", { params });
   };
+
   getActe = (codFil: any, codAssur: any, parente: any, sexe: any): Observable<any> => {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur).set("parente", parente).set("sexe", sexe)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getAct", { params });
@@ -133,10 +137,12 @@ export class BulletinSoinService {
     const params = new HttpParams().set("refTyp", refTyp)
     return this.http.get<any[]>(API_URL + "Remb/BultSoin/refEtablis", { params });
   };
+
   getRefPhysiqueByCode = (prfCod: any, refTyp: any): Observable<any> => {
     const params = new HttpParams().set("prfCod", prfCod).set("refTyp", refTyp)
     return this.http.get<any[]>(API_URL + "Remb/BultSoin/refEtablisByCode", { params });
   };
+
   addBultSoin(data: any): Observable<any> {
     return this.http.post<any>(API_URL + "Remb/BultSoin/addBultSoin", data);
   }
@@ -158,13 +164,16 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigPhar", { params });
   };
+
   getLigPharCons = (soc: any, mat: any, numFam: any, datSoin: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getLigPharCons", { params });
   };
+
   addLigPhar(data: any): Observable<any[]> {
     return this.http.post<any[]>(API_URL + "Remb/BultSoin/addLigPhar", data);
   }
+
   addBultArriver(data: any): Observable<any[]> {
     return this.http.post<any[]>(API_URL + "Remb/BordArriv/saveBultArrive", data);
   }
@@ -197,6 +206,7 @@ export class BulletinSoinService {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("fam", fam).set("datSoin", datSoin).set("med", med).set("numLig", numLig)
     return this.http.delete<any>(API_URL + "Remb/BultSoin/deleteLigPhar", { params })
   }
+
   getRegimeRemb = (): Observable<any[]> => {
     return this.http.get<any[]>(API_URL + "Remb/BultSoin/getRegimeRemb")
   }
@@ -217,31 +227,38 @@ export class BulletinSoinService {
     const params = new HttpParams().set("parente", parente).set("sexe", sexe).set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getVisit", { params });
   }
+
   getVisitManuel = (codFil: any, codAssur: any): Observable<any> => {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getVisitManuel", { params });
   }
+
   getAppareil = (codFil: any, codAssur: any): Observable<any> => {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getAppareil", { params });
   }
+
   getActes = (parente: any, sexe: any, codFil: any, codAssur: any): Observable<any> => {
     const params = new HttpParams().set("parente", parente).set("sexe", sexe).set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getActes", { params });
   }
+
   getActesManuel = (codFil: any, codAssur: any): Observable<any> => {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getActesManuel", { params });
   }
+
   /** Maladies des dossiers maladie de l'adhérent / du membre de famille (cod_malad, lib_malad, num_dos_mld). */
   getDossiersMaladie = (soc: any, mat: any, numFam: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getDossiersMaladie", { params });
   }
+
   getMeds = (codFil: any, codAssur: any): Observable<any> => {
     const params = new HttpParams().set("codFil", codFil).set("codAssur", codAssur)
     return this.http.get<any>(API_URL + "Remb/BultSoin/getMeds", { params });
   }
+
   calculer_montant_net_app = (soc: any, mat: any, numFam: any, datSoin: any, mntHnor: any, codApp: any, MutMntNet: any): Observable<any> => {
     const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("mntHnor", mntHnor).set("codApp", codApp)
       .set("MutMntNet", MutMntNet)
@@ -410,18 +427,23 @@ export class BulletinSoinService {
   existeLigBult(cle: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigBult", cle);
   }
+
   existeLigPhar(data: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigPhar", data);
   }
+
   existeLigBultAct(data: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigBultAct", data);
   }
+
   existeLigBultVisit(data: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigBultVisit", data);
   }
+
   existeLigBultApp(data: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigBultApp", data);
   }
+
   existeLigBultMed(data: any) {
     return this.http.post<boolean>(API_URL + "Remb/BultSoin/existeLigBultMed", data);
   }
@@ -457,4 +479,5 @@ export class BulletinSoinService {
     }
     return this.http.get<number[]>(API_URL + 'Remb/Annee', { params });
   }
+  
 }
