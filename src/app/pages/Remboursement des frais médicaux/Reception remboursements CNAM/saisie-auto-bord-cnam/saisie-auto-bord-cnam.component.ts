@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { ChangeDetectorRef, Component } from "@angular/core";
 import { ReceptionRemboursementService } from "../reception-remboursement.service";
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from "@angular/forms";
@@ -15,6 +17,12 @@ import { EnvoiServiceService } from "../../Envoi/envoi-service.service";
   styleUrl: "./saisie-auto-bord-cnam.component.scss",
 })
 export class SaisieAutoBordCnamComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux arrivés de la société, lus page par page (mêmes critères que GetAllBordArriver). */
+  readonly sourceBordArriver = this.lovServeur.source('Remb/Remboursement/lovBordArriver', () => ({ cod_soc: this.lovServeur.societe() }), 'cod_bord');
+  /** Bordereaux CNAM envoyés, lus page par page (mêmes critères que getAllBordEnvoi). */
+  readonly sourceBordEnvoi = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiCnam', () => ({ soc: this.lovServeur.societe(), cols: 'cod_bord,dat_bord' }), 'cod_bord');
+
   breadCrumbItems!: Array<{}>;
   BordEnvoiForm!: FormGroup;
   ligPretForm!: FormGroup
@@ -189,12 +197,13 @@ export class SaisieAutoBordCnamComponent {
 
   ngOnDestroy() { this.saveService.clearSaveCallback(); }
 
+  /** Plus de chargement complet : les fenêtres lisent les bordereaux page par page (sourceBordArriver, sourceBordEnvoi). */
   getAllBordArriverList() {
-    this.serv.GetAllBordArriver(this.token.getUser().codSoc).subscribe(data => this.AllBordArriver = data);
+    this.AllBordArriver = [];
   }
 
   getAllBordEnvoiList() {
-    this.serv.getAllBordEnvoiCnam(this.token.getUser().codSoc).subscribe(data => this.AllBordEnvoi = data);
+    this.AllBordEnvoi = [];
   }
 
   getAllAssurance() {
@@ -210,7 +219,8 @@ export class SaisieAutoBordCnamComponent {
     this.isProcessingSearch = true;
     this.isArriverMode = true;
     this.pageTitle = 'Consultation Bordereaux Arrivés CNAM';
-    const bord = this.AllBordArriver.find(b => b.cod_bord === event.cod_bord);
+    // ligne complète renvoyée par la fenêtre (lue page par page) ; un simple code = bordereau introuvable
+    const bord = this.AllBordArriver.find(b => b.cod_bord === event.cod_bord) ?? ('dat_bord' in event ? event : undefined);
     if (bord) {
       this.codBord = bord.cod_bord; this.cod_bord = bord.cod_bord; this.dateBord = bord.dat_bord;
       this.codeAssur = bord.cod_assur; this.libAssur = bord.lib_assur;

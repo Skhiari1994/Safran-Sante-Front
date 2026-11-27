@@ -12,14 +12,14 @@
           <div class="row mb-4">
             <div class="col-sm-2 col-md-1">
               <label for="codBordArriv" class="form-label">Bordereau Arrivé</label>
-              <app-lov [listData]="AllBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
+              <app-lov [source]="sourceBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
                 [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriverPage($event)">
               </app-lov>
             </div>
 
             <div class="col-sm-2 col-md-1">
               <label for="codBordEnvoi" class="form-label">Bordereau Envoi</label>
-              <app-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
+              <app-lov [source]="sourceBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
                 [selectedCode]="codBord" (selectedValue)="search($event)">
               </app-lov>
             </div>

@@ -24,7 +24,7 @@
           </div>
           <div class="col-md-3">
             <label class="form-label">Code bordereau</label>
-            <app-lov [listData]="AllBordArrivers" [columns]="columnBordArriver" codeField="cod_bord"
+            <app-lov [source]="sourceBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
               [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriver($event)">
             </app-lov>
           </div>

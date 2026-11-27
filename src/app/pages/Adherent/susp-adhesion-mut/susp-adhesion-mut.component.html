@@ -112,7 +112,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Matricule</label>
-          <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="matPersVal"
+          <app-lov [source]="sourcePersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="matPersVal"
             (selectedValue)="onSelectedValuePers($event)">
           </app-lov>
         </div>

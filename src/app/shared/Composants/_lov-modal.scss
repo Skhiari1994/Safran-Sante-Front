@@ -144,4 +144,52 @@ table.lov-table {
   }
 }
 
+/* ---------- Mode serveur : chargement et pagination ---------- */
+.lov-table-wrap {
+  position: relative;
+}
+
+/* pendant le chargement d'une page, l'ancienne reste visible mais estompée (pas de saut de mise en page) */
+.lov-table-wrap--chargement table.lov-table tbody {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* fine barre animée en haut du tableau */
+.lov-loader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(64, 81, 137, 0.12);
+}
+
+.lov-loader__barre {
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: var(--vz-primary, #405189);
+  animation: lov-loader 1s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    left: 0;
+    width: 100%;
+    animation: none;
+  }
+}
+
+@keyframes lov-loader {
+  to {
+    left: 100%;
+  }
+}
+
+.lov-empty--erreur {
+  flex-wrap: wrap;
+  color: #b42318;
+}
+
 /* Filtre Sexe : sélecteur segmenté (rail gris clair + curseur blanc sur l'option choisie) */

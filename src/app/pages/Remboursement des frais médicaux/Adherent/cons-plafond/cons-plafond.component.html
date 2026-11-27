@@ -267,7 +267,7 @@
 
 <!-- Section Recherche -->
 <div *ngIf="isSearch" class="d-flex justify-content-center">
-  <app-search-lov [listData]="listPersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
+  <app-search-lov [source]="sourcePersonnel" [columns]="columnPersonnels" (selectedValue)="search($event)">
   </app-search-lov>
 </div>
 

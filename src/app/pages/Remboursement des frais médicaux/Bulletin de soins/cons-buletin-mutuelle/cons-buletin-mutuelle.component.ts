@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,6 +16,9 @@ import { forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
   styleUrl: './cons-buletin-mutuelle.component.scss'
 })
 export class ConsBuletinMutuelleComponent {
+  /** Bulletins mutuelle de la fenêtre de recherche, lus page par page sur le serveur (au lieu de ~11 000 lignes d'un coup). */
+  private readonly lovServeur = inject(LovServeurService);
+  readonly sourceBultSoin = this.lovServeur.source('Remb/BultSoin/lovBultMut', () => ({ soc: this.lovServeur.societe() }));
   formBuletinSoin!: FormGroup
   ligPretForm!: FormGroup
   ligPharForm!: FormGroup
@@ -538,17 +543,17 @@ export class ConsBuletinMutuelleComponent {
         })
     })
   }
+  /**
+   * Colonnes de la fenêtre de recherche. La liste n'est plus chargée en entier : la fenêtre la lit page par page
+   * sur le serveur (sourceBultSoin) ; la fiche complète est chargée à la sélection (voir search).
+   */
   getBultSoin() {
-    // liste légère de la société de connexion ; la fiche complète est chargée à la sélection (voir search)
-    this.serv.getBultMutListe(this.token.getUser().codSoc).subscribe((data: any) => {
-      this.listBultSoin = Array.isArray(data) ? data : [];
-      this.columnsBultSoin = [
-        { key: "cod_bord", label: "Code bord" },
-        { key: "mat_pers", label: "Matricule" },
-        { key: "num_fam", label: "Num fam" },
-        { key: "dat_soin", label: "Date soin" },
-      ]
-    })
+    this.columnsBultSoin = [
+      { key: "cod_bord", label: "Code bord" },
+      { key: "mat_pers", label: "Matricule" },
+      { key: "num_fam", label: "Num fam" },
+      { key: "dat_soin", label: "Date soin" },
+    ]
   }
   /** Une ligne de la liste légère est choisie : on charge sa fiche complète, puis on remplit l'écran. */
   search(item: any) {

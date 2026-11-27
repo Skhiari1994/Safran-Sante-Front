@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { ActivationEnd, CanDeactivateFn, NavigationEnd, Route, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -82,6 +82,8 @@ export class NavigationFicheService {
   /** L'écran affiché a sa propre confirmation de sortie (et marque lui-même ses champs modifiés). */
   private protectionPropre = false;
 
+  private readonly zone = inject(NgZone);
+
   constructor(private saveService: SaveService, router: Router) {
     // « Nouveau » ou « Retour » : il n'y a plus de fiche courante
     this.saveService.add$.subscribe(v => {
@@ -145,16 +147,21 @@ export class NavigationFicheService {
    */
   private suivreChampsModifies(): void {
     if (typeof MutationObserver === 'undefined') return;
-    new MutationObserver(mutations => {
-      if (this.modifie || this.protectionPropre) return;
-      for (const m of mutations) {
-        const el = m.target as HTMLElement;
-        if (el.classList?.contains('ng-dirty') && !(m.oldValue || '').includes('ng-dirty') && this.estChampDeFiche(el)) {
-          this.modifie = true;
-          return;
+    // Hors de la zone Angular : l'observateur ne fait que lever un indicateur, il ne doit jamais relancer la détection
+    // de changements. Dans la zone, chaque changement de classe (ex. menu du profil repositionné par ng-bootstrap à
+    // chaque cycle) relançait un cycle, qui rechangeait une classe… : boucle sans fin, page figée.
+    this.zone.runOutsideAngular(() => {
+      new MutationObserver(mutations => {
+        if (this.modifie || this.protectionPropre) return;
+        for (const m of mutations) {
+          const el = m.target as HTMLElement;
+          if (el.classList?.contains('ng-dirty') && !(m.oldValue || '').includes('ng-dirty') && this.estChampDeFiche(el)) {
+            this.modifie = true;
+            return;
+          }
         }
-      }
-    }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'], attributeOldValue: true });
+      }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'], attributeOldValue: true });
+    });
   }
 
   /** Champ de la fiche affichée (et non barre d'en-tête, fenêtre, recherche ou filtre). */

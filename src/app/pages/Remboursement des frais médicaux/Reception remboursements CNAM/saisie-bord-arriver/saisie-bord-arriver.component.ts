@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { ChangeDetectorRef, Component, OnInit, OnDestroy } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { finalize, map, forkJoin, catchError, of, Observable, switchMap } from "rxjs";
@@ -15,6 +17,10 @@ import { SaveService } from "src/app/shared/Service/save.service";
     styleUrls: ["./saisie-bord-arriver.component.scss"],
 })
 export class SaisieBordArriverComponent implements OnInit, OnDestroy {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux non envoyés, lus page par page sur le serveur (mêmes critères que BordEnvoiEntete). */
+  readonly sourceBordEnvoi = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiEntete', () => ({ soc: this.lovServeur.societe() }), 'cod_bord');
+
     // State
     isLoading = false;
     isSaving = false;
@@ -105,11 +111,9 @@ export class SaisieBordArriverComponent implements OnInit, OnDestroy {
     get apps(): FormArray { return this.appForm.get('lines') as FormArray; }
 
     // --- Step 1: Load Bordereaux ---
+    /** Plus de chargement complet : la fenêtre des bordereaux lit la liste page par page (sourceBordEnvoi). */
     loadBordEnvoiList(): void {
-        this.isLoading = true;
-        this.serv.getAllBordEnvoi(this.token.getUser().codSoc).pipe(
-            finalize(() => this.isLoading = false)
-        ).subscribe(data => this.listBordEnvoi = data);
+        this.isLoading = false;
     }
 
     // --- Step 2: Load Bulletins on Selection ---

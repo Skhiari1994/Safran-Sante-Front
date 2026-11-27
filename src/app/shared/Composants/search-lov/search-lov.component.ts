@@ -1,11 +1,13 @@
 import { lovMatch } from 'src/app/shared/lov-match';
-import { Component, EventEmitter, Input, OnChanges, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { ActiviteHttpService } from 'src/app/shared/Service/activite-http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { debounceTime } from 'rxjs/operators';
-import { Subject, Subscription } from 'rxjs';
+import { catchError, debounceTime, finalize, switchMap } from 'rxjs/operators';
+import { Subject, Subscription, of } from 'rxjs';
+import { AVEC_SEXES, FILTRE_GLOBAL, FILTRE_SEXE, PageLov, SourceLovServeur } from 'src/app/shared/lov-serveur';
 import { SaveService } from 'src/app/shared/Service/save.service';
 import { DemandeNavigation, NavigationFicheService } from 'src/app/shared/Service/navigation-fiche.service';
-import { cibleNavigation, clesDeNavigation, ContexteNavigation, identification, ordonner, signature } from 'src/app/shared/navigation-liste';
+import { cibleNavigation, clesDeNavigation, ContexteNavigation, identification, ordonner, positionCible, signature } from 'src/app/shared/navigation-liste';
 
 @Component({
   selector: 'app-search-lov',
@@ -25,28 +27,213 @@ export class SearchLovComponent implements OnChanges {
   /** Colonnes réellement affichées = columns moins hiddenKeys. */
   visibleColumns: any[] = [];
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
     this.visibleColumns = (this.columns || []).filter(c => !this.hiddenKeys.includes(c.key));
+    const liste = changes['listData'];
+    if (liste && !this.modeServeur) {
+      // liste reçue de l'écran (une liste vide liée dès le départ ne compte pas : elle est souvent encore en route)
+      if (!liste.firstChange || (Array.isArray(liste.currentValue) && liste.currentValue.length > 0)) this.listeRecue = true;
+      if (!liste.firstChange) {
+        // arrivée pendant que la fenêtre est ouverte : elle s'affiche aussitôt, avec la recherche déjà tapée
+        if (this.filtreSexe) this.compterSexes();
+        this.filterData();
+      }
+    }
+  }
+
+  /** true dès que l'écran a fourni sa liste (même vide). */
+  private listeRecue = false;
+
+  /**
+   * Mode mémoire : la fenêtre est ouverte avant que l'écran ait reçu sa liste du serveur (lecture encore en route).
+   * On affiche « Chargement de la liste… » plutôt que « Aucun résultat » ; la liste s'affiche dès son arrivée.
+   */
+  get attenteListe(): boolean {
+    return !this.modeServeur && !this.listeRecue && !(this.listData?.length) && this.activite.actif
+      && Date.now() < this.limiteAttente;
+  }
+
+  /**
+   * Attente bornée : certains écrans lient une liste qu'ils ne remplissent jamais, et l'application fait d'autres
+   * lectures en arrière-plan. Passé ce délai, une liste toujours vide affiche « Aucun résultat » (si elle arrive
+   * plus tard, elle s'affiche quand même).
+   */
+  private limiteAttente = 0;
+  private static readonly ATTENTE_MAX_MS = 6000;
+
+  /** Pendant l'attente de la liste, la fenêtre se réévalue régulièrement (une liste vide n'est déclarée vide qu'au calme). */
+  private minuterieAttente?: ReturnType<typeof setInterval>;
+
+  private surveillerAttente(): void {
+    this.arreterAttente();
+    this.limiteAttente = Date.now() + SearchLovComponent.ATTENTE_MAX_MS;
+    if (!this.attenteListe) return;
+    this.minuterieAttente = setInterval(() => {
+      if (!this.attenteListe) this.arreterAttente();
+    }, 300);
+  }
+
+  private arreterAttente(): void {
+    if (this.minuterieAttente) {
+      clearInterval(this.minuterieAttente);
+      this.minuterieAttente = undefined;
+    }
+  }
+
+
+  /** Une page (mode serveur) ou la liste de l'écran (mode mémoire) est en route. */
+  get enChargement(): boolean {
+    return this.chargement || this.attenteListe;
   }
   @Input() codeField: string = 'cod_tit';
   @Input() labelField: string = 'lib_tit';
   @Output() selectedValue = new EventEmitter<any>();
 
-  /** Nombre de lignes créées dans le tableau : afficher des dizaines de milliers de lignes bloque le navigateur. */
-  readonly taillePage = 100;
-  private limiteAffichage = this.taillePage;
-  /** Lignes réellement affichées (début de filteredData) ; la suite arrive au défilement. */
+  // ---------- mode serveur : la liste est lue page par page (grosses listes) ----------
+
+  /**
+   * Source serveur : si elle est donnée, listData n'est plus utilisé. Filtres, recherche unique et filtre Sexe partent
+   * au serveur ; la fenêtre affiche une page à la fois ; les boutons fiche précédente / suivante demandent la fiche
+   * voisine au serveur.
+   */
+  @Input() source: SourceLovServeur | null = null;
+  get modeServeur(): boolean {
+    return !!this.source;
+  }
+  /** Nombre de lignes correspondant aux filtres (toutes pages confondues). */
+  totalServeur = 0;
+  chargement = false;
+  erreurChargement = '';
+  /** true = demander aussi les effectifs du filtre Sexe. */
+  private demandesPage = new Subject<boolean>();
+  private abonnementPages?: Subscription;
+
+  /** Filtres envoyés au serveur : colonnes remplies, recherche unique, sexe. */
+  private filtresServeur(): Record<string, string> {
+    const filtres: Record<string, string> = {};
+    for (const [cle, valeur] of Object.entries(this.searchQueries)) {
+      if (valeur && valeur.trim() !== '') filtres[cle] = valeur.trim();
+    }
+    if (this.rechercheGlobale.trim()) filtres[FILTRE_GLOBAL] = this.rechercheGlobale.trim();
+    if (this.sexeFiltre) filtres[FILTRE_SEXE] = this.sexeFiltre;
+    return filtres;
+  }
+
+  /** Une seule requête à la fois : une demande plus récente (frappe, page suivante) annule la précédente. */
+  private brancherSourceServeur(): void {
+    this.abonnementPages = this.demandesPage
+      .pipe(
+        switchMap(avecSexes => {
+          const source = this.source;
+          if (!source) return of<PageLov | null>(null);
+          this.chargement = true;
+          this.erreurChargement = '';
+          const filtres = this.filtresServeur();
+          if (avecSexes) filtres[AVEC_SEXES] = 'oui';
+          return source.page(filtres, this.pageCourante, this.taillePage).pipe(
+            catchError(() => {
+              this.erreurChargement = "La liste n'a pas pu être chargée.";
+              return of<PageLov | null>(null);
+            }),
+            finalize(() => (this.chargement = false))
+          );
+        })
+      )
+      .subscribe(resultat => {
+        if (!resultat) {
+          this.filteredData = [];
+          return;
+        }
+        this.totalServeur = resultat.total;
+        this.filteredData = resultat.content;
+        if (resultat.sexes) {
+          const { tous, M, F } = resultat.sexes;
+          this.comptesSexe = { tous, M, F, autre: Math.max(0, tous - M - F) };
+        }
+        // les filtres ont réduit la liste pendant qu'on était sur une page lointaine : retour à la dernière page
+        if (!resultat.content.length && resultat.total > 0 && this.pageCourante > 0) {
+          this.pageCourante = this.nbPages - 1;
+          this.demandesPage.next(false);
+        }
+      });
+  }
+
+  /** Recharge la page courante (bouton « Réessayer » après une erreur). */
+  rechargerPage(): void {
+    this.demandesPage.next(false);
+  }
+
+  /** Ouverture de la fenêtre en mode serveur : première page, et effectifs du filtre Sexe s'il est affiché. */
+  private ouvrirServeur(): void {
+    this.pageCourante = 0;
+    this.totalServeur = 0;
+    this.filteredData = [];
+    this.demandesPage.next(this.filtreSexe);
+  }
+
+  // ---------- pagination (même barre que la fenêtre des champs, app-lov) ----------
+  readonly taillesPage = [25, 50, 100];
+  /** Lignes par page : afficher des dizaines de milliers de lignes d'un coup bloque le navigateur. */
+  taillePage = 50;
+  /** Page affichée, numérotée à partir de 0. */
+  pageCourante = 0;
+  /** Lignes de la page affichée dans le tableau. */
   affichees: any[] = [];
 
   private _filteredData: any[] = [];
+  /** Liste filtrée complète (toutes pages) : elle sert aussi à la navigation entre fiches. */
   get filteredData(): any[] {
     return this._filteredData;
   }
-  /** Chaque nouvelle liste (ouverture, recherche) repart des 100 premières lignes. */
+  /** Chaque nouvelle liste (ouverture, recherche) repart de la première page. */
   set filteredData(valeur: any[]) {
     this._filteredData = valeur || [];
-    this.limiteAffichage = this.taillePage;
-    this.affichees = this._filteredData.slice(0, this.limiteAffichage);
+    if (!this.modeServeur) this.pageCourante = 0;
+    this.majAffichees();
+  }
+
+  /** Mode mémoire : découpe la page courante dans la liste filtrée ; mode serveur : la page reçue telle quelle. */
+  private majAffichees(): void {
+    this.affichees = this.modeServeur
+      ? this._filteredData
+      : this._filteredData.slice(this.pageCourante * this.taillePage, (this.pageCourante + 1) * this.taillePage);
+  }
+
+  /** Nombre de lignes trouvées, toutes pages confondues. */
+  get totalLignes(): number {
+    return this.modeServeur ? this.totalServeur : this._filteredData.length;
+  }
+
+  get nbPages(): number {
+    return Math.max(1, Math.ceil(this.totalLignes / this.taillePage));
+  }
+
+  /** Rang de la première et de la dernière ligne affichées (« 51–100 »). */
+  get premiereLigne(): number {
+    return this.totalLignes ? this.pageCourante * this.taillePage + 1 : 0;
+  }
+  get derniereLigne(): number {
+    return Math.min(this.totalLignes, (this.pageCourante + 1) * this.taillePage);
+  }
+
+  allerPage(page: number): void {
+    const cible = Math.min(Math.max(page, 0), this.nbPages - 1);
+    if (cible === this.pageCourante || this.chargement) return;
+    this.pageCourante = cible;
+    if (this.modeServeur) this.demandesPage.next(false);
+    else this.majAffichees();
+  }
+
+  changerTaillePage(taille: number): void {
+    this.taillePage = Number(taille) || 50;
+    this.pageCourante = 0;
+    if (this.modeServeur) this.demandesPage.next(false);
+    else this.majAffichees();
+  }
+
+  /** 6678 → « 6 678 ». */
+  nombre(n: number): string {
+    return (n ?? 0).toLocaleString('fr-FR');
   }
 
   /** Largeur d'un champ de filtre selon le nombre de colonnes : 2 à 4 champs par ligne, jamais une longue pile. */
@@ -91,7 +278,7 @@ export class SearchLovComponent implements OnChanges {
 
   /** Entrée dans la barre : s'il ne reste qu'un résultat, on le choisit directement. */
   entrerRecherche(modal: any): void {
-    if (this.filteredData.length === 1) {
+    if (this.modeServeur ? this.totalServeur === 1 && this.affichees.length === 1 : this.filteredData.length === 1) {
       this.choisir(this.filteredData[0], modal);
     }
   }
@@ -154,15 +341,6 @@ export class SearchLovComponent implements OnChanges {
     this.filterData();
   }
 
-  /** Défilement vers le bas du tableau : on ajoute les 100 lignes suivantes. */
-  onScrollTableau(event: Event): void {
-    const el = event.target as HTMLElement;
-    if (this.affichees.length < this._filteredData.length && el.scrollTop + el.clientHeight >= el.scrollHeight - 80) {
-      this.limiteAffichage += this.taillePage;
-      this.affichees = this._filteredData.slice(0, this.limiteAffichage);
-    }
-  }
-
   searchQueries: { [key: string]: string } = {};  // This will store search queries for each column
   selectedCode: string = '';
   selectedLabel: string = '';
@@ -171,10 +349,12 @@ export class SearchLovComponent implements OnChanges {
   private isSearchSubscription!: Subscription;
   private dateFormatCache = new Map<any, string>(); // Cache for formatted dates
 
-  constructor(private modalService: NgbModal, private saveService: SaveService, private navFiche: NavigationFicheService) { }
+  constructor(private modalService: NgbModal, private saveService: SaveService, private navFiche: NavigationFicheService,
+    private activite: ActiviteHttpService) { }
 
   ngOnInit(): void {
-    this.filteredData = this.listData;
+    this.filteredData = this.modeServeur ? [] : this.listData;
+    this.brancherSourceServeur();
 
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
       this.filterData();
@@ -197,10 +377,12 @@ export class SearchLovComponent implements OnChanges {
   }
 
   ngOnDestroy(): void {
+    this.arreterAttente();
     // Unsubscribe to prevent leaks
     if (this.isSearchSubscription) {
       this.isSearchSubscription.unsubscribe();
     }
+    this.abonnementPages?.unsubscribe();
   }
   private isModalOpen = false;
 
@@ -215,9 +397,15 @@ export class SearchLovComponent implements OnChanges {
     this.rechercheGlobale = '';
     this.filtresOuverts = false;
     this.sexeFiltre = '';
-    if (this.filtreSexe) this.compterSexes();
-    this.filteredData = [...this.listData]; // Show all data immediately
+    if (this.modeServeur) {
+      this.ouvrirServeur();
+    } else {
+      if (this.filtreSexe) this.compterSexes();
+      this.filteredData = [...this.listData]; // Show all data immediately
+    }
+    this.surveillerAttente();
     this.modalService.open(this.content, { size: 'xl' }).result.finally(() => {
+      this.arreterAttente();
       this.isModalOpen = false; // Reset modal state
       this.saveService.setIsSearch(false); // Reset isSearch
     });
@@ -226,6 +414,12 @@ export class SearchLovComponent implements OnChanges {
 
   // Filter data based on individual column search
   filterData() {
+    if (this.modeServeur) {
+      // nouveaux critères : le serveur renvoie la première page des lignes correspondantes
+      this.pageCourante = 0;
+      this.demandesPage.next(false);
+      return;
+    }
     if (!this.columns || this.columns.length === 0) {
       // No columns defined: return empty
       this.filteredData = [];
@@ -258,7 +452,9 @@ export class SearchLovComponent implements OnChanges {
 
   // Trigger search for each column
   onSearch() {
-    this.filterData(); // Call filter when user types in search fields
+    // mode serveur : une seule requête quand la frappe marque une pause
+    if (this.modeServeur) this.searchSubject.next('');
+    else this.filterData(); // Call filter when user types in search fields
   }
 
   // Show all data (clear search)
@@ -266,6 +462,10 @@ export class SearchLovComponent implements OnChanges {
     this.searchQueries = {}; // Reset all search queries
     this.rechercheGlobale = '';
     this.sexeFiltre = '';
+    if (this.modeServeur) {
+      this.filterData();
+      return;
+    }
     this.filteredData = this.listData; // Show all data
   }
 
@@ -284,6 +484,10 @@ export class SearchLovComponent implements OnChanges {
    * service : les écrans détruisent cette fenêtre dès qu'une ligne est choisie.
    */
   private publierNavigation(item: any): void {
+    if (this.modeServeur) {
+      this.publierNavigationServeur(item);
+      return;
+    }
     const cles = clesDeNavigation(this.visibleColumns);
     const filtre = this.hasQuery();
     const liste = ordonner(this.filteredData, cles);
@@ -302,6 +506,65 @@ export class SearchLovComponent implements OnChanges {
     this.navFiche.publier(contexte, { position: index + 1, total: liste.length, filtre, code: id.code, detail: id.detail });
   }
 
+  /** Mode serveur : la position est celle de la ligne dans la liste du serveur (page affichée + rang dans la page). */
+  private publierNavigationServeur(item: any): void {
+    const rang = this.affichees.indexOf(item);
+    if (rang < 0) {
+      this.navFiche.effacer();
+      return;
+    }
+    const filtre = this.hasQuery();
+    const index = this.pageCourante * this.taillePage + rang;
+    const contexte: ContexteNavigation = {
+      cles: clesDeNavigation(this.visibleColumns),
+      signature: signature(item, this.visibleColumns),
+      filtre,
+      signaturesPortee: null,
+      serveur: { filtres: this.filtresServeur(), index, total: this.totalServeur },
+    };
+    const id = identification(item, this.affichees, this.visibleColumns, (cle, valeur) => this.valeurAffichee(cle, valeur));
+    this.navFiche.publier(contexte, { position: index + 1, total: this.totalServeur, filtre, code: id.code, detail: id.detail });
+  }
+
+  /**
+   * Mode serveur : fiche voisine demandée au serveur (page d'une ligne à la position voulue, mêmes filtres que lors du
+   * choix). Le nombre de fiches est relu à chaque déplacement : une fiche ajoutée ou supprimée entre-temps est prise
+   * en compte.
+   */
+  private naviguerServeur(demande: DemandeNavigation, serveur: NonNullable<ContexteNavigation['serveur']>): void {
+    const cible = positionCible(serveur.index, serveur.total, demande.sens);
+    if (cible < 0 || cible === serveur.index || !this.source) {
+      // déjà à la première ou à la dernière fiche : on ne recharge pas la fiche affichée
+      this.saveService.setIsSearch(false);
+      return;
+    }
+    this.source.page(serveur.filtres, cible, 1).pipe(catchError(() => of<PageLov | null>(null))).subscribe(resultat => {
+      const item = resultat?.content?.[0];
+      if (!resultat || !item) {
+        // la liste a changé (fiches supprimées) : la navigation s'arrête
+        this.navFiche.effacer();
+      } else {
+        this.selectedCode = item[this.codeField] || '';
+        this.selectedLabel = item[this.labelField] || '';
+        this.selectedValue.emit(item);
+        const contexte: ContexteNavigation = {
+          ...demande.contexte,
+          signature: signature(item, this.visibleColumns),
+          serveur: { filtres: serveur.filtres, index: cible, total: resultat.total },
+        };
+        const id = identification(item, [item], this.visibleColumns, (cle, valeur) => this.valeurAffichee(cle, valeur));
+        this.navFiche.publier(contexte, {
+          position: cible + 1,
+          total: resultat.total,
+          filtre: demande.contexte.filtre,
+          code: id.code,
+          detail: id.detail,
+        });
+      }
+      this.saveService.setIsSearch(false);
+    });
+  }
+
   /** Valeur d'une colonne telle que l'utilisateur la lit (les dates en jj/mm/aaaa). */
   private valeurAffichee(cle: string, valeur: unknown): string {
     return /^dat/i.test(cle) ? this.formatDateValue(valeur) : String(valeur ?? '');
@@ -314,6 +577,11 @@ export class SearchLovComponent implements OnChanges {
    */
   private appliquerNavigation(demande: DemandeNavigation): void {
     setTimeout(() => {
+      const serveur = demande.contexte.serveur;
+      if (serveur) {
+        this.naviguerServeur(demande, serveur);
+        return;
+      }
       const resultat = cibleNavigation(this.listData, this.visibleColumns, demande.contexte, demande.sens);
       if (resultat && resultat.index === resultat.courant) {
         // déjà à la première ou à la dernière fiche : on ne recharge pas la fiche affichée (une saisie en cours serait perdue)
@@ -346,9 +614,14 @@ export class SearchLovComponent implements OnChanges {
     this.rechercheGlobale = '';
     this.filtresOuverts = false;
     this.sexeFiltre = '';
-    if (this.filtreSexe) this.compterSexes();
-    this.filteredData = [...this.listData]; // Show all data immediately
-    this.modalService.open(content, { size: 'xl' });
+    if (this.modeServeur) {
+      this.ouvrirServeur();
+    } else {
+      if (this.filtreSexe) this.compterSexes();
+      this.filteredData = [...this.listData]; // Show all data immediately
+    }
+    this.modalService.open(content, { size: 'xl' }).result?.finally(() => this.arreterAttente()).catch(() => undefined);
+    this.surveillerAttente();
   }
 
   // Track by function for performance

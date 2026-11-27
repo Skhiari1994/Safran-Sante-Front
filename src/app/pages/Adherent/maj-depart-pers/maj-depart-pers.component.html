@@ -86,7 +86,7 @@
             >Matricule</label>
            <div *ngIf="!edit">
             <app-lov
-              [listData]="listPersonnelDepart"
+              [source]="sourcePersonnel"
               [columns]="columnsSearch"
               [codeField]="'mat_pers'"
               [selectedCode]="matPersVal"

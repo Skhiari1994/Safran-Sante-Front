@@ -86,7 +86,7 @@
                             <div class="mb-5 row">
 
                                 <app-lov 
-                                [listData]="listValues" 
+                                [source]="sourcePersonnel" 
                                 [columns]="columns" 
                                 [codeField]="codeField" 
                                  (selectedValue)="onSelectedValue($event)">
@@ -95,7 +95,7 @@
                             <div class="mb-5 row">
 
                                 <app-lov 
-                                [listData]="listValues" 
+                                [source]="sourcePersonnel" 
                                 [columns]="columns" 
                                 [codeField]="codeField" 
                                  (selectedValue)="onSelectedValueResp($event)">

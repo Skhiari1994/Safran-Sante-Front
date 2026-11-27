@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../Admin.service';
@@ -12,6 +14,10 @@ import { confirmerSuppression, echapperHtml, notifErreur, notifSucces, MSG_SUPPR
   styleUrl: './maj-valideur.component.scss'
 })
 export class MajValideurComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnels). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovPersonnels', () => ({ codSoc: this.lovServeur.societe(), cols: 'mat_pers,full_name' }), 'mat_pers');
+
   listValues: any[] = [];
   columns: any[] = [];
   selectedCode: string = '';
@@ -28,7 +34,8 @@ export class MajValideurComponent {
   persValidForm!: FormGroup
   gridOpen!: boolean
   rowSelection
-  codeField: string = 'matPers';
+  // le serveur renvoie mat_pers / full_name (matPers / fullName n'existent pas : colonnes vides, choix sans matricule)
+  codeField: string = 'mat_pers';
   constructor(private adminServ: AdminService, private formBuilder: FormBuilder, private modalService: NgbModal,
       private tokenService: TokenStorage) {
     this.rowSelection = "single";
@@ -44,37 +51,29 @@ export class MajValideurComponent {
       nom_resp: [''],
 
     });
-    this.adminServ.getPersonnels().subscribe(data => {
-      this.listValues = data;
-      console.log(this.listValues)
-      // Définir les colonnes dynamiques du tableau
-      this.columns = [
-        { key: 'matPers', label: 'Matricule' },
-        { key: 'fullName', label: 'Nom & prénom' },
-
-       // { key: 'lib_tit_a', label: 'Libellé 2éme langue' }
-      ];
-      console.log("this.columns",this.columns)
-
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columns = [
+      { key: 'mat_pers', label: 'Matricule' },
+      { key: 'full_name', label: 'Nom & prénom' },
+    ];
     this.GetPersValid()
     this.getmatriculeetnom()
   }
 
   onSelectedValue(item: any) {
-    this.selectedCode = item.matPers; // Mise à jour du champ code
-    this.selectedLabel = item.fullName; // Mise à jour du champ libellé
+    this.selectedCode = item.mat_pers; // Mise à jour du champ code
+    this.selectedLabel = item.full_name; // Mise à jour du champ libellé
     this.persValidForm.patchValue({
-      mat_pers:item.matPers,
-      nom_pers: item.fullName  
+      mat_pers:item.mat_pers,
+      nom_pers: item.full_name  
     });
   }
   onSelectedValueResp(item: any) {
-    this.selectedCode = item.matPers; // Mise à jour du champ code
-    this.selectedLabel = item.fullName; // Mise à jour du champ libellé
+    this.selectedCode = item.mat_pers; // Mise à jour du champ code
+    this.selectedLabel = item.full_name; // Mise à jour du champ libellé
     this.persValidForm.patchValue({
-      mat_resp:item.matPers,
-      nom_resp: item.fullName  
+      mat_resp:item.mat_pers,
+      nom_resp: item.full_name  
     });
   }
   openModal(targetModal :any, pers :any) {

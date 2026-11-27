@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-3">
           <label class="form-label">Code bordereau</label>
-          <app-lov [listData]="listCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="codBord"
+          <app-lov [source]="sourceCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="codBord"
             (selectedValue)="onSelectedValueCodBord($event)">
           </app-lov>
         </div>
@@ -161,7 +161,7 @@
 
 <!-- end row -->
 <div *ngIf="isSearch">
-  <app-search-lov [listData]="listCodBord" [columns]="columnsSearch" (selectedValue)="search($event)">
+  <app-search-lov [source]="sourceCodBord" [columns]="columnsSearch" (selectedValue)="search($event)">
   </app-search-lov>
 </div>
 <ng-template #deleteModel let-modal>

@@ -23,6 +23,7 @@ import { SaveService } from 'src/app/shared/Service/save.service';
 import { EtatNavigation, NavigationFicheService } from 'src/app/shared/Service/navigation-fiche.service';
 import { SensNavigation } from 'src/app/shared/navigation-liste';
 import Swal from 'sweetalert2';
+import { estSaisissable, focaliser, reserverCurseur } from 'src/app/shared/focus-nouvelle-ligne';
 import { debounceTime, Subject } from 'rxjs';
 import { MajAdherentComponent } from 'src/app/pages/Adherent/maj-adherent/maj-adherent.component';
 
@@ -212,7 +213,33 @@ delete(){
 /** Retour et Nouveau vident le formulaire : confirmation si la fiche a été modifiée sans être enregistrée. */
 async resetForm() {
   if (!(await this.navFiche.confirmerAbandon('formulaire'))) return;
+  // les lignes vides recréées par l'écran ne prennent pas le curseur : il va dans le premier champ de la fiche
+  reserverCurseur();
   this.saveService.setAdded(true); // Trigger reset
+  this.curseurSurPremierChamp();
+}
+
+/**
+ * Après « Nouveau » / « Retour » : curseur dans le premier champ saisissable de la fiche (ex. Matricule), pour saisir
+ * directement. On attend que l'écran ait vidé son formulaire ; le calendrier d'un champ date ne s'ouvre pas.
+ */
+private curseurSurPremierChamp(essais = 10): void {
+  setTimeout(() => {
+    const champ = Array.from(document.querySelectorAll<HTMLElement>(
+      '.main-content input, .main-content select, .main-content textarea'))
+      .find(el => estSaisissable(el)
+        && !el.closest('.modal, .p-datatable, [role="search"], .search-box')
+        && !(el instanceof HTMLInputElement && (el.type === 'search' || /^rechercher/i.test(el.placeholder || ''))));
+    if (champ) {
+      // remontée immédiate en haut de la page, puis curseur dans le champ SANS autre défilement. Avant : la page défile en
+      // douceur (scroll-behavior: smooth de Bootstrap) et le focus du champ, en défilant lui aussi, interrompait la
+      // remontée à mi-chemin (champ caché sous la barre du haut)
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      focaliser(champ, true);
+    } else if (essais > 0) {
+      this.curseurSurPremierChamp(essais - 1);
+    }
+  }, 100);
 }
  
 

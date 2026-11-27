@@ -260,8 +260,12 @@ export class BulletinSoinService {
   }
 
   calculer_montant_net_app = (soc: any, mat: any, numFam: any, datSoin: any, mntHnor: any, codApp: any, MutMntNet: any): Observable<any> => {
-    const params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("mntHnor", mntHnor).set("codApp", codApp)
-      .set("MutMntNet", MutMntNet)
+    let params = new HttpParams().set("soc", soc).set("mat", mat).set("numFam", numFam).set("datSoin", datSoin).set("mntHnor", mntHnor).set("codApp", codApp)
+    // MutMntNet n'est envoyé que s'il a une valeur : le serveur ne calcule RIEN dès qu'il le reçoit, même à 0
+    // (les écrans passaient 0 : le net d'un appareil valait donc toujours 0)
+    if (MutMntNet !== null && MutMntNet !== undefined && String(MutMntNet).trim() !== '' && Number(MutMntNet) !== 0) {
+      params = params.set("MutMntNet", MutMntNet)
+    }
     return this.http.get<any>(API_URL + "Remb/BultSoin/calculer_montant_net_app", { params });
   }
 

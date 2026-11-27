@@ -20,7 +20,7 @@
                             <div class="row mt-3">
                                 <div class="col-md-2">
                                     <label class="form-label">Matricule </label>
-                                    <app-lov [listData]="personnelListDeb" [columns]="columnsSearch"
+                                    <app-lov [source]="sourcePersonnel" [columns]="columnsSearch"
                                         codeField="mat_pers" [selectedCode]="formAdherent.get('mat_pers_deb')?.value"
                                         (selectedValue)="onSelectedVMat($event)">
                                     </app-lov>

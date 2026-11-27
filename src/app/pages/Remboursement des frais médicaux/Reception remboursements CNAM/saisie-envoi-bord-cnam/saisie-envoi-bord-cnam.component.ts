@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
@@ -17,6 +19,10 @@ import { HasUnsavedChanges } from 'src/app/core/guards/unsaved-changes.guard';
   styleUrls: ['./saisie-envoi-bord-cnam.component.scss']
 })
 export class SaisieEnvoiBordCnamComponent implements OnInit, HasUnsavedChanges {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux CNAM envoyés, lus page par page sur le serveur (mêmes critères que getAllBordEnvoi). */
+  readonly sourceBordEnvoi = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiCnam', () => ({ soc: this.lovServeur.societe(), cols: 'cod_bord,dat_bord,cod_assur,nbr_bult,tot_remb' }), 'cod_bord');
+
   breadCrumbItems!: Array<{}>;
 
   // Forms
@@ -257,23 +263,15 @@ export class SaisieEnvoiBordCnamComponent implements OnInit, HasUnsavedChanges {
   }
 
   // API Calls
+  /** Colonnes des fenêtres de bordereaux : la liste est lue page par page sur le serveur (sourceBordEnvoi). */
   getAllBordEnvoi(): void {
-    this.serv.getAllBordEnvoiCnam(this.token.getUser().codSoc).subscribe({
-      next: (data) => {
-        this.AllBordEnvoi = data;
-        this.columnBordArriver = [
-          { key: 'cod_bord', label: 'Code Bordereau' },
-          { key: 'dat_bord', label: 'Date' },
-          { key: 'cod_assur', label: 'Assurance' },
-          { key: 'nbr_bult', label: 'Nbre Bulletins' },
-          { key: 'tot_remb', label: 'Total Remb.' }
-        ];
-      },
-      error: (err) => {
-        console.error('Error loading bordereaux:', err);
-        Swal.fire('Erreur', 'Impossible de charger les bordereaux', 'error');
-      }
-    });
+    this.columnBordArriver = [
+      { key: 'cod_bord', label: 'Code Bordereau' },
+      { key: 'dat_bord', label: 'Date' },
+      { key: 'cod_assur', label: 'Assurance' },
+      { key: 'nbr_bult', label: 'Nbre Bulletins' },
+      { key: 'tot_remb', label: 'Total Remb.' }
+    ];
   }
 
   getAllAssurance(): void {

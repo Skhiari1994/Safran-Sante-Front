@@ -1,5 +1,6 @@
 
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
@@ -19,6 +20,9 @@ import { forEach } from 'lodash';
   styleUrl: './preparation-bord-cnam.component.scss'
 })
 export class PreparationBordCnamComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux CNAM envoyés, lus page par page sur le serveur (mêmes critères que getCodBord(société)). */
+  readonly sourceCodBord = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiCnam', () => ({ soc: this.lovServeur.societe(), cols: 'cod_bord,dat_bord' }), 'cod_bord');
 
   listDem: any;
   selectedRows: any;
@@ -222,10 +226,7 @@ export class PreparationBordCnamComponent {
       { key: "cod_bord", label: "Code Borderau" },
       { key: "dat_bord", label: "Date Bord" },
     ];
-
-    this.envoiServ.getCodBord(this.tokenStorage.getUser().codSoc).subscribe((data) => {
-      this.listCodBord = data;
-    });
+    // la liste n'est plus chargée en entier : les fenêtres la lisent page par page sur le serveur (sourceCodBord)
   }
 
   onSelectedValueCodAssur(item: any) {

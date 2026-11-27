@@ -25,7 +25,7 @@
             </div>
             <div class="col-md-3">
               <label class="form-label">Code bordereau arrivé</label>
-              <app-lov [listData]="AllBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
+              <app-lov [source]="sourceBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
                 [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriverPage($event)">
               </app-lov>
             </div>
@@ -839,7 +839,7 @@
   </form>
 </ng-template>
 <div *ngIf="isSearch">
-  <app-search-lov [listData]="AllBordArriver" [columns]="columnBordArriver"
+  <app-search-lov [source]="sourceBordArriver" [columns]="columnBordArriver"
     (selectedValue)="onSelectedValueBordArriverPage($event)">
   </app-search-lov>
 </div>

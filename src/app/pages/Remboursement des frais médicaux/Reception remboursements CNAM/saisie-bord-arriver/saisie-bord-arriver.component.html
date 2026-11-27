@@ -32,7 +32,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label small text-muted">Bordereau Source (Envoi)</label>
-                        <app-lov [listData]="listBordEnvoi" [columns]="colBordEnvoi" codeField="cod_bord"
+                        <app-lov [source]="sourceBordEnvoi" [columns]="colBordEnvoi" codeField="cod_bord"
                             (selectedValue)="onSelectBord($event)">
                         </app-lov>
                     </div>

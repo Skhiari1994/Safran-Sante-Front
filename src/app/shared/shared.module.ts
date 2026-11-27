@@ -45,6 +45,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableauComponent } from './Composants/tableau/tableau.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { SearchLovComponent } from './Composants/search-lov/search-lov.component';
+import { LovPaginationComponent } from './Composants/lov-pagination/lov-pagination.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { PretSearchComponent } from './Composants/pret-search/pret-search.component';
 import { MatriculeLovComponent } from './Composants/matricule-lov/matricule-lov.component';
@@ -85,6 +86,7 @@ import { ConsBultCnamLovComponent } from './Composants/cons-bult-cnam-lov/cons-b
     LovComponent,
     TableauComponent,
     SearchLovComponent,
+    LovPaginationComponent,
     PretSearchComponent,
     MatriculeLovComponent,
     ConsBultMutLovComponent,
@@ -137,6 +139,7 @@ import { ConsBultCnamLovComponent } from './Composants/cons-bult-cnam-lov/cons-b
     LovComponent,
     TableauComponent,
     SearchLovComponent,
+    LovPaginationComponent,
     PretSearchComponent,
     MatriculeLovComponent,
     ConsBultMutLovComponent,

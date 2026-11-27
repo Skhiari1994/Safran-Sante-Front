@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { libelleDe } from 'src/app/shared/lov-libelle';
 import { TokenStorage } from './../../../account/token-storage.service';
 import { ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from '@angular/core';
@@ -18,6 +20,10 @@ import { CarteCnamAlertService } from '../carte-cnam-alert.service';
   styleUrl: './maj-adherent.component.scss'
 })
 export class MajAdherentComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnelles). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovPersonnelles', () => ({ codSoc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom_pers,pren_pers,num_retr,cin,cod_lieu_geog' }), 'mat_pers');
+
   breadCrumbItems!: Array<{}>;
   listNationalite: any[] = []
   listCorps: any[] = []
@@ -628,21 +634,17 @@ export class MajAdherentComponent {
   }
 
   getPersonnels() {
-    this.adherentServ.getPersonnels().subscribe(data => {
-      console.log("personnel", data)
-      this.listPersonnel = data;
-      this.columnsSearch = [
-        { key: 'mat_pers', label: 'Matricule' },
-        { key: 'mat_int', label: 'Mat. Administratif' },
-        { key: 'dat_nais', label: 'Date naissance' },
-        { key: 'nom_pers', label: 'Nom' },
-        { key: 'pren_pers', label: 'Prénom' },
-        { key: 'num_retr', label: 'Id unique' },
-        { key: 'cin', label: 'CIN' },
-        { key: 'cod_lieu_geog', label: 'Service' },
-      ];
-
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: 'mat_pers', label: 'Matricule' },
+      { key: 'mat_int', label: 'Mat. Administratif' },
+      { key: 'dat_nais', label: 'Date naissance' },
+      { key: 'nom_pers', label: 'Nom' },
+      { key: 'pren_pers', label: 'Prénom' },
+      { key: 'num_retr', label: 'Id unique' },
+      { key: 'cin', label: 'CIN' },
+      { key: 'cod_lieu_geog', label: 'Service' },
+    ];
   }
   countMat() {
     this.adherentServ.countMat(this.tokenStorage.getUser().codSoc, '998').subscribe(data => {

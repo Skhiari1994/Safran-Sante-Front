@@ -33,7 +33,7 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label">Matricule début</label>
-                <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
+                <app-lov [listData]="personnelListDeb" [source]="listeDebRestreinte ? null : sourcePersonnel" [columns]="columnsSearch" codeField="mat_pers"
                   [selectedCode]="formAdherent.get('mat_pers_deb')?.value" (selectedValue)="onSelectedVMat($event)"></app-lov>
               </div>
               <div class="col-md-8">
@@ -46,7 +46,7 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label">Matricule fin</label>
-                <app-lov [listData]="personnelListDeb" [columns]="columnsSearch" codeField="mat_pers"
+                <app-lov [listData]="personnelListDeb" [source]="listeDebRestreinte ? null : sourcePersonnel" [columns]="columnsSearch" codeField="mat_pers"
                   [selectedCode]="formAdherent.get('mat_pers_fin')?.value" (selectedValue)="onSelectedVMatFin($event)"></app-lov>
               </div>
               <div class="col-md-8">

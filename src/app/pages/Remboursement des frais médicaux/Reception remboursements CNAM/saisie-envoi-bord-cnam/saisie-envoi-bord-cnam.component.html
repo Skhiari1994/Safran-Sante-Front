@@ -12,7 +12,7 @@
                             <!-- Code Bordereau -->
                             <div class="col-sm-2 col-md-2">
                                 <label for="codBord" class="form-label fw-bold">Code Bordereau</label>
-                                <app-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
+                                <app-lov [source]="sourceBordEnvoi" [columns]="columnBordArriver" codeField="cod_bord"
                                     [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriver($event)"
                                     [readonly]="isReadOnly">
                                 </app-lov>
@@ -705,6 +705,6 @@
 
 <!-- Search Modal -->
 <div *ngIf="isSearch">
-    <app-search-lov [listData]="AllBordEnvoi" [columns]="columnBordArriver" (selectedValue)="search($event)">
+    <app-search-lov [source]="sourceBordEnvoi" [columns]="columnBordArriver" (selectedValue)="search($event)">
     </app-search-lov>
 </div>

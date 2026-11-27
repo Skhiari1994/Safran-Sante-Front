@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +14,10 @@ import { AdherentService } from '../adherent.service';
   styleUrl: './maj-doss-mld.component.scss'
 })
 export class MajDossMldComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersActif). */
+  readonly sourcePersonnel = this.lovServeur.source('Remb/Personnel/lovPersActif', () => ({ soc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,num_retr,nom_pers,pren_pers' }), 'mat_pers');
+
   pSusp2: any
   listPersonnel: any[] = []
   columnPersonnels: any[] = []
@@ -134,17 +140,15 @@ export class MajDossMldComponent {
   }
 
   getPersonnels() {
-    this.adherentServ.getPersActif().subscribe(data => {
-      this.listPersonnel = data
-      this.columnPersonnels = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "num_retr", label: "Num Retr" },
-        { key: "nom_pers", label: "Nom " },
-        { key: "pren_pers", label: "Prénom " },
-      ];
-    })
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnPersonnels = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "num_retr", label: "Num Retr" },
+      { key: "nom_pers", label: "Nom " },
+      { key: "pren_pers", label: "Prénom " },
+    ];
   }
 
 

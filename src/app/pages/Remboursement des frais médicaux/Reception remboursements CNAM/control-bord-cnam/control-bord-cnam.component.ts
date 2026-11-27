@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from "@angular/core";
 import { ReceptionRemboursementService } from "../reception-remboursement.service";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -12,6 +14,10 @@ import { SaveService } from "src/app/shared/Service/save.service";
   styleUrl: "./control-bord-cnam.component.scss",
 })
 export class ControlBordCnamComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux non envoyés, lus page par page sur le serveur (mêmes critères que BordEnvoiEntete). */
+  readonly sourceBordEnvoi = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiEntete', () => ({ soc: this.lovServeur.societe() }), 'cod_bord');
+
  
 
  
@@ -128,20 +134,12 @@ export class ControlBordCnamComponent {
 
   
 
+  /** Colonnes de la fenêtre des bordereaux : la liste est lue page par page sur le serveur (sourceBordEnvoi). */
   getAllBordEnvoi(): void {
-    this.serv.getAllBordEnvoi(this.token.getUser().codSoc).subscribe({
-      next: (data) => {
-        this.AllBordEnvoi = data;
-        console.log("donne des bordereau",this.AllBordEnvoi)
-        this.columnBordEnvoi = [
-          { key: "cod_bord", label: "Code de bordereau" },
-          { key: "dat_bord", label: "Date de bordereau" },
-        ];
-      },
-      error: (err) => {
-        this.error = "Erreur lors de la récupération des données";
-      },
-    });
+    this.columnBordEnvoi = [
+      { key: "cod_bord", label: "Code de bordereau" },
+      { key: "dat_bord", label: "Date de bordereau" },
+    ];
   }
 
   onSelectedValueBordEnvoi(event: any): void {

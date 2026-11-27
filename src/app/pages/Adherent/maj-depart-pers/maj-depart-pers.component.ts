@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
 import { Component } from '@angular/core';
 import { PaginationService } from 'src/app/core/services/pagination.service';
@@ -13,6 +15,10 @@ import { TokenStorage } from 'src/app/account/token-storage.service';
   styleUrl: './maj-depart-pers.component.scss'
 })
 export class MajDepartPersComponent  {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que listPersonnelDepart). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovPersonnelDepart', () => ({ soc: this.tokenStorage.getUser().codSoc, cols: 'mat_pers,nomPren,cod_lieu_geog,cod_affect,corps' }), 'mat_pers');
+
   pSusp: any;
   listTypeDepart:any[]=[]
   listDepart:any[]=[]
@@ -141,17 +147,14 @@ export class MajDepartPersComponent  {
     })
   }
   getListPersonnelDepart(){
-    this.serv.getListPersonnelDepart(this.tokenStorage.getUser().codSoc).subscribe(data=>{
-      this.listPersonnelDepart=data
-
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "nomPren", label: "Nom & Prénom" },
-        { key: "cod_lieu_geog", label: "Département" },
-        { key: "cod_affect", label: "Affectation" },
-        { key: "corps", label: "Corps" },
-      ];
-    })
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "nomPren", label: "Nom & Prénom" },
+      { key: "cod_lieu_geog", label: "Département" },
+      { key: "cod_affect", label: "Affectation" },
+      { key: "corps", label: "Corps" },
+    ];
   }
 
   onSelectedValuePers(item: any) {

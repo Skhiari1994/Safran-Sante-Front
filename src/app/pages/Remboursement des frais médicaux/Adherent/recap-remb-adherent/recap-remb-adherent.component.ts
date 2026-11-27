@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
@@ -11,6 +13,10 @@ import { AdherentService } from '../adherent.service';
     styleUrl: './recap-remb-adherent.component.scss'
 })
 export class RecapRembAdherentComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersBultCnamDeb). */
+  readonly sourcePersonnel = this.lovServeur.source('Remb/Personnel/lovPersBultCnam', () => ({ soc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom,num_retr' }), 'mat_pers');
+
     personnelListDeb: any[] = [];
     personnelListFin: any[] = [];
     formAdherent: FormGroup;
@@ -45,29 +51,25 @@ export class RecapRembAdherentComponent {
     }
 
     getPersonnelDeb() {
-        this.adherentService.getPersBultCnamDeb(this.token.getUser().codSoc).subscribe(data => {
-            this.personnelListDeb = data;
-            this.columnsSearch = [
-                { key: "mat_pers", label: "Matricule" },
-                { key: "mat_int", label: "Mat. Administratif" },
-                { key: "dat_nais", label: "Date naissance" },
-                { key: "nom", label: "Nom & Prénom" },
-                { key: "num_retr", label: "N° CNRPS" },
-            ];
-        });
+        // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+        this.columnsSearch = [
+            { key: "mat_pers", label: "Matricule" },
+            { key: "mat_int", label: "Mat. Administratif" },
+            { key: "dat_nais", label: "Date naissance" },
+            { key: "nom", label: "Nom & Prénom" },
+            { key: "num_retr", label: "N° CNRPS" },
+        ];
     }
 
     getPersonnelFin() {
-        this.adherentService.getPersBultCnamDeb(this.token.getUser().codSoc).subscribe(data => {
-            this.personnelListFin = data;
-            this.columnsSearch = [
-                { key: "mat_pers", label: "Matricule" },
-                { key: "mat_int", label: "Mat. Administratif" },
-                { key: "dat_nais", label: "Date naissance" },
-                { key: "nom", label: "Nom & Prénom" },
-                { key: "num_retr", label: "N° CNRPS" },
-            ];
-        });
+        // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+        this.columnsSearch = [
+            { key: "mat_pers", label: "Matricule" },
+            { key: "mat_int", label: "Mat. Administratif" },
+            { key: "dat_nais", label: "Date naissance" },
+            { key: "nom", label: "Nom & Prénom" },
+            { key: "num_retr", label: "N° CNRPS" },
+        ];
     }
 
     onSelectedVMat(item: any) {

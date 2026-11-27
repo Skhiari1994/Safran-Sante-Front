@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminService } from '../Admin.service';
@@ -13,6 +15,10 @@ import { AuthenticationService } from 'src/app/core/services/auth.service';
   styleUrl: './gestion-utlisateur.component.scss'
 })
 export class GestionUtlisateurComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnels). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovPersonnels', () => ({ codSoc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,full_name' }), 'mat_pers');
+
   listValues: any[] = [];
   columns: any[] = [];
   selectedCode: string = '';
@@ -60,21 +66,13 @@ export class GestionUtlisateurComponent {
 
   ngOnInit(): void {
 
-    this.adminServ.getPersonnels().subscribe(data => {
-      this.listValues = data;
-      console.log(this.listValues)
-      // Définir les colonnes dynamiques du tableau
-      this.columns = [
-        { key: 'mat_pers', label: 'Matricule' },
-        { key: 'mat_int', label: 'Mat. Administratif' },
-        { key: 'dat_nais', label: 'Date naissance' },
-        { key: 'full_name', label: 'Nom & prénom' },
-
-        // { key: 'lib_tit_a', label: 'Libellé 2éme langue' }
-      ];
-      console.log("this.columns", this.columns)
-
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columns = [
+      { key: 'mat_pers', label: 'Matricule' },
+      { key: 'mat_int', label: 'Mat. Administratif' },
+      { key: 'dat_nais', label: 'Date naissance' },
+      { key: 'full_name', label: 'Nom & prénom' },
+    ];
     this.getRoles()
 
   }

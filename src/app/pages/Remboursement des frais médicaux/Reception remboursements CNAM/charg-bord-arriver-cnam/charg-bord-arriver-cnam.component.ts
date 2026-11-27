@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovBordereauxService } from 'src/app/shared/Service/lov-bordereaux.service';
 import { Component } from "@angular/core";
 import { ReceptionRemboursementService } from "../reception-remboursement.service";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -11,6 +13,8 @@ import { SaveService } from "src/app/shared/Service/save.service";
   styleUrls: ["./charg-bord-arriver-cnam.component.scss"],
 })
 export class ChargBordArriverCNAMComponent {
+  /** Bordereaux de la fenêtre de recherche, lus page par page (mêmes critères que l'ancienne liste getAllBordArriver : tous les bordereaux). */
+  readonly sourceBordArriver = inject(LovBordereauxService).bordArriver({});
   bultArriver: any[] = [];
   visitArriver: any[] = [];
   appArriver: any[] = [];
@@ -284,19 +288,15 @@ export class ChargBordArriverCNAMComponent {
     }
   }
 
+  /**
+   * Colonnes de la fenêtre de recherche des bordereaux. La liste elle-même n'est plus chargée en entier :
+   * la fenêtre la lit page par page sur le serveur (sourceBordArriver).
+   */
   getAllBordArriver(): void {
-    this.serv.getAllBordArriver().subscribe({
-      next: (data) => {
-        this.AllBordArrivers = data;
-        this.columnBordArriver = [
-          { key: "cod_bord", label: "Code de bordereau" },
-          { key: "dat_bord", label: "Date de bordereau" },
-        ];
-      },
-      error: (err) => {
-        this.error = "Erreur lors de la récupération des données";
-      },
-    });
+    this.columnBordArriver = [
+      { key: "cod_bord", label: "Code de bordereau" },
+      { key: "dat_bord", label: "Date de bordereau" },
+    ];
   }
 
   onSelectedValueBordArriver(event: any): void {

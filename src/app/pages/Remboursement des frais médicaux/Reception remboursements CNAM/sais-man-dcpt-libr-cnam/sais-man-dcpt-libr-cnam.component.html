@@ -26,7 +26,7 @@
           </div>
           <div class="col-md-3" *ngIf="boolCodBord === false">
             <label class="form-label">Code bordereau</label>
-            <app-lov [listData]="AllBordArrive" [columns]="columnBordArriver" codeField="cod_bord"
+            <app-lov [source]="sourceBordArriver" [columns]="columnBordArriver" codeField="cod_bord"
               [selectedCode]="codBord" (selectedValue)="onSelectedValueBordArriver($event)"></app-lov>
           </div>
           <div class="col-md-3">

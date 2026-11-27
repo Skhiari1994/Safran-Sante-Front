@@ -16,6 +16,7 @@ import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
 import { ResultatEcritureInterceptor } from './core/helpers/resultat-ecriture.interceptor';
+import { ActiviteHttpInterceptor } from './core/helpers/activite-http.interceptor';
 
 // Store
 import { rootReducer } from './store';
@@ -99,6 +100,8 @@ if (environment.defaultauth === 'firebase') {
     // après ErrorInterceptor : reçoit l'erreur HTTP d'origine pour afficher un message clair
     { provide: HTTP_INTERCEPTORS, useClass: ResultatEcritureInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
+    // lectures en cours : les fenêtres de recherche affichent « Chargement… » tant que leur liste est en route
+    { provide: HTTP_INTERCEPTORS, useClass: ActiviteHttpInterceptor, multi: true },
      
       {
         provide: APP_INITIALIZER,

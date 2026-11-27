@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { LovComponent } from 'src/app/shared/Composants/lov/lov.component';
 import { DatePipe } from '@angular/common';
@@ -8,11 +10,14 @@ import { SaveService } from 'src/app/shared/Service/save.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginationService } from 'ngx-pagination';
 import Swal from 'sweetalert2';
-import { distinctUntilChanged, forkJoin, map, Subject, takeUntil, tap } from 'rxjs';
+import { distinctUntilChanged, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Table } from 'primeng/table';
 import { CarteCnamAlertService } from '../../../Adherent/carte-cnam-alert.service';
 import { focusPremiereCase } from '../../../../shared/focus-nouvelle-ligne';
+
+/** Régime de remboursement d'un nouveau bulletin : 01 = Maladie ordinaire (REGIME_REMB). */
+const REGIME_PAR_DEFAUT = '01';
 
 @Component({
   selector: 'app-buletin-cnam',
@@ -20,6 +25,10 @@ import { focusPremiereCase } from '../../../../shared/focus-nouvelle-ligne';
   styleUrl: './buletin-cnam.component.scss'
 })
 export class BuletinCNAMComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnelBultSoin). */
+  readonly sourcePersonnel = this.lovServeur.source('Remb/Personnel/lovPersonnelBultSoin', () => ({ soc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom,num_retr,lib_fill' }), 'mat_pers');
+
   @ViewChildren(LovComponent) lovs!: QueryList<LovComponent>;
   @ViewChild('dtActes') tableActes!: Table;
   @ViewChild('dtPhar') tablePhar!: Table;
@@ -85,6 +94,8 @@ export class BuletinCNAMComponent {
   etabliss: string = ''
   datPec: string = ''
   acte: string[] = []
+  /** Acte exact choisi pour chaque ligne (abrv_act n'est pas unique : « BP » = 996 actes). */
+  acteChoisi: any[] = []
   visiteCode: string[] = []
   appareilCode: string[] = []
   Med: string[] = []
@@ -134,7 +145,8 @@ export class BuletinCNAMComponent {
       tot_honor: [0],
       tot_net: [0],
       tot_remb: [0],
-      reg_remb: [''],
+      // régime par défaut d'un nouveau bulletin : Maladie ordinaire (01), modifiable ensuite
+      reg_remb: [REGIME_PAR_DEFAUT],
       cod_malad: [''],
       num_pec: [''],
       cod_fil: [{ value: '', disabled: true }],
@@ -279,6 +291,28 @@ export class BuletinCNAMComponent {
       return;
     }
 
+    // ligne d'acte commencée mais incomplète : elle ne serait pas enregistrée, sans que l'utilisateur le sache
+    const actesIncompletes = this.lignesActesIncompletes();
+    const appareilsIncomplets = this.lignesAppareilsIncompletes();
+    const visitesIncompletes = this.lignesIncompletes(this.visite, 'cod_visit', ['mnt_honor', 'prf_cod']);
+    const medicamentsIncomplets = this.lignesIncompletes(this.phar, 'cod_med', ['mnt_honor', 'indice', 'prf_cod']);
+    if (actesIncompletes.length || appareilsIncomplets.length || visitesIncompletes.length || medicamentsIncomplets.length) {
+      const detail = (n: number[], onglet: string, champ: string) => n.length
+        ? `<li>${onglet} : ${n.length > 1 ? 'lignes' : 'ligne'} n° <b>${n.join(', ')}</b> (${champ} obligatoires)</li>` : '';
+      Swal.fire({
+        icon: 'warning',
+        title: 'Lignes incomplètes',
+        html: 'Complétez ou supprimez :<ul class="text-start mt-2 mb-0">'
+          + detail(actesIncompletes, '« Les actes »', 'acte et date d\'acte')
+          + detail(appareilsIncomplets, '« Les appareils »', 'appareil et date')
+          + detail(visitesIncompletes, '« Les visites »', 'visite et date')
+          + detail(medicamentsIncomplets, '« Pharmacies »', 'médicament et date')
+          + '</ul>',
+        confirmButtonText: 'Compris',
+      });
+      return;
+    }
+
     const formArrays = [
       this.ligVisiteForm.get('visite') as FormArray,
       this.ligPharForm.get('phar') as FormArray,
@@ -395,13 +429,44 @@ export class BuletinCNAMComponent {
           });
         };
 
-        this.serv.addAllLigBult(visites, acts, meds, apps).subscribe({
+        // lignes d'actes déjà enregistrées dont l'acte ou la date a changé : leur clé en base change. L'ancienne ligne est
+        // supprimée avant l'enregistrement (sinon une seconde ligne serait créée et l'ancienne resterait dans les soldes)
+        const suppressions = [
+          ...this.clesActesModifiees(ctrlActs).map(k => this.serv.deleteLigBultAct(
+            k.cod_soc, k.mat_pers, k.num_fam, k.dat_soin, k.abrv_act, k.num_lig, k.dat_act, k.cod_act, k.num_soin)),
+          // même chose pour les appareils dont l'appareil ou la date a changé
+          ...this.clesAppareilsModifiees(ctrlApps).map(k => this.serv.deleteLigBultApp(
+            k.cod_soc, k.mat_pers, k.num_fam, k.dat_soin, k.abrv_act, k.num_lig, k.cod_app, k.num_soin, k.dat_act)),
+          // visites et médicaments dont la visite / le médicament ou la date a changé
+          ...this.clesLignesModifiees(ctrlVisites, 'cod_visit').map(k => this.serv.deleteLigBultVisit(
+            k.cod_soc, k.mat_pers, k.num_fam, k.dat_soin, k.abrv_act, k.num_lig, k.dat_act, k.cod_visit, k.num_soin)),
+          ...this.clesLignesModifiees(ctrlMeds, 'cod_med').map(k => this.serv.deleteLigBultMed(
+            k.cod_soc, k.mat_pers, k.num_fam, k.dat_soin, k.abrv_act, k.num_lig, k.cod_med, k.num_soin, k.dat_act)),
+        ];
+
+        (suppressions.length ? forkJoin(suppressions) : of([])).pipe(
+          switchMap(() => this.serv.addAllLigBult(visites, acts, meds, apps))
+        ).subscribe({
           next: (res: any) => {
             this.enregistrementEnCours = false;
             memoriser(ctrlVisites, res?.visit);
+            if (Array.isArray(res?.visit)) ctrlVisites.forEach((c, i) => { if (res.visit[i]) this.memoriserEnBase(c, 'cod_visit'); });
             memoriser(ctrlActs, res?.act);
+            // nouvelle clé en base des lignes d'actes enregistrées
+            if (Array.isArray(res?.act)) {
+              ctrlActs.forEach((c, i) => {
+                if (!res.act[i]) return;
+                this.cleOrigineActe.set(c, this.cleActe(c.value));
+                this.netEnBaseActe.set(c, Number(c.value.mnt_net) || 0);
+              });
+            }
             memoriser(ctrlMeds, res?.med);
+            if (Array.isArray(res?.med)) ctrlMeds.forEach((c, i) => { if (res.med[i]) this.memoriserEnBase(c, 'cod_med'); });
             memoriser(ctrlApps, res?.app);
+            // nouvelle clé en base des appareils enregistrés
+            if (Array.isArray(res?.app)) {
+              ctrlApps.forEach((c, i) => { if (res.app[i]) this.cleOrigineApp.set(c, this.cleApp(c.value)); });
+            }
             const echecs = Object.values(res || {}).filter((r: any) => r?.error).map((r: any) => r.message);
             if (echecs.length) {
               Swal.fire('Enregistrement incomplet', 'Échec de l\'enregistrement : ' + echecs.join(', '), 'error');
@@ -431,7 +496,7 @@ export class BuletinCNAMComponent {
     this.lovs?.forEach(l => l.clear());
     this.ligPretForm.reset();
     this.ligPharForm.reset();
-    this.formBuletinSoin.reset({ reg_remb: '' });
+    this.formBuletinSoin.reset({ reg_remb: REGIME_PAR_DEFAUT });
     this.ligAppareilForm.reset();
     this.ligVisiteForm.reset();
 
@@ -460,6 +525,7 @@ export class BuletinCNAMComponent {
     this.etab_rsoc_phar = [];
     this.etab_rsoc_appareil = [];
     this.acte = [];
+    this.acteChoisi = [];
     this.libAct = [];
     this.refEtablis = [];
     this.etab_rsoc = [];
@@ -610,22 +676,33 @@ export class BuletinCNAMComponent {
           this.loadDataIntoTable(data);
         });
       });
+
+      // visites : la liste dépend aussi du sexe et de la parenté du bénéficiaire. Elle est chargée AVANT les lignes
+      // enregistrées (leurs libellés y sont cherchés) ; avant, elle ne l'était qu'au choix du prestataire, si bien qu'à
+      // l'ouverture d'un bulletin la loupe Visite était vide (ou celle du bénéficiaire précédent) et les libellés absents
+      this.chargerVisites(item);
     }, () => {
       this.sexe = '';
       this.parente = '';
+      this.chargerVisites(item);
     });
 
-    // Load visits
-    this.serv.getLigBultVisit(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
-      this.loadDataIntoTableVisite(data);
-      this.calculateTotalsVisite();
-    })
-
-    // Load apparatus
-    this.serv.getLigBultApp(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
-      this.loadDataIntoTablApp(data);
-      this.calculateTotalsAppareil();
-    })
+    // appareils : même chose, liste chargée avant les lignes enregistrées
+    this.serv.getAppareil(item.cod_fil, item.cod_assur).subscribe({
+      next: (data: any) => {
+        this.listAppareil = Array.isArray(data) ? data : [];
+        this.columnsAppareil = [
+          { key: "cod_app", label: "Code" },
+          { key: "lib_app", label: "Libelle" },
+        ];
+      },
+      error: () => { this.listAppareil = []; },
+    }).add(() => {
+      this.serv.getLigBultApp(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
+        this.loadDataIntoTablApp(data);
+        this.calculateTotalsAppareil();
+      });
+    });
 
     this.serv.getDatNais(
       this.token.getUser().codSoc,
@@ -659,9 +736,29 @@ export class BuletinCNAMComponent {
 
   }
 
+  /** Liste des visites du bénéficiaire (sexe, parenté, filière, assurance), puis les visites enregistrées du bulletin. */
+  private chargerVisites(item: any): void {
+    this.serv.getVisite(this.parente, this.sexe, item.cod_fil, item.cod_assur).subscribe({
+      next: (data: any) => {
+        this.listVisite = Array.isArray(data) ? data : [];
+        this.columnVisite = [
+          { key: "cod_Visit", label: "Abrv acte" },
+          { key: "lib_Visit", label: "Libelle" },
+        ];
+      },
+      error: () => { this.listVisite = []; },
+    }).add(() => {
+      this.serv.getLigBultVisit(item.cod_soc, item.mat_pers, item.num_fam, item.dat_soin, item.num_soin).subscribe((data: any) => {
+        this.loadDataIntoTableVisite(data);
+        this.calculateTotalsVisite();
+      });
+    });
+  }
+
   loadDataIntoTable(data: any[]) {
     // Clear existing arrays first
     this.acte = [];
+    this.acteChoisi = [];
     this.libAct = [];
     this.refEtablis = [];
     this.etab_rsoc = [];
@@ -696,9 +793,14 @@ export class BuletinCNAMComponent {
 
           // Find and store the lib_act from listActe
           // abrv_act n'est pas unique (ex. « BP » : des centaines d'actes) : on cherche d'abord avec le code acte
-          const selectedActe = this.listActe.find(acte => acte.abrv_act === item.abrv_act && acte.cod_act === item.cod_act)
-            ?? this.listActe.find(acte => acte.abrv_act === item.abrv_act);
+          const acteExact = this.listActe.find(acte => acte.abrv_act === item.abrv_act && acte.cod_act === item.cod_act);
+          const selectedActe = acteExact ?? this.listActe.find(acte => acte.abrv_act === item.abrv_act);
           this.libAct.push((selectedActe?.lib_act || '').trim());
+          // acte exact de la ligne, redonné au champ code : il ne doit pas être remplacé par le premier « BP » de la liste
+          this.acteChoisi.push(acteExact ?? {
+            abrv_act: item.abrv_act, cod_act: item.cod_act, lib_act: selectedActe?.lib_act ?? '',
+            let_cod: item.let_cod, cot_act: item.cot_act, act_prix: item.act_prix, taux_act: item.taux_act,
+          });
 
           // Store the etablissement code
           this.refEtablis.push(item.prf_cod);
@@ -727,7 +829,7 @@ export class BuletinCNAMComponent {
             cot_act: [item.cot_act],
             act_prix: [item.act_prix],
             mnt_honor: [Number(item.mnt_honor).toFixed(3)],
-            mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+            mnt_remb: [item.mnt_remb == null ? null : Number(item.mnt_remb).toFixed(3)],   // vide reste vide (et non 0)
             accord_act: [item.accord_act],
             mnt_net: [Number(item.mnt_net).toFixed(3)],
             indice: [item.indice],
@@ -742,6 +844,11 @@ export class BuletinCNAMComponent {
           }))
         )
       );
+      // clé en base de chaque ligne chargée (pour la retrouver si l'acte ou la date de la ligne change)
+      this.lignes.controls.forEach(c => {
+        this.cleOrigineActe.set(c, this.cleActe(c.value));
+        this.netEnBaseActe.set(c, Number(c.value.mnt_net) || 0);
+      });
       this.calculateTotals();
     });
   }
@@ -798,7 +905,7 @@ export class BuletinCNAMComponent {
         num_soin: [item.num_soin],
         num_lig: [item.num_lig],
         mnt_honor: [Number(item.mnt_honor).toFixed(3)],
-        mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+        mnt_remb: [item.mnt_remb == null ? null : Number(item.mnt_remb).toFixed(3)],   // vide reste vide (et non 0)
         mnt_net: [Number(item.mnt_net).toFixed(3)],
         indice: [item.indice],
         dat_act: [item.dat_act],
@@ -809,6 +916,8 @@ export class BuletinCNAMComponent {
         mut_mnt_net: [item.mut_mnt_net],
       }))));
 
+      // clé et net en base de chaque visite chargée
+      this.visite.controls.forEach(c => this.memoriserEnBase(c, 'cod_visit'));
       this.calculateTotalsVisite();
     });
   }
@@ -873,7 +982,7 @@ export class BuletinCNAMComponent {
         num_lig: [item.num_lig],
         num_soin: [item.num_soin],
         mnt_honor: [Number(item.mnt_honor).toFixed(3)],
-        mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+        mnt_remb: [item.mnt_remb == null ? null : Number(item.mnt_remb).toFixed(3)],   // vide reste vide (et non 0)
         mnt_net: [Number(item.mnt_net).toFixed(3)],
         indice: [item.indice],
         dat_act: [item.dat_act],
@@ -889,6 +998,8 @@ export class BuletinCNAMComponent {
         nbr_j: [item.nbr_j],
       }))));
 
+      // clé et net en base de chaque médicament chargé
+      this.phar.controls.forEach(c => this.memoriserEnBase(c, 'cod_med'));
       this.calculateTotalsPhar();
     });
   }
@@ -945,41 +1056,34 @@ export class BuletinCNAMComponent {
         num_lig: [item.num_lig],
         num_soin: [item.num_soin],
         mnt_honor: [Number(item.mnt_honor).toFixed(3)],
-        mnt_remb: [Number(item.mnt_remb).toFixed(3)],
+        mnt_remb: [item.mnt_remb == null ? null : Number(item.mnt_remb).toFixed(3)],   // vide reste vide (et non 0)
         mnt_net: [Number(item.mnt_net).toFixed(3)],
         indice: [item.indice],
         dat_act: [item.dat_act],
         prf_typ: [item.prf_typ],
         prf_cod: [item.prf_cod],
-        accord_app: [item.accord_med],
+        accord_app: [item.accord_app],   // avant : item.accord_med (inexistant) => accord effacé au prochain enregistrement
         num_pec_app: [item.num_pec_app],
         num_lig_app: [item.num_lig_app],
         mut_mnt_net: [item.mut_mnt_net],
       }))));
 
+      // clé en base de chaque appareil chargé (pour le retrouver si l'appareil ou la date de la ligne change)
+      this.appareil.controls.forEach(c => this.cleOrigineApp.set(c, this.cleApp(c.value)));
       this.calculateTotalsAppareil();
     });
   }
 
   getPersonnel() {
-    this.serv.getPersonnelBultSoin(this.token.getUser().codSoc).subscribe(
-      (data: any) => {
-        this.listPersonnel = Array.isArray(data) ? data : [];
-
-        this.columnsMat = [
-          { key: "mat_pers", label: "Matricule" },
-          { key: "mat_int", label: "Mat. Administratif" },
-          { key: "dat_nais", label: "Date naissance" },
-          { key: "nom", label: "Nom & Prénom" },
-          { key: "num_retr", label: "Id CNRPS" },
-          { key: "lib_fill", label: "Filière" },
-        ];
-      },
-      error => {
-        console.error('Error loading personnel:', error);
-        this.listPersonnel = [];
-      }
-    );
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsMat = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "nom", label: "Nom & Prénom" },
+      { key: "num_retr", label: "Id CNRPS" },
+      { key: "lib_fill", label: "Filière" },
+    ];
   }
 
 
@@ -1013,7 +1117,7 @@ export class BuletinCNAMComponent {
         const codFil = this.formBuletinSoin.get('cod_fil')?.value;
         const codAssur = this.formBuletinSoin.get('cod_assur')?.value;
 
-        this.serv.getActes(this.sexe, this.parente, codFil, codAssur).subscribe(
+        this.serv.getActes(this.parente, this.sexe, codFil, codAssur).subscribe(
           (data: any) => {
             this.listActe = Array.isArray(data) ? data : [];
 
@@ -1322,7 +1426,9 @@ export class BuletinCNAMComponent {
       dat_soin: ['', Validators.required],
       abrv_act: ['', Validators.required],
       cod_act: [''],
-      num_lig: ['1'],
+      // numéro attribué par le serveur à l'enregistrement (avant : « 1 » ou le prochain numéro libre demandé à l'avance,
+      // si bien que deux lignes ajoutées avant d'enregistrer recevaient le même numéro)
+      num_lig: [null],
       num_soin: [''],
       let_cod: [''],
       cot_act: [''],
@@ -1352,27 +1458,6 @@ export class BuletinCNAMComponent {
 
     this.selectedActes = [newLigne];
     this.calculateTotals();
-
-    const codSoc = this.formBuletinSoin.get('cod_soc')?.value;
-    const matPers = this.formBuletinSoin.get('mat_pers')?.value;
-    const numFam = this.formBuletinSoin.get('num_fam')?.value;
-    const datSoin = this.formBuletinSoin.get('dat_soin')?.value;
-
-    // ✅ Only call API if all required values exist
-    if (codSoc && matPers && numFam && datSoin) {
-      this.serv.getNumLigAct(codSoc, matPers, numFam, datSoin).subscribe(
-        (data: any) => {
-          this.lignes.at(index).patchValue({ num_lig: data });
-        },
-        (error) => {
-          console.error('Error fetching num_lig:', error);
-          this.lignes.at(index).patchValue({ num_lig: index + 1 });
-        }
-      );
-    } else {
-      // Set default value when form data is not ready
-      this.lignes.at(index).patchValue({ num_lig: index + 1 });
-    }
 
     setTimeout(() => {
       this.startEditingNewRowActes(newLigne);
@@ -1410,9 +1495,52 @@ export class BuletinCNAMComponent {
     this.modalService.open(content, { centered: true });
   }
 
+  /** Clé en base de chaque ligne d'acte enregistrée, telle qu'au chargement ou au dernier enregistrement. */
+  private cleOrigineActe = new WeakMap<AbstractControl, any>();
+
+  private cleActe(v: any): any {
+    return {
+      cod_soc: v.cod_soc, mat_pers: v.mat_pers, num_fam: v.num_fam, dat_soin: v.dat_soin, abrv_act: v.abrv_act,
+      cod_act: v.cod_act, num_lig: v.num_lig, dat_act: v.dat_act, num_soin: v.num_soin,
+    };
+  }
+
+  /** Même ligne en base : même acte (code abrégé et code), même date d'acte. */
+  private memeCleActe(a: any, b: any): boolean {
+    const texte = (x: any) => String(x ?? '').trim().toUpperCase();
+    // jj/mm/aaaa ou aaaa-mm-jj : comparés sous la même forme (jjmmaaaa)
+    const date = (x: any) => {
+      const s = String(x ?? '').trim();
+      const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      return iso ? iso[3] + iso[2] + iso[1] : s.replace(/\D/g, '');
+    };
+    return texte(a.abrv_act) === texte(b.abrv_act) && texte(a.cod_act) === texte(b.cod_act) && date(a.dat_act) === date(b.dat_act);
+  }
+
+  /** Anciennes clés des lignes enregistrées dont l'acte ou la date a changé depuis. */
+  private clesActesModifiees(controles: AbstractControl[]): any[] {
+    return controles
+      .map(c => ({ avant: this.cleOrigineActe.get(c), maintenant: c.value }))
+      .filter(({ avant, maintenant }) => avant && avant.num_soin != null && String(avant.num_soin).trim() !== '' && !this.memeCleActe(avant, maintenant))
+      .map(({ avant }) => avant);
+  }
+
+  /** Numéros des lignes d'actes commencées (montant, unités, code…) mais sans acte ou sans date d'acte. */
+  private lignesActesIncompletes(): number[] {
+    const rempli = (x: any) => x !== null && x !== undefined && String(x).trim() !== '';
+    const numeros: number[] = [];
+    this.lignes.controls.forEach((c, i) => {
+      const v = c.value;
+      const commencee = [v.abrv_act, v.cod_act, v.mnt_honor, v.indice, v.prf_cod].some(rempli);
+      if (commencee && (!rempli(v.abrv_act) || !rempli(v.dat_act))) numeros.push(i + 1);
+    });
+    return numeros;
+  }
+
   private retirerLigneActe(index: number): void {
     this.lignes.removeAt(index);
     this.acte.splice(index, 1);
+    this.acteChoisi.splice(index, 1);
     this.libAct.splice(index, 1);
     this.refEtablis.splice(index, 1);
     this.etab_rsoc.splice(index, 1);
@@ -1426,7 +1554,9 @@ export class BuletinCNAMComponent {
   }
 
   ConfirmDelete(index: number): void {
-    const ligne = this.lignes.at(index).value;
+    // clé en base de la ligne : si l'acte ou la date a été changé sans enregistrer, c'est l'ancienne ligne qu'il faut supprimer
+    const cleEnBase = this.cleOrigineActe.get(this.lignes.at(index));
+    const ligne = cleEnBase ? { ...this.lignes.at(index).value, ...cleEnBase } : this.lignes.at(index).value;
     const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
 
     // acte jamais enregistré (pas de numéro de soin ni de ligne) : rien à supprimer en base
@@ -1512,8 +1642,12 @@ export class BuletinCNAMComponent {
     }
 
     this.acte[index] = selectedValue.abrv_act;
+    this.acteChoisi[index] = selectedValue;
     // le libellé est celui de la ligne choisie (le code abrégé, ex. « BP », est partagé par des centaines d'actes)
     this.libAct[index] = (selectedValue.lib_act || selectedActe?.lib_act || '').trim();
+
+    const avant = this.lignes.at(index).value;
+    const acteChange = avant.abrv_act !== selectedValue.abrv_act || avant.cod_act !== selectedValue.cod_act;
 
     this.lignes.at(index).patchValue({
       abrv_act: selectedValue.abrv_act,
@@ -1524,6 +1658,18 @@ export class BuletinCNAMComponent {
       act_prix: selectedValue.act_prix ?? null,
       taux_act: selectedValue.taux_act ?? null
     });
+
+    // unités pré-remplies avec la cotation de l'acte choisi, modifiables ensuite à la main. Seulement quand l'acte
+    // change : rouvrir une ligne ne remplace pas une valeur saisie. Acte sans cotation (ligne générique) : inchangées.
+    const cotation = selectedValue.cot_act;
+    if (acteChange && cotation !== null && cotation !== undefined && String(cotation).trim() !== '' && !isNaN(Number(cotation))) {
+      this.lignes.at(index).patchValue({ indice: Number(cotation) });
+    }
+
+    // autre acte (prix et taux différents) sur une ligne qui a déjà des honoraires : le net n'est plus le bon
+    if (acteChange && String(this.lignes.at(index).value.mnt_honor ?? '').trim() !== '') {
+      this.recalculerNetActe(index);
+    }
   }
   
   libVisite: string[] = []
@@ -1545,10 +1691,17 @@ export class BuletinCNAMComponent {
     this.visiteCode[index] = selectedValue.cod_Visit;
     this.libVisite[index] = selectedActe?.lib_Visit || '';
 
+    const visiteChange = this.visite.at(index).value.cod_visit !== selectedValue.cod_Visit;
     this.visite.at(index).patchValue({
       cod_visit: selectedValue.cod_Visit,
-      abrv_act: selectedValue.abrv_Act
+      abrv_act: selectedValue.abrv_Act,
+      // prix et taux de la visite choisie, sur SA ligne (le calcul prenait ceux de la dernière visite choisie, toutes lignes)
+      prix_visit: selectedValue.prix_Visit ?? null,
+      taux_remb: selectedValue.taux_Remb ?? null,
     });
+    if (visiteChange && String(this.visite.at(index).value.mnt_honor ?? '').trim() !== '') {
+      this.recalculerNetVisite(index);
+    }
   }
   libAppareil: string[] = []
   onSelectedAppareil(selectedValue: any, index: number): void {
@@ -1567,36 +1720,78 @@ export class BuletinCNAMComponent {
     this.appareilCode[index] = selectedValue.cod_app; // Store the selected code
     this.libAppareil[index] = selectedActe?.lib_app || '';
 
+    const appareilChange = this.appareil.at(index).value.cod_app !== selectedValue.cod_app;
     this.appareil.at(index).patchValue({
       cod_app: selectedValue.cod_app,
       abrv_act: selectedValue.abrv_act
     });
+
+    // autre appareil (prix et règles différents) sur une ligne qui a déjà des honoraires : nouveau calcul du net
+    if (appareilChange && String(this.appareil.at(index).value.mnt_honor ?? '').trim() !== '') {
+      this.recalculerNetAppareil(index);
+    }
   }
   mntNetArray: number[] = []; // Declare an array to store the amounts for each line
 
-  calcul_mnt_net(event: any, index: number) {
-    const ligBult = this.ligPretForm.get('lignes') as FormArray;
-    if (event.target.value == null) {
-      Swal.fire({
-        title: 'Message',
-        text: 'Mnt honor est obligatoire',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK',
-      });
+  /** Honoraires modifiés : nouveau calcul du net de la ligne. */
+  calcul_mnt_net(_event: any, index: number) {
+    this.recalculerNetActe(index);
+  }
+
+  /** Net déjà enregistré en base pour chaque ligne d'acte (compté dans le consommé CNAM estimé). */
+  private netEnBaseActe = new WeakMap<AbstractControl, number>();
+  /** Dernier calcul demandé par ligne : une réponse plus ancienne arrivée après est ignorée. */
+  private calculNetActe = new WeakMap<AbstractControl, number>();
+
+  /**
+   * Net d'une ligne d'acte, calculé par le serveur : min(prix de l'acte × taux / 100, honoraires), limité au reste du
+   * plafond CNAM de l'année. Valeurs envoyées : celles de CETTE ligne (avant : celles du dernier acte choisi, quelle que
+   * soit la ligne) ; « sauvNet » = son net déjà enregistré (déjà compté dans le consommé) ; « cumulNet » = ce que les
+   * autres lignes pas encore enregistrées ajoutent au consommé.
+   */
+  recalculerNetActe(index: number): void {
+    const ligne = this.lignes.at(index);
+    if (!ligne) return;
+    const v = ligne.value;
+    const nombre = (x: any) => { const n = Number(String(x ?? '').replace(',', '.')); return isNaN(n) ? 0 : n; };
+    const rempli = (x: any) => x !== null && x !== undefined && String(x).trim() !== '';
+
+    const appliquer = (net: number) => {
+      this.mntNetArray[index] = net;
+      ligne.patchValue({ mnt_net: net });
+      this.calculateTotals();
+    };
+
+    // sans acte ou sans honoraires : pas de remboursement à calculer
+    if (!rempli(v.cod_act) || !rempli(v.mnt_honor) || nombre(v.mnt_honor) <= 0) {
+      appliquer(0);
+      return;
     }
 
-    this.serv.calculer_montant_net_act(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligBult.value[index].cod_act, event.target.value,
-      this.formBuletinSoin.get("dat_soin")?.value, this.selectedAct.act_prix, this.selectedAct.taux_act, 0, 0).subscribe((data: any) => {
+    const sauvNet = this.netEnBaseActe.get(ligne) ?? 0;
+    const cumulNet = this.lignes.controls.reduce((total, c, i) =>
+      i === index ? total : total + (nombre(c.value.mnt_net) - (this.netEnBaseActe.get(c) ?? 0)), 0);
 
+    const numero = (this.calculNetActe.get(ligne) ?? 0) + 1;
+    this.calculNetActe.set(ligne, numero);
 
-        this.mntNet = data.p_mnt_net ?? 0; // Assurez-vous que la valeur est 0 si null ou undefined
-
-        this.mntNetArray[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
-        this.lignes.at(index).patchValue({ mnt_net: this.mntNetArray[index] });
-        this.calculateTotals();
-      })
-
+    this.serv.calculer_montant_net_act(
+      this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value, v.cod_act,
+      nombre(v.mnt_honor), this.formBuletinSoin.get('dat_soin')?.value,
+      nombre(v.act_prix), nombre(v.taux_act), Number(cumulNet.toFixed(3)), sauvNet,
+    ).subscribe({
+      next: (data: any) => {
+        if (this.calculNetActe.get(ligne) !== numero) return;   // une modification plus récente est en cours
+        if (data?.message) {
+          Swal.fire({ icon: 'warning', title: 'Net non calculé', text: data.message, confirmButtonText: 'Compris' });
+        }
+        appliquer(nombre(data?.p_mnt_net));
+      },
+      error: () => {
+        if (this.calculNetActe.get(ligne) !== numero) return;
+        Swal.fire({ icon: 'error', title: 'Net non calculé', text: 'Le calcul du net a échoué. Vérifiez les honoraires puis réessayez.', confirmButtonText: 'Compris' });
+      },
+    });
   }
 
   OnselectRefTyp(event: any) {
@@ -1984,7 +2179,9 @@ export class BuletinCNAMComponent {
   }
 
   ConfirmDeleteMed(index: number): void {
-    const ligne = this.phar.at(index).value;
+    // clé en base : si le médicament ou la date a été changé sans enregistrer, c'est l'ancienne ligne qu'il faut supprimer
+    const cleEnBase = this.cleOrigineLigne.get(this.phar.at(index));
+    const ligne = cleEnBase ? { ...this.phar.at(index).value, ...cleEnBase } : this.phar.at(index).value;
     const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
 
     // médicament jamais enregistré (pas de numéro de soin ni de ligne) : rien à supprimer en base
@@ -2060,7 +2257,8 @@ export class BuletinCNAMComponent {
 
   verif_indice_phar(item: any, index: any) {
     const ligPhar = this.ligPharForm.get('phar') as FormArray;
-    this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].abrv_act.indice).
+    // unités saisies sur la ligne (avant : abrv_act.indice, propriété inexistante : la vraie valeur n'était jamais contrôlée)
+    this.serv.verif_indice(ligPhar.value[index].abrv_act, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value, ligPhar.value[index].indice ?? '').
       subscribe((data: any) => {
         if (data.reponse != null) {
           Swal.fire({
@@ -2072,7 +2270,10 @@ export class BuletinCNAMComponent {
           });
 
           item.target.value = '';
+          this.phar.at(index).patchValue({ indice: '' });
         }
+        // les unités entrent dans le calcul du net d'un médicament
+        if (this.estRempli(this.phar.at(index).value.mnt_honor)) this.recalculerNetMed(index);
       })
   }
 
@@ -2196,17 +2397,33 @@ export class BuletinCNAMComponent {
 
   mntNetArrayPhar: number[] = [];
 
-  calcul_mnt_netPhar(event: any, index: number) {
-    const ligPhar = this.ligPharForm.get('phar') as FormArray;
-    this.serv.calculer_montant_net_med(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligPhar.value[index].cod_med
-      , event.target.value, this.formBuletinSoin.get("dat_soin")?.value, this.selectedMed.prix_remb,
-      ligPhar.value[index].indice, 0, 0).subscribe((data: any) => {
-        this.mntNetPhar = data.p_mnt_net
+  /** Honoraires d'un médicament modifiés : nouveau calcul du net de la ligne. */
+  calcul_mnt_netPhar(_event: any, index: number) {
+    this.recalculerNetMed(index);
+  }
 
-        this.mntNetArrayPhar[index] = data.p_mnt_net;
-        this.phar.at(index).patchValue({ mnt_net: this.mntNetArrayPhar[index] });
-        this.calculateTotalsPhar();
-      })
+  /**
+   * Net d'un médicament (serveur) : prix remboursable × unités, limité par les honoraires et le plafond CNAM.
+   * Prix et unités de CETTE ligne ; « sauvNet » = son net déjà enregistré ; « cumulNet » = ce que les autres
+   * médicaments pas encore enregistrés ajoutent au consommé.
+   */
+  recalculerNetMed(index: number): void {
+    const ligne = this.phar.at(index);
+    if (!ligne) return;
+    const v = ligne.value;
+    const appliquer = (net: number) => {
+      this.mntNetArrayPhar[index] = net;
+      ligne.patchValue({ mnt_net: net });
+      this.calculateTotalsPhar();
+    };
+    if (!this.estRempli(v.cod_med) || this.enNombre(v.mnt_honor) <= 0) { appliquer(0); return; }
+    const cumulNet = this.phar.controls.reduce((total, c, i) =>
+      i === index ? total : total + (this.enNombre(c.value.mnt_net) - (this.netEnBaseLigne.get(c) ?? 0)), 0);
+    this.appelNetLigne(ligne, this.serv.calculer_montant_net_med(
+      this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value, v.cod_med,
+      this.enNombre(v.mnt_honor), this.formBuletinSoin.get('dat_soin')?.value,
+      this.enNombre(v.prix_remb), Math.trunc(this.enNombre(v.indice)), Number(cumulNet.toFixed(3)), this.netEnBaseLigne.get(ligne) ?? 0,
+    ), appliquer, 'Médicament');
   }
 
   totalHonorairesPhar: number = 0;
@@ -2243,11 +2460,18 @@ export class BuletinCNAMComponent {
     this.Med[index] = selectedValue.cod_med;
     this.libMed[index] = selectedMed?.lib_med || '';
 
+    const medicamentChange = this.phar.at(index).value.cod_med !== selectedValue.cod_med;
     this.phar.at(index).patchValue({
       cod_med: selectedValue.cod_med,
       abrv_act: selectedValue.abrv_act,
-      mdc_prix: selectedValue.mdc_prix
+      mdc_prix: selectedValue.mdc_prix,
+      // prix du médicament choisi, sur SA ligne (le calcul prenait le prix du dernier médicament choisi, toutes lignes)
+      med_prix: selectedValue.med_prix ?? null,
+      prix_remb: selectedValue.prix_remb ?? null,
     });
+    if (medicamentChange && String(this.phar.at(index).value.mnt_honor ?? '').trim() !== '') {
+      this.recalculerNetMed(index);
+    }
   }
   /* Fin Traitement des medicaments*/
 
@@ -2349,8 +2573,9 @@ export class BuletinCNAMComponent {
   }
 
   ConfirmDeleteVisit(index: number): void {
-
-    const ligne = this.visite.at(index).value;
+    // clé en base : si la visite ou la date a été changée sans enregistrer, c'est l'ancienne ligne qu'il faut supprimer
+    const cleEnBase = this.cleOrigineLigne.get(this.visite.at(index));
+    const ligne = cleEnBase ? { ...this.visite.at(index).value, ...cleEnBase } : this.visite.at(index).value;
     const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
 
     // visite jamais enregistrée (pas de numéro de soin ni de ligne) : rien à supprimer en base
@@ -2436,26 +2661,30 @@ export class BuletinCNAMComponent {
     });
   }
   mntNetArrayVisite: number[] = [];
-  calcul_mnt_net_visite(event: any, index: number) {
-    const ligBult = this.ligVisiteForm.get('visite') as FormArray;
-    if (event.target.value == null) {
-      Swal.fire({
-        title: 'Message',
-        text: 'Mnt honor est obligatoire',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK',
-      });
-    }
+  /** Honoraires d'une visite modifiés : nouveau calcul du net de la ligne. */
+  calcul_mnt_net_visite(_event: any, index: number) {
+    this.recalculerNetVisite(index);
+  }
 
-    this.serv.calculer_montant_net_visit(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, ligBult.value[index].cod_visit,
-      event.target.value, this.formBuletinSoin.get("dat_soin")?.value, this.selectedVisit.prix_Visit, this.selectedVisit.taux_Remb, '0').subscribe((data: any) => {
-        this.mntNet = data.p_mnt_net
-        this.mntNetArrayVisite[index] = data.p_mnt_net;
-        this.visite.at(index).patchValue({ mnt_net: this.mntNetArrayVisite[index] });
-        this.calculateTotalsVisite();
-      })
-
+  /**
+   * Net d'une visite (serveur) : min(honoraires, prix de la visite) × taux / 100, limité au plafond CNAM.
+   * Prix et taux de CETTE ligne ; « sauvNet » = son net déjà enregistré (déjà compté dans le consommé).
+   */
+  recalculerNetVisite(index: number): void {
+    const ligne = this.visite.at(index);
+    if (!ligne) return;
+    const v = ligne.value;
+    const appliquer = (net: number) => {
+      this.mntNetArrayVisite[index] = net;
+      ligne.patchValue({ mnt_net: net });
+      this.calculateTotalsVisite();
+    };
+    if (!this.estRempli(v.cod_visit) || this.enNombre(v.mnt_honor) <= 0) { appliquer(0); return; }
+    this.appelNetLigne(ligne, this.serv.calculer_montant_net_visit(
+      this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value, v.cod_visit,
+      this.enNombre(v.mnt_honor), this.formBuletinSoin.get('dat_soin')?.value,
+      this.enNombre(v.prix_visit), this.enNombre(v.taux_remb), this.netEnBaseLigne.get(ligne) ?? 0,
+    ), appliquer, 'Visite');
   }
 
   totalHonorairesVisite: number = 0;
@@ -2598,6 +2827,104 @@ export class BuletinCNAMComponent {
     this.modalService.open(content, { centered: true });
   }
 
+  /** Visites et médicaments : clé et net en base de chaque ligne enregistrée (chargement ou dernier enregistrement). */
+  private cleOrigineLigne = new WeakMap<AbstractControl, any>();
+  private netEnBaseLigne = new WeakMap<AbstractControl, number>();
+  /** Dernier calcul de net demandé par ligne : une réponse plus ancienne arrivée après est ignorée. */
+  private calculNetLigne = new WeakMap<AbstractControl, number>();
+
+  private estRempli(x: any): boolean {
+    return x !== null && x !== undefined && String(x).trim() !== '';
+  }
+
+  private enNombre(x: any): number {
+    const n = Number(String(x ?? '').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  private memoriserEnBase(c: AbstractControl, champCode: string): void {
+    const v = c.value;
+    this.cleOrigineLigne.set(c, {
+      cod_soc: v.cod_soc, mat_pers: v.mat_pers, num_fam: v.num_fam, dat_soin: v.dat_soin, abrv_act: v.abrv_act,
+      [champCode]: v[champCode], num_lig: v.num_lig, dat_act: v.dat_act, num_soin: v.num_soin,
+    });
+    this.netEnBaseLigne.set(c, this.enNombre(v.mnt_net));
+  }
+
+  /** Anciennes clés des lignes enregistrées dont le code (visite, médicament) ou la date a changé depuis. */
+  private clesLignesModifiees(controles: AbstractControl[], champCode: string): any[] {
+    const texte = (x: any) => String(x ?? '').trim().toUpperCase();
+    return controles
+      .map(c => ({ avant: this.cleOrigineLigne.get(c), maintenant: c.value }))
+      .filter(({ avant, maintenant }) => avant && this.estRempli(avant.num_soin)
+        && !(texte(avant[champCode]) === texte(maintenant[champCode])
+          && this.memeCleActe({ abrv_act: '', cod_act: '', dat_act: avant.dat_act }, { abrv_act: '', cod_act: '', dat_act: maintenant.dat_act })))
+      .map(({ avant }) => avant);
+  }
+
+  /** Numéros des lignes commencées (code, montant…) mais sans code ou sans date. */
+  private lignesIncompletes(tableau: FormArray, champCode: string, autres: string[]): number[] {
+    const numeros: number[] = [];
+    tableau.controls.forEach((c, i) => {
+      const v = c.value;
+      const commencee = [champCode, ...autres].some(k => this.estRempli(v[k]));
+      if (commencee && (!this.estRempli(v[champCode]) || !this.estRempli(v.dat_act))) numeros.push(i + 1);
+    });
+    return numeros;
+  }
+
+  /** Appel du calcul de net d'une ligne : seule la dernière réponse compte, messages du serveur affichés. */
+  private appelNetLigne(ligne: AbstractControl, appel: any, appliquer: (net: number) => void, titre: string): void {
+    const numero = (this.calculNetLigne.get(ligne) ?? 0) + 1;
+    this.calculNetLigne.set(ligne, numero);
+    appel.subscribe({
+      next: (data: any) => {
+        if (this.calculNetLigne.get(ligne) !== numero) return;
+        if (data?.message) {
+          Swal.fire({ icon: 'warning', title: titre, text: data.message, confirmButtonText: 'Compris' });
+        }
+        appliquer(this.enNombre(data?.p_mnt_net));
+      },
+      error: () => {
+        if (this.calculNetLigne.get(ligne) !== numero) return;
+        Swal.fire({ icon: 'error', title: 'Net non calculé', text: 'Le calcul du net a échoué. Vérifiez la saisie puis réessayez.', confirmButtonText: 'Compris' });
+      },
+    });
+  }
+
+  /** Clé en base de chaque appareil enregistré, telle qu'au chargement ou au dernier enregistrement. */
+  private cleOrigineApp = new WeakMap<AbstractControl, any>();
+
+  private cleApp(v: any): any {
+    return {
+      cod_soc: v.cod_soc, mat_pers: v.mat_pers, num_fam: v.num_fam, dat_soin: v.dat_soin, abrv_act: v.abrv_act,
+      cod_app: v.cod_app, num_lig: v.num_lig, dat_act: v.dat_act, num_soin: v.num_soin,
+    };
+  }
+
+  /** Anciennes clés des appareils enregistrés dont l'appareil ou la date a changé depuis. */
+  private clesAppareilsModifiees(controles: AbstractControl[]): any[] {
+    const texte = (x: any) => String(x ?? '').trim().toUpperCase();
+    return controles
+      .map(c => ({ avant: this.cleOrigineApp.get(c), maintenant: c.value }))
+      .filter(({ avant, maintenant }) => avant && avant.num_soin != null && String(avant.num_soin).trim() !== ''
+        && !(texte(avant.cod_app) === texte(maintenant.cod_app)
+          && this.memeCleActe({ ...avant, cod_act: '' }, { ...maintenant, abrv_act: avant.abrv_act, cod_act: '' })))
+      .map(({ avant }) => avant);
+  }
+
+  /** Numéros des lignes d'appareils commencées (appareil, montant, code…) mais sans appareil ou sans date. */
+  private lignesAppareilsIncompletes(): number[] {
+    const rempli = (x: any) => x !== null && x !== undefined && String(x).trim() !== '';
+    const numeros: number[] = [];
+    this.appareil.controls.forEach((c, i) => {
+      const v = c.value;
+      const commencee = [v.cod_app, v.mnt_honor, v.prf_cod].some(rempli);
+      if (commencee && (!rempli(v.cod_app) || !rempli(v.dat_act))) numeros.push(i + 1);
+    });
+    return numeros;
+  }
+
   /** Retire la ligne de l'écran (tableau et listes associées) ; une ligne vide est recréée si c'était la dernière. */
   private retirerLigneAppareil(index: number): void {
     this.appareil.removeAt(index);
@@ -2615,7 +2942,9 @@ export class BuletinCNAMComponent {
   }
 
   ConfirmDeleteApp(index: number): void {
-    const ligne = this.appareil.at(index).value;
+    // clé en base : si l'appareil ou la date a été changé sans enregistrer, c'est l'ancienne ligne qu'il faut supprimer
+    const cleEnBase = this.cleOrigineApp.get(this.appareil.at(index));
+    const ligne = cleEnBase ? { ...this.appareil.at(index).value, ...cleEnBase } : this.appareil.at(index).value;
     const present = (v: any) => v !== null && v !== undefined && String(v).trim() !== '';
 
     // appareil jamais enregistré (pas de numéro de soin ni de ligne) : rien à supprimer en base
@@ -2705,27 +3034,55 @@ export class BuletinCNAMComponent {
 
   mntNetArrayAppareil: number[] = [];
 
-  calcul_mnt_net_app(event: any, index: number) {
-    const ligBult = this.ligAppareilForm.get('appareil') as FormArray;
-    if (event.target.value == null) {
-      Swal.fire({
-        title: 'Message',
-        text: 'Mnt honor est obligatoire',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK',
-      });
+  /** Honoraires d'un appareil modifiés : nouveau calcul du net de la ligne. */
+  calcul_mnt_net_app(_event: any, index: number) {
+    this.recalculerNetAppareil(index);
+  }
+
+  /** Dernier calcul demandé par ligne d'appareil : une réponse plus ancienne arrivée après est ignorée. */
+  private calculNetAppareil = new WeakMap<AbstractControl, number>();
+
+  /**
+   * Net d'un appareil, calculé par le serveur : min(honoraires, prix de l'appareil), avec les règles de l'appareil
+   * (droit mensuel, devis, droit périodique) et le plafond CNAM. Les messages de ces règles sont affichés.
+   */
+  recalculerNetAppareil(index: number): void {
+    const ligne = this.appareil.at(index);
+    if (!ligne) return;
+    const v = ligne.value;
+    const nombre = (x: any) => { const n = Number(String(x ?? '').replace(',', '.')); return isNaN(n) ? 0 : n; };
+    const rempli = (x: any) => x !== null && x !== undefined && String(x).trim() !== '';
+    const appliquer = (net: number) => {
+      this.mntNetArrayAppareil[index] = net;
+      ligne.patchValue({ mnt_net: net });
+      this.calculateTotalsAppareil();
+    };
+
+    if (!rempli(v.cod_app) || !rempli(v.mnt_honor) || nombre(v.mnt_honor) <= 0) {
+      appliquer(0);
+      return;
     }
 
-    this.serv.calculer_montant_net_app(this.formBuletinSoin.get("cod_soc")?.value, this.formBuletinSoin.get("mat_pers")?.value, this.formBuletinSoin.get("num_fam")?.value,
-      this.formBuletinSoin.get("dat_soin")?.value, event.target.value, ligBult.value[index].cod_app, 0).subscribe((data: any) => {
-        this.mntNet = data.p_mnt_net ?? 0
+    const numero = (this.calculNetAppareil.get(ligne) ?? 0) + 1;
+    this.calculNetAppareil.set(ligne, numero);
 
-        this.mntNetArrayAppareil[index] = this.mntNet === 0 ? 0 : data.p_mnt_net;
-        this.appareil.at(index).patchValue({ mnt_net: this.mntNetArrayAppareil[index] });
-        this.calculateTotalsAppareil();
-      })
-
+    this.serv.calculer_montant_net_app(
+      this.formBuletinSoin.get('cod_soc')?.value, this.formBuletinSoin.get('mat_pers')?.value,
+      this.formBuletinSoin.get('num_fam')?.value, this.formBuletinSoin.get('dat_soin')?.value,
+      nombre(v.mnt_honor), v.cod_app, null,
+    ).subscribe({
+      next: (data: any) => {
+        if (this.calculNetAppareil.get(ligne) !== numero) return;   // une modification plus récente est en cours
+        if (data?.message) {
+          Swal.fire({ icon: 'warning', title: 'Appareil', text: data.message, confirmButtonText: 'Compris' });
+        }
+        appliquer(nombre(data?.p_mnt_net));
+      },
+      error: () => {
+        if (this.calculNetAppareil.get(ligne) !== numero) return;
+        Swal.fire({ icon: 'error', title: 'Net non calculé', text: 'Le calcul du net de l\x27appareil a échoué. Réessayez.', confirmButtonText: 'Compris' });
+      },
+    });
   }
 
   totalHonorairesAppareil: number = 0;

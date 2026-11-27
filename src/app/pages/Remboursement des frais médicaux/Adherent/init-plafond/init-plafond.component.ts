@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TokenStorage } from 'src/app/account/token-storage.service';
@@ -16,6 +18,15 @@ import { catchError, tap } from 'rxjs/operators';
   styleUrl: './init-plafond.component.scss'
 })
 export class InitPlafondComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersBultCnamDeb). */
+  readonly sourcePersonnel = this.lovServeur.source('Remb/Personnel/lovPersBultCnam', () => ({ soc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom,num_retr' }), 'mat_pers');
+  /**
+   * Après le choix du matricule fin, l'écran remplace la liste par celle du service des éditions (agents ayant des
+   * bulletins CNAM en attente jusqu'à ce matricule) : les fenêtres utilisent alors cette petite liste, comme avant.
+   */
+  listeDebRestreinte = false;
+
   personnelListDeb: Personnel[] = [];
   personnelListFin: Personnel[] = [];
   formAdherent: FormGroup;
@@ -69,6 +80,7 @@ export class InitPlafondComponent {
 
     this.editionService.getPersBultCnamDeb(this.token.getUser().codSoc, this.formAdherent.get('mat_pers_fin')?.value).subscribe((data) => {
       this.personnelListDeb = data;
+      this.listeDebRestreinte = true;
       this.columnsSearch = [
         { key: "mat_pers", label: "Matricule" },
         { key: "mat_int", label: "Mat. Administratif" },
@@ -80,30 +92,26 @@ export class InitPlafondComponent {
   }
 
   getPersonnelDeb() {
-    this.serv.getPersBultCnamDeb(this.token.getUser().codSoc).subscribe((data) => {
-      this.personnelListDeb = data;
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "nom", label: "Nom & Prénom" },
-        { key: "num_retr", label: "N° CNRPS" },
-      ];
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "nom", label: "Nom & Prénom" },
+      { key: "num_retr", label: "N° CNRPS" },
+    ];
     console.log(this.personnelListDeb)
   }
 
   getPersonnelFin() {
-    this.serv.getPersBultCnamDeb(this.token.getUser().codSoc).subscribe((data) => {
-      this.personnelListDeb = data;
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "nom", label: "Nom & Prénom" },
-        { key: "num_retr", label: "N° CNRPS" },
-      ];
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "nom", label: "Nom & Prénom" },
+      { key: "num_retr", label: "N° CNRPS" },
+    ];
     console.log(this.personnelListDeb)
   }
 

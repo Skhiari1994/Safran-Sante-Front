@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup } from "@angular/forms";
 import { AdherentService } from "../adherent.service";
@@ -13,6 +15,10 @@ import { TokenStorage } from "src/app/account/token-storage.service";
   styleUrl: "./susp-adhesion-mut.component.scss",
 })
 export class SuspAdhesionMutComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getAffilPers). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovAffilPers', () => ({ soc: this.tokenStorage.getUser().codSoc, cols: 'mat_pers,nom_pers,pren_pers,etat_act' }), 'mat_pers');
+
   formAdherent!: FormGroup;
   formAffilMutuelle!: FormGroup;
   pSusp: any;
@@ -105,16 +111,13 @@ ngOnDestroy(){
 
 }
   getPersonnels() {
-    this.adherentServ.getAffilPers(this.tokenStorage.getUser().codSoc).subscribe((data) => {
-      console.log("personnel", data);
-      this.listPersonnel = data;
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "nom_pers", label: "Nom" },
-        { key: "pren_pers", label: "Prénom" },
-        { key: "etat_act", label: "Etat" },
-      ];
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "nom_pers", label: "Nom" },
+      { key: "pren_pers", label: "Prénom" },
+      { key: "etat_act", label: "Etat" },
+    ];
   }
   getCorps() {
     this.adherentServ.getCorps().subscribe((data) => {

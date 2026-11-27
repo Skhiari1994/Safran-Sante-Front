@@ -25,7 +25,7 @@
             </div>
             <div class="col-md-3">
               <label class="form-label">Matricule</label>
-              <app-lov [listData]="listPersonnel" [columns]="columnsMat" codeField="mat_pers"
+              <app-lov [source]="sourcePersonnel" [columns]="columnsMat" codeField="mat_pers"
                 [selectedCode]="matricule" (selectedValue)="onSelectedVMat($event)"></app-lov>
             </div>
             <div class="col-md-6">
@@ -562,7 +562,7 @@
               <th style="text-align: left; width: 150px; min-width: 150px;">Date Acte</th>
               <th style="text-align: left; width: 150px; min-width: 150px;">Acte</th>
               <th style="text-align: left; width: 170px; min-width: 170px;">Libellé</th>
-              <th style="text-align: center; width: 60px; min-width: 60px;">Unit</th>
+              <th style="text-align: center; width: 85px; min-width: 85px;">Unit</th>
               <th style="text-align: right; width: 90px; min-width: 90px;">Honoraires</th>
               <th style="text-align: right; width: 90px; min-width: 90px;">Net</th>
               <th style="text-align: center; width: 60px; min-width: 60px;">Pièces</th>
@@ -589,7 +589,7 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input"><app-lov [listData]="listActe || []" [columns]="columnActe || []"
-                      codeField="abrv_act" [selectedCode]="(acte && acte[ri]) || ''" appendTo="body"
+                      codeField="abrv_act" [selectedCode]="(acte && acte[ri]) || ''" [selectedItem]="acteChoisi[ri] || null" appendTo="body"
                       (selectedValue)="onSelectedActe($event, ri)"></app-lov></ng-template>
                   <ng-template pTemplate="output">{{ rowData.get('abrv_act')?.value }}</ng-template>
                 </p-cellEditor>

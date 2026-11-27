@@ -97,13 +97,15 @@
 
       <!-- Résultats -->
       <div class="lov-count" aria-live="polite">
-        <span><b>{{ filteredData.length }}</b> ligne(s)</span>
-        <span class="lov-count-hint" *ngIf="affichees.length < filteredData.length">
-          {{ affichees.length }} affichées · faites défiler ou affinez la recherche
+        <span *ngIf="!enChargement || totalLignes"><b>{{ nombre(totalLignes) }}</b> ligne(s)</span>
+        <span *ngIf="enChargement && !totalLignes" class="lov-count-hint">{{ modeServeur ? 'Recherche en cours…' : 'Chargement de la liste…' }}</span>
+        <span class="lov-count-hint" *ngIf="totalLignes">
+          Lignes {{ nombre(premiereLigne) }}–{{ nombre(derniereLigne) }}
         </span>
       </div>
 
-      <div class="lov-table-wrap" (scroll)="onScrollTableau($event)">
+      <div class="lov-table-wrap" #tableau [class.lov-table-wrap--chargement]="enChargement" [attr.aria-busy]="enChargement">
+        <div class="lov-loader" *ngIf="enChargement" aria-hidden="true"><span class="lov-loader__barre"></span></div>
         <table class="table lov-table">
           <thead>
             <tr>
@@ -124,11 +126,21 @@
           </tbody>
         </table>
 
-        <div *ngIf="filteredData.length === 0" class="lov-empty">
+        <div *ngIf="filteredData.length === 0 && !enChargement && !erreurChargement" class="lov-empty">
           <i class="ri-search-eye-line" aria-hidden="true"></i>
           <span>Aucun résultat trouvé</span>
         </div>
+        <div *ngIf="erreurChargement && !chargement" class="lov-empty lov-empty--erreur" role="alert">
+          <i class="ri-error-warning-line" aria-hidden="true"></i>
+          <span>{{ erreurChargement }}</span>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="rechargerPage()">Réessayer</button>
+        </div>
       </div>
+
+      <!-- Pagination : à chaque changement de page, le tableau remonte en haut -->
+      <app-lov-pagination *ngIf="totalLignes > 0" [page]="pageCourante" [total]="totalLignes"
+        [taille]="taillePage" [tailles]="taillesPage" [desactive]="chargement" (pageChange)="allerPage($event); tableau.scrollTop = 0"
+        (tailleChange)="changerTaillePage($event); tableau.scrollTop = 0"></app-lov-pagination>
     </div>
   </ng-template>
 </div>

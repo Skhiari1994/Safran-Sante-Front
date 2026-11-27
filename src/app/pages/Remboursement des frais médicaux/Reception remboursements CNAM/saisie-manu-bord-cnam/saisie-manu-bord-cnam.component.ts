@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { ChangeDetectorRef, Component } from "@angular/core";
 import { ReceptionRemboursementService } from "../reception-remboursement.service";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -27,6 +29,10 @@ export interface BordArriver {
   styleUrl: "./saisie-manu-bord-cnam.component.scss",
 })
 export class SaisieManuBordCnamComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux de la fenêtre de recherche, lus page par page sur le serveur (mêmes critères que BordEnvoiEntete). */
+  readonly sourceBordArriver = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiEntete', () => ({ soc: this.lovServeur.societe() }), 'cod_bord');
+
   breadCrumbItems!: Array<{}>;
   BordEnvoiForm!: FormGroup;
   ligPretForm!: FormGroup
@@ -319,17 +325,9 @@ export class SaisieManuBordCnamComponent {
     // Clear the callback to avoid memory leaks
     this.saveService.clearSaveCallback();
   }
+  /** Plus de chargement complet : les fenêtres de recherche lisent la liste page par page (sourceBordArriver). */
   getAllBordArriverList(): void {
-    this.serv.getAllBordEnvoi(this.token.getUser().codSoc).subscribe({
-      next: (data) => {
-        this.AllBordArriver = data;
-        console.log("Liste des bordereaux arrivés (page search):", this.AllBordArriver);
-      },
-      error: (err) => {
-        this.error = "Erreur lors de la récupération des bordereaux arrivés";
-        console.error(err);
-      },
-    });
+    this.AllBordArriver = [];
   }
 
   private patchBordEnvoiForm(item: any) {
@@ -448,9 +446,11 @@ export class SaisieManuBordCnamComponent {
 
     if (event) {
       // ✅ Find the complete bordereau object from AllBordArriver list
+      // la fenêtre (lue page par page sur le serveur) renvoie la ligne complète ; un simple code ({ cod_bord })
+      // signifie qu'il n'a pas été trouvé, comme avant quand il était absent de la liste
       const bordereauArriver = this.AllBordArriver.find(
         (bord: any) => bord.cod_bord === event.cod_bord
-      );
+      ) ?? ('dat_bord' in event ? event : undefined);
 
       if (bordereauArriver) {
         console.log('📋 Found complete bordereau in arriver list:', bordereauArriver);

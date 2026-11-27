@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovBordereauxService } from 'src/app/shared/Service/lov-bordereaux.service';
 import { Component } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup } from "@angular/forms";
 import { ReceptionRemboursementService } from "../reception-remboursement.service";
@@ -14,6 +16,8 @@ import { SaveService } from "src/app/shared/Service/save.service";
   styleUrl: "./calcul-complement-remb.component.scss",
 })
 export class CalculComplementRembComponent {
+  /** Bordereaux de la fenêtre de recherche, lus page par page (mêmes critères que l'ancienne liste GetAllBordArriver : bordereaux de la société). */
+  readonly sourceBordArriver = inject(LovBordereauxService).bordArriver({ societe: true });
   bultArriver: any[] = [];
   visitArriver: any[] = [];
   appArriver: any[] = [];
@@ -321,20 +325,15 @@ export class CalculComplementRembComponent {
     }
   }
 
+  /**
+   * Colonnes de la fenêtre de recherche des bordereaux. La liste elle-même n'est plus chargée en entier :
+   * la fenêtre la lit page par page sur le serveur (sourceBordArriver).
+   */
   getAllBordArriver(): void {
-    this.serv.GetAllBordArriver(this.token.getUser().codSoc).subscribe({
-      next: (data) => {
-        this.AllBordArrivers = data;
-        console.log("la liste des bordereaux", this.AllBordArrivers);
-        this.columnBordArriver = [
-          { key: "cod_bord", label: "Code de bordereau" },
-          { key: "dat_bord", label: "Date de bordereau" },
-        ];
-      },
-      error: (err) => {
-        this.error = "Erreur lors de la récupération des données";
-      },
-    });
+    this.columnBordArriver = [
+      { key: "cod_bord", label: "Code de bordereau" },
+      { key: "dat_bord", label: "Date de bordereau" },
+    ];
   }
 
   onSelectedValueBordArriver(event: any): void {

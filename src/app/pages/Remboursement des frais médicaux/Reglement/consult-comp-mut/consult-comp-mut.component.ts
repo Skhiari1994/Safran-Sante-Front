@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovBordereauxService } from 'src/app/shared/Service/lov-bordereaux.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -14,6 +16,8 @@ import { ReglementService } from '../reglement.service';
   styleUrl: './consult-comp-mut.component.scss'
 })
 export class ConsultCompMutComponent {
+  /** Bordereaux de la fenêtre de recherche, lus page par page (mêmes critères que l'ancienne liste ConsultBordArriver : bordereaux validés et clôturés). */
+  readonly sourceBordArriver = inject(LovBordereauxService).bordArriver({ valid_bord: 'O', clot_bord: 'O' });
   bultArriver: any[] = [];
   visitArriver: any[] = [];
   appArriver: any[] = [];
@@ -341,19 +345,15 @@ export class ConsultCompMutComponent {
     }
   }
 
+  /**
+   * Colonnes de la fenêtre de recherche des bordereaux. La liste elle-même n'est plus chargée en entier :
+   * la fenêtre la lit page par page sur le serveur (sourceBordArriver).
+   */
   getAllBordArriver(): void {
-    this.serv.ConsultBordArriver().subscribe({
-      next: (data) => {
-        this.AllBordArrivers = data;
-        this.columnBordArriver = [
-          { key: "cod_bord", label: "Code de bordereau" },
-          { key: "dat_bord", label: "Date de bordereau" },
-        ];
-      },
-      error: (err) => {
-        this.error = "Erreur lors de la récupération des données";
-      },
-    });
+    this.columnBordArriver = [
+      { key: "cod_bord", label: "Code de bordereau" },
+      { key: "dat_bord", label: "Date de bordereau" },
+    ];
   }
 
   onSelectedValueBordArriver(event: any): void {

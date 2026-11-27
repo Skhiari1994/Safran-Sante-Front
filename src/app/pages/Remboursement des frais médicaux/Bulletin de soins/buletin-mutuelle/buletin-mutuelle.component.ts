@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { LovComponent } from 'src/app/shared/Composants/lov/lov.component';
 
@@ -19,6 +21,10 @@ import { focusPremiereCase } from '../../../../shared/focus-nouvelle-ligne';
   styleUrl: './buletin-mutuelle.component.scss'
 })
 export class BuletinMutuelleComponent implements OnInit, OnDestroy {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnelBultSoin). */
+  readonly sourcePersonnel = this.lovServeur.source('Remb/Personnel/lovPersonnelBultSoin', () => ({ soc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom,num_retr,lib_fill' }), 'mat_pers');
+
   @ViewChildren(LovComponent) lovs!: QueryList<LovComponent>;
   @ViewChild('dtActes') tableActes!: Table;
   @ViewChild('dtPhar') tablePhar!: Table;
@@ -372,18 +378,15 @@ export class BuletinMutuelleComponent implements OnInit, OnDestroy {
     });
   }
   getPersonnel() {
-    this.serv.getPersonnelBultSoin(this.token.getUser().codSoc).subscribe((data: any) => {
-      this.listPersonnel = data
-
-      this.columnsMat = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "nom", label: "Nom & Prénom" },
-        { key: "num_retr", label: "Id CNRPS" },
-        { key: "lib_fill", label: "Filière" },
-      ];
-    })
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsMat = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "nom", label: "Nom & Prénom" },
+      { key: "num_retr", label: "Id CNRPS" },
+      { key: "lib_fill", label: "Filière" },
+    ];
   }
 
   ensureDatActNotAfterSoins(index: number) {

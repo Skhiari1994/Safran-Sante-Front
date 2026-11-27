@@ -22,7 +22,7 @@
         <!-- Matricule -->
         <div class="col-md-2">
           <label class="form-label">Matricule</label>
-          <app-lov [listData]="listPersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="codMatVal"
+          <app-lov [source]="sourcePersonnel" [columns]="columnsSearch" codeField="mat_pers" [selectedCode]="codMatVal"
             (selectedValue)="onSelectedValue($event)">
           </app-lov>
         </div>

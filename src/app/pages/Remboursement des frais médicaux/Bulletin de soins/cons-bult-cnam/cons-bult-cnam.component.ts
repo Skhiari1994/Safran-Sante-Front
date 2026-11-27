@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +19,9 @@ import { switchMap, takeUntil } from 'rxjs/operators';
   styleUrl: './cons-bult-cnam.component.scss'
 })
 export class ConsBultCnamComponent {
+  /** Bulletins CNAM de la fenêtre de recherche, lus page par page sur le serveur (au lieu des ~43 000 lignes d'un coup). */
+  private readonly lovServeur = inject(LovServeurService);
+  readonly sourceBultSoin = this.lovServeur.source('Remb/BultSoin/lovBultCnam', () => ({ soc: this.lovServeur.societe() }));
   formBuletinSoin!: FormGroup
   ligPretForm!: FormGroup
   ligPharForm!: FormGroup
@@ -299,25 +304,17 @@ export class ConsBultCnamComponent {
     });
   }
 
+  /**
+   * Colonnes de la fenêtre de recherche. La liste n'est plus chargée en entier : la fenêtre la lit page par page
+   * sur le serveur (sourceBultSoin) ; la fiche complète n'est chargée qu'à la sélection d'une ligne (voir search).
+   */
   getBultSoin() {
-    // liste légère : la fiche complète n'est chargée qu'à la sélection d'une ligne (voir search)
-    this.serv.getBultCnamListe(this.token.getUser().codSoc).subscribe(
-      (data: any) => {
-        this.listBultSoin = Array.isArray(data) ? data : [];
-        this.columnsBultSoin = [
-          { key: "cod_bord", label: "Code bord" },
-
-          { key: "mat_pers", label: "Matricule" },
-          { key: "num_fam", label: "Num fam" },
-          { key: "dat_soin", label: "Date soin" },
-
-        ];
-      },
-      error => {
-        console.error('Error loading bulletin records:', error);
-        this.listBultSoin = [];
-      }
-    );
+    this.columnsBultSoin = [
+      { key: "cod_bord", label: "Code bord" },
+      { key: "mat_pers", label: "Matricule" },
+      { key: "num_fam", label: "Num fam" },
+      { key: "dat_soin", label: "Date soin" },
+    ];
   }
 
   getBultSoinRecords() {
@@ -916,7 +913,7 @@ export class ConsBultCnamComponent {
     this.serv.getSexe(this.token.getUser().codSoc, this.formBuletinSoin.get('mat_pers')?.value, item.num_fam).subscribe((data: any) => {
       this.sexe = data.sexe
       this.parente = data.parente
-      this.serv.getActes(this.sexe, this.parente, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value).subscribe((data: any) => {
+      this.serv.getActes(this.parente, this.sexe, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value).subscribe((data: any) => {
         this.listActe = data
 
         this.columnActe = [

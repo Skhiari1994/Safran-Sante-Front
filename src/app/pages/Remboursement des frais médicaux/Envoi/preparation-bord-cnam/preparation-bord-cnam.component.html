@@ -19,7 +19,7 @@
       <form class="row g-3" [formGroup]="bordEnvoiForm">
         <div class="col-md-2">
           <label class="form-label">Code bordereau</label>
-          <app-lov [listData]="listCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="bordEnvoiForm.get('cod_bord')?.value"
+          <app-lov [source]="sourceCodBord" [columns]="columnsSearch" codeField="cod_bord" [selectedCode]="bordEnvoiForm.get('cod_bord')?.value"
             (selectedValue)="search($event)">
           </app-lov>
         </div>
@@ -191,7 +191,7 @@
 
 <!-- end row -->
 <div *ngIf="isSearch">
-  <app-search-lov [listData]="listCodBord" [columns]="columnsSearch" (selectedValue)="search($event)">
+  <app-search-lov [source]="sourceCodBord" [columns]="columnsSearch" (selectedValue)="search($event)">
   </app-search-lov>
 </div>
 <ng-template #deleteModel let-modal>

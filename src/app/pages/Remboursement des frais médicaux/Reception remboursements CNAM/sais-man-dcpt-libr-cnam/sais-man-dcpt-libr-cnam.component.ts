@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovBordereauxService } from 'src/app/shared/Service/lov-bordereaux.service';
 import { Component } from "@angular/core";
 import { ReceptionRemboursementService } from "../reception-remboursement.service";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -16,6 +18,8 @@ import { AdherentService } from "src/app/pages/Adherent/adherent.service";
 })
 
 export class SaisManDcptLibrCnamComponent {
+  /** Bordereaux de la fenêtre de recherche, lus page par page (mêmes critères que l'ancienne liste EnteteSaisieBordArriverManuLibreCnam : bordereaux non validés de la société). */
+  readonly sourceBordArriver = inject(LovBordereauxService).bordArriver({ societe: true, valid: 'N' });
 
   imageURL: string | undefined;
   isReadOnly: boolean = true;  // Set to 'true' to visually make it readonly
@@ -1073,21 +1077,15 @@ export class SaisManDcptLibrCnamComponent {
       this.error = "Aucun cod_bord sélectionné.";
     }
   }
+  /**
+   * Colonnes de la fenêtre de recherche des bordereaux. La liste elle-même n'est plus chargée en entier :
+   * la fenêtre la lit page par page sur le serveur (sourceBordArriver).
+   */
   getAllBordArrive(): void {
-    this.servLibre.EnteteSaisieBordArriverManuLibreCnam(this.tokenStorage.getUser().codSoc).subscribe({
-      next: (data) => {
-        this.AllBordArrive = data;
-        console.log("liste des bordereaux :", this.AllBordArrive);
-
-        this.columnBordArriver = [
-          { key: "cod_bord", label: "Code de bordereau" },
-          { key: "dat_bord", label: "Date de bordereau" },
-        ];
-      },
-      error: (err) => {
-        this.error = "Erreur lors de la récupération des données";
-      },
-    });
+    this.columnBordArriver = [
+      { key: "cod_bord", label: "Code de bordereau" },
+      { key: "dat_bord", label: "Date de bordereau" },
+    ];
   }
 
   applyFilter() {
@@ -1210,7 +1208,7 @@ export class SaisManDcptLibrCnamComponent {
     });
 
     /* 
-          this.servLibre.getActes(this.sexe, this.parente, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value).subscribe((data: any) => {
+          this.servLibre.getActes(this.parente, this.sexe, this.formBuletinSoin.get('cod_fil')?.value, this.formBuletinSoin.get('cod_assur')?.value).subscribe((data: any) => {
             this.listActe = data
     
             this.columnActe = [

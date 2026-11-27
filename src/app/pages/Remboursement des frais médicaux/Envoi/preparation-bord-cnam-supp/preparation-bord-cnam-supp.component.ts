@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdherentService } from 'src/app/pages/Adherent/adherent.service';
@@ -19,6 +20,9 @@ import { token } from 'flatpickr/dist/utils/formatting';
   styleUrl: './preparation-bord-cnam-supp.component.scss'
 })
 export class PreparationBordCnamSuppComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Bordereaux CNAM envoyés, lus page par page sur le serveur (mêmes critères que getCodBord('01')). */
+  readonly sourceCodBord = this.lovServeur.source('Remb/BordEnvoi/lovBordEnvoiCnam', () => ({ soc: '01', cols: 'cod_bord,dat_bord' }), 'cod_bord');
 
 listDem: any;
   selectedRows: any;
@@ -321,15 +325,12 @@ ngOnDestroy() {
     });
   }
   
-getCodBord() {
-    this.envoiServ.getCodBord('01').subscribe((data) => {
-      console.log("getCodBord", data);
-     this.listCodBord = data;
-      this.columnsSearch = [
-        { key: "cod_bord", label: "Code Borderau" },
-        { key: "dat_bord", label: "Date Bord" },
-      ];
-    });
+  /** Colonnes des fenêtres de bordereaux : la liste est lue page par page sur le serveur (sourceCodBord). */
+  getCodBord() {
+    this.columnsSearch = [
+      { key: "cod_bord", label: "Code Borderau" },
+      { key: "dat_bord", label: "Date Bord" },
+    ];
   }
 
   onSelectedValueCodAssur(item:any) {

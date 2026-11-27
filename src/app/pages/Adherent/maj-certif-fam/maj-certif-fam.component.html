@@ -231,7 +231,7 @@
 </div>
 
 <div *ngIf="isSearch">
-  <app-search-lov [listData]="listPersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
+  <app-search-lov [source]="sourcePersonnel" [columns]="columnsSearch" (selectedValue)="search($event)">
   </app-search-lov>
 </div>
 

@@ -1,0 +1,40 @@
+<div class="lov-pager">
+  <label class="lov-pager__taille">
+    <span>Lignes par page</span>
+    <select class="form-select form-select-sm" [ngModel]="taille" (ngModelChange)="changerTaille($event)"
+      aria-label="Nombre de lignes par page">
+      <option *ngFor="let t of tailles" [ngValue]="t">{{ t }}</option>
+    </select>
+  </label>
+
+  <nav aria-label="Pages de résultats">
+    <ul class="lov-pager__pages">
+      <li>
+        <button type="button" class="lov-pager__btn" (click)="aller(0)" [disabled]="page === 0 || desactive"
+          aria-label="Première page" title="Première page"><i class="ri-skip-back-mini-line" aria-hidden="true"></i></button>
+      </li>
+      <li>
+        <button type="button" class="lov-pager__btn" (click)="aller(page - 1)" [disabled]="page === 0 || desactive"
+          aria-label="Page précédente" title="Page précédente"><i class="ri-arrow-left-s-line" aria-hidden="true"></i></button>
+      </li>
+      <li *ngFor="let p of pagesVisibles">
+        <span *ngIf="p === null" class="lov-pager__ellipse" aria-hidden="true">…</span>
+        <button *ngIf="p !== null" type="button" class="lov-pager__btn lov-pager__num" [class.active]="p === page"
+          [attr.aria-current]="p === page ? 'page' : null" [attr.aria-label]="'Page ' + (p + 1)"
+          [disabled]="desactive && p !== page" (click)="aller(p)">{{ p + 1 }}</button>
+      </li>
+      <li>
+        <button type="button" class="lov-pager__btn" (click)="aller(page + 1)"
+          [disabled]="page >= nbPages - 1 || desactive" aria-label="Page suivante" title="Page suivante">
+          <i class="ri-arrow-right-s-line" aria-hidden="true"></i></button>
+      </li>
+      <li>
+        <button type="button" class="lov-pager__btn" (click)="aller(nbPages - 1)"
+          [disabled]="page >= nbPages - 1 || desactive" aria-label="Dernière page" title="Dernière page">
+          <i class="ri-skip-forward-mini-line" aria-hidden="true"></i></button>
+      </li>
+    </ul>
+  </nav>
+
+  <span class="lov-pager__info">Page {{ page + 1 }} / {{ nombre(nbPages) }}</span>
+</div>

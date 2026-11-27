@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component } from "@angular/core";
 import {
   AbstractControl,
@@ -19,6 +21,10 @@ import { TokenStorage } from "src/app/account/token-storage.service";
   styleUrl: "./maj-certif-fam.component.scss",
 })
 export class MajCertifFamComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnelles). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovPersonnelles', () => ({ codSoc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom_pers,pren_pers,num_retr,cin,cod_lieu_geog' }), 'mat_pers');
+
   p: any
   pCertif: any
   formAdherent!: FormGroup;
@@ -79,20 +85,17 @@ export class MajCertifFamComponent {
   }
 
   getPersonnels() {
-    this.adherentServ.getPersonnels().subscribe((data) => {
-      console.log("personnel", data);
-      this.listPersonnel = data;
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "nom_pers", label: "Nom" },
-        { key: "pren_pers", label: "Prénom" },
-        { key: "num_retr", label: "Id unique" },
-        { key: "cin", label: "CIN" },
-        { key: "cod_lieu_geog", label: "Service" },
-      ];
-    });
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "nom_pers", label: "Nom" },
+      { key: "pren_pers", label: "Prénom" },
+      { key: "num_retr", label: "Id unique" },
+      { key: "cin", label: "CIN" },
+      { key: "cod_lieu_geog", label: "Service" },
+    ];
   }
 
   search(item: any) {

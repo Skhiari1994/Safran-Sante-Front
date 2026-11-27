@@ -29,7 +29,7 @@
             </div>
             <div class="col-md-4">
               <label class="form-label">Matricule</label>
-              <app-lov [listData]="listPersonnel" [columns]="columnsMat" codeField="mat_pers" [selectedCode]="matricule"
+              <app-lov [source]="sourcePersonnel" [columns]="columnsMat" codeField="mat_pers" [selectedCode]="matricule"
                 (selectedValue)="onSelectedVMat($event)"></app-lov>
             </div>
             <div class="col-md-5">

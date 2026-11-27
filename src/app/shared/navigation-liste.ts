@@ -17,6 +17,11 @@ export interface ContexteNavigation {
   filtre: boolean;
   /** Identités des fiches du filtre d'origine ; null = toute la liste. */
   signaturesPortee: string[] | null;
+  /**
+   * Liste lue page par page sur le serveur : filtres du choix, position (à partir de 0) et nombre de fiches.
+   * La fiche voisine est demandée au serveur (page de 1 ligne à la position voulue).
+   */
+  serveur?: { filtres: Record<string, string>; index: number; total: number };
 }
 
 export interface ResultatNavigation<T> {

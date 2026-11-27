@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { libelleDe } from 'src/app/shared/lov-libelle';
 import {
   ChangeDetectorRef,
@@ -35,6 +37,10 @@ import { ActivatedRoute, Router } from "@angular/router";
   styleUrl: "./maj-adherent-test.component.scss",
 })
 export class MajAdherentTestComponent {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnels). */
+  readonly sourcePersonnel = this.lovServeur.source('adherent/Personnel/lovPersonnels', () => ({ codSoc: this.lovServeur.societe(), cols: 'mat_pers,dat_nais,nom_pers,pren_pers,num_retr,cin,cod_lieu_geog' }), 'mat_pers');
+
   p: any
   pSusp: number = 1;
   editIndex: number | null = null; // Track the index of the child being edited
@@ -863,25 +869,24 @@ export class MajAdherentTestComponent {
   }
 
   getPersonnels() {
-    this.adherentServ.getPersonnelsCredit().subscribe((data) => {
-      this.listPersonnel = data;
-      // ouverture depuis l'alerte de carte CNAM (?mat=...) : on charge directement cet adhérent
-      const matDemande = this.route.snapshot.queryParamMap.get("mat");
-      if (matDemande) {
-        const adherent = data.find((p: any) => String(p.mat_pers) === matDemande);
-        if (adherent) this.search(adherent);
-      }
-      this.columnsSearch = [
-        { key: "mat_pers", label: "Matricule" },
-        { key: "mat_int", label: "Mat. Administratif" },
-        { key: "dat_nais", label: "Date naissance" },
-        { key: "nom_pers", label: "Nom" },
-        { key: "pren_pers", label: "Prénom" },
-        { key: "num_retr", label: "Id unique" },
-        { key: "cin", label: "CIN" },
-        { key: "cod_lieu_geog", label: "Service" },
-      ];
-    });
+    // ouverture depuis l'alerte de carte CNAM (?mat=...) : cet adhérent est demandé au serveur puis chargé
+    const matDemande = this.route.snapshot.queryParamMap.get("mat");
+    if (matDemande) {
+      this.sourcePersonnel.parCode(matDemande).subscribe(adherent => {
+        if (adherent && String(adherent.mat_pers) === matDemande) this.search(adherent);
+      });
+    }
+    // liste lue page par page sur le serveur (sourcePersonnel) : seules les colonnes sont posées ici
+    this.columnsSearch = [
+      { key: "mat_pers", label: "Matricule" },
+      { key: "mat_int", label: "Mat. Administratif" },
+      { key: "dat_nais", label: "Date naissance" },
+      { key: "nom_pers", label: "Nom" },
+      { key: "pren_pers", label: "Prénom" },
+      { key: "num_retr", label: "Id unique" },
+      { key: "cin", label: "CIN" },
+      { key: "cod_lieu_geog", label: "Service" },
+    ];
   }
   countMat() {
     this.adherentServ.countMat(this.tokenStorage.getUser().codSoc, "998").subscribe((data) => { });

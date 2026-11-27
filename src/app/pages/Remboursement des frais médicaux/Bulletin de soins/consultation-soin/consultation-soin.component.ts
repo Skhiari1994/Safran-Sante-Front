@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { LovServeurService } from 'src/app/shared/Service/lov-serveur.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
@@ -9,6 +11,10 @@ import { BulletinSoinService } from '../bulletin-soin.service';
   styleUrls: ['./consultation-soin.component.scss']
 })
 export class ConsultationSoinComponent implements OnInit {
+  private readonly lovServeur = inject(LovServeurService);
+  /** Personnel de la fenêtre de recherche, lu page par page sur le serveur (même liste que getPersonnelBultSoin). */
+  readonly sourcePersonnel = this.lovServeur.source('Remb/Personnel/lovPersonnelBultSoin', () => ({ soc: this.codSoc || this.lovServeur.societe(), cols: 'mat_pers,dat_nais' }), 'mat_pers');
+
 
   filterForm!: FormGroup;
 
@@ -200,13 +206,9 @@ export class ConsultationSoinComponent implements OnInit {
     });
   }
 
+  /** Plus de chargement complet : la fenêtre Matricule lit le personnel page par page (sourcePersonnel). */
   chargerPersonnel(): void {
-    this.bultService.getPersonnelBultSoin(this.codSoc).subscribe({
-      next: (data: any[]) => {
-        this.listPersonnel = data || [];
-      },
-      error: (err) => console.error('Erreur chargement personnel', err)
-    });
+    this.listPersonnel = [];
   }
 
   onSelectedMatricule(item: any): void {

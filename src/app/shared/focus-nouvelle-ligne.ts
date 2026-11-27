@@ -17,15 +17,16 @@ export function champsSaisissables(ligne: Element | null | undefined): HTMLEleme
  * Place le curseur dans un champ sans ouvrir son calendrier (global-datepicker ne l'ouvre que sur un clic de
  * l'utilisateur) ; le texte d'un champ texte est sélectionné pour pouvoir être remplacé directement.
  */
-export function focaliser(champ: HTMLElement): void {
+export function focaliser(champ: HTMLElement, sansDefilement = false): void {
   champ.dataset['fpSansOuverture'] = '1';
-  champ.focus();
+  // sansDefilement : la page est déjà en train de défiler (ex. remontée en haut) ; un défilement de plus l'interromprait
+  champ.focus(sansDefilement ? { preventScroll: true } : undefined);
   delete champ.dataset['fpSansOuverture'];
   (champ as any)._flatpickr?.close?.();
   if (champ instanceof HTMLInputElement && (champ.type === 'text' || champ.type === '')) {
     try { champ.select(); } catch { /* certains champs masqués refusent la sélection */ }
   }
-  champ.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  if (!sansDefilement) champ.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 
 /**
@@ -59,7 +60,37 @@ export function focusCaseLigne(table: Table | undefined, indexLigne: number, der
   setTimeout(() => tenter(essais), 0);
 }
 
-/** Après l'ajout d'une ligne : curseur dans sa première case saisissable. */
+/** Jusqu'à cette heure, les lignes ajoutées par le programme ne prennent pas le curseur (voir reserverCurseur). */
+let curseurReserveJusqua = 0;
+
+/**
+ * Le curseur va ailleurs (ex. Matricule après « Nouveau ») : pendant `ms`, les lignes vides que l'écran recrée en
+ * vidant son formulaire ne prennent pas le curseur (sinon la page descendrait jusqu'au tableau).
+ */
+export function reserverCurseur(ms = 1500): void {
+  curseurReserveJusqua = Date.now() + ms;
+}
+
+/**
+ * Heure de la dernière demande d'ajout de ligne faite par l'utilisateur : clic sur un bouton « Ajouter » (.add-btn),
+ * Alt+N, ou Entrée (sur la dernière case d'un tableau). Les lignes que l'écran crée lui-même (chargement d'une fiche,
+ * Nouveau, Retour, dernière ligne supprimée) ne doivent pas déplacer le curseur ni faire défiler la page.
+ */
+let derniereDemandeAjout = 0;
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', ev => {
+    if (ev.isTrusted && (ev.target as Element | null)?.closest?.('.add-btn, [data-ajout-ligne]')) derniereDemandeAjout = Date.now();
+  }, true);
+  document.addEventListener('keydown', ev => {
+    if (!ev.isTrusted) return;
+    const entreeDansTableau = ev.key === 'Enter' && !!(ev.target as Element | null)?.closest?.('.p-datatable');
+    if (entreeDansTableau || (ev.altKey && (ev.key || '').toLowerCase() === 'n')) derniereDemandeAjout = Date.now();
+  }, true);
+}
+
+/** Après l'ajout d'une ligne demandé par l'utilisateur : curseur dans sa première case saisissable. */
 export function focusPremiereCase(table: Table | undefined, indexLigne: number, essais = 12): void {
+  if (Date.now() < curseurReserveJusqua) return;
+  if (Date.now() - derniereDemandeAjout > 1500) return;   // ligne créée par le programme : le curseur reste où il est
   focusCaseLigne(table, indexLigne, false, essais);
 }
