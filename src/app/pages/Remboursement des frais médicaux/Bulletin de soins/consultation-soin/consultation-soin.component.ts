@@ -260,7 +260,7 @@ export class ConsultationSoinComponent implements OnInit {
 
     // 2. Bloc 2 : Plafond Mutuelle
     if (natBult !== 'C') {
-      this.bultService.getPlafondAssurAdherent(matricule).subscribe({
+      this.bultService.getPlafondAssurAdherent(this.codSoc, matricule).subscribe({
         next: (data: any[]) => {
           this.plafondMutuelle = data?.find((p: any) => Number(p.annee_assur) === anneeNum) || null;
         },

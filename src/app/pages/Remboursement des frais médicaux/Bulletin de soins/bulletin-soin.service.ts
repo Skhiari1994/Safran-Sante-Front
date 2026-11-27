@@ -473,8 +473,8 @@ export class BulletinSoinService {
     return this.http.get<any[]>(API_URL + 'Remb/Personnel/getPlafondCnam', { params });
   }
 
-  getPlafondAssurAdherent(mat: string): Observable<any[]> {
-    const params = new HttpParams().set('mat', mat);
+  getPlafondAssurAdherent(soc: string, mat: string): Observable<any[]> {
+    const params = new HttpParams().set('soc', soc).set('mat', mat);
     return this.http.get<any[]>(API_URL + 'Remb/Personnel/getPlafondAssur', { params });
   }
 
